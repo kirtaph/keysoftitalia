@@ -1,0 +1,513 @@
+/**
+ * Key Soft Italia - Servizi Detail Page Styles
+ * Stili per le pagine dettaglio servizi
+ */
+
+/* Hero Service */
+.hero-service {
+    background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-secondary) 100%);
+    padding: 120px 0 80px;
+}
+
+.hero-icon {
+    width: 100px;
+    height: 100px;
+    margin: 0 auto 30px;
+    background: rgba(255,255,255,0.2);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 50px;
+    color: white;
+}
+
+/* Service Categories */
+.section-categories {
+    padding: 60px 0;
+}
+
+.category-card {
+    background: white;
+    padding: 30px;
+    border-radius: 15px;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+    height: 100%;
+    transition: all 0.3s ease;
+}
+
+.category-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+}
+
+.category-icon {
+    width: 70px;
+    height: 70px;
+    margin-bottom: 20px;
+    background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-secondary) 100%);
+    border-radius: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 32px;
+    color: white;
+}
+
+.category-title {
+    font-size: 20px;
+    font-weight: 600;
+    margin-bottom: 10px;
+    color: var(--color-dark);
+}
+
+.category-description {
+    color: var(--color-text-secondary);
+    margin-bottom: 15px;
+    font-size: 14px;
+}
+
+.category-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.category-list li {
+    padding: 5px 0;
+    color: var(--color-text);
+    font-size: 14px;
+    position: relative;
+    padding-left: 20px;
+}
+
+.category-list li:before {
+    content: "•";
+    position: absolute;
+    left: 0;
+    color: var(--color-primary);
+}
+
+/* Service Detail Cards */
+.service-detail-card {
+    background: white;
+    border-radius: 15px;
+    padding: 30px;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+    display: flex;
+    gap: 25px;
+    height: 100%;
+    transition: all 0.3s ease;
+}
+
+.service-detail-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.12);
+}
+
+.service-detail-card .service-icon {
+    flex-shrink: 0;
+    width: 80px;
+    height: 80px;
+    background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-secondary) 100%);
+    border-radius: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 36px;
+    color: white;
+}
+
+.service-content h3 {
+    font-size: 22px;
+    font-weight: 600;
+    margin-bottom: 10px;
+    color: var(--color-dark);
+}
+
+.service-content p {
+    color: var(--color-text-secondary);
+    margin-bottom: 20px;
+}
+
+.service-features {
+    list-style: none;
+    padding: 0;
+    margin-bottom: 20px;
+}
+
+.service-features li {
+    padding: 8px 0;
+    color: var(--color-text);
+    position: relative;
+    padding-left: 25px;
+}
+
+.service-features li:before {
+    content: "✓";
+    position: absolute;
+    left: 0;
+    color: var(--color-success);
+    font-weight: bold;
+}
+
+.service-price {
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--color-primary);
+}
+
+/* Product Cards */
+.product-card {
+    background: white;
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+    position: relative;
+    height: 100%;
+    transition: all 0.3s ease;
+}
+
+.product-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+}
+
+.product-badge {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    background: var(--color-danger);
+    color: white;
+    padding: 5px 15px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    z-index: 1;
+}
+
+.product-image {
+    height: 200px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 80px;
+    color: white;
+}
+
+.product-content {
+    padding: 25px;
+}
+
+.product-title {
+    font-size: 20px;
+    font-weight: 600;
+    margin-bottom: 10px;
+    color: var(--color-dark);
+}
+
+.product-specs {
+    color: var(--color-text-secondary);
+    font-size: 14px;
+    margin-bottom: 15px;
+}
+
+.product-condition {
+    margin-bottom: 15px;
+}
+
+.product-price {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 15px;
+}
+
+.price-old {
+    text-decoration: line-through;
+    color: var(--color-text-secondary);
+    font-size: 18px;
+}
+
+.price-current {
+    font-size: 24px;
+    font-weight: 600;
+    color: var(--color-primary);
+}
+
+.product-warranty {
+    color: var(--color-success);
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+/* Benefits */
+.benefit-card {
+    text-align: center;
+    padding: 30px;
+    height: 100%;
+}
+
+.benefit-icon {
+    width: 80px;
+    height: 80px;
+    margin: 0 auto 20px;
+    background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-secondary) 100%);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 36px;
+    color: white;
+}
+
+.benefit-title {
+    font-size: 20px;
+    font-weight: 600;
+    margin-bottom: 10px;
+    color: var(--color-dark);
+}
+
+.benefit-text {
+    color: var(--color-text-secondary);
+    line-height: 1.6;
+}
+
+/* Technologies Grid */
+.technologies-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: 20px;
+}
+
+.tech-item {
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    text-align: center;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+    transition: all 0.3s ease;
+}
+
+.tech-item:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.12);
+}
+
+.tech-icon {
+    font-size: 40px;
+    color: var(--color-primary);
+    margin-bottom: 10px;
+}
+
+.tech-item span {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--color-dark);
+}
+
+/* Process Timeline */
+.process-timeline {
+    position: relative;
+    padding: 20px 0;
+}
+
+.process-timeline:before {
+    content: '';
+    position: absolute;
+    left: 50%;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: var(--color-gray);
+    transform: translateX(-50%);
+}
+
+.process-step {
+    display: flex;
+    align-items: center;
+    margin-bottom: 60px;
+    position: relative;
+}
+
+.process-step:nth-child(even) {
+    flex-direction: row-reverse;
+}
+
+.process-number {
+    width: 50px;
+    height: 50px;
+    background: var(--color-primary);
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    font-weight: 600;
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 1;
+}
+
+.process-content {
+    width: 45%;
+    padding: 20px;
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+}
+
+.process-step:nth-child(even) .process-content {
+    margin-left: auto;
+}
+
+.process-content h3 {
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 10px;
+    color: var(--color-dark);
+}
+
+.process-content p {
+    color: var(--color-text-secondary);
+    font-size: 14px;
+    margin: 0;
+}
+
+/* Portfolio Cards */
+.portfolio-card {
+    background: white;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+    transition: all 0.3s ease;
+}
+
+.portfolio-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.12);
+}
+
+.portfolio-image {
+    height: 200px;
+    position: relative;
+    overflow: hidden;
+}
+
+.portfolio-placeholder {
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 60px;
+    color: white;
+}
+
+.portfolio-content {
+    padding: 25px;
+}
+
+.portfolio-content h4 {
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 10px;
+    color: var(--color-dark);
+}
+
+.portfolio-content p {
+    color: var(--color-text-secondary);
+    font-size: 14px;
+    margin-bottom: 15px;
+}
+
+.portfolio-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.portfolio-tags .tag {
+    background: var(--color-gray-light);
+    color: var(--color-text);
+    padding: 4px 12px;
+    border-radius: 15px;
+    font-size: 12px;
+}
+
+/* CTA Section */
+.btn-white {
+    background: white;
+    color: var(--color-primary);
+    border: 2px solid white;
+}
+
+.btn-white:hover {
+    background: transparent;
+    color: white;
+    border-color: white;
+}
+
+/* Responsive */
+@media (max-width: 992px) {
+    .service-detail-card {
+        flex-direction: column;
+    }
+    
+    .process-timeline:before {
+        left: 30px;
+    }
+    
+    .process-step,
+    .process-step:nth-child(even) {
+        flex-direction: row;
+    }
+    
+    .process-number {
+        left: 30px;
+    }
+    
+    .process-content {
+        width: auto;
+        margin-left: 100px !important;
+    }
+}
+
+@media (max-width: 768px) {
+    .hero-icon {
+        width: 80px;
+        height: 80px;
+        font-size: 40px;
+    }
+    
+    .category-card,
+    .service-detail-card {
+        padding: 20px;
+    }
+    
+    .technologies-grid {
+        grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+    }
+    
+    .process-timeline:before {
+        left: 20px;
+    }
+    
+    .process-number {
+        width: 40px;
+        height: 40px;
+        font-size: 16px;
+        left: 20px;
+    }
+    
+    .process-content {
+        margin-left: 70px !important;
+        padding: 15px;
+    }
+}
