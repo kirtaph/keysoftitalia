@@ -665,7 +665,7 @@
 /* Small Mobile (max 575px) */
 @media (max-width: 575px) {
   .footer-logo {
-    flex-direction: column;
+    flex-direction: row;
     align-items: flex-start;
     text-align: left;
   }
