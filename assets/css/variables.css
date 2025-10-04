@@ -30,7 +30,7 @@
   --ks-red-hover: #DC2626;
   --ks-red-light: #FEE2E2;
   
-  --ks-gray-50: #F9FAFB;
+  --ks-gray-50:  #F9FAFB;
   --ks-gray-100: #F3F4F6;
   --ks-gray-200: #E5E7EB;
   --ks-gray-300: #D1D5DB;
@@ -40,22 +40,37 @@
   --ks-gray-700: #374151;
   --ks-gray-800: #1F2937;
   --ks-gray-900: #111827;
-  
-  /* Colori di testo */
+
+  /* ===== ALIAS SEMANTICI ===== */
+  /* Brand */
+  --ks-brand: var(--ks-orange);
+  --ks-brand-hover: var(--ks-orange-hover);
+  --ks-brand-weak: var(--ks-orange-light);
+  --ks-on-brand: #FFFFFF;         /* testo/icon su sfondo brand */
+
+  /* Surface / testo */
   --ks-text-primary: var(--ks-gray-900);
   --ks-text-secondary: var(--ks-gray-600);
   --ks-text-muted: var(--ks-gray-500);
   --ks-text-white: #FFFFFF;
-  
-  /* Colori di sfondo */
+  --ks-text-on-dark: #FFFFFF;
+
   --ks-bg-primary: #FFFFFF;
   --ks-bg-secondary: var(--ks-gray-50);
   --ks-bg-dark: var(--ks-dark);
-  
+
+  /* Link (separati dal brand per libertà di design) */
+  --ks-link: var(--ks-brand);
+  --ks-link-hover: var(--ks-brand-hover);
+
+  /* Focus ring/accessibilità */
+  --ks-focus-ring: var(--ks-brand);
+  --ks-focus-ring-weak: rgba(255, 107, 53, 0.25);
+
   /* ===== TIPOGRAFIA ===== */
   --ks-font-primary: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   --ks-font-heading: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-  
+
   /* Font Sizes - Sistema modulare */
   --ks-text-xs: 0.75rem;     /* 12px */
   --ks-text-sm: 0.875rem;    /* 14px */
@@ -67,19 +82,19 @@
   --ks-text-4xl: 2.25rem;    /* 36px */
   --ks-text-5xl: 3rem;       /* 48px */
   --ks-text-6xl: 3.75rem;    /* 60px */
-  
+
   /* Font Weights */
   --ks-font-light: 300;
   --ks-font-regular: 400;
   --ks-font-medium: 500;
   --ks-font-semibold: 600;
   --ks-font-bold: 700;
-  
+
   /* Line Heights */
   --ks-leading-tight: 1.25;
   --ks-leading-normal: 1.5;
   --ks-leading-relaxed: 1.75;
-  
+
   /* ===== SPACING ===== */
   --ks-spacing-0: 0;
   --ks-spacing-1: 0.25rem;   /* 4px */
@@ -94,7 +109,7 @@
   --ks-spacing-16: 4rem;     /* 64px */
   --ks-spacing-20: 5rem;     /* 80px */
   --ks-spacing-24: 6rem;     /* 96px */
-  
+
   /* ===== BORDER RADIUS ===== */
   --ks-radius-sm: 0.25rem;   /* 4px */
   --ks-radius-md: 0.5rem;    /* 8px */
@@ -102,7 +117,7 @@
   --ks-radius-xl: 1rem;      /* 16px */
   --ks-radius-2xl: 1.5rem;   /* 24px */
   --ks-radius-full: 9999px;
-  
+
   /* ===== SHADOWS ===== */
   --ks-shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
   --ks-shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
@@ -110,12 +125,12 @@
   --ks-shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
   --ks-shadow-2xl: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
   --ks-shadow-inner: inset 0 2px 4px 0 rgba(0, 0, 0, 0.06);
-  
+
   /* ===== TRANSITIONS ===== */
   --ks-transition-fast: 150ms ease;
   --ks-transition-base: 250ms ease;
   --ks-transition-slow: 350ms ease;
-  
+
   /* ===== Z-INDEX ===== */
   --ks-z-dropdown: 1000;
   --ks-z-sticky: 1020;
@@ -124,14 +139,14 @@
   --ks-z-modal: 1050;
   --ks-z-popover: 1060;
   --ks-z-tooltip: 1070;
-  
+
   /* ===== BREAKPOINTS ===== */
   --ks-screen-sm: 576px;
   --ks-screen-md: 768px;
   --ks-screen-lg: 992px;
   --ks-screen-xl: 1200px;
   --ks-screen-xxl: 1400px;
-  
+
   /* ===== CONTAINER ===== */
   --ks-container-padding: var(--ks-spacing-4);
   --ks-container-max-width: 1320px;

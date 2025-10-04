@@ -98,57 +98,53 @@ a:hover {
   border: none;
   border-radius: var(--ks-radius-lg);
   cursor: pointer;
-  transition: all var(--ks-transition-base);
+  transition: background-color var(--ks-transition-base), transform var(--ks-transition-base), box-shadow var(--ks-transition-base), color var(--ks-transition-base), border-color var(--ks-transition-base);
   white-space: nowrap;
 }
 
+.btn:focus-visible {
+  outline: 2px solid var(--ks-orange);
+  outline-offset: 2px;
+}
+
+/* Brand filled */
 .btn-primary {
+  background-color: var(--ks-brand);
+  color: var(--ks-on-brand);
+  border: 2px solid var(--ks-brand);
+}
+.btn-primary:hover {
+  background-color: var(--ks-brand-hover);
+  border-color: var(--ks-brand-hover);
+  color: var(--ks-on-brand); /* resta bianco in hover */
+}
+
+/* Outline brand (usala dove serve contrasto su bg chiari) */
+.btn-outline-orange {
+  background-color: transparent;
+  color: var(--ks-orange);
+  border: 2px solid var(--ks-orange);
+}
+.btn-outline-orange:hover {
   background-color: var(--ks-orange);
   color: var(--ks-text-white);
+  border-color: var(--ks-orange-hover);
 }
 
-.btn-primary:hover {
-  background-color: var(--ks-orange-hover);
+/* Neutri, se ti servono */
+.btn-dark {
+  background-color: var(--ks-dark);
+  color: var(--ks-text-white);
+}
+.btn-dark:hover {
+  background-color: var(--ks-dark-secondary);
   transform: translateY(-2px);
   box-shadow: var(--ks-shadow-lg);
 }
 
-.btn-secondary {
-  background-color: transparent;
-  color: var(--ks-text-white);
-  border: 2px solid var(--ks-text-white);
-}
-
-.btn-secondary:hover {
-  background-color: var(--ks-text-white);
-  color: var(--ks-orange);
-}
-
-.btn-green {
-  background-color: var(--ks-green);
-  color: var(--ks-text-white);
-}
-
-.btn-green:hover {
-  background-color: var(--ks-green-hover);
-  transform: translateY(-2px);
-  box-shadow: var(--ks-shadow-lg);
-}
-
-.btn-lg {
-  padding: var(--ks-spacing-4) var(--ks-spacing-8);
-  font-size: var(--ks-text-lg);
-}
-
-.btn-sm {
-  padding: var(--ks-spacing-2) var(--ks-spacing-4);
-  font-size: var(--ks-text-sm);
-}
-
-.btn-icon {
-  padding: var(--ks-spacing-3);
-  border-radius: var(--ks-radius-full);
-}
+.btn-lg { padding: var(--ks-spacing-4) var(--ks-spacing-8); font-size: var(--ks-text-lg); }
+.btn-sm { padding: var(--ks-spacing-2) var(--ks-spacing-4); font-size: var(--ks-text-sm); }
+.btn-icon { padding: var(--ks-spacing-3); border-radius: var(--ks-radius-full); }
 
 /* ===== BADGES ===== */
 .badge {

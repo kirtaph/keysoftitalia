@@ -511,3 +511,78 @@ document.addEventListener('DOMContentLoaded', () => {
 // Export utilities for global use
 window.KS = KS;
 window.Utils = Utils;
+
+document.addEventListener('DOMContentLoaded', function () {
+  var el = document.getElementById('heroCarousel');
+  if (el && typeof bootstrap !== 'undefined' && bootstrap.Carousel) {
+    // inizializza/forza autoplay anche se i data-attr non venissero letti
+    new bootstrap.Carousel(el, {
+      interval: 10000,
+      ride: 'carousel',
+      pause: false,
+      wrap: true,
+      touch: true,
+      keyboard: true
+    });
+  }
+});
+
+document.addEventListener("DOMContentLoaded", function() {
+  new Swiper(".recond-swiper", {
+    loop: true,
+    autoplay: {
+      delay: 4000,
+      disableOnInteraction: false,
+    },
+    slidesPerView: 1,
+    spaceBetween: 20,
+    pagination: {
+      el: ".swiper-pagination",
+      clickable: true,
+    },
+    breakpoints: {
+      768: { slidesPerView: 2 },
+      992: { slidesPerView: 3 },
+      1200: { slidesPerView: 4 }
+    }
+  });
+});
+
+document.addEventListener("DOMContentLoaded", function () {
+  new Swiper(".brand-swiper", {
+    slidesPerView: 5,
+    spaceBetween: 30,
+    loop: true,
+    autoplay: {
+      delay: 2500,
+      disableOnInteraction: false,
+    },
+    breakpoints: {
+      1200: { slidesPerView: 5 },
+      992: { slidesPerView: 4 },
+      768: { slidesPerView: 3 },
+      576: { slidesPerView: 2 },
+      0: { slidesPerView: 1 }
+    }
+  });
+});
+
+document.addEventListener("DOMContentLoaded", function() {
+  new Swiper(".testimonial-swiper", {
+    loop: true,
+    autoplay: {
+      delay: 5000,
+      disableOnInteraction: false,
+    },
+    slidesPerView: 1,
+    spaceBetween: 30,
+    pagination: {
+      el: ".testimonial-swiper .swiper-pagination",
+      clickable: true,
+    },
+    breakpoints: {
+      768: { slidesPerView: 2 },
+      1200: { slidesPerView: 3 }
+    }
+  });
+});
