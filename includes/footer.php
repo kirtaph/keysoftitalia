@@ -19,7 +19,7 @@ if (!defined('BASE_PATH')) {
         <a href="<?php echo url(); ?>" class="footer-logo" aria-label="Homepage Key Soft Italia">
           <img src="<?php echo asset('img/logo.png'); ?>" alt="Key Soft Italia" class="footer-logo-img" width="40" height="40" decoding="async">
           <div class="footer-logo-text">
-            <strong>Key Soft Italia</strong><br>
+            <strong>Key Soft Italia</strong>
             <span class="footer-logo-subititle-text">L'universo della Tecnologia</span>
           </div>
         </a>

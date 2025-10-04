@@ -179,7 +179,6 @@
   margin-right: 10px;
   transition: transform 0.3s ease, color 0.3s ease;
 }
-
 .mobile-nav-link:hover i {
   transform: scale(1.2);
   color: var(--ks-orange-hover);
@@ -303,7 +302,7 @@
   font-weight: 700;
   color: #ffffff;
   display: block;
-  margin-bottom: 4px;
+  margin-bottom: -6px;
 }
 
 .footer-logo-subititle-text {
