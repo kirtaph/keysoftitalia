@@ -240,11 +240,11 @@ $page_keywords = "riparazioni smartphone ginosa, assistenza computer taranto, ri
 </section>
 
 <!-- SERVICES -->
-<section class="section section-services bg-light" role="region" aria-label="I nostri servizi" data-aos="fade-up" data-aos-duration="1000" data-aos-once="true">
+<section class="section section-services bg-light" role="region" aria-label="I nostri servizi">
   <div class="container">
 
     <!-- Sezione Header -->
-    <div class="section-header text-center mb-5" data-aos="zoom-in" data-aos-duration="800" data-aos-delay="100">
+    <div class="section-header text-center mb-5">
       <h2 class="section-title">Cosa facciamo</h2>
       <p class="section-subtitle">Soluzioni tecnologiche complete per ogni esigenza</p>
     </div>

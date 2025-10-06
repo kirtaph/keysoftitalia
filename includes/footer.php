@@ -115,5 +115,35 @@ if (!defined('BASE_PATH')) {
     </div>
   </div>
 </footer>
+<!-- Sticky WhatsApp Button -->
+<a href="<?php echo whatsapp_link('Ciao Key Soft Italia, ho bisogno di assistenza!'); ?>"
+   target="_blank"
+   class="whatsapp-sticky"
+   aria-label="Contattaci su WhatsApp">
+  <i class="ri-whatsapp-line"></i>
+  <span class="whatsapp-tooltip">Hai bisogno di aiuto?</span>
+</a>
 
+<!-- Back to Top Button -->
+<button id="backToTop" class="back-to-top" aria-label="Torna su">
+  <i class="ri-arrow-up-line"></i>
+</button>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const backToTop = document.getElementById('backToTop');
+
+    window.addEventListener('scroll', function() {
+      if (window.scrollY > 300) {
+        backToTop.classList.add('visible');
+      } else {
+        backToTop.classList.remove('visible');
+      }
+    });
+
+    backToTop.addEventListener('click', function() {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+  });
+</script>
 <script src="<?php echo asset('js/main.js'); ?>"></script>
