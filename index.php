@@ -29,8 +29,6 @@ $page_keywords = "riparazioni smartphone ginosa, assistenza computer taranto, ri
     <meta property="og:url" content="<?php echo 'https://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI']; ?>">
     <meta property="og:image" content="<?php echo asset('images/og-image.jpg'); ?>">
     <link rel="stylesheet" href="<?php echo asset('css/pages/home.css'); ?>">
-    <!-- AOS CSS -->
-    <link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
 </head>
 <body>
 
@@ -587,15 +585,6 @@ $page_keywords = "riparazioni smartphone ginosa, assistenza computer taranto, ri
 
     <?php include 'includes/footer.php'; ?>
 
-    <!-- AOS JS -->
-    <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
-    <script>
-      AOS.init({
-        duration: 800, // Durata default
-        easing: 'ease-in-out', // Easing fluido
-        once: true, // Anima solo una volta
-        mirror: false // Non anima al reverse scroll
-      });
-    </script>
+
 </body>
 </html>

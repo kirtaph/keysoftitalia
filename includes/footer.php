@@ -146,4 +146,14 @@ if (!defined('BASE_PATH')) {
     });
   });
 </script>
+    <!-- AOS JS -->
+    <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
+    <script>
+      AOS.init({
+        duration: 800, // Durata default
+        easing: 'ease-in-out', // Easing fluido
+        once: true, // Anima solo una volta
+        mirror: false // Non anima al reverse scroll
+      });
+    </script>
 <script src="<?php echo asset('js/main.js'); ?>"></script>

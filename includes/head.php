@@ -68,6 +68,9 @@ $canonical        = url(ltrim($_SERVER['REQUEST_URI'] ?? '', '/'));
 <link rel="stylesheet" href="<?php echo asset('css/main.css'); ?>">
 <link rel="stylesheet" href="<?php echo asset('css/components.css'); ?>">
 
+<!-- AOS CSS -->
+<link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
+
 <!-- Schema.org JSON-LD (dinamico) -->
 <?php
 $openingSpecs = [];
