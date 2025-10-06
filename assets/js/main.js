@@ -600,3 +600,31 @@ document.querySelectorAll('a.smooth-scroll').forEach(link => {
     }
   });
 });
+
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/service-worker.js')
+                    .then((registration) => {
+                        console.log('Service Worker registrato:', registration.scope);
+                        
+                        // Controlla aggiornamenti
+                        registration.addEventListener('updatefound', () => {
+                            const newWorker = registration.installing;
+                            
+                            newWorker.addEventListener('statechange', () => {
+                                if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                                    console.log('Nuovo Service Worker disponibile!');
+                                    
+                                    // Opzionale: aggiorna automaticamente
+                                    if (confirm('Nuova versione disponibile. Aggiornare?')) {
+                                        newWorker.postMessage({ type: 'SKIP_WAITING' });
+                                        window.location.reload();
+                                    }
+                                }
+                            });
+                        });
+                    })
+                    .catch((error) => {
+                        console.error('Errore registrazione Service Worker:', error);
+                    });
+        })}
