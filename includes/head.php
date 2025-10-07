@@ -64,9 +64,10 @@ $canonical        = url(ltrim($_SERVER['REQUEST_URI'] ?? '', '/'));
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
 <!-- CSS -->
-<link rel="stylesheet" href="<?php echo asset('css/variables.css'); ?>">
-<link rel="stylesheet" href="<?php echo asset('css/main.css'); ?>">
-<link rel="stylesheet" href="<?php echo asset('css/components.css'); ?>">
+ <?php require_once __DIR__ . '/../helpers.versioning.php'; ?>
+<link rel="stylesheet" href="<?php echo asset_version('css/variables.css'); ?>">
+<link rel="stylesheet" href="<?php echo asset_version('css/main.css'); ?>">
+<link rel="stylesheet" href="<?php echo asset_version('css/components.css'); ?>">
 
 <!-- AOS CSS -->
 <link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
@@ -121,3 +122,16 @@ $schema = [
 ];
 ?>
 <script type="application/ld+json"><?php echo json_encode($schema, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES); ?></script>
+
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    // Costruisci correttamente l’URL PHP
+    navigator.serviceWorker.register("<?php echo url('service-worker.dev.js'); ?>", { scope: "<?php echo url('/'); ?>" })
+      .then(reg => console.log('✅ SW registrato:', reg.scope))
+      .catch(err => console.warn('❌ SW errore:', err));
+
+    console.log('SW path:', "<?php echo url('service-worker.dev.js'); ?>");
+  });
+}
+</script>

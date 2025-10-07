@@ -1,0 +1,15 @@
+User-agent: *
+# Allow everything during development except private/system folders
+Disallow: /assets/php/
+Disallow: /includes/
+Disallow: /vendor/
+Disallow: /node_modules/
+Disallow: /tmp/
+Disallow: /private/
+
+# Block search results or duplicate filters (if any)
+Disallow: /search
+Disallow: /*?*utm_*
+
+# Sitemaps (update the domain if in subfolder replace with full absolute URL)
+Sitemap: https://www.keysoftitalia.it/sitemap.xml
