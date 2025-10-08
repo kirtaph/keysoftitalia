@@ -91,11 +91,6 @@ $current_page = get_current_page();
   <!-- Body -->
   <div class="offcanvas-body">
     <ul class="mobile-nav">
-      <li class="mobile-nav-item">
-        <a href="<?php echo url(''); ?>" class="mobile-nav-link">
-          <i class="ri-home-4-line"></i> Home
-        </a>
-      </li>
 
       <li class="mobile-nav-item">
         <a href="<?php echo url('chi-siamo.php'); ?>" class="mobile-nav-link">

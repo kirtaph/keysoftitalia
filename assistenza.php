@@ -1,535 +1,751 @@
 <?php
 /**
  * Key Soft Italia - Assistenza Tecnica
- * Pagina richiesta assistenza tecnica
+ * Richiesta assistenza a domicilio o remota
  */
 
-// Define BASE_PATH if not defined
 if (!defined('BASE_PATH')) {
-    define('BASE_PATH', __DIR__ . '/');
+  define('BASE_PATH', __DIR__ . '/');
 }
-
 require_once BASE_PATH . 'config/config.php';
 
-// SEO Meta
-$page_title = "Assistenza Tecnica - Key Soft Italia | Supporto a Domicilio e Remoto";
-$page_description = "Richiedi assistenza tecnica professionale. Supporto a domicilio e remoto per privati e aziende. Intervento rapido garantito.";
-$page_keywords = "assistenza tecnica, supporto informatico, assistenza remota, riparazione computer a domicilio";
+$page_title       = "Assistenza Tecnica - Key Soft Italia | Supporto a Domicilio e Remoto";
+$page_description = "Assistenza informatica professionale a domicilio e da remoto. Risolviamo i tuoi problemi tecnologici rapidamente e con trasparenza.";
+$page_keywords    = "assistenza tecnica, supporto informatico, assistenza remota, tecnico a domicilio, riparazione computer";
 
-// Breadcrumbs
 $breadcrumbs = [
-    ['label' => 'Assistenza', 'url' => 'assistenza.php']
+  ['label' => 'Assistenza', 'url' => 'assistenza.php']
 ];
 ?>
-
 <!DOCTYPE html>
 <html lang="it">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?php echo $page_title; ?></title>
-    
-    <?php echo generate_meta_tags([
-        'title' => $page_title,
-        'description' => $page_description,
-        'keywords' => $page_keywords,
-        'url' => url('assistenza.php')
-    ]); ?>
-    
-    <!-- Preconnect -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    
-    <!-- Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    
-    <!-- Icons -->
-    <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
-    
-    <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    
-    <!-- Custom CSS -->
-    <link rel="stylesheet" href="<?php echo asset('css/variables.css'); ?>">
-    <link rel="stylesheet" href="<?php echo asset('css/main.css'); ?>">
-    <link rel="stylesheet" href="<?php echo asset('css/components.css'); ?>">
-    
-    <!-- Favicon -->
-    <link rel="icon" type="image/x-icon" href="<?php echo asset('images/favicon.ico'); ?>">
-    
-    <style>
-        .assistance-hero {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            padding: 80px 0;
-            color: white;
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .assistance-hero::before {
-            content: '';
-            position: absolute;
-            top: -50%;
-            right: -50%;
-            width: 200%;
-            height: 200%;
-            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
-            animation: pulse 15s ease-in-out infinite;
-        }
-        
-        @keyframes pulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.1); }
-        }
-        
-        .assistance-type-card {
-            background: white;
-            border-radius: 15px;
-            padding: 30px;
-            text-align: center;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-            cursor: pointer;
-            transition: all 0.3s ease;
-            border: 3px solid transparent;
-        }
-        
-        .assistance-type-card:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
-        }
-        
-        .assistance-type-card.selected {
-            border-color: #4a00e0;
-            background: linear-gradient(135deg, #f0f4ff 0%, #e8ecff 100%);
-        }
-        
-        .assistance-type-card i {
-            font-size: 3.5rem;
-            color: #4a00e0;
-            margin-bottom: 20px;
-        }
-        
-        .form-section {
-            background: #f8f9fa;
-            padding: 60px 0;
-        }
-        
-        .form-container {
-            background: white;
-            border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-            padding: 40px;
-        }
-        
-        .emergency-box {
-            background: linear-gradient(135deg, #ff6b6b 0%, #ff8e8e 100%);
-            color: white;
-            padding: 30px;
-            border-radius: 15px;
-            margin-bottom: 30px;
-        }
-        
-        .emergency-box h3 {
-            margin-bottom: 15px;
-            font-weight: 700;
-        }
-        
-        .emergency-box .btn {
-            background: white;
-            color: #ff6b6b;
-            font-weight: 600;
-            padding: 12px 30px;
-        }
-        
-        .emergency-box .btn:hover {
-            transform: scale(1.05);
-        }
-        
-        .faq-section {
-            padding: 60px 0;
-            background: white;
-        }
-        
-        .accordion-button:not(.collapsed) {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-        }
-        
-        .accordion-button:focus {
-            box-shadow: none;
-            border-color: rgba(102, 126, 234, 0.25);
-        }
-        
-        .stats-box {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 40px;
-            border-radius: 15px;
-            margin-top: 30px;
-        }
-        
-        .stat-item {
-            text-align: center;
-            padding: 20px;
-        }
-        
-        .stat-number {
-            font-size: 2.5rem;
-            font-weight: 700;
-            margin-bottom: 10px;
-        }
-        
-        .stat-label {
-            font-size: 1rem;
-            opacity: 0.9;
-        }
-        
-        @media (max-width: 768px) {
-            .assistance-type-card {
-                margin-bottom: 20px;
-            }
-            
-            .stat-number {
-                font-size: 2rem;
-            }
-        }
-    </style>
+  <?php include 'includes/head.php'; ?>
+  <title><?php echo htmlspecialchars($page_title); ?></title>
+  <?php echo generate_meta_tags([
+      'title' => $page_title,
+      'description' => $page_description,
+      'keywords' => $page_keywords,
+      'url' => url('assistenza.php')
+  ]); ?>
+
+  <link rel="stylesheet" href="<?php echo asset('css/pages/assistenza.css'); ?>">
 </head>
-<body>
-    
-    <!-- Header -->
-    <?php include 'includes/header.php'; ?>
+<body data-aos-easing="ease-in-out" data-aos-duration="800" data-aos-once="true">
+<?php include 'includes/header.php'; ?>
 
-    <!-- Hero Section -->
-    <section class="assistance-hero">
-        <div class="container position-relative">
-            <div class="row align-items-center">
-                <div class="col-lg-8">
-                    <h1 class="display-4 fw-bold mb-4">Assistenza Tecnica Professionale</h1>
-                    <p class="lead mb-4">Supporto tecnico qualificato a domicilio o da remoto. Risolviamo ogni problema informatico con rapidità e professionalità.</p>
-                    <div class="d-flex gap-4 flex-wrap">
-                        <div>
-                            <i class="ri-time-line"></i> Intervento Rapido
-                        </div>
-                        <div>
-                            <i class="ri-shield-check-line"></i> Tecnici Certificati
-                        </div>
-                        <div>
-                            <i class="ri-money-euro-circle-line"></i> Prezzi Trasparenti
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
+<!-- HERO SECONDARY (riuso componente) -->
+<section class="hero hero-secondary text-center">
+  <div class="hero-pattern"></div>
+  <div class="container position-relative z-2" data-aos="fade-up">
+    <div class="hero-icon mb-3" data-aos="zoom-in">
+      <i class="ri-customer-service-2-line"></i>
+    </div>
+    <h1 class="hero-title text-white" data-aos="fade-up" data-aos-delay="100">
+      Richiedi <span class="text-gradient">Assistenza</span>
+    </h1>
+    <p class="hero-subtitle" data-aos="fade-up" data-aos-delay="200">
+      Assistenza professionale a domicilio e da remoto. Risolviamo in fretta, con trasparenza.
+    </p>
+    <div class="hero-cta" data-aos="fade-up" data-aos-delay="300">
+      <a href="#tipo-assistenza" class="btn btn-primary btn-lg smooth-scroll" aria-label="Scegli il tipo di assistenza">
+        <i class="ri-arrow-down-line me-1"></i> Scegli il tipo di assistenza
+      </a>
+    </div>
+    <div class="hero-breadcrumb mt-4" data-aos="fade-up" data-aos-delay="400">
+      <?= generate_breadcrumbs($breadcrumbs); ?>
+    </div>
+  </div>
+</section>
 
-    <!-- Assistance Type Selection -->
-    <div class="container" style="margin-top: -50px; margin-bottom: 50px;">
-        <div class="row g-4">
-            <div class="col-md-6">
-                <div class="assistance-type-card" id="domicilio-card" onclick="selectAssistanceType('domicilio')">
-                    <i class="ri-home-smile-line"></i>
-                    <h3>Assistenza a Domicilio</h3>
-                    <p class="mb-0">Un tecnico verrà direttamente a casa o in ufficio per risolvere il problema</p>
-                    <div class="mt-3">
-                        <span class="badge bg-success">Più Richiesto</span>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-6">
-                <div class="assistance-type-card" id="remota-card" onclick="selectAssistanceType('remota')">
-                    <i class="ri-global-line"></i>
-                    <h3>Assistenza Remota</h3>
-                    <p class="mb-0">Ci colleghiamo al tuo computer da remoto per risolvere il problema</p>
-                    <div class="mt-3">
-                        <span class="badge bg-primary">Soluzione Veloce</span>
-                    </div>
-                </div>
-            </div>
-        </div>
+<!-- TYPE SELECTOR -->
+<section id="tipo-assistenza" class="assistance-select">
+  <div class="container">
+    <h2 class="section-title text-center mb-2" data-aos="fade-up">Scegli il Tipo di Assistenza</h2>
+    <p class="section-subtitle text-center mb-4" data-aos="fade-up" data-aos-delay="100">
+      Seleziona la modalità più adatta alle tue esigenze
+    </p>
+
+    <div class="row g-4 justify-content-center">
+      <div class="col-md-6" data-aos="fade-up" data-aos-delay="150">
+        <button type="button" class="assistance-type-card" id="domicilio-card" data-type="domicilio" aria-pressed="false">
+          <div class="card-icon"><i class="ri-home-smile-line"></i></div>
+          <h3 class="card-title">Assistenza a Domicilio</h3>
+          <ul class="card-list">
+            <li><i class="ri-check-line"></i> Tecnico specializzato a casa tua</li>
+            <li><i class="ri-check-line"></i> Risoluzione problemi software</li>
+            <li><i class="ri-check-line"></i> Installazioni e configurazioni</li>
+            <li><i class="ri-check-line"></i> Consulenza e ottimizzazione rete</li>
+          </ul>
+          <div class="card-foot"><span class="badge badge-soft">A partire da <strong>€35</strong> + trasferta</span></div>
+        </button>
+      </div>
+
+      <div class="col-md-6" data-aos="fade-up" data-aos-delay="200">
+        <button type="button" class="assistance-type-card" id="remota-card" data-type="remota" aria-pressed="false">
+          <div class="card-icon indigo"><i class="ri-global-line"></i></div>
+          <h3 class="card-title">Assistenza Remota</h3>
+          <ul class="card-list">
+            <li><i class="ri-check-line"></i> Intervento immediato</li>
+            <li><i class="ri-check-line"></i> Nessuna trasferta</li>
+            <li><i class="ri-check-line"></i> Software sicuri (TeamViewer/AnyDesk)</li>
+            <li><i class="ri-check-line"></i> Pagamento rapido</li>
+          </ul>
+          <div class="card-foot"><span class="badge badge-soft">A partire da <strong>€25</strong></span></div>
+        </button>
+      </div>
     </div>
 
-    <!-- Form Section -->
-    <section class="form-section">
-        <div class="container">
-            <div class="row">
-                <div class="col-lg-8">
-                    <div class="form-container">
-                        <h2 class="mb-4">Richiedi Assistenza</h2>
-                        <form id="assistanceForm" method="POST" action="<?php echo url('assets/php/process_assistance.php'); ?>">
-                            <input type="hidden" name="csrf_token" value="<?php echo $_SESSION['csrf_token'] ?? ''; ?>">
-                            <input type="hidden" name="assistance_type" id="assistance_type" value="domicilio">
-                            
-                            <div class="row mb-3">
-                                <div class="col-md-6">
-                                    <label class="form-label">Nome e Cognome *</label>
-                                    <input type="text" class="form-control" name="name" required>
-                                </div>
-                                <div class="col-md-6">
-                                    <label class="form-label">Email *</label>
-                                    <input type="email" class="form-control" name="email" required>
-                                </div>
-                            </div>
-                            
-                            <div class="row mb-3">
-                                <div class="col-md-6">
-                                    <label class="form-label">Telefono *</label>
-                                    <input type="tel" class="form-control" name="phone" required>
-                                </div>
-                                <div class="col-md-6">
-                                    <label class="form-label">Tipo Dispositivo *</label>
-                                    <select class="form-select" name="device_type" required>
-                                        <option value="">Seleziona...</option>
-                                        <option value="computer">Computer Desktop</option>
-                                        <option value="notebook">Notebook/Laptop</option>
-                                        <option value="smartphone">Smartphone</option>
-                                        <option value="tablet">Tablet</option>
-                                        <option value="stampante">Stampante</option>
-                                        <option value="rete">Rete/Router</option>
-                                        <option value="altro">Altro</option>
-                                    </select>
-                                </div>
-                            </div>
-                            
-                            <div class="mb-3" id="address-field">
-                                <label class="form-label">Indirizzo (per assistenza a domicilio) *</label>
-                                <input type="text" class="form-control" name="address" id="address" placeholder="Via, numero civico, città">
-                            </div>
-                            
-                            <div class="mb-3">
-                                <label class="form-label">Descrizione del Problema *</label>
-                                <textarea class="form-control" name="problem_description" rows="5" required 
-                                    placeholder="Descrivi dettagliatamente il problema che stai riscontrando..."></textarea>
-                            </div>
-                            
-                            <div class="row mb-3">
-                                <div class="col-md-6">
-                                    <label class="form-label">Urgenza</label>
-                                    <select class="form-select" name="urgency">
-                                        <option value="normale">Normale (2-3 giorni)</option>
-                                        <option value="urgente">Urgente (24 ore)</option>
-                                        <option value="immediata">Immediata (stesso giorno)</option>
-                                    </select>
-                                </div>
-                                <div class="col-md-6">
-                                    <label class="form-label">Fascia Oraria Preferita</label>
-                                    <select class="form-select" name="time_preference">
-                                        <option value="mattina">Mattina (9:00-13:00)</option>
-                                        <option value="pomeriggio">Pomeriggio (14:00-18:00)</option>
-                                        <option value="sera">Sera (18:00-20:00)</option>
-                                        <option value="qualsiasi">Qualsiasi orario</option>
-                                    </select>
-                                </div>
-                            </div>
-                            
-                            <div class="form-check mb-3">
-                                <input class="form-check-input" type="checkbox" id="privacy" name="privacy" required>
-                                <label class="form-check-label" for="privacy">
-                                    Acconsento al trattamento dei dati personali secondo la <a href="<?php echo url('privacy.php'); ?>">Privacy Policy</a> *
-                                </label>
-                            </div>
-                            
-                            <button type="submit" class="btn btn-primary btn-lg w-100">
-                                <i class="ri-send-plane-line"></i> Invia Richiesta Assistenza
-                            </button>
-                        </form>
-                    </div>
+<!-- FORM MULTISTEP (inizialmente nascosto, centrato) -->
+<section class="form-section d-none" aria-labelledby="titolo-form" >
+
+    <div class="row justify-content-center" id="titolo-form">
+      <div class="col-lg-12">
+        <div class="form-container" data-aos="fade-up">
+          <!-- Stepper -->
+<div class="ks-stepper" aria-hidden="true" > 
+  <div class="ks-step active" data-step="1">
+    <span class="ks-step-num">1</span> <span class="ks-step-label">Contatti</span>
+  </div>
+  <div class="ks-step" data-step="2">
+    <span class="ks-step-num">2</span> <span class="ks-step-label">Dettagli</span>
+  </div>
+  <div class="ks-step" data-step="3">
+    <span class="ks-step-num">3</span> <span class="ks-step-label">Preferenze</span>
+  </div>
+</div>
+
+          <h2 class="mb-2">Richiedi Assistenza</h2>
+          <p class="text-muted mb-4">Compila i campi: puoi inviare via <strong>Email</strong> o <strong>WhatsApp</strong>.</p>
+
+          <form id="assistanceForm" method="POST" action="<?php echo url('assets/php/process_assistance.php'); ?>" novalidate>
+            <input type="hidden" name="csrf_token" value="<?php echo $_SESSION['csrf_token'] ?? ''; ?>">
+            <input type="hidden" name="assistance_type" id="assistance_type" value="">
+            <!-- honeypot -->
+            <input type="text" name="website" class="d-none" tabindex="-1" autocomplete="off">
+
+            <!-- STEP 1: Contatti -->
+            <fieldset class="ks-step-pane" data-step="1">
+              <div class="row g-3">
+                <div class="col-md-6">
+                  <label class="form-label">Nome e Cognome *</label>
+                  <input type="text" class="form-control" name="name" required>
                 </div>
-                
-                <div class="col-lg-4">
-                    <!-- Emergency Box -->
-                    <div class="emergency-box">
-                        <h3><i class="ri-alarm-warning-line"></i> Emergenza?</h3>
-                        <p>Per interventi urgenti chiama subito!</p>
-                        <h2 class="mb-3"><?php echo PHONE_PRIMARY; ?></h2>
-                        <a href="tel:<?php echo PHONE_PRIMARY; ?>" class="btn btn-white">
-                            <i class="ri-phone-line"></i> Chiama Ora
-                        </a>
-                    </div>
-                    
-                    <!-- Stats Box -->
-                    <div class="stats-box">
-                        <div class="row">
-                            <div class="col-6">
-                                <div class="stat-item">
-                                    <div class="stat-number">2h</div>
-                                    <div class="stat-label">Tempo Medio Intervento</div>
-                                </div>
-                            </div>
-                            <div class="col-6">
-                                <div class="stat-item">
-                                    <div class="stat-number">98%</div>
-                                    <div class="stat-label">Problemi Risolti</div>
-                                </div>
-                            </div>
-                            <div class="col-6">
-                                <div class="stat-item">
-                                    <div class="stat-number">500+</div>
-                                    <div class="stat-label">Clienti Assistiti</div>
-                                </div>
-                            </div>
-                            <div class="col-6">
-                                <div class="stat-item">
-                                    <div class="stat-number">4.9</div>
-                                    <div class="stat-label">Valutazione Media</div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- WhatsApp Contact -->
-                    <div class="text-center mt-4">
-                        <a href="<?php echo whatsapp_link('Salve, avrei bisogno di assistenza tecnica'); ?>" 
-                           class="btn btn-success btn-lg w-100" target="_blank">
-                            <i class="ri-whatsapp-line"></i> Contattaci su WhatsApp
-                        </a>
-                    </div>
+                <div class="col-md-6">
+                  <label class="form-label">Telefono *</label>
+                  <input type="tel" class="form-control" name="phone" required inputmode="tel" placeholder="3xx xxx xxxx">
                 </div>
-            </div>
+                <div class="col-12">
+                  <label class="form-label">Email <span class="text-muted">(facoltativa)</span></label>
+                  <input type="email" class="form-control" name="email" placeholder="es. nome@mail.it">
+                </div>
+              </div>
+
+<div class="ks-actions">
+  <div class="ks-left">
+    <button type="button" class="btn btn-emergency ks-goto-emergency">
+      <i class="ri-alert-line"></i> <span class="btn-text">Emergenza</span>
+    </button>
+  </div>
+  <div class="ks-right">
+    <button type="button" class="btn btn-next ks-next">
+      <i class="ri-arrow-right-line"></i> <span class="btn-text">Avanti</span>
+    </button>
+  </div>
+</div>
+            </fieldset>
+
+            <!-- STEP 2: Dettagli -->
+            <fieldset class="ks-step-pane d-none" data-step="2">
+              <div class="row g-3">
+                <div class="col-md-6">
+                  <label class="form-label">Tipo Dispositivo *</label>
+                  <select class="form-select" name="device_type" required>
+                    <option value="">Seleziona…</option>
+                    <option value="computer">Computer Desktop</option>
+                    <option value="notebook">Notebook/Laptop</option>
+                    <option value="smartphone">Smartphone</option>
+                    <option value="tablet">Tablet</option>
+                    <option value="stampante">Stampante</option>
+                    <option value="rete">Rete/Router</option>
+                    <option value="altro">Altro</option>
+                  </select>
+                </div>
+                <div class="col-md-6" id="address-field" class="d-none">
+                  <label class="form-label">Indirizzo (solo domicilio) *</label>
+                  <input type="text" class="form-control" name="address" id="address" placeholder="Via, numero, città">
+                </div>
+                <div class="col-12">
+                  <label class="form-label">Descrizione del Problema *</label>
+                  <textarea class="form-control" name="problem_description" rows="5" required placeholder="Descrivi il problema…"></textarea>
+                </div>
+              </div>
+
+              <!-- Info Remota -->
+              <div class="remote-steps d-none mt-3" id="remote-steps">
+                <div class="remote-steps-inner">
+                  <strong><i class="ri-information-line me-1"></i> Assistenza Remota — Come funziona</strong>
+                  <ol class="mt-2 mb-0">
+                    <li>Confermiamo disponibilità</li>
+                    <li>Ti inviamo link/ID TeamViewer/AnyDesk</li>
+                    <li>Risolviamo insieme e inviamo report</li>
+                  </ol>
+                </div>
+              </div>
+
+<div class="ks-actions">
+  <div class="ks-left">
+    <button type="button" class="btn btn-emergency ks-goto-emergency">
+      <i class="ri-alert-line"></i> <span class="btn-text">Emergenza</span>
+    </button>
+  </div>
+  <div class="ks-right">
+    <button type="button" class="btn btn-prev ks-prev">
+      <i class="ri-arrow-left-line"></i> <span class="btn-text">Indietro</span>
+    </button>
+    <button type="button" class="btn btn-next ks-next">
+      <i class="ri-arrow-right-line"></i> <span class="btn-text">Avanti</span>
+    </button>
+  </div>
+</div>
+            </fieldset>
+
+            <!-- STEP 3: Preferenze + Privacy -->
+            <fieldset class="ks-step-pane d-none" data-step="3">
+              <div class="row g-3">
+                <div class="col-md-6">
+                  <label class="form-label">Urgenza</label>
+                  <select class="form-select" name="urgency">
+                    <option value="normale">Normale (2–3 giorni)</option>
+                    <option value="urgente">Urgente (24 ore)</option>
+                    <option value="immediata">Immediata (stesso giorno)</option>
+                  </select>
+                </div>
+                <div class="col-md-6">
+                  <label class="form-label">Fascia Oraria Preferita</label>
+                  <select class="form-select" name="time_preference">
+                    <option value="mattina">Mattina (9:00–13:00)</option>
+                    <option value="pomeriggio">Pomeriggio (14:00–18:00)</option>
+                    <option value="sera">Sera (18:00–20:00)</option>
+                    <option value="qualsiasi">Qualsiasi orario</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="form-check my-3">
+                <input class="form-check-input" type="checkbox" id="privacy" name="privacy" required>
+                <label class="form-check-label" for="privacy">
+                  Acconsento al trattamento dei dati secondo la <a href="<?php echo url('privacy.php'); ?>">Privacy Policy</a> *
+                </label>
+              </div>
+
+<div class="ks-actions">
+  <div class="ks-left">
+
+        <button type="button" class="btn btn-prev ks-prev">
+      <i class="ri-arrow-left-line"></i> <span class="btn-text">Indietro</span>
+    </button>
+  </div>
+  <div class="ks-right">
+    <a class="btn btn-wa btn-lg" target="_blank" id="send-whatsapp" rel="noopener">
+      <i class="ri-whatsapp-line"></i> <span class="btn-text">WhatsApp</span>
+    </a>
+    <button type="submit" class="btn btn-mail btn-lg" id="send-email">
+      <i class="ri-mail-send-line"></i> <span class="btn-text">Mail</span>
+    </button>
+  </div>
+</div>
+            </fieldset>
+          </form>
         </div>
-    </section>
+      </div>
+    </div>
+</section>
 
-    <!-- FAQ Section -->
-    <section class="faq-section">
-        <div class="container">
-            <h2 class="text-center mb-5">Domande Frequenti sull'Assistenza</h2>
-            
-            <div class="accordion" id="faqAccordion">
-                <div class="accordion-item">
-                    <h2 class="accordion-header">
-                        <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#faq1">
-                            Quanto costa l'assistenza a domicilio?
-                        </button>
-                    </h2>
-                    <div id="faq1" class="accordion-collapse collapse show" data-bs-parent="#faqAccordion">
-                        <div class="accordion-body">
-                            Il costo dell'assistenza a domicilio parte da €30 per la chiamata più €20/ora di lavoro. 
-                            Il preventivo viene sempre comunicato prima dell'intervento e non ci sono costi nascosti.
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="accordion-item">
-                    <h2 class="accordion-header">
-                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq2">
-                            Come funziona l'assistenza remota?
-                        </button>
-                    </h2>
-                    <div id="faq2" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
-                        <div class="accordion-body">
-                            Utilizziamo software sicuri come TeamViewer o AnyDesk. Ti forniremo un codice da inserire 
-                            che ci permetterà di collegarci al tuo computer. Potrai vedere tutto quello che facciamo 
-                            e interrompere la connessione in qualsiasi momento.
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="accordion-item">
-                    <h2 class="accordion-header">
-                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq3">
-                            In quanto tempo intervenite?
-                        </button>
-                    </h2>
-                    <div id="faq3" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
-                        <div class="accordion-body">
-                            Per interventi urgenti garantiamo l'assistenza entro 24 ore. Per richieste normali 
-                            interveniamo entro 2-3 giorni lavorativi. L'assistenza remota può essere fornita anche 
-                            immediatamente se c'è disponibilità.
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="accordion-item">
-                    <h2 class="accordion-header">
-                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq4">
-                            Che tipo di problemi potete risolvere?
-                        </button>
-                    </h2>
-                    <div id="faq4" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
-                        <div class="accordion-body">
-                            Risolviamo qualsiasi problema informatico: virus, lentezza del sistema, problemi software, 
-                            errori di sistema, configurazione periferiche, recupero dati, installazione programmi, 
-                            problemi di rete e molto altro.
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="accordion-item">
-                    <h2 class="accordion-header">
-                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq5">
-                            Offrite garanzia sul lavoro svolto?
-                        </button>
-                    </h2>
-                    <div id="faq5" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
-                        <div class="accordion-body">
-                            Sì, tutti i nostri interventi sono garantiti per 30 giorni. Se il problema si ripresenta 
-                            entro questo periodo, interveniamo gratuitamente per risolverlo definitivamente.
-                        </div>
-                    </div>
-                </div>
-            </div>
+<!-- EMERGENCY FULL-WIDTH -->
+<div class="row mt-4" data-aos="fade-up" data-aos-delay="250">
+  <div class="col-12">
+    <section class="emergency-wide em-centered" role="region" aria-labelledby="emergenza-title">
+      <div class="ew-header">
+        <div class="ew-beacon" aria-hidden="true">
+          <span class="pulse"></span>
+          <i class="ri-alarm-warning-line"></i>
         </div>
+        <div>
+          <h3 id="emergenza-title" class="mb-1">Emergenza Informatica?</h3>
+          <p class="mb-0">Se un problema blocca la tua attività o lo studio, attiva la <strong>corsia prioritaria</strong>.</p>
+        </div>
+      </div>
+
+      <ul class="ew-points centered">
+        <li><i class="ri-flashlight-line"></i> Intervento prioritario</li>
+        <li><i class="ri-shield-check-line"></i> Tecnici certificati & diagnosi mirata</li>
+        <li><i class="ri-time-line"></i> Risposta rapida negli orari di apertura</li>
+      </ul>
+
+      <div class="ew-actions">
+        <a href="tel:<?php echo PHONE_PRIMARY; ?>" class="btn btn-em-call btn-lg">
+          <i class="ri-phone-line me-1"></i> Chiama Subito<span class="phone-number">: <?php echo PHONE_PRIMARY; ?>
+        </a>
+        <a href="<?php echo whatsapp_link('Emergenza informatica: ho bisogno di assistenza urgente'); ?>" class="btn btn-em-wa btn-lg" id="wa-emergency" target="_blank" rel="noopener">
+          <i class="ri-whatsapp-line me-1"></i> WhatsApp Urgente
+        </a>
+        <small class="ew-note">Fuori orario: scrivi su WhatsApp, ti ricontattiamo alla prima apertura.</small>
+      </div>
     </section>
+  </div>
+</div>
 
-    <!-- Footer -->
-    <?php include 'includes/footer.php'; ?>
 
-    <!-- Bootstrap Bundle JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-    
-    <!-- Main JS -->
-    <script src="<?php echo asset('js/main.js'); ?>"></script>
-    
-    <script>
-        let selectedType = 'domicilio';
-        
-        function selectAssistanceType(type) {
-            selectedType = type;
-            
-            // Update cards visual state
-            document.querySelectorAll('.assistance-type-card').forEach(card => {
-                card.classList.remove('selected');
-            });
-            document.getElementById(type + '-card').classList.add('selected');
-            
-            // Update hidden input
-            document.getElementById('assistance_type').value = type;
-            
-            // Show/hide address field
-            const addressField = document.getElementById('address-field');
-            const addressInput = document.getElementById('address');
-            
-            if (type === 'domicilio') {
-                addressField.style.display = 'block';
-                addressInput.setAttribute('required', '');
-            } else {
-                addressField.style.display = 'none';
-                addressInput.removeAttribute('required');
-            }
-        }
-        
-        // Initialize with domicilio selected
-        selectAssistanceType('domicilio');
-        
-        // Form submission
-        document.getElementById('assistanceForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            // Show loading state
-            const submitBtn = this.querySelector('button[type="submit"]');
-            const originalText = submitBtn.innerHTML;
-            submitBtn.disabled = true;
-            submitBtn.innerHTML = '<i class="ri-loader-4-line ri-spin"></i> Invio in corso...';
-            
-            // Simulate form submission
-            setTimeout(() => {
-                alert('Richiesta di assistenza inviata con successo! Ti contatteremo al più presto.');
-                this.reset();
-                selectAssistanceType('domicilio');
-                submitBtn.disabled = false;
-                submitBtn.innerHTML = originalText;
-            }, 2000);
-        });
-    </script>
+  </div>
+</section>
+
+
+<?php
+$assist_metrics = [
+  ['icon'=>'ri-tools-line','label'=>'Interventi/anno','value'=>800,'suffix'=>'+'],
+  ['icon'=>'ri-remote-control-2-line','label'=>'Sessioni remote','value'=>300,'suffix'=>'+'],
+  ['icon'=>'ri-home-2-line','label'=>'Uscite a domicilio','value'=>450,'suffix'=>'+'],
+  ['icon'=>'ri-user-smile-line','label'=>'Clienti soddisfatti','value'=>98,'suffix'=>'%'],
+  ['icon'=>'ri-time-line','label'=>'Tempo medio','value'=>2,'suffix'=>'h'],
+  ['icon'=>'ri-star-smile-line','label'=>'Valutazione media','value'=>4.9,'suffix'=>'/5'],
+];
+?>
+<section class="section section-proof bg-gradient-orange">
+  <div class="container position-relative">
+    <div class="section-header text-center">
+      <h2 class="section-title text-white">Alcuni dei nostri numeri</h2>
+      <p class="section-subtitle text-white-80">Numeri indicativi su base annuale</p>
+    </div>
+    <div class="row g-4 justify-content-center equalize">
+      <?php foreach($assist_metrics as $m): ?>
+        <div class="col-6 col-md-4 col-lg-2">
+          <div class="proof-card">
+            <div class="proof-icon" aria-hidden="true"><i class="<?php echo $m['icon']; ?>"></i></div>
+            <div class="proof-value">
+              <span class="num" data-target="<?php echo htmlspecialchars($m['value']); ?>"><?php echo htmlspecialchars($m['value']); ?></span><span class="suffix"><?php echo htmlspecialchars($m['suffix']); ?></span>
+            </div>
+            <div class="proof-label"><?php echo htmlspecialchars($m['label']); ?></div>
+          </div>
+        </div>
+      <?php endforeach; ?>
+    </div>
+    <p class="why-note mt-3 text-center text-white-70"></p>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section class="faq-section">
+  <div class="container">
+    <h2 class="text-center mb-5">Domande Frequenti sull'Assistenza</h2>
+
+    <div class="accordion accordion-faq" id="faqAccordion">
+      <div class="accordion-item">
+        <h2 class="accordion-header">
+          <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#faq1">
+            Quanto costa l'assistenza a domicilio?
+          </button>
+        </h2>
+        <div id="faq1" class="accordion-collapse collapse show" data-bs-parent="#faqAccordion">
+          <div class="accordion-body">
+            L’assistenza a domicilio parte da <strong>€35</strong> + <strong>trasferta</strong> per Ginosa e zone limitrofe.
+            Il costo finale dipende dalla complessità dell’intervento. Il preventivo viene sempre comunicato prima di iniziare.
+          </div>
+        </div>
+      </div>
+
+      <div class="accordion-item">
+        <h2 class="accordion-header">
+          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq2">
+            L’assistenza remota è sicura?
+          </button>
+        </h2>
+        <div id="faq2" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+          <div class="accordion-body">
+            Sì. Utilizziamo software professionali (TeamViewer/AnyDesk). Segui tutto ciò che facciamo e puoi
+            interrompere la connessione in qualunque momento.
+          </div>
+        </div>
+      </div>
+
+      <div class="accordion-item">
+        <h2 class="accordion-header">
+          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq3">
+            In quanto tempo intervenite?
+          </button>
+        </h2>
+        <div id="faq3" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+          <div class="accordion-body">
+            Remota: spesso <strong>immediata</strong> in base alla disponibilità. Domicilio: appuntamento entro <strong>24–48h</strong>.
+          </div>
+        </div>
+      </div>
+
+      <div class="accordion-item">
+        <h2 class="accordion-header">
+          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq4">
+            Che tipo di problemi risolvete?
+          </button>
+        </h2>
+        <div id="faq4" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+          <div class="accordion-body">
+            Problemi software e sistema, rimozione virus, backup e recupero dati, installazione programmi e periferiche,
+            rete Wi-Fi/Router, ottimizzazioni e altro ancora.
+          </div>
+        </div>
+      </div>
+
+      <div class="accordion-item">
+        <h2 class="accordion-header">
+          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq5">
+            Offrite garanzia sul lavoro svolto?
+          </button>
+        </h2>
+        <div id="faq5" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+          <div class="accordion-body">
+            Sì, gli interventi sono <strong>garantiti 30 giorni</strong>. Se il problema si ripresenta nello stesso periodo,
+            interveniamo per risolverlo definitivamente.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<?php
+// JSON-LD per i due servizi
+$ld = [
+  '@context' => 'https://schema.org',
+  '@type' => 'ItemList',
+  'name' => 'Assistenza tecnica Key Soft Italia',
+  'itemListElement' => [
+    [
+      '@type' => 'ListItem',
+      'position' => 1,
+      'item' => [
+        '@type' => 'Service',
+        'name' => 'Assistenza a Domicilio',
+        'serviceType' => 'On-site IT support',
+        'url' => url('assistenza.php#tipo-assistenza')
+      ]
+    ],
+    [
+      '@type' => 'ListItem',
+      'position' => 2,
+      'item' => [
+        '@type' => 'Service',
+        'name' => 'Assistenza Remota',
+        'serviceType' => 'Remote IT support',
+        'url' => url('assistenza.php#tipo-assistenza')
+      ]
+    ]
+  ]
+];
+?>
+<script type="application/ld+json">
+<?php echo json_encode($ld, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT); ?>
+</script>
+
+<?php include 'includes/footer.php'; ?>
+
+<!-- JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="<?php echo asset('js/main.js'); ?>"></script>
+<script src="https://unpkg.com/aos@next/dist/aos.js"></script>
+<script>AOS.init();</script>
+
+<script>
+// ===== Multistep form + validazioni + canali invio =====
+(function(){
+  const formSection = document.querySelector('.form-section');
+  const form = document.getElementById('assistanceForm');
+  const stepPanes = [...form.querySelectorAll('.ks-step-pane')];
+  const steps = [...document.querySelectorAll('.ks-stepper .ks-step')];
+  const nextBtns = form.querySelectorAll('.ks-next');
+  const prevBtns = form.querySelectorAll('.ks-prev');
+  const goEmergencyBtns = form.querySelectorAll('.ks-goto-emergency');
+
+  const hiddenType  = document.getElementById('assistance_type');
+  const addressWrap = document.getElementById('address-field');
+  const addressInput= document.getElementById('address');
+  const remoteSteps = document.getElementById('remote-steps');
+
+  const sendEmailBtn = document.getElementById('send-email');
+  const sendWaBtn    = document.getElementById('send-whatsapp');
+
+  const emSection = document.querySelector('.emergency-wide, .emergency-wide.em-centered');
+
+  let current = 1;
+
+  // --- Smooth scroll con offset per header sticky ---
+function getHeaderOffset() {
+  const hdr = document.querySelector('.site-header, header.sticky-top, header.navbar, .main-header');
+  return hdr ? (hdr.getBoundingClientRect().height + 16) : 96; // fallback ~96px
+}
+function smoothScrollTo(el) {
+  if (!el) return;
+  const y = el.getBoundingClientRect().top + window.pageYOffset - getHeaderOffset();
+  window.scrollTo({ top: y, behavior: 'smooth' });
+}
+
+  function showFormIfHidden(){
+    if (formSection && formSection.classList.contains('d-none')) {
+      formSection.classList.remove('d-none');
+      if (window.AOS) setTimeout(()=>AOS.refresh(),0);
+    }
+  }
+  // gestione tipo (da selettore cards esterno)
+  function applyType(type){
+    hiddenType.value = type || '';
+    const isHome = type === 'domicilio';
+    addressWrap.classList.toggle('d-none', !isHome);
+    if (isHome) addressInput.setAttribute('required',''); else addressInput.removeAttribute('required');
+    remoteSteps.classList.toggle('d-none', isHome);
+  }
+
+  // click sulle card: **mostra form** e **resetta** tutto ogni volta che cambi tipo
+  let lastType = null;
+  document.querySelectorAll('.assistance-type-card').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      const type = btn.dataset.type;
+      document.querySelectorAll('.assistance-type-card').forEach(b=>{
+        b.classList.toggle('selected', b===btn);
+        b.setAttribute('aria-pressed', b===btn ? 'true' : 'false');
+      });
+
+      // se il tipo è diverso dal precedente, resetta il form
+      if (type !== lastType){
+        showFormIfHidden();
+        applyType(type);
+        resetFormFields();
+        lastType = type;
+      } else {
+        // se è lo stesso, solo scorri al form
+        showFormIfHidden();
+      }
+      smoothScrollTo(document.getElementById('titolo-form'));
+    });
+  });
+
+  // deep-link ?type=remota/dom
+  const qs = new URLSearchParams(location.search);
+  const initType = (qs.get('type') === 'remota') ? 'remota' : (qs.get('type') === 'domicilio' ? 'domicilio' : null);
+  if (initType){
+    const targetBtn = document.querySelector(`.assistance-type-card[data-type="${initType}"]`);
+    if (targetBtn) targetBtn.click();
+  }
+
+// stepper helpers (FIX)
+function setStep(n){
+  current = n; // <— aggiorna lo stato corrente
+  stepPanes.forEach(p => p.classList.toggle('d-none', +p.dataset.step !== n));
+  steps.forEach(s => s.classList.toggle('active', +s.dataset.step === n));
+}
+
+function validateStep(n){
+  const pane = stepPanes[n-1];
+  const required = [...pane.querySelectorAll('[required]')];
+
+  let allOk = true;
+  required.forEach(el => {
+    // validazione per singolo campo (no "ok" globale)
+    const valid = (el.type === 'checkbox') ? el.checked : !!el.value.trim();
+    el.classList.toggle('is-invalid', !valid);
+    if (!valid) allOk = false;
+  });
+  return allOk;
+}
+
+  nextBtns.forEach(b=> b.addEventListener('click', ()=>{
+    if (!validateStep(current)) return;
+    setStep(Math.min(3, current+1));
+    smoothScrollTo(document.getElementById('titolo-form'));
+  }));
+  prevBtns.forEach(b=> b.addEventListener('click', ()=>{
+    setStep(Math.max(1, current-1));
+    smoothScrollTo(document.getElementById('titolo-form'));
+  }));
+
+  goEmergencyBtns.forEach(b=> b.addEventListener('click', ()=>{
+    if (emSection) smoothScrollTo(emSection);
+  }));
+
+  function resetFormFields(){
+    if (!form) return;
+    form.reset();
+    // rimuovi stati di validazione
+    form.querySelectorAll('.is-invalid').forEach(el=>el.classList.remove('is-invalid'));
+    // reimposta step 1
+    setStep(1);
+    // reimposta UI condizionali
+    applyType(hiddenType.value || ''); // mantiene il tipo corrente ma resetta i campi condizionali
+  }
+
+  function ensurePrivacyThen(formEl, onOk){
+  const modalEl = document.getElementById('privacyModal');
+  const bsModal = new bootstrap.Modal(modalEl, {backdrop:'static'});
+  const chkForm = formEl.querySelector('#privacy');
+  if (chkForm && chkForm.checked) { onOk(); return; }
+
+  // reset checkbox del modal
+  const chk = document.getElementById('privacyModalCheck');
+  chk.checked = false;
+
+  const acceptBtn = document.getElementById('privacyModalAccept');
+  function handleAccept(){
+    if (!chk.checked) return;
+    // spunta la checkbox reale nel form
+    if (chkForm) chkForm.checked = true;
+    acceptBtn.removeEventListener('click', handleAccept);
+    bsModal.hide();
+    onOk();
+  }
+  acceptBtn.addEventListener('click', handleAccept);
+  bsModal.show();
+}
+
+// ====== Builder messaggi WhatsApp (formattati e sanificati) ======
+function normalizeText(s){ return (s || '').toString().trim().replace(/\s+/g,' '); }
+
+function buildWaMessage(data){
+  // data: {tipo, name, phone, email, device, address, prob, urgency, timepref}
+  const lines = [];
+  const tipo = (data.tipo || 'DOMICILIO').toUpperCase();
+
+  lines.push(`🆘 *Richiesta Assistenza (${tipo})*`);
+  lines.push(`👤 *Nome:* ${normalizeText(data.name)}`);
+  lines.push(`📞 *Telefono:* ${normalizeText(data.phone)}`);
+  if (normalizeText(data.email)) lines.push(`📧 *Email:* ${normalizeText(data.email)}`);
+  lines.push(`💻 *Dispositivo:* ${normalizeText(data.device)}`);
+  if (tipo === 'DOMICILIO' && normalizeText(data.address)) {
+    lines.push(`🏠 *Indirizzo:* ${normalizeText(data.address)}`);
+  }
+  lines.push(`❗ *Problema:* ${normalizeText(data.prob)}`);
+  lines.push(`⏱️ *Urgenza:* ${normalizeText(data.urgency)}  •  🕘 *Fascia:* ${normalizeText(data.timepref)}`);
+
+  return lines.join('\n');
+}
+
+function buildEmergencyMessage(){
+  const lines = [];
+  lines.push(`🚨 *EMERGENZA INFORMATICA*`);
+  lines.push(`Ho bisogno di assistenza *urgente*.`);
+  lines.push(`Preferisco *prima disponibilità utile* (remota o in loco).`);
+  lines.push(`Grazie!`);
+  return lines.join('\n');
+}
+
+function waLinkFromText(text){
+  // usa il tuo helper PHP come base ma sovrascrivi sempre 'text'
+  let base = "<?= whatsapp_link(''); ?>";
+  try{
+    const u = new URL(base);
+    u.searchParams.set('text', text); // sostituisce, non concatena
+    return u.toString();
+  }catch(e){
+    return 'https://wa.me/?text=' + encodeURIComponent(text);
+  }
+}
+
+(function(){
+  const form = document.getElementById('assistanceForm');
+  const hiddenType  = document.getElementById('assistance_type');
+  const sendWaBtn   = document.getElementById('send-whatsapp');
+  const sendEmailBtn= document.getElementById('send-email');
+  const emergencyBtn= document.getElementById('wa-emergency');
+
+  function collectFormData(){
+    return {
+      tipo: (hiddenType && hiddenType.value) || 'domicilio',
+      name: form.name?.value || '',
+      phone: form.phone?.value || '',
+      email: form.email?.value || '',
+      device: form.device_type?.value || '',
+      address: form.address?.value || '',
+      prob: form.problem_description?.value || '',
+      urgency: form.urgency?.value || 'normale',
+      timepref: form.time_preference?.value || 'qualsiasi'
+    };
+  }
+
+  // Invia via WhatsApp (step 3, bottone sinistro)
+  if (sendWaBtn){
+    sendWaBtn.addEventListener('click', (e)=>{
+      e.preventDefault();
+      ensurePrivacyThen(form, ()=>{
+        // (opzionale) valida step 1 e 2 se vuoi essere rigido
+        const d = collectFormData();
+        const msg = buildWaMessage(d);
+        const href = waLinkFromText(msg);
+        // apri in nuova scheda
+        window.open(href, '_blank', 'noopener');
+      });
+    });
+  }
+
+  // Submit via Email (POST)
+  if (sendEmailBtn){
+    form.addEventListener('submit', (e)=>{
+      e.preventDefault();
+      ensurePrivacyThen(form, ()=>{
+        // lascia che il form proceda
+        form.submit();
+      });
+    });
+  }
+
+  // WhatsApp Urgenza (box emergenza)
+  if (emergencyBtn){
+    emergencyBtn.addEventListener('click', (e)=>{
+      // niente privacy obbligatoria qui (è contatto diretto), ma puoi riutilizzarla se vuoi
+      const msg = buildEmergencyMessage();
+      const href = waLinkFromText(msg);
+      emergencyBtn.setAttribute('href', href);
+      // lasciamo aprire il link normalmente
+    });
+  }
+})();
+
+  // Init primo step
+  setStep(1);
+})();
+</script>
+
+<script>
+// Contatori "proof" al primo ingresso in viewport
+(function(){
+  const section = document.querySelector('.section-proof');
+  if(!section) return;
+  let started = false;
+
+  function run(){
+    if (started) return; started = true;
+    section.querySelectorAll('.num').forEach(el=>{
+      const raw = el.dataset.target;
+      const target = parseFloat(raw);
+      const isFloat = (raw+'').includes('.');
+      const duration = 900;
+      const start = performance.now();
+      function tick(now){
+        const p = Math.min(1, (now-start)/duration);
+        const val = isFloat ? (target*p).toFixed(1) : Math.floor(target*p);
+        el.textContent = val;
+        if (p<1) requestAnimationFrame(tick); else el.textContent = raw;
+      }
+      requestAnimationFrame(tick);
+    });
+  }
+
+  if ('IntersectionObserver' in window){
+    const io = new IntersectionObserver(es=>{
+      if (es.some(e=>e.isIntersecting)){ setTimeout(run, 150); io.disconnect(); }
+    }, {threshold:.35});
+    io.observe(section);
+  } else {
+    window.addEventListener('load', ()=> setTimeout(run, 300));
+  }
+})();
+</script>
+
 </body>
 </html>

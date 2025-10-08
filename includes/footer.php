@@ -129,6 +129,35 @@ if (!defined('BASE_PATH')) {
   <i class="ri-arrow-up-line"></i>
 </button>
 
+<!-- Privacy Modal (Bootstrap) -->
+<div class="modal fade" id="privacyModal" tabindex="-1" aria-labelledby="privacyModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content border-0 rounded-3">
+      <div class="modal-header border-0">
+        <h5 class="modal-title" id="privacyModalLabel">
+          <i class="ri-shield-check-line me-1"></i> Consenso Privacy
+        </h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Chiudi"></button>
+      </div>
+      <div class="modal-body">
+        Per inviare la richiesta è necessario accettare la <a href="<?= url('privacy.php'); ?>" target="_blank" rel="noopener">Privacy Policy</a>.
+        <div class="form-check mt-3">
+          <input class="form-check-input" type="checkbox" id="privacyModalCheck">
+          <label class="form-check-label" for="privacyModalCheck">
+            Ho letto e accetto la Privacy Policy.
+          </label>
+        </div>
+      </div>
+      <div class="modal-footer border-0">
+        <button type="button" class="btn btn-light" data-bs-dismiss="modal">Annulla</button>
+        <button type="button" class="btn btn-primary" id="privacyModalAccept">
+          Accetta e continua
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <script>
   document.addEventListener('DOMContentLoaded', function() {
     const backToTop = document.getElementById('backToTop');
