@@ -57,21 +57,29 @@ if (!defined('DB_HOST')) {
 // Debug
 if (!defined('DEBUG_MODE')) define('DEBUG_MODE', true);
 
-// Mail (placeholder)
-define('SMTP_HOST', 'smtp.gmail.com');
-define('SMTP_PORT', 587);
-define('SMTP_USERNAME', '');
-define('SMTP_PASSWORD', '');
-define('SMTP_ENCRYPTION', 'tls');
-define('SMTP_FROM_EMAIL', COMPANY_EMAIL);
-define('SMTP_FROM_NAME', COMPANY_NAME);
+// Produzione
+define('APP_ENV', 'prod');
+define('MAIL_TRANSPORT', 'smtp'); // usa SMTP in produzione
+
+// SMTP del tuo hosting (esempi: cPanel/Aruba/Mailtrap prod)
+define('SMTP_HOST',    'smtp.keysoftitalia.it'); // es: 'smtps.aruba.it' o quello del provider
+define('SMTP_PORT',    587);                  // 587 (TLS) o 465 (SSL)
+define('SMTP_SECURE',  'tls');                // 'tls' o 'ssl'
+define('SMTP_AUTH',    true);
+define('SMTP_USER',    'no-reply@keysoftitalia.it');
+define('SMTP_PASS',    '8CGYYJQr2024!');
+
+// Mittenti/destinazioni
+define('EMAIL_ASSISTENZA', 'info@keysoftitalia.it');
+define('EMAIL_FROM',       'no-reply@keysoftitalia.it');
+
+// WhatsApp (in forma internazionale, solo cifre – es: +39 333 1234567 -> 393331234567)
+define('PHONE_PRIMARY',   '+39 099 000000'); // usato per tel:
+define('PHONE_WHATSAPP',  '393331234567');   // per wa.me
 
 // Contatti
-define('PHONE_PRIMARY', '099 829 3794');
 define('PHONE_SECONDARY', '348 310 9840');
 define('EMAIL_INFO', 'info@keysoftitalia.it');
-define('EMAIL_SUPPORT', 'supporto@keysoftitalia.it');
-define('EMAIL_NOREPLY', 'noreply@keysoftitalia.it');
 
 // WhatsApp
 define('WHATSAPP_NUMBER', '393483109840');

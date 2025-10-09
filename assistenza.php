@@ -607,44 +607,42 @@ function validateStep(n){
 // ====== Builder messaggi WhatsApp (formattati e sanificati) ======
 function normalizeText(s){ return (s || '').toString().trim().replace(/\s+/g,' '); }
 
+// --- Builder messaggio standard (usa solo emoji full-Unicode, niente font-icone) ---
 function buildWaMessage(data){
-  // data: {tipo, name, phone, email, device, address, prob, urgency, timepref}
-  const lines = [];
-  const tipo = (data.tipo || 'DOMICILIO').toUpperCase();
-
-  lines.push(`🆘 *Richiesta Assistenza (${tipo})*`);
-  lines.push(`👤 *Nome:* ${normalizeText(data.name)}`);
-  lines.push(`📞 *Telefono:* ${normalizeText(data.phone)}`);
-  if (normalizeText(data.email)) lines.push(`📧 *Email:* ${normalizeText(data.email)}`);
+  const tipoUC = (data.tipo || 'DOMICILIO').toString().toUpperCase();
+  const lines = [
+    `🆘 *Richiesta Assistenza (${tipoUC})*`,
+    `👤 *Nome:* ${normalizeText(data.name)}`,
+    `📞 *Telefono:* ${normalizeText(data.phone)}`,
+  ];
+  const email = normalizeText(data.email);
+  if (email) lines.push(`📧 *Email:* ${email}`);
   lines.push(`💻 *Dispositivo:* ${normalizeText(data.device)}`);
-  if (tipo === 'DOMICILIO' && normalizeText(data.address)) {
+  if (tipoUC === 'DOMICILIO' && normalizeText(data.address)) {
     lines.push(`🏠 *Indirizzo:* ${normalizeText(data.address)}`);
   }
   lines.push(`❗ *Problema:* ${normalizeText(data.prob)}`);
   lines.push(`⏱️ *Urgenza:* ${normalizeText(data.urgency)}  •  🕘 *Fascia:* ${normalizeText(data.timepref)}`);
-
   return lines.join('\n');
 }
 
+// --- Builder messaggio Emergenza ---
 function buildEmergencyMessage(){
-  const lines = [];
-  lines.push(`🚨 *EMERGENZA INFORMATICA*`);
-  lines.push(`Ho bisogno di assistenza *urgente*.`);
-  lines.push(`Preferisco *prima disponibilità utile* (remota o in loco).`);
-  lines.push(`Grazie!`);
-  return lines.join('\n');
+  return [
+    '🚨 *EMERGENZA INFORMATICA*',
+    'Ho bisogno di assistenza *urgente*.',
+    'Preferisco *prima disponibilità utile* (remota o in loco).',
+    'Grazie!'
+  ].join('\n');
 }
 
+// --- Costruisci link WhatsApp SEMPRE con encodeURIComponent (UTF-8) ---
 function waLinkFromText(text){
-  // usa il tuo helper PHP come base ma sovrascrivi sempre 'text'
-  let base = "<?= whatsapp_link(''); ?>";
-  try{
-    const u = new URL(base);
-    u.searchParams.set('text', text); // sostituisce, non concatena
-    return u.toString();
-  }catch(e){
-    return 'https://wa.me/?text=' + encodeURIComponent(text);
-  }
+  // Se hai un helper PHP, puoi ignorarlo e forzare qui:
+  // Imposta qui il numero con prefisso internazionale, es. +39XXXXXXXXXX
+  const phone = "<?= preg_replace('/\D+/', '', (defined('PHONE_WHATSAPP') ? PHONE_SECONDARY : PHONE_PRIMARY)); ?>";
+  const base = `https://wa.me/${phone}`;
+  return `${base}?text=${encodeURIComponent(text)}`;
 }
 
 (function(){

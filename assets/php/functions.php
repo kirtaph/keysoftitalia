@@ -4,6 +4,8 @@
  * Funzioni globali per il sito
  */
 
+use PHPMailer\PHPMailer\PHPMailer;
+
 // === Percorso base del progetto (1 sola fonte di verità) ===
 if (!defined('BASE_PATH')) {
     // /assets/php/functions.php -> risale di 2 livelli fino alla root progetto
@@ -179,6 +181,8 @@ function is_valid_phone(string $phone): bool {
     return strlen($digits) >= 9 && strlen($digits) <= 13;
 }
 
+
+
 function generate_meta_tags(array $meta = []): string {
     $defaults = [
         'title' => "Key Soft Italia - L'universo della Tecnologia",
@@ -203,6 +207,114 @@ function generate_meta_tags(array $meta = []): string {
     $out .= '<meta name="twitter:description" content="' . $h($m['description']) . '">' . "\n";
     $out .= '<meta name="twitter:image" content="' . $h($m['image']) . '">' . "\n";
     return $out;
+}
+
+// Carica Composer autoload se presente (meglio farlo in bootstrap generale)
+if (defined('BASE_PATH') && file_exists(BASE_PATH . 'vendor/autoload.php')) {
+  require_once BASE_PATH . 'vendor/autoload.php';
+}
+
+if (!function_exists('send_assistance_email')) {
+  function send_assistance_email(array $data, array $opts = []): array {
+    // --- pick helper
+    $get = static function($k, $def='') use ($data){ return isset($data[$k]) ? trim((string)$data[$k]) : $def; };
+
+    // --- fields
+    $tipo   = strtoupper($get('assistance_type','DOMICILIO'));
+    $name   = $get('name');
+    $phone  = $get('phone');
+    $email  = $get('email');
+    $device = $get('device_type');
+    $addr   = $get('address');
+    $prob   = $get('problem_description');
+    $urg    = $get('urgency','normale');
+    $fascia = $get('time_preference','qualsiasi');
+
+    // --- minimal validation
+    if ($name==='' || $phone==='' || $device==='' || $prob==='') return ['ok'=>false,'error'=>'Campi obbligatori mancanti'];
+    if ($email!=='' && !filter_var($email, FILTER_VALIDATE_EMAIL)) return ['ok'=>false,'error'=>'Email non valida'];
+
+    // --- headers
+    $to        = $opts['to']        ?? (defined('EMAIL_ASSISTENZA') ? EMAIL_ASSISTENZA : 'info@tuodominio.it');
+    $from      = $opts['from']      ?? (defined('EMAIL_FROM') ? EMAIL_FROM : 'no-reply@' . ($_SERVER['SERVER_NAME'] ?? 'tuodominio.it'));
+    $from_name = $opts['from_name'] ?? (defined('SITE_NAME') ? SITE_NAME : 'Key Soft Italia');
+    $reply_to  = $opts['reply_to']  ?? ($email ?: $from);
+    $subject   = $opts['subject']   ?? "Richiesta Assistenza ($tipo) - $name";
+
+    // --- bodies
+    $row = function($label,$value){
+      if ($value==='') return '';
+      return '<tr><td style="width:180px;background:#f6f7f9;border:1px solid #e5e7eb;font-weight:600;">'
+           . htmlspecialchars($label).'</td><td style="border:1px solid #e5e7eb;">'
+           . nl2br(htmlspecialchars($value)).'</td></tr>';
+    };
+    $html = '<html><body style="font-family:Inter,Arial,sans-serif;font-size:15px;color:#111">';
+    $html.= '<h2 style="margin:0 0 8px">Richiesta Assistenza ('.htmlspecialchars($tipo).')</h2>';
+    $html.= '<table cellpadding="6" cellspacing="0" style="border-collapse:collapse;width:100%">';
+    $html.= $row('Nome',$name).$row('Telefono',$phone).$row('Email',$email).$row('Tipo',$tipo).$row('Dispositivo',$device);
+    if ($tipo==='DOMICILIO') $html.= $row('Indirizzo',$addr);
+    $html.= $row('Problema',$prob).$row('Urgenza',$urg).$row('Fascia',$fascia).'</table>';
+    $html.= '<p style="color:#6b7280;font-size:12px;margin-top:10px;">IP: '.htmlspecialchars($_SERVER['REMOTE_ADDR'] ?? '').'</p>';
+    $html.= '</body></html>';
+
+    $plain = "Richiesta Assistenza ($tipo)\n"
+           . "Nome: $name\nTelefono: $phone\n".($email ? "Email: $email\n" : '')
+           . "Dispositivo: $device\n".(($tipo==='DOMICILIO' && $addr) ? "Indirizzo: $addr\n" : '')
+           . "Problema:\n$prob\nUrgenza: $urg | Fascia: $fascia\n";
+
+    // --- transport
+    $transport = defined('MAIL_TRANSPORT') ? MAIL_TRANSPORT : 'smtp';
+
+    // SMTP con PHPMailer
+    if ($transport==='smtp' && class_exists('\PHPMailer\PHPMailer\PHPMailer')) {
+      try {
+        $mail = new \PHPMailer\PHPMailer\PHPMailer(true);
+        $mail->CharSet  = 'UTF-8';
+        $mail->Encoding = 'base64';
+        $mail->isSMTP();
+        $mail->Host       = defined('SMTP_HOST') ? SMTP_HOST : '';
+        $mail->SMTPAuth   = defined('SMTP_AUTH') ? (bool)SMTP_AUTH : true;
+        $mail->Username   = defined('SMTP_USER') ? (string)SMTP_USER : '';
+        $mail->Password   = defined('SMTP_PASS') ? (string)SMTP_PASS : '';
+        $mail->SMTPSecure = (defined('SMTP_SECURE') && SMTP_SECURE) ? (string)SMTP_SECURE : \PHPMailer\PHPMailer\PHPMailer::ENCRYPTION_STARTTLS;
+        $mail->Port       = defined('SMTP_PORT') ? (int)SMTP_PORT : 587;
+        $mail->Timeout    = 20;
+
+        $mail->setFrom($from, $from_name);
+        $mail->addAddress($to);
+        if ($reply_to) $mail->addReplyTo($reply_to, $name ?: $from_name);
+
+        $mail->isHTML(true);
+        $mail->Subject = $subject;
+        $mail->Body    = $html;
+        $mail->AltBody = $plain;
+
+        $mail->send();
+        return ['ok'=>true,'error'=>null];
+      } catch (\Throwable $e) {
+        // se SMTP fallisce, prova mail() come fallback
+        error_log('PHPMailer SMTP error: '.$e->getMessage());
+      }
+    }
+
+    // Fallback: mail() nativa
+    $boundary = md5(uniqid('', true));
+    $headers  = [];
+    $headers[] = 'MIME-Version: 1.0';
+    $headers[] = 'From: ' . sprintf('"%s" <%s>', mb_encode_mimeheader($from_name,'UTF-8'), $from);
+    if ($reply_to) $headers[] = 'Reply-To: ' . $reply_to;
+    $headers[] = 'Content-Type: multipart/alternative; boundary="'.$boundary.'"';
+    $headers[] = 'X-Mailer: PHP/'.phpversion();
+
+    $body  = "--$boundary\r\n";
+    $body .= "Content-Type: text/plain; charset=UTF-8\r\nContent-Transfer-Encoding: 8bit\r\n\r\n$plain\r\n";
+    $body .= "--$boundary\r\n";
+    $body .= "Content-Type: text/html; charset=UTF-8\r\nContent-Transfer-Encoding: 8bit\r\n\r\n$html\r\n";
+    $body .= "--$boundary--";
+
+    $ok = @mail($to, '=?UTF-8?B?'.base64_encode($subject).'?=', $body, implode("\r\n",$headers));
+    return ['ok'=>(bool)$ok, 'error'=>$ok ? null : 'mail() ha restituito false'];
+  }
 }
 
 function get_excerpt(string $text, int $length = 150, string $suffix = '...'): string {
