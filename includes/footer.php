@@ -158,6 +158,9 @@ if (!defined('BASE_PATH')) {
   </div>
 </div>
 
+<!-- Toasts -->
+<div id="ks-toast-container" class="toast-container position-fixed p-3" aria-live="polite" aria-atomic="true"></div>
+
 <script>
   document.addEventListener('DOMContentLoaded', function() {
     const backToTop = document.getElementById('backToTop');
@@ -174,6 +177,39 @@ if (!defined('BASE_PATH')) {
       window.scrollTo({ top: 0, behavior: 'smooth' });
     });
   });
+
+  // ===== Toast Utility =====
+function showToast({title='', message='', type='info', delay=4500} = {}){
+  const cont = document.getElementById('ks-toast-container');
+  if (!cont) return;
+
+  const id = 'toast-'+Date.now();
+  const colorClass = type === 'success' ? 'border-success'
+                    : type === 'danger'  ? 'border-danger'
+                    : 'border-info';
+
+  const el = document.createElement('div');
+  el.className = `toast align-items-center shadow ${colorClass}`;
+  el.id = id;
+  el.role = 'alert'; el.ariaLive = 'assertive'; el.ariaAtomic = 'true';
+  el.innerHTML = `
+    <div class="toast-header">
+      <span class="toast-title me-auto">
+        ${type==='success' ? '✅' : (type==='danger' ? '❌' : 'ℹ️')} ${title}
+      </span>
+      <small class="text-muted">ora</small>
+      <button type="button" class="btn-close ms-2 mb-1" data-bs-dismiss="toast" aria-label="Chiudi"></button>
+    </div>
+    <div class="toast-body">${message}</div>
+  `;
+  cont.appendChild(el);
+
+  const bsToast = new bootstrap.Toast(el, { delay, autohide: true });
+  bsToast.show();
+
+  // rimuovi dal DOM quando chiuso
+  el.addEventListener('hidden.bs.toast', ()=> el.remove());
+}
 </script>
     <!-- AOS JS -->
     <script src="https://unpkg.com/aos@next/dist/aos.js"></script>

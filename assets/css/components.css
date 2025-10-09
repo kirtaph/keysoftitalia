@@ -921,3 +921,15 @@
   border-color: var(--ks-orange);
 }
 #privacyModal .btn-primary:hover{ filter: brightness(1.03); }
+
+/* Toasts: bottom-right su desktop, top-center su mobile */
+#ks-toast-container{ right: 1rem; bottom: 1rem; z-index: 1080; }
+@media (max-width: 576px){
+  #ks-toast-container{ top: .75rem; bottom: auto; left: 50%; transform: translateX(-50%); }
+}
+
+/* Accenti colore coerenti */
+.toast.border-success{ border-left: .35rem solid #22c55e !important; }
+.toast.border-danger{  border-left: .35rem solid #ef4444 !important; }
+.toast.border-info{    border-left: .35rem solid #0ea5e9 !important; }
+.toast .toast-title{ font-weight: 700; }

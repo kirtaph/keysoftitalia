@@ -3,14 +3,36 @@ require_once __DIR__ . '/../../config/config.php';
 require_once __DIR__ . '/../../assets/php/functions.php';
 session_start();
 
-// Honeypot
-if (!empty($_POST['website'])) { http_response_code(400); exit('Bad request'); }
-
-// CSRF (se già generi il token in sessione altrove)
-if (empty($_POST['csrf_token']) || $_POST['csrf_token'] !== ($_SESSION['csrf_token'] ?? '')) {
-  http_response_code(403); exit('CSRF token invalid');
+function is_ajax_request(): bool {
+  // fetch() manda spesso Accept: application/json; oppure header X-Requested-With
+  $accept = $_SERVER['HTTP_ACCEPT'] ?? '';
+  $xhr    = $_SERVER['HTTP_X_REQUESTED_WITH'] ?? '';
+  return (stripos($accept, 'application/json') !== false) || (strtolower($xhr) === 'xmlhttprequest');
 }
 
+// --- Basic anti-spam
+if (!empty($_POST['website'])) {
+  if (is_ajax_request()) {
+    http_response_code(400);
+    header('Content-Type: application/json; charset=UTF-8');
+    echo json_encode(['ok'=>false, 'error'=>'bad_request']);
+    exit;
+  }
+  header('Location: ' . url('errore.php?code=bad_request')); exit;
+}
+
+// --- CSRF
+if (empty($_POST['csrf_token']) || $_POST['csrf_token'] !== ($_SESSION['csrf_token'] ?? '')) {
+  if (is_ajax_request()) {
+    http_response_code(403);
+    header('Content-Type: application/json; charset=UTF-8');
+    echo json_encode(['ok'=>false, 'error'=>'csrf']);
+    exit;
+  }
+  header('Location: ' . url('errore.php?code=csrf')); exit;
+}
+
+// --- Collect
 $data = [
   'assistance_type'     => $_POST['assistance_type'] ?? '',
   'name'                => trim($_POST['name'] ?? ''),
@@ -23,13 +45,34 @@ $data = [
   'time_preference'     => trim($_POST['time_preference'] ?? 'qualsiasi'),
 ];
 
+// --- Send
 $res = send_assistance_email($data, [
-  'to'        => EMAIL_ASSISTENZA,
-  'from'      => EMAIL_FROM,
-  'from_name' => SITE_NAME,
-  'reply_to'  => $data['email'] ?: EMAIL_FROM,
+  'to'        => defined('EMAIL_ASSISTENZA') ? EMAIL_ASSISTENZA : 'info@tuodominio.it',
+  'from'      => defined('EMAIL_FROM') ? EMAIL_FROM : 'no-reply@' . ($_SERVER['SERVER_NAME'] ?? 'tuodominio.it'),
+  'from_name' => defined('SITE_NAME') ? SITE_NAME : 'Key Soft Italia',
+  'reply_to'  => $data['email'] ?: (defined('EMAIL_FROM') ? EMAIL_FROM : ''),
 ]);
 
+if (is_ajax_request()) {
+  header('Content-Type: application/json; charset=UTF-8');
+  if ($res['ok']) {
+    echo json_encode([
+      'ok'      => true,
+      'message' => 'Richiesta inviata con successo. Ti contatteremo al più presto.'
+    ]);
+    exit;
+  } else {
+    http_response_code(500);
+    echo json_encode([
+      'ok'      => false,
+      'error'   => 'send_failed',
+      'message' => 'Si è verificato un errore durante l’invio. Riprova tra poco o utilizza WhatsApp.'
+    ]);
+    exit;
+  }
+}
+
+// --- Fallback senza JS
 if ($res['ok']) {
   header('Location: ' . url('grazie.php?type=assistenza')); exit;
 } else {
