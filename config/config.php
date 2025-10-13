@@ -78,7 +78,7 @@ define('EMAIL_ASSISTENZA', 'info@keysoftitalia.it');
 define('EMAIL_FROM',       'no-reply@keysoftitalia.it');
 
 // WhatsApp (in forma internazionale, solo cifre – es: +39 333 1234567 -> 393331234567)
-define('PHONE_PRIMARY',   '+39 099 000000'); // usato per tel:
+define('PHONE_PRIMARY',   '099 829 3794'); // usato per tel:
 define('PHONE_WHATSAPP',  '393483109840');   // per wa.me
 
 // Contatti
