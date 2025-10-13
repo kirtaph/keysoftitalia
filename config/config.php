@@ -54,6 +54,10 @@ if (!defined('DB_HOST')) {
     define('DB_CHARSET', 'utf8mb4');
 }
 
+if (!defined('GA_MEASUREMENT_ID')) {
+  define('GA_MEASUREMENT_ID', 'G-1QG00HRZK8'); // <-- metti il tuo
+}
+
 // Debug
 if (!defined('DEBUG_MODE')) define('DEBUG_MODE', true);
 

@@ -1,4 +1,30 @@
 <?php
+
+if (defined('GA_MEASUREMENT_ID') && GA_MEASUREMENT_ID): ?>
+<!-- Google Analytics 4 + Consent Mode v2 -->
+<script>
+  // Imposta il consenso su denied di default (GDPR)
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  // Consent Mode v2: default negato finché l’utente non accetta
+  gtag('consent', 'default', {
+    'ad_storage': 'denied',
+    'ad_user_data': 'denied',
+    'ad_personalization': 'denied',
+    'analytics_storage': 'denied',
+    'functionality_storage': 'granted',   // opzionale per preferenze sito
+    'security_storage': 'granted'
+  });
+</script>
+
+<script async src="https://www.googletagmanager.com/gtag/js?id=<?php echo GA_MEASUREMENT_ID; ?>"></script>
+<script>
+  gtag('js', new Date());
+  gtag('config', '<?php echo GA_MEASUREMENT_ID; ?>', {
+    'anonymize_ip': true
+  });
+</script>
+<?php endif;
 // Assicurati che config sia già incluso prima di questo file.
 // Inizializza CSRF (usa l'helper)
 if (function_exists('generate_csrf_token')) {

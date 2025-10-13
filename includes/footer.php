@@ -161,6 +161,142 @@ if (!defined('BASE_PATH')) {
 <!-- Toasts -->
 <div id="ks-toast-container" class="toast-container position-fixed p-3" aria-live="polite" aria-atomic="true"></div>
 
+<?php
+  // opzionale: path della privacy
+  if (!defined('PRIVACY_URL')) {
+    define('PRIVACY_URL', url('privacy.php')); // cambia se diverso
+  }
+?>
+
+<!-- Cookie Banner (Bootstrap 5) -->
+<div id="cookie-banner"
+     class="position-fixed bottom-0 start-50 translate-middle-x z-3"
+     style="display:none; max-width: 920px; width: calc(100% - 1.5rem);">
+  <div class="card shadow-lg border-0" style="border-radius: 16px;">
+    <div class="card-body p-3 p-md-4">
+      <div class="d-flex flex-column flex-md-row align-items-md-center gap-3">
+        <div class="flex-grow-1">
+          <strong class="d-block mb-1">Questo sito usa solo statistiche anonime (GA4 con Consent Mode)</strong>
+          <small class="text-muted">
+            Per migliorare i contenuti usiamo Google Analytics in modalità rispettosa della privacy.
+            Puoi accettare o rifiutare le statistiche anonime. Nessuna pubblicità personalizzata.
+            <a href="<?php echo PRIVACY_URL; ?>" class="link-primary">Leggi la Privacy Policy</a>.
+          </small>
+        </div>
+        <div class="d-flex align-items-center gap-2 ms-md-3">
+          <button id="btn-cookie-decline" type="button" class="btn btn-outline-secondary btn-sm">
+            Rifiuta
+          </button>
+          <button id="btn-cookie-accept" type="button" class="btn btn-primary btn-sm">
+            Accetta
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Link per riaprire le preferenze (mettilo nel tuo footer dove vuoi) -->
+<div class="text-center mt-2">
+  <a href="#" id="open-consent-manager" class="small text-muted">Preferenze cookie</a>
+</div>
+
+<script>
+// === Cookie/Consent Banner – Key Soft Italia ===
+// Requisiti: gtag + Consent Mode v2 con default denied già presente nel <head>
+
+(function(){
+  const STORAGE_KEY = 'ksoft_consent_v2';
+  const RETENTION_DAYS = 180; // 6 mesi
+  const bannerEl  = document.getElementById('cookie-banner');
+  const acceptBtn = document.getElementById('btn-cookie-accept');
+  const declineBtn= document.getElementById('btn-cookie-decline');
+  const reopenLink= document.getElementById('open-consent-manager');
+
+  // Utility
+  function now(){ return Date.now(); }
+  function days(n){ return n * 24 * 60 * 60 * 1000; }
+
+  function readConsent(){
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      return raw ? JSON.parse(raw) : null;
+    } catch(e){ return null; }
+  }
+
+  function persistConsent(state){
+    const payload = { state, ts: now() };
+    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(payload)); } catch(e){}
+  }
+
+  // Aggiorna Google Consent Mode (gtag)
+  function updateConsentTo(state){
+    // state: 'granted' | 'denied'
+    // Manteniamo SEMPRE negato l'advertising (niente pubblicità personalizzata)
+    try {
+      if (typeof gtag === 'function') {
+        gtag('consent', 'update', {
+          ad_storage: 'denied',
+          ad_user_data: 'denied',
+          ad_personalization: 'denied',
+          analytics_storage: state,
+          functionality_storage: 'granted',
+          security_storage: 'granted'
+        });
+      }
+    } catch(e){}
+  }
+
+  function showBanner(){ bannerEl.style.display = 'block'; }
+  function hideBanner(){ bannerEl.style.display = 'none'; }
+
+  function accept(){
+    updateConsentTo('granted');
+    persistConsent('granted');
+    hideBanner();
+  }
+
+  function decline(){
+    updateConsentTo('denied');
+    persistConsent('denied');
+    hideBanner();
+  }
+
+  // Riapertura manuale
+  function reopen(){
+    showBanner();
+  }
+
+  // Init su DOM pronto
+  document.addEventListener('DOMContentLoaded', function(){
+    // Posizionamento: centrato in basso, con margini
+    bannerEl.style.left = '50%';
+    bannerEl.style.bottom = '0.75rem';
+
+    const saved = readConsent();
+    if (!saved) {
+      showBanner();
+    } else {
+      const expired = (now() - (saved.ts || 0)) > days(RETENTION_DAYS);
+      if (expired) {
+        showBanner();
+      } else {
+        // Rispetta la scelta precedente
+        updateConsentTo(saved.state === 'granted' ? 'granted' : 'denied');
+      }
+    }
+  });
+
+  // Bind bottoni
+  acceptBtn?.addEventListener('click', accept);
+  declineBtn?.addEventListener('click', decline);
+  reopenLink?.addEventListener('click', function(e){ e.preventDefault(); reopen(); });
+
+  // Espone un metodo globale opzionale
+  window.showConsentManager = reopen;
+})();
+</script>
+
 <script>
   document.addEventListener('DOMContentLoaded', function() {
     const backToTop = document.getElementById('backToTop');
