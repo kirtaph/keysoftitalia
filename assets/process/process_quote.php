@@ -270,7 +270,7 @@ try {
 
   // ricalcolo server-side (fonte di verità)
   $est = compute_estimate($pdo, $device, $brandId, $brandText, $modelText, $issues);
-
+  $source = strtolower(trim($_POST['source'] ?? 'form'));
   // insert in quotes (schema reale)
   $sql = "INSERT INTO quotes
     (device_id, brand_text, model_text, problems_json, description, est_min, est_max, first_name, last_name, email, phone, company, ip_address, user_agent)
@@ -294,13 +294,66 @@ try {
   ]);
 
   $id = (int)$pdo->lastInsertId();
+// ---- EMAIL (facoltativa): invia solo se la sorgente è "email" e la funzione esiste
+$mail_result = null;
 
-  respond([
-    'ok'=>true,
-    'id'=>$id,
-    'estimate'=>$est,
-    'message'=>'Preventivo salvato'
-  ]);
+if (
+  isset($_POST['source']) && $_POST['source'] === 'email' &&
+  function_exists('send_assistance_email')
+){
+  // format stima (usa badge se già presente, altrimenti ricrea)
+  $badge = $est['badge'] ?? (
+    (!empty($est['max']) && (float)$est['max'] > (float)$est['min'])
+      ? ('€ ' . round((float)$est['min']) . '–' . round((float)$est['max']))
+      : ('da € ' . round((float)$est['min']))
+  );
+
+  // problemi in riga
+  $issues_str = '';
+  if (!empty($issues) && is_array($issues)) {
+    $issues_str = implode(', ', array_map(static function($s){ return trim((string)$s); }, $issues));
+  }
+
+  // descrizione da inviare a mail: problemi + nota + stima + id richiesta
+  $mail_description = trim(
+    ($desc ?: '') . "\n\n" .
+    ($issues_str ? "Problemi: {$issues_str}\n" : '') .
+    "Stima indicativa: {$badge}\n" .
+    "ID richiesta: #{$id}\n"
+  );
+
+  // mappa campi verso la tua funzione esistente
+  $mail_data = [
+    'assistance_type'     => 'PREVENTIVO',
+    'name'                => trim($first . ' ' . $last),
+    'phone'               => $phone,
+    'email'               => $email,
+    'device_type'         => strtoupper($device) . ' • ' . ($brand ?: 'n/d') . ( $model ? (' • ' . $model) : '' ),
+    'address'             => '',
+    'problem_description' => $mail_description,
+    'urgency'             => 'normale',
+    'time_preference'     => 'qualsiasi',
+  ];
+
+  // opzionali: destinatario/subject/reply-to personalizzati
+  $mail_opts = [
+    // se vuoi un indirizzo dedicato ai preventivi, definisci EMAIL_PREVENTIVI nel config
+    // 'to'      => defined('EMAIL_PREVENTIVI') ? EMAIL_PREVENTIVI : null,
+    'subject' => 'Richiesta Preventivo - ' . trim($first . ' ' . $last),
+    'reply_to'=> $email ?: null,
+  ];
+
+  $mail_result = send_assistance_email($mail_data, $mail_opts);
+}
+
+// ...e nella risposta JSON aggiungi l’esito mail:
+respond([
+  'ok'       => true,
+  'id'       => $id,
+  'estimate' => $est,
+  'mail'     => $mail_result, // es. {ok:true,error:null} oppure null se non inviata
+  'message'  => 'Preventivo salvato'
+], 200);
 
 } catch (Throwable $e) {
   respond(['ok'=>false,'message'=>'Errore server: '.$e->getMessage()], 500);

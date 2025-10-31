@@ -3,13 +3,6 @@ require_once __DIR__ . '/../../config/config.php';
 require_once __DIR__ . '/../../assets/php/functions.php';
 session_start();
 
-function is_ajax_request(): bool {
-  // fetch() manda spesso Accept: application/json; oppure header X-Requested-With
-  $accept = $_SERVER['HTTP_ACCEPT'] ?? '';
-  $xhr    = $_SERVER['HTTP_X_REQUESTED_WITH'] ?? '';
-  return (stripos($accept, 'application/json') !== false) || (strtolower($xhr) === 'xmlhttprequest');
-}
-
 // --- Basic anti-spam
 if (!empty($_POST['website'])) {
   if (is_ajax_request()) {

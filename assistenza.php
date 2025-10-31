@@ -124,7 +124,7 @@ $breadcrumbs = [
                         <h2 class="mb-2">Richiedi Assistenza</h2>
                         <p class="text-muted mb-4">Compila i campi: puoi inviare via <strong>Email</strong> o <strong>WhatsApp</strong>.</p>
 
-                        <form id="assistanceForm" method="POST" action="<?php echo url('assets/php/process_assistance.php'); ?>" novalidate>
+                        <form id="assistanceForm" method="POST" action="<?php echo url('assets/process/process_assistance.php'); ?>" novalidate>
                             <input type="hidden" name="csrf_token" value="<?php echo $_SESSION['csrf_token'] ?? ''; ?>">
                             <input type="hidden" name="assistance_type" id="assistance_type" value="">
                             <input type="text" name="website" class="d-none" tabindex="-1" autocomplete="off">
