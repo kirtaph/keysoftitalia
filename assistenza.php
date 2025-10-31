@@ -482,16 +482,7 @@ $ld = [
     let lastType = null;
 
     // ========== UTILITY FUNCTIONS ==========
-    function getHeaderOffset() {
-        const hdr = document.querySelector('.site-header, header.sticky-top, header.navbar, .main-header');
-        return hdr ? (hdr.getBoundingClientRect().height + 16) : 96;
-    }
 
-    function smoothScrollTo(el) {
-        if (!el) return;
-        const y = el.getBoundingClientRect().top + window.pageYOffset - getHeaderOffset();
-        window.scrollTo({ top: y, behavior: 'smooth' });
-    }
 
     function showFormIfHidden() {
         if (formSection?.classList.contains('d-none')) {

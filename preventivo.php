@@ -1,9 +1,10 @@
 <?php
 /**
- * Key Soft Italia - Preventivo (Wizard 3 step)
- * Step 1: Dispositivo/Marca/Modello
- * Step 2: Problemi (multi-select) + Descrizione
- * Step 3: Stima + Dati + Invio (AJAX) – con modale Privacy
+ * Key Soft Italia - Preventivo (Wizard 4 step)
+ * Step 1: Dispositivo/Marca/Modello (device+brand obbligatori; modello facoltativo con "Altro modello")
+ * Step 2: Problemi (multi-select) + Descrizione (obbligatoria solo se tra i problemi c'è "Altro")
+ * Step 3: Dati + Privacy (niente stima qui) – click WhatsApp o Invia => salvataggio e passaggio a Step 4
+ * Step 4: Riepilogo + Stima da server, messaggio di conferma, solo "Ricomincia"
  */
 
 if (!defined('BASE_PATH')) {
@@ -27,8 +28,8 @@ $breadcrumbs = [
   <?php echo generate_meta_tags([
       'title' => $page_title,
       'description' => $page_description,
-      'keywords' => $page_keywords,
-      'url' => url('preventivo.php')
+      'keywords'    => $page_keywords,
+      'url'         => url('preventivo.php')
   ]); ?>
   <link rel="stylesheet" href="<?php echo asset('css/pages/preventivo.css'); ?>">
 </head>
@@ -42,7 +43,7 @@ $breadcrumbs = [
   <div class="container position-relative z-2">
     <div class="hero-icon mb-3" data-aos="zoom-in"><i class="ri-calculator-line"></i></div>
     <h1 class="hero-title text-white" data-aos="fade-up">Calcola il tuo <span class="text-gradient">Preventivo</span></h1>
-    <p class="hero-subtitle" data-aos="fade-up" data-aos-delay="100">Stima indicativa e invio in 3 step</p>
+    <p class="hero-subtitle" data-aos="fade-up" data-aos-delay="100">Stima indicativa e invio in 4 step</p>
     <div class="hero-breadcrumb mt-3" data-aos="fade-up" data-aos-delay="150">
       <?= generate_breadcrumbs($breadcrumbs); ?>
     </div>
@@ -56,23 +57,24 @@ $breadcrumbs = [
       <!-- Stepper -->
       <div class="ks-stepper" aria-hidden="true">
         <div class="ks-step active" data-step="1"><span class="ks-step-num">1</span><span class="ks-step-label">Dispositivo</span></div>
-        <div class="ks-step" data-step="2"><span class="ks-step-num">2</span><span class="ks-step-label">Problema</span></div>
-        <div class="ks-step" data-step="3"><span class="ks-step-num">3</span><span class="ks-step-label">Stima & Dati</span></div>
+        <div class="ks-step" data-step="2"><span class="ks-step-num">2</span><span class="ks-step-label">Problemi</span></div>
+        <div class="ks-step" data-step="3"><span class="ks-step-num">3</span><span class="ks-step-label">Dati</span></div>
+        <div class="ks-step" data-step="4"><span class="ks-step-num">4</span><span class="ks-step-label">Riepilogo</span></div>
       </div>
 
-      <h2 id="titolo-wizard" class="form-title">Richiedi Preventivo</h2>
-      <p class="form-subtitle">Completa i 3 step: <strong>stima</strong> + <strong>invio</strong> in pochi secondi.</p>
+      <h2 id="wizard_title" class="form-title">Richiedi Preventivo</h2>
+      <p id="wizard_subtitle" class="form-subtitle">Completa i 4 step: <strong>scelta</strong> → <strong>problemi</strong> → <strong>dati</strong> → <strong>riepilogo</strong>.</p>
 
-      <form id="quoteWizard" method="POST" action="<?php echo url('process_quote.php'); ?>" novalidate>
+      <form id="quoteWizard" method="POST" action="<?php echo url('assets/process/process_quote.php'); ?>" novalidate>
         <?php echo generate_csrf_field(); ?>
         <input type="text" name="website" class="d-none" tabindex="-1" autocomplete="off"><!-- honeypot -->
 
-        <!-- Hidden serialize (per server) -->
+        <!-- Hidden serialize (per server/WA) -->
         <input type="hidden" name="estimate_min" id="est_min">
         <input type="hidden" name="estimate_max" id="est_max">
         <input type="hidden" name="wizard_payload" id="wizard_payload">
 
-        <!-- STEP 1 -->
+        <!-- ================= STEP 1 ================= -->
         <fieldset class="ks-step-pane" data-step="1">
           <div class="step-block">
             <h3 class="block-title"><i class="ri-device-line"></i> Seleziona il dispositivo</h3>
@@ -100,22 +102,35 @@ $breadcrumbs = [
 
           <div class="step-block">
             <h3 class="block-title"><i class="ri-price-tag-3-line"></i> Marca & Modello</h3>
-            <div class="row g-3">
-              <div class="col-md-6">
+            <div class="row g-3 align-items-end">
+              <!-- Brand (da DB) -->
+              <div class="col-md-4">
                 <label class="form-label">Marca *</label>
-                <select class="form-select" id="brand" name="brand" required>
+                <select class="form-select" id="brand" name="brand" required disabled>
                   <option value="">Seleziona il dispositivo prima…</option>
                 </select>
               </div>
-              <div class="col-md-6" id="brand-other-wrap" class="d-none">
-                <label class="form-label">Altra marca</label>
+
+              <!-- Brand “Altro” -->
+              <div class="col-md-4 d-none" id="brand-other-wrap">
+                <label class="form-label">Specifica marca *</label>
                 <input type="text" class="form-control" id="brand_other" name="brand_other" placeholder="Scrivi la marca">
               </div>
-              <div class="col-12">
-                <label class="form-label">Modello</label>
-                <input type="text" class="form-control" id="model" name="model" placeholder="Es. iPhone 12, Lenovo IdeaPad 3…">
+
+              <!-- Modello (select da DB, con Altro modello…) -->
+              <div class="col-md-4" id="model-wrap">
+                <label class="form-label" id="model-label">Modello <span class="text-muted">(opzionale)</span></label>
+                <select class="form-select d-none" id="model_select" name="model_select"></select>
+                <input type="text" class="form-control" id="model" name="model" placeholder="Es. iPhone 12, IdeaPad 3…" />
+              </div>
+
+              <!-- Modello “Altro modello…” -->
+              <div class="col-md-4 d-none" id="model-other-wrap">
+                <label class="form-label">Specifica modello</label>
+                <input type="text" class="form-control" id="model_other" name="model_other" placeholder="Scrivi il modello">
               </div>
             </div>
+            <small class="form-text text-muted d-block mt-1">Se non selezioni il modello, la stima sarà “<em>a partire da</em>” per quella marca.</small>
           </div>
 
           <div class="ks-actions">
@@ -132,18 +147,18 @@ $breadcrumbs = [
           </div>
         </fieldset>
 
-        <!-- STEP 2 -->
+        <!-- ================= STEP 2 ================= -->
         <fieldset class="ks-step-pane d-none" data-step="2">
           <div class="step-block">
             <h3 class="block-title"><i class="ri-tools-line"></i> Seleziona i problemi (uno o più)</h3>
             <div id="problem-grid" class="problem-grid" role="group" aria-label="Problemi selezionabili"><!-- via JS --></div>
-            <small class="text-muted d-block mt-1">Puoi selezionarne più di uno. Nessun segno di spunta: si evidenziano le card scelte.</small>
+            <small class="text-muted d-block mt-1">Nessun segno di spunta: si evidenziano le card scelte. La descrizione è obbligatoria solo se selezioni “Altro”.</small>
           </div>
 
           <div class="step-block">
             <h3 class="block-title"><i class="ri-edit-2-line"></i> Descrizione</h3>
-            <textarea class="form-control" id="problem_description" name="problem_description" rows="5" required placeholder="Descrivi il problema: quando si presenta? messaggi di errore? cosa hai già provato…"></textarea>
-            <div class="form-text">Più dettagli = stima e diagnosi più precise.</div>
+            <textarea class="form-control" id="problem_description" name="problem_description" rows="5" placeholder="Descrivi il problema (opzionale, eccetto per 'Altro')"></textarea>
+            <div class="form-text">Più dettagli = diagnosi più precisa.</div>
           </div>
 
           <div class="ks-actions">
@@ -163,16 +178,8 @@ $breadcrumbs = [
           </div>
         </fieldset>
 
-        <!-- STEP 3 -->
+        <!-- ================= STEP 3 (no stima qui) ================= -->
         <fieldset class="ks-step-pane d-none" data-step="3">
-          <div class="step-block">
-            <h3 class="block-title"><i class="ri-money-euro-circle-line"></i> Stima Indicativa</h3>
-            <div class="estimate-box" aria-live="polite">
-              <div class="estimate-badge"><span id="est_badge">€ —</span></div>
-              <div class="estimate-note">IVA inclusa, salvo diagnosi. Il prezzo finale viene confermato dal tecnico.</div>
-            </div>
-          </div>
-
           <div class="step-block">
             <h3 class="block-title"><i class="ri-user-line"></i> I tuoi dati</h3>
             <div class="row g-3">
@@ -195,13 +202,59 @@ $breadcrumbs = [
               </button>
             </div>
             <div class="ks-right">
-              <a class="btn btn-wa" id="btn_whatsapp" target="_blank" rel="noopener">
+              <a class="btn btn-wa" id="btn_whatsapp" href="#" rel="noopener">
                 <i class="ri-whatsapp-line"></i> <span class="btn-text">WhatsApp</span>
               </a>
-              <button type="submit" class="btn btn-mail" id="btn_submit">
+              <button type="button" class="btn btn-mail" id="btn_submit">
                 <i class="ri-mail-send-line"></i> <span class="btn-text">Invia</span>
               </button>
             </div>
+          </div>
+        </fieldset>
+
+        <!-- ================= STEP 4 (RIEPILOGO) ================= -->
+        <fieldset class="ks-step-pane d-none" data-step="4">
+          <div class="step-block">
+            <h3 class="block-title"><i class="ri-check-double-line"></i> Riepilogo richiesta</h3>
+
+            <div class="summary-box">
+
+              <div class="summary-estimate">
+                <div class="summary-estimate-title">
+                  <i class="ri-money-euro-circle-line"></i> Stima indicativa
+                </div>
+
+                <div class="summary-estimate-box">
+                  <div class="summary-price">
+                    <span class="from" id="sum_from_label" hidden>da</span>
+                    <span id="sum_estimate_value">€ —</span>
+                  </div>
+                </div>
+
+                <div class="summary-caption">
+                  IVA inclusa, salvo diagnosi. Il prezzo finale viene confermato dal tecnico.
+                </div>
+              </div>
+              <ul class="summary-list">
+                <li><strong>Dispositivo:</strong> <span id="sum_device">—</span></li>
+                <li><strong>Marca:</strong> <span id="sum_brand">—</span></li>
+                <li><strong>Modello:</strong> <span id="sum_model">—</span></li>
+                <li><strong>Problemi selezionati:</strong> <span id="sum_issues">—</span></li>
+                <li><strong>Descrizione:</strong> <span id="sum_desc">—</span></li>
+              </ul>
+              <div class="summary-note mt-3">
+                ✅ Richiesta registrata. Ti contatteremo al più presto per confermare tempi e prezzo.
+              </div>
+            </div>
+          </div>
+
+          <div class="ks-actions">
+            <div class="ks-left">
+              <button type="button" class="btn btn-light" id="btn_restart">
+                <i class="ri-refresh-line"></i> <span class="btn-text">Ricomincia</span>
+              </button>
+            </div>
+            <div class="ks-right"><!-- intentionally empty --></div>
           </div>
         </fieldset>
       </form>
@@ -246,52 +299,83 @@ $breadcrumbs = [
   </div>
 </section>
 
-<?php
-// Proof metrics
-$quote_metrics = [
-  ['icon'=>'ri-file-list-2-line','label'=>'Preventivi/anno','value'=>1200,'suffix'=>'+'],
-  ['icon'=>'ri-timer-flash-line','label'=>'Tempo medio risposta','value'=>6,'suffix'=>'h'],
-  ['icon'=>'ri-hand-coin-line','label'=>'Tasso accettazione','value'=>78,'suffix'=>'%'],
-  ['icon'=>'ri-star-smile-line','label'=>'Valutazione media','value'=>4.9,'suffix'=>'/5'],
-];
-?>
-<section class="section section-proof bg-gradient-orange">
-  <div class="container position-relative">
-    <div class="section-header text-center">
-      <h2 class="section-title text-white">I nostri numeri</h2>
-      <p class="section-subtitle text-white-80">Indicativi su base annuale</p>
-    </div>
-    <div class="row g-4 justify-content-center equalize">
-      <?php foreach($quote_metrics as $m): ?>
-        <div class="col-6 col-md-4 col-lg-2">
-          <div class="proof-card">
-            <div class="proof-icon" aria-hidden="true"><i class="<?php echo $m['icon']; ?>"></i></div>
-            <div class="proof-value">
-              <span class="num" data-target="<?php echo htmlspecialchars($m['value']); ?>"><?php echo htmlspecialchars($m['value']); ?></span><span class="suffix"><?php echo htmlspecialchars($m['suffix']); ?></span>
-            </div>
-            <div class="proof-label"><?php echo htmlspecialchars($m['label']); ?></div>
-          </div>
-        </div>
-      <?php endforeach; ?>
-    </div>
-  </div>
-</section>
-
-<!-- PROCESS -->
-<section class="section section-process">
+<!-- =============================================== -->
+<!-- ============ Sezione "Come Funziona" ============ -->
+<!-- =============================================== -->
+<section class="section section-process fancy-process">
   <div class="container">
+    <!-- Intestazione della sezione -->
     <div class="section-header text-center">
       <h2 class="section-title">Come funziona</h2>
       <p class="section-subtitle">Dalla richiesta alla consegna, in 4 passi</p>
     </div>
-    <div class="row g-4 process-grid">
-      <div class="col-md-6 col-lg-3"><div class="process-card" data-aos="fade-up"><div class="process-icon"><i class="ri-edit-line"></i></div><h3>1) Richiesta</h3><p>Compili il wizard o scrivi su WhatsApp.</p></div></div>
-      <div class="col-md-6 col-lg-3"><div class="process-card" data-aos="fade-up" data-aos-delay="60"><div class="process-icon"><i class="ri-search-eye-line"></i></div><h3>2) Analisi</h3><p>Diagnosi rapida, verifichiamo tempi e fattibilità.</p></div></div>
-      <div class="col-md-6 col-lg-3"><div class="process-card" data-aos="fade-up" data-aos-delay="120"><div class="process-icon"><i class="ri-price-tag-3-line"></i></div><h3>3) Preventivo</h3><p>Ricevi prezzo trasparente e tempistiche.</p></div></div>
-      <div class="col-md-6 col-lg-3"><div class="process-card" data-aos="fade-up" data-aos-delay="180"><div class="process-icon"><i class="ri-checkbox-circle-line"></i></div><h3>4) Conferma</h3><p>Partiamo col lavoro e ti aggiorniamo.</p></div></div>
+
+    <!-- Lista dei passaggi (processo) -->
+    <ol class="row g-4 process-steps align-items-stretch">
+      <li class="col-md-6 col-lg-3">
+        <div class="process-item" data-aos="fade-up">
+          <div class="step-head">
+            <span class="step-badge">1</span>
+            <span class="step-icon"><i class="ri-edit-line" aria-hidden="true"></i></span>
+          </div>
+          <h3 class="step-title">Richiesta</h3>
+          <p class="step-text">Compili il wizard o scrivi su WhatsApp.</p>
+        </div>
+      </li>
+
+      <li class="col-md-6 col-lg-3">
+        <div class="process-item" data-aos="fade-up" data-aos-delay="60">
+          <div class="step-head">
+            <span class="step-badge">2</span>
+            <span class="step-icon"><i class="ri-search-eye-line" aria-hidden="true"></i></span>
+          </div>
+          <h3 class="step-title">Analisi</h3>
+          <p class="step-text">Diagnosi rapida, verifichiamo tempi e fattibilità.</p>
+        </div>
+      </li>
+
+      <li class="col-md-6 col-lg-3">
+        <div class="process-item" data-aos="fade-up" data-aos-delay="120">
+          <div class="step-head">
+            <span class="step-badge">3</span>
+            <span class="step-icon"><i class="ri-price-tag-3-line" aria-hidden="true"></i></span>
+          </div>
+          <h3 class="step-title">Preventivo</h3>
+          <p class="step-text">Ricevi prezzo trasparente e tempistiche.</p>
+        </div>
+      </li>
+
+      <li class="col-md-6 col-lg-3">
+        <div class="process-item" data-aos="fade-up" data-aos-delay="180">
+          <div class="step-head">
+            <span class="step-badge">4</span>
+            <span class="step-icon"><i class="ri-checkbox-circle-line" aria-hidden="true"></i></span>
+          </div>
+          <h3 class="step-title">Conferma</h3>
+          <p class="step-text">Partiamo col lavoro e ti aggiorniamo.</p>
+        </div>
+      </li>
+    </ol>
+
+    <!-- Trust Badges (punti di fiducia) -->
+    <div class="trust-badges" data-aos="fade-up" data-aos-delay="240" aria-label="Punti di fiducia">
+      <div class="tb-item">
+        <i class="ri-shield-check-line" aria-hidden="true"></i>
+        <span>Garanzia 3 mesi</span>
+      </div>
+      <div class="tb-item">
+        <i class="ri-tools-line" aria-hidden="true"></i>
+        <span>Ricambi di qualità</span>
+      </div>
+      <div class="tb-item">
+        <i class="ri-time-line" aria-hidden="true"></i>
+        <span>Diagnosi rapida</span>
+      </div>
     </div>
+
   </div>
 </section>
+
 
 <!-- FAQ -->
 <section class="section section-faq bg-light">
@@ -369,6 +453,16 @@ $ld_faq = [
 <!-- Wizard IIFE -->
 <script>
 (function(){
+  // ---- Endpoints
+  const ENDPOINTS = {
+    brands: "<?= url('assets/ajax/get_brands.php'); ?>",
+    models: "<?= url('assets/ajax/get_models.php'); ?>",
+    process: "<?= url('assets/process/process_quote.php') ?>",
+    issues: "<?= url('assets/ajax/get_issues.php'); ?>"
+  };
+  const ALT_BRAND_VALUE = "__other_brand__";
+  const ALT_MODEL_VALUE = "__other_model__";
+
   // ---- Elements
   const wizard   = document.getElementById('quoteWizard');
   const panes    = [...wizard.querySelectorAll('.ks-step-pane')];
@@ -377,40 +471,53 @@ $ld_faq = [
   const prevBtns = wizard.querySelectorAll('.ks-prev');
   const goEmerg  = wizard.querySelectorAll('.ks-goto-emergency');
 
-  const brandSel   = document.getElementById('brand');
-  const brandOther = document.getElementById('brand_other');
-  const brandOtherWrap = document.getElementById('brand-other-wrap');
-  const modelInput = document.getElementById('model');
+  const brandSel        = document.getElementById('brand');
+  const brandOtherWrap  = document.getElementById('brand-other-wrap');
+  const brandOther      = document.getElementById('brand_other');
+
+  const modelWrap       = document.getElementById('model-wrap');
+  const modelLabel      = document.getElementById('model-label');
+  const modelSelect     = document.getElementById('model_select');
+  const modelInput      = document.getElementById('model');
+  const modelOtherWrap  = document.getElementById('model-other-wrap');
+  const modelOther      = document.getElementById('model_other');
 
   const problemGrid   = document.getElementById('problem-grid');
   const problemDescr  = document.getElementById('problem_description');
 
   const estMin   = document.getElementById('est_min');
   const estMax   = document.getElementById('est_max');
-  const estBadge = document.getElementById('est_badge');
   const payload  = document.getElementById('wizard_payload');
 
-  const waBtn  = document.getElementById('btn_whatsapp');
-  const submit = document.getElementById('btn_submit');
+  const waBtn   = document.getElementById('btn_whatsapp');
+  const mailBtn = document.getElementById('btn_submit');
+
+  const formCard       = document.querySelector('.form-card');
+  const wizardTitle    = document.getElementById('wizard_title');
+  const wizardSubtitle = document.getElementById('wizard_subtitle');
+
+  // Summary DOM
+  const sumDevice   = document.getElementById('sum_device');
+  const sumBrand    = document.getElementById('sum_brand');
+  const sumModel    = document.getElementById('sum_model');
+  const sumIssues   = document.getElementById('sum_issues');
+  const sumDesc     = document.getElementById('sum_desc');
+  const sumFromLbl  = document.getElementById('sum_from_label');
+  const sumValue    = document.getElementById('sum_estimate_value');
+  const restartBtn  = document.getElementById('btn_restart');
 
   const emSection = document.querySelector('.emergency-wide');
+  const csrfEl = wizard.querySelector('input[name="csrf_token"], input[name="_csrf"], input[name="csrf"]');
 
   // ---- Data
   let current = 1;
   let selectedDevice = null;
   let selectedProblems = new Set();
+  let lastSavedId = null; // quote id
 
-  const BRANDS = {
-    smartphone: ['Apple','Samsung','Xiaomi','Huawei','Oppo','OnePlus','Google','Altro'],
-    tablet:     ['Apple','Samsung','Lenovo','Huawei','Xiaomi','Amazon (Fire)','Altro'],
-    computer:   ['Apple','HP','Dell','Lenovo','Acer','ASUS','MSI','Altro'],
-    console:    ['Sony PlayStation','Microsoft Xbox','Nintendo Switch','Altro'],
-    tv:         ['Samsung','LG','Sony','Philips','Hisense','TCL','Altro'],
-    altro:      ['Altro']
-  };
-
-  const PROBLEMS = {
-    smartphone: ['Non carica','Display rotto','Back cover','Non mi sentono (microfono)','Non sento (altoparlante)','Non si accende','Batteria scarica/si spegne','Fotocamera guasta','Wi-Fi/Bluetooth','Altro'],
+  // Problemi fallback per device
+  const FALLBACK_ISSUES = {
+    smartphone: ['Non carica','Display rotto','Back cover','Non mi sentono (microfono)','Non sento (altoparlante)','Non si accende','Batteria','Fotocamera','Andato in acqua','Altro'],
     tablet:     ['Non carica','Display rotto','Batteria','Lento/ottimizzazione','Non si accende','Wi-Fi/Bluetooth','Altro'],
     computer:   ['Non si accende','Non si avvia (OS/boot)','Formattazione/Reinstallazione','Lento/ottimizzazione','Virus/Malware','Schermo rotto','Tastiera/Trackpad','Recupero dati','Rete/driver','Altro'],
     console:    ['Non legge dischi','Surriscaldamento/ventola','Errore aggiornamento','Porta HDMI danneggiata','Alimentazione','Controller non si connette','Memoria/archiviazione','Altro'],
@@ -418,69 +525,299 @@ $ld_faq = [
     altro:      ['Altro']
   };
 
-  const BASE_RANGE = {
-    smartphone: [39,129],
-    tablet:     [49,149],
-    computer:   [35,180],
-    console:    [45,160],
-    tv:         [60,220],
-    altro:      [40,160]
-  };
-  const WEIGHTS = { low: 0.1, mid: 0.25, high: 0.45 };
-  const PROBLEM_WEIGHT = {
-    smartphone: {
-      'Display rotto':'high','Back cover':'mid','Non carica':'mid','Batteria scarica/si spegne':'mid','Fotocamera guasta':'mid',
-      'Non mi sentono (microfono)':'low','Non sento (altoparlante)':'low','Wi-Fi/Bluetooth':'low','Non si accende':'high','Altro':'mid'
-    },
-    tablet:     { 'Display rotto':'high','Batteria':'mid','Non carica':'mid','Lento/ottimizzazione':'low','Non si accende':'high','Wi-Fi/Bluetooth':'low','Altro':'mid' },
-    computer:   { 'Formattazione/Reinstallazione':'low','Lento/ottimizzazione':'low','Virus/Malware':'mid','Non si avvia (OS/boot)':'mid','Rete/driver':'low','Schermo rotto':'high','Tastiera/Trackpad':'mid','Recupero dati':'high','Non si accende':'high','Altro':'mid' },
-    console:    { 'Porta HDMI danneggiata':'high','Surriscaldamento/ventola':'mid','Errore aggiornamento':'low','Non legge dischi':'mid','Alimentazione':'high','Controller non si connette':'low','Memoria/archiviazione':'low','Altro':'mid' },
-    tv:         { 'Schermo nero':'high','Linee sul display':'high','Nessun segnale HDMI':'low','Audio assente':'low','Wi-Fi/rete':'low','Non si accende':'high','Aggiornamento firmware':'low','Altro':'mid' },
-    altro:      { 'Altro':'mid' }
-  };
-
   // ---- Utils
-  function showToast({title='', message='', type='info', delay=4500} = {}){
-    let cont = document.getElementById('ks-toast-container');
-    if (!cont) {
-      cont = document.createElement('div');
-      cont.id = 'ks-toast-container';
-      cont.className = 'toast-container position-fixed p-3';
-      cont.style.right = '1rem'; cont.style.bottom = '1rem'; cont.style.zIndex = '1080';
-      cont.setAttribute('role','region'); cont.setAttribute('aria-live','polite');
-      document.body.appendChild(cont);
-    }
-    const color = type === 'success' ? 'border-success' : (type === 'danger' ? 'border-danger' : 'border-info');
-    const el = document.createElement('div');
-    el.className = `toast align-items-center shadow ${color}`;
-    el.innerHTML = `
-      <div class="toast-header">
-        <strong class="me-auto">${type==='success'?'✅':(type==='danger'?'❌':'ℹ️')} ${title}</strong>
-        <button type="button" class="btn-close ms-2 mb-1" data-bs-dismiss="toast" aria-label="Chiudi"></button>
-      </div>
-      <div class="toast-body">${message}</div>`;
-    cont.appendChild(el);
-    const t = new bootstrap.Toast(el, {delay, autohide:true}); t.show();
-    el.addEventListener('hidden.bs.toast', ()=> el.remove());
+  
+  function formatEstimate(min, max, showFrom=false){
+    const m1 = (min != null) ? Math.round(min) : null;
+    const m2 = (max != null) ? Math.round(max) : null;
+    if (showFrom || !m2 || m2 <= m1) return `€ ${m1 ?? '—'}`;
+    return `€ ${m1 ?? '—'}–${m2 ?? '—'}`;
   }
-  function smoothScrollTo(el){
-    if (!el) return;
-    const hdr = document.querySelector('.site-header, header.sticky-top, header.navbar, .main-header');
-    const off = hdr ? (hdr.getBoundingClientRect().height + 16) : 96;
-    const y = el.getBoundingClientRect().top + window.pageYOffset - off;
-    window.scrollTo({top:y, behavior:'smooth'});
-  }
-  function eur(v){ return Math.round(v/5)*5; }
-  function clamp(min,max){ min = Math.max(0,min); return [eur(min), eur(Math.max(min+5, max))]; }
   function normalizeText(s){ return (s || '').toString().trim().replace(/\s+/g,' '); }
+  function formatCurrency(n){ try { return new Intl.NumberFormat('it-IT',{style:'currency',currency:'EUR',maximumFractionDigits:0}).format(n); } catch { return `€ ${Math.round(+n||0)}`; } }
+  function formatEstimateDisplay(est){
+    const min = +est?.min || 0;
+    const max = +est?.max || 0;
+    if (!min && !max) return "€ —";
+    if (!max || max < min) return `da ${formatCurrency(min)}`;
+    if (min === max) return formatCurrency(min);
+    return `${formatCurrency(min)} – ${formatCurrency(max)}`;
+  }
   function waLinkFromText(text){
     const phone = "<?= preg_replace('/\D+/', '', (defined('PHONE_WHATSAPP') ? PHONE_WHATSAPP : PHONE_PRIMARY)); ?>";
     return `https://wa.me/${phone}?text=${encodeURIComponent(text)}`;
   }
 
-  // Privacy gate (usa la modale già presente nel footer)
-  function ensurePrivacyThen(formEl, onOk){
-    const chkForm = formEl.querySelector('#privacy');
+  // ---- Device cards
+  const deviceCards = document.querySelectorAll('.device-card');
+  deviceCards.forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      deviceCards.forEach(b=>{
+        const sel = (b===btn);
+        b.classList.toggle('selected', sel);
+        b.setAttribute('aria-pressed', sel ? 'true' : 'false');
+      });
+      selectedDevice = btn.dataset.device;
+      loadBrandsForDevice(selectedDevice);
+      loadIssues();
+    });
+  });
+
+  // ---- Brands / Models (DB)
+  async function loadBrandsForDevice(device){
+    brandSel.disabled = true;
+    brandSel.innerHTML = `<option value="">Carico marche…</option>`;
+    brandOtherWrap.classList.add('d-none'); brandOther.value = '';
+    resetModelUI();
+
+    try{
+      const url = `${ENDPOINTS.brands}?device=${encodeURIComponent(device)}`;
+      const res = await fetch(url, {headers:{'Accept':'application/json'}});
+      const data = await res.json();
+      const list = Array.isArray(data?.brands) ? data.brands : [];
+      const opts = [`<option value="">Seleziona marca…</option>`]
+        .concat(list.map(b => `<option value="${b.id}" data-name="${b.name}">${b.name}</option>`))
+        .concat([`<option value="${ALT_BRAND_VALUE}">Altro</option>`]);
+      brandSel.innerHTML = opts.join('');
+      brandSel.disabled = false;
+    } catch(e){
+      brandSel.innerHTML = `<option value="">Errore: ricarica la pagina</option>`;
+      showToast({type:'danger', title:'Marche', message:'Impossibile caricare le marche.'});
+    }
+  }
+
+  function resetModelUI(){
+    modelSelect.classList.add('d-none');
+    modelSelect.innerHTML = '';
+    modelInput.classList.remove('d-none');
+    modelInput.value = '';
+    modelOtherWrap.classList.add('d-none');
+    modelOther.value = '';
+  }
+
+  async function loadModelsForBrand(brandId, brandName){
+    resetModelUI();
+    if (!brandId || brandId === ALT_BRAND_VALUE){
+      return; // brand “Altro”: modello solo input libero
+    }
+    try{
+      const url = `${ENDPOINTS.models}?brand_id=${encodeURIComponent(brandId)}`;
+      const res = await fetch(url, {headers:{'Accept':'application/json'}});
+      const data = await res.json();
+      const list = Array.isArray(data?.models) ? data.models : [];
+      if (!list.length) return;
+
+      const options = [`<option value="">Seleziona modello…</option>`]
+        .concat(list.map(m => `<option value="${m.name}" data-id="${m.id||''}">${m.name}</option>`))
+        .concat([`<option value="${ALT_MODEL_VALUE}">Altro modello…</option>`]);
+      modelSelect.innerHTML = options.join('');
+      modelSelect.classList.remove('d-none');
+      modelInput.classList.add('d-none');
+    } catch(e){
+      showToast({type:'danger', title:'Modelli', message:'Impossibile caricare i modelli.'});
+    }
+  }
+
+  function buildProblemGridFromList(list){
+    const labels = (Array.isArray(list) ? list : []).map(it => (typeof it === 'string' ? it : (it?.label ?? ''))).filter(Boolean);
+    if (!labels.some(l => l.toLowerCase() === 'altro')) labels.push('Altro');
+
+    selectedProblems.clear();
+    problemGrid.innerHTML = labels.map(p => `
+      <button type="button" class="problem-card" data-problem="${p.replace(/"/g,'&quot;')}" role="checkbox" aria-checked="false">
+        <span class="problem-label">${p}</span>
+      </button>
+    `).join('');
+
+    problemGrid.querySelectorAll('.problem-card').forEach(btn=>{
+      btn.addEventListener('click', ()=>{
+        const p = btn.dataset.problem;
+        const isSel = selectedProblems.has(p);
+        if (isSel) {
+          selectedProblems.delete(p);
+          btn.classList.remove('selected'); btn.setAttribute('aria-checked','false');
+        } else {
+          selectedProblems.add(p);
+          btn.classList.add('selected'); btn.setAttribute('aria-checked','true');
+          if (p === 'Altro') problemDescr.focus();
+        }
+      });
+    });
+  }
+
+  async function loadIssues(){
+    const qp = new URLSearchParams();
+    qp.set('device', selectedDevice || '');
+    if (brandSel.value && brandSel.value !== ALT_BRAND_VALUE) {
+      qp.set('brand_id', brandSel.value);
+    }
+    if (!modelSelect.classList.contains('d-none')){
+      const val = modelSelect.value;
+      if (val && val !== ALT_MODEL_VALUE){
+        const opt = modelSelect.options[modelSelect.selectedIndex];
+        const mid = opt ? (opt.dataset.id || '') : '';
+        if (mid) qp.set('model_id', mid);
+        qp.set('model_name', val);
+      }
+    } else {
+      const name = normalizeText(modelInput.value);
+      if (name) qp.set('model_name', name);
+    }
+
+    try{
+      problemGrid.innerHTML = `<div class="text-muted small">Carico problemi…</div>`;
+      const res = await fetch(`${ENDPOINTS.issues}?${qp.toString()}`, {headers:{'Accept':'application/json'}});
+      const data = await res.json();
+      const fromDb = Array.isArray(data?.issues) ? data.issues : null;
+      if (fromDb && fromDb.length){
+        buildProblemGridFromList(fromDb);
+      } else {
+        buildProblemGridFromList(FALLBACK_ISSUES[selectedDevice] || FALLBACK_ISSUES['altro']);
+      }
+    } catch(e){
+      buildProblemGridFromList(FALLBACK_ISSUES[selectedDevice] || FALLBACK_ISSUES['altro']);
+      showToast({type:'danger', title:'Problemi', message:'Impossibile caricare i problemi dal server. Uso elenco di base.'});
+    }
+  }
+
+  brandSel.addEventListener('change', () => {
+    const val = brandSel.value;
+    const opt = brandSel.options[brandSel.selectedIndex];
+    const name = opt ? (opt.dataset.name || opt.textContent) : '';
+
+    const isOther = (val === ALT_BRAND_VALUE);
+    brandOtherWrap.classList.toggle('d-none', !isOther);
+    if (!isOther) brandOther.value = '';
+
+    loadModelsForBrand(val, name);
+    loadIssues();
+  });
+
+  modelSelect.addEventListener('change', ()=>{
+    const val = modelSelect.value;
+    const isOtherModel = (val === ALT_MODEL_VALUE);
+    modelOtherWrap.classList.toggle('d-none', !isOtherModel);
+    if (!isOtherModel) modelOther.value = '';
+    loadIssues();
+  });
+
+  modelInput.addEventListener('blur', ()=>{ if (normalizeText(modelInput.value)) loadIssues(); });
+
+  // ---- Stepper
+  function setStep(n){
+    current = n;
+    panes.forEach(p => p.classList.toggle('d-none', +p.dataset.step !== n));
+    steps.forEach(s => s.classList.toggle('active', +s.dataset.step === n));
+
+    const isSummary = (n === 4);
+    if (formCard){
+      formCard.classList.toggle('summary-mode', isSummary);
+    }
+    if (wizardTitle)    wizardTitle.style.display    = isSummary ? 'none' : '';
+    if (wizardSubtitle) wizardSubtitle.style.display = isSummary ? 'none' : '';
+
+    smoothScrollTo(document.querySelector('.quote-wizard'));
+  }
+
+  function validateStep(n){
+    if (n===1){
+      if (!selectedDevice){
+        showToast({type:'danger', title:'Dispositivo', message:'Seleziona un dispositivo per continuare.'});
+        return false;
+      }
+      if (!brandSel.value){
+        showToast({type:'danger', title:'Marca', message:'Seleziona la marca.'});
+        brandSel.classList.add('is-invalid'); return false;
+      }
+      brandSel.classList.remove('is-invalid');
+
+      if (brandSel.value === ALT_BRAND_VALUE && !normalizeText(brandOther.value)){
+        showToast({type:'danger', title:'Marca', message:'Specifica la marca.'});
+        brandOther.classList.add('is-invalid'); return false;
+      }
+      brandOther.classList.remove('is-invalid');
+
+      if (!modelInput.classList.contains('d-none') ){
+        // modello via input: facoltativo
+      } else {
+        if (modelSelect.value === ALT_MODEL_VALUE && !normalizeText(modelOther.value)){
+          showToast({type:'danger', title:'Modello', message:'Specifica il modello.'});
+          modelOther.classList.add('is-invalid'); return false;
+        }
+        modelOther.classList.remove('is-invalid');
+      }
+      return true;
+    }
+    if (n===2){
+      if (!selectedProblems.size){
+        showToast({type:'danger', title:'Problemi', message:'Seleziona almeno un problema.'});
+        return false;
+      }
+      if (selectedProblems.has('Altro') && !normalizeText(problemDescr.value)){
+        showToast({type:'danger', title:'Descrizione', message:'Per "Altro" serve una breve descrizione.'});
+        problemDescr.classList.add('is-invalid'); return false;
+      }
+      problemDescr.classList.remove('is-invalid');
+      return true;
+    }
+    return true;
+  }
+
+  nextBtns.forEach(b=> b.addEventListener('click', ()=>{ if (!validateStep(current)) return; setStep(Math.min(4, current+1)); }));
+  prevBtns.forEach(b=> b.addEventListener('click', ()=> setStep(Math.max(1, current-1))));
+  goEmerg.forEach(b=> b.addEventListener('click', ()=>{ if (emSection) smoothScrollTo(emSection); }));
+
+  // ---- Build payload for server/WA
+  function getBrandDisplay(){
+    if (brandSel.value === ALT_BRAND_VALUE) return normalizeText(brandOther.value);
+    const opt = brandSel.options[brandSel.selectedIndex];
+    return (opt ? (opt.dataset.name || opt.textContent) : '').trim();
+  }
+  function getModelDisplay(){
+    if (!modelInput.classList.contains('d-none')){
+      return normalizeText(modelInput.value);
+    }
+    if (modelSelect.value === ALT_MODEL_VALUE) return normalizeText(modelOther.value);
+    return modelSelect.value || '';
+  }
+  function getIssuesArray(){ return Array.from(selectedProblems); }
+
+  function buildWaMessage(estimate){
+    const lines = [
+      '🧮 *Richiesta Preventivo*',
+      `📱 *Dispositivo:* ${selectedDevice || 'n/d'} • *Marca:* ${getBrandDisplay() || 'n/d'} • *Modello:* ${getModelDisplay() || 'n/d'}`,
+      `🛠️ *Problema:* ${getIssuesArray().join(', ') || 'n/d'}`,
+      ...(normalizeText(problemDescr.value) ? [`📝 *Descrizione:* ${normalizeText(problemDescr.value)}`] : []),
+      `💶 *Stima indicativa:* ${formatEstimateDisplay(estimate)}`,
+      'Grazie!'
+    ];
+    return lines.join('\n');
+  }
+
+  // ---- Summary rendering
+  function renderSummary(){
+    sumDevice.textContent = (selectedDevice || '—');
+    const brandTxt = getBrandDisplay();
+    sumBrand.textContent  = brandTxt || '—';
+    const modelTxt        = getModelDisplay();
+    sumModel.textContent  = modelTxt || '—';
+
+    sumIssues.textContent = (Array.from(selectedProblems).join(', ') || '—');
+    sumDesc.textContent   = (normalizeText(problemDescr.value) || '—');
+
+    const min = (estMin.value ? +estMin.value : null);
+    const max = (estMax.value ? +estMax.value : null);
+
+    const modelMissingOrOther = !modelTxt || modelTxt.toLowerCase() === 'altro' || modelTxt.toLowerCase() === 'other';
+    const showFrom = modelMissingOrOther || !max || max <= (min ?? 0);
+
+    sumFromLbl.hidden = !showFrom;
+    sumValue.textContent = formatEstimate(min, max, showFrom);
+  }
+
+  // ---- Privacy modal gate
+  function ensurePrivacyThen(onOk){
+    const chkForm = wizard.querySelector('#privacy');
     if (chkForm && chkForm.checked) { onOk(); return; }
     const modalEl = document.getElementById('privacyModal');
     if (!modalEl || typeof bootstrap === 'undefined'){
@@ -501,206 +838,117 @@ $ld_faq = [
     bsModal.show();
   }
 
-  // ---- Device cards
-  const deviceCards = document.querySelectorAll('.device-card');
-  deviceCards.forEach(btn=>{
-    btn.addEventListener('click', ()=>{
-      deviceCards.forEach(b=>{
-        const sel = (b===btn);
-        b.classList.toggle('selected', sel);
-        b.setAttribute('aria-pressed', sel ? 'true' : 'false');
-      });
-      selectedDevice = btn.dataset.device;
-      fillBrand(selectedDevice);
-      buildProblems(selectedDevice);
+  // ---- SAVE to server (mode=save), then go to Step 4 and optionally open WhatsApp
+  async function saveQuoteAndProceed(source){
+    const req = [...wizard.querySelectorAll('[data-step="3"] [required]')];
+    let ok = true;
+    req.forEach(el=>{
+      const valid = (el.type==='checkbox') ? el.checked : !!(el.value||'').trim();
+      el.classList.toggle('is-invalid', !valid);
+      if (!valid) ok=false;
     });
-  });
-
-  function fillBrand(device){
-    const list = (BRANDS[device] || BRANDS['altro']);
-    brandSel.innerHTML = `<option value="">Seleziona marca…</option>` + list.map(b=>`<option value="${b}">${b}</option>`).join('');
-    brandOtherWrap.classList.add('d-none');
-    brandOther.value = '';
-  }
-  brandSel.addEventListener('change', () => {
-    const val = brandSel.value;
-    brandOtherWrap.classList.toggle('d-none', val !== 'Altro');
-    if (val !== 'Altro') brandOther.value = '';
-  });
-
-  // ---- Problems grid (multi) — senza icona di check, solo evidenza card
-  function buildProblems(device){
-    const items = PROBLEMS[device] || PROBLEMS['altro'];
-    selectedProblems.clear();
-    problemGrid.innerHTML = items.map(p => `
-      <button type="button" class="problem-card" data-problem="${p.replace(/"/g,'&quot;')}" role="checkbox" aria-checked="false">
-        <span class="problem-label">${p}</span>
-      </button>
-    `).join('');
-    problemGrid.querySelectorAll('.problem-card').forEach(btn=>{
-      btn.addEventListener('click', ()=>{
-        const p = btn.dataset.problem;
-        const isSel = selectedProblems.has(p);
-        if (isSel) { selectedProblems.delete(p); btn.classList.remove('selected'); btn.setAttribute('aria-checked','false'); }
-        else { selectedProblems.add(p); btn.classList.add('selected'); btn.setAttribute('aria-checked','true'); }
-        if (p === 'Altro' && !isSel) problemDescr.focus();
-      });
-    });
-  }
-
-  // ---- Stepper
-  function setStep(n){
-    current = n;
-    panes.forEach(p => p.classList.toggle('d-none', +p.dataset.step !== n));
-    steps.forEach(s => s.classList.toggle('active', +s.dataset.step === n));
-    smoothScrollTo(document.querySelector('.quote-wizard'));
-  }
-  function validateStep(n){
-    if (n===1){
-      if (!selectedDevice){
-        showToast({type:'danger', title:'Dispositivo', message:'Seleziona un dispositivo per continuare.'});
-        return false;
-      }
-      if (!brandSel.value){
-        showToast({type:'danger', title:'Marca', message:'Seleziona la marca.'});
-        brandSel.classList.add('is-invalid'); return false;
-      }
-      brandSel.classList.remove('is-invalid');
-      if (brandSel.value==='Altro' && !normalizeText(brandOther.value)){
-        showToast({type:'danger', title:'Altra marca', message:'Specifica la marca.'});
-        brandOther.classList.add('is-invalid'); return false;
-      }
-      brandOther.classList.remove('is-invalid');
-      return true;
+    if (!ok){
+      showToast({type:'danger', title:'Campi mancanti', message:'Compila i dati richiesti.'});
+      return;
     }
-    if (n===2){
-      if (!selectedProblems.size){
-        showToast({type:'danger', title:'Problema', message:'Seleziona almeno un problema.'});
-        return false;
+
+    const dataPayload = {
+      device: selectedDevice,
+      brand: getBrandDisplay(),
+      model: getModelDisplay(),
+      problems: getIssuesArray(),
+      description: normalizeText(problemDescr.value)
+    };
+    payload.value = JSON.stringify(dataPayload);
+
+    const fd = new FormData(wizard);
+    fd.set('mode', 'save');
+    fd.set('device', selectedDevice || '');
+    if (brandSel.value && brandSel.value !== ALT_BRAND_VALUE) fd.set('brand_id', brandSel.value);
+    fd.set('brand', getBrandDisplay());
+    fd.set('model', getModelDisplay());
+    getIssuesArray().forEach(p => fd.append('issues[]', p));
+    fd.set('description', normalizeText(problemDescr.value));
+    fd.set('source', source || 'form');
+
+    const triggerBtn = (source === 'whatsapp') ? waBtn : mailBtn;
+    const originalHTML = triggerBtn.innerHTML;
+    triggerBtn.disabled = true;
+    triggerBtn.innerHTML = `<i class="ri-loader-4-line ri-spin"></i> Invio…`;
+
+    try{
+      const res = await fetch(ENDPOINTS.process, {
+        method: 'POST',
+        headers: { 'Accept':'application/json','X-Requested-With':'XMLHttpRequest' },
+        body: fd,
+        credentials: 'same-origin'
+      });
+      const data = await res.json();
+      if (!res.ok || !data.ok){
+        showToast({type:'danger', title:'Invio', message: (data && data.message) || 'Errore durante il salvataggio.'});
+        return;
       }
-      if (!normalizeText(problemDescr.value)){
-        showToast({type:'danger', title:'Descrizione', message:'Aggiungi una breve descrizione.'});
-        problemDescr.classList.add('is-invalid'); return false;
+
+      lastSavedId = data.id || null;
+      const estimate = data.estimate || {};
+      estMin.value = Math.round(+estimate.min || 0);
+      estMax.value = Math.round(+estimate.max || 0);
+
+      // Mostra riepilogo
+      renderSummary();
+      setStep(4);
+
+      if (source === 'whatsapp'){
+        const href = waLinkFromText(buildWaMessage(estimate));
+        // Nota: alcuni browser potrebbero bloccare pop-up se non direttamente da gesture.
+        // In tal caso l'utente può cliccare di nuovo il bottone WA (ora inutile perché siamo allo step 4).
+        window.open(href, '_blank', 'noopener');
+        showToast({type:'info', title:'WhatsApp', message:'Apro la chat precompilata…', delay:2500});
+      } else {
+        showToast({type:'success', title:'Richiesta inviata', message:'Ti contatteremo entro 24 ore.'});
       }
-      problemDescr.classList.remove('is-invalid');
-      const est = computeEstimate();
-      estBadge.textContent = `€ ${est.min}–${est.max}`;
-      estMin.value = est.min; estMax.value = est.max;
-      return true;
+
+    } catch(e){
+      showToast({type:'danger', title:'Invio', message:'Errore di rete durante il salvataggio.'});
+    } finally {
+      triggerBtn.disabled = false;
+      triggerBtn.innerHTML = originalHTML;
     }
-    return true;
-  }
-  nextBtns.forEach(b=> b.addEventListener('click', ()=>{ if (!validateStep(current)) return; setStep(Math.min(3, current+1)); }));
-  prevBtns.forEach(b=> b.addEventListener('click', ()=> setStep(Math.max(1, current-1))));
-  goEmerg.forEach(b=> b.addEventListener('click', ()=>{ if (emSection) smoothScrollTo(emSection); }));
-
-  // ---- Estimator
-  function computeEstimate(){
-    const dev = selectedDevice || 'altro';
-    let [minB, maxB] = BASE_RANGE[dev] || BASE_RANGE['altro'];
-    let weightAcc = 0, count = 0;
-    selectedProblems.forEach(p=>{
-      const level = (PROBLEM_WEIGHT[dev] || {})[p] || 'mid';
-      weightAcc += WEIGHTS[level] || WEIGHTS.mid;
-      count++;
-    });
-    const avg = count ? (weightAcc / count) : WEIGHTS.mid;
-    const span = maxB - minB;
-    const shift = span * avg;
-    let min = minB + (span * 0.10);
-    let max = minB + shift + (span * 0.50);
-    const mm = clamp(min, max);
-    return {min: mm[0], max: mm[1]};
   }
 
-  // ---- WA message (gated by Privacy)
-  function buildWaMessage(){
-    const brand = brandSel.value === 'Altro' ? normalizeText(brandOther.value) : brandSel.value;
-    const model = normalizeText(modelInput.value);
-    const list  = Array.from(selectedProblems).join(', ');
-    const desc  = normalizeText(problemDescr.value);
-    const minV  = estMin.value || '—';
-    const maxV  = estMax.value || '—';
-    const lines = [
-      '🧮 *Richiesta Preventivo*',
-      `📱 *Dispositivo:* ${selectedDevice || 'n/d'} • *Marca:* ${brand || 'n/d'} • *Modello:* ${model || 'n/d'}`,
-      `🛠️ *Problema:* ${list || 'n/d'}`,
-      `📝 *Descrizione:* ${desc || 'n/d'}`,
-      `💶 *Stima indicativa:* € ${minV}–${maxV}`,
-      'Grazie!'
-    ];
-    return lines.join('\n');
-  }
+  // ---- Actions Step 3
   if (waBtn){
     waBtn.addEventListener('click', (e)=>{
       e.preventDefault();
-      ensurePrivacyThen(wizard, ()=>{
-        if (!estMin.value || !estMax.value){ const e = computeEstimate(); estMin.value=e.min; estMax.value=e.max; }
-        const href = waLinkFromText(buildWaMessage());
-        waBtn.setAttribute('href', href);
-        showToast({type:'info', title:'WhatsApp', message:'Apro la chat precompilata…', delay:2500});
-        window.open(href, '_blank', 'noopener');
-      });
+      ensurePrivacyThen(()=> saveQuoteAndProceed('whatsapp'));
+    });
+  }
+  if (mailBtn){
+    mailBtn.addEventListener('click', (e)=>{
+      e.preventDefault();
+      ensurePrivacyThen(()=> saveQuoteAndProceed('email'));
     });
   }
 
-  // ---- Submit AJAX (gated by Privacy modal)
-  wizard.addEventListener('submit', (ev)=>{
-    ev.preventDefault();
-    ensurePrivacyThen(wizard, async ()=>{
-      // validazione step 3
-      const req = [...wizard.querySelectorAll('[data-step="3"] [required]')];
-      let ok = true;
-      req.forEach(el=>{
-        const valid = (el.type==='checkbox') ? el.checked : !!(el.value||'').trim();
-        el.classList.toggle('is-invalid', !valid);
-        if (!valid) ok=false;
-      });
-      if (!ok){ showToast({type:'danger', title:'Campi mancanti', message:'Compila i dati richiesti.'}); return; }
-
-      const est = (estMin.value && estMax.value) ? {min:+estMin.value, max:+estMax.value} : computeEstimate();
-      estMin.value = est.min; estMax.value = est.max;
-
-      const dataPayload = {
-        device: selectedDevice,
-        brand: brandSel.value === 'Altro' ? normalizeText(brandOther.value) : brandSel.value,
-        model: normalizeText(modelInput.value),
-        problems: Array.from(selectedProblems),
-        description: normalizeText(problemDescr.value),
-        estimate: est
-      };
-      payload.value = JSON.stringify(dataPayload);
-
-      const original = submit.innerHTML;
-      submit.disabled = true; submit.innerHTML = `<i class="ri-loader-4-line ri-spin"></i> Invio…`;
-
-      try{
-        const fd  = new FormData(wizard);
-        const res = await fetch(wizard.action, { method: 'POST', headers: { 'Accept':'application/json','X-Requested-With':'XMLHttpRequest' }, body: fd, credentials:'same-origin' });
-        const isJson = (res.headers.get('Content-Type')||'').includes('application/json');
-        const data = isJson ? await res.json() : {ok:false, message:'Risposta non valida dal server.'};
-
-        if (res.ok && data.ok){
-          showToast({type:'success', title:'Richiesta inviata', message: data.message || 'Ti contatteremo entro 24 ore.'});
-          wizard.reset();
-          deviceCards.forEach(b=>{ b.classList.remove('selected'); b.setAttribute('aria-pressed','false'); });
-          selectedDevice = null; selectedProblems.clear(); problemGrid.innerHTML='';
-          brandSel.innerHTML = `<option value="">Seleziona il dispositivo prima…</option>`;
-          brandOtherWrap.classList.add('d-none'); brandOther.value = ''; modelInput.value='';
-          estBadge.textContent = '€ —'; estMin.value=''; estMax.value='';
-          setStep(1);
-        } else {
-          showToast({type:'danger', title:'Invio non riuscito', message: (data && data.message) || 'Riprova o usa WhatsApp.'});
-        }
-      } catch {
-        showToast({type:'danger', title:'Errore di rete', message:'Controlla la connessione e riprova.'});
-      } finally {
-        submit.disabled = false; submit.innerHTML = original;
-      }
+  // ---- Ricomincia
+  if (restartBtn){
+    restartBtn.addEventListener('click', ()=>{
+      wizard.reset();
+      selectedDevice = null;
+      selectedProblems.clear();
+      problemGrid.innerHTML = '';
+      brandSel.innerHTML = `<option value="">Seleziona il dispositivo prima…</option>`;
+      brandOtherWrap.classList.add('d-none');
+      if (brandOther) brandOther.value = '';
+      resetModelUI();
+      estMin.value = ''; estMax.value = '';
+      if (waBtn) waBtn.removeAttribute('href');
+      document.querySelectorAll('.device-card').forEach(b=>{ b.classList.remove('selected'); b.setAttribute('aria-pressed','false'); });
+      setStep(1);
     });
-  });
+  }
 
-  // Counters
+  // ---- Counters (sezione numeri)
   (function(){
     const section = document.querySelector('.section-proof'); if(!section) return;
     let started = false;

@@ -346,6 +346,17 @@ function showToast({title='', message='', type='info', delay=4500} = {}){
   // rimuovi dal DOM quando chiuso
   el.addEventListener('hidden.bs.toast', ()=> el.remove());
 }
+
+    function getHeaderOffset() {
+        const hdr = document.querySelector('.site-header, header.sticky-top, header.navbar, .main-header');
+        return hdr ? (hdr.getBoundingClientRect().height + 16) : 96;
+    }
+
+    function smoothScrollTo(el) {
+        if (!el) return;
+        const y = el.getBoundingClientRect().top + window.pageYOffset - getHeaderOffset();
+        window.scrollTo({ top: y, behavior: 'smooth' });
+    }
 </script>
     <!-- AOS JS -->
     <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
