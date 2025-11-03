@@ -35,6 +35,7 @@ require_once '../config/config.php';
                             <li class="nav-item"><a href="issues.php" class="nav-link">Problemi</a></li>
                             <li class="nav-item"><a href="price_rules.php" class="nav-link">Regole di Prezzo</a></li>
                             <li class="nav-item"><a href="quotes.php" class="nav-link">Preventivi</a></li>
+                            <li class="nav-item"><a href="users.php" class="nav-link">Utenti</a></li>
                             <li class="nav-item"><a href="logout.php" class="nav-link">Logout</a></li>
                         </ul>
                     </nav>
