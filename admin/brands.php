@@ -1,102 +1,177 @@
 <?php
 include_once 'includes/header.php';
-
-// Logica per gestire le operazioni CRUD
-$action = $_GET['action'] ?? 'list';
-$id = $_GET['id'] ?? null;
-
-switch ($action) {
-    case 'add':
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $device_id = $_POST['device_id'];
-            $name = $_POST['name'];
-            $is_active = isset($_POST['is_active']) ? 1 : 0;
-            $stmt = $pdo->prepare('INSERT INTO brands (device_id, name, is_active) VALUES (?, ?, ?)');
-            $stmt->execute([$device_id, $name, $is_active]);
-            header('Location: brands.php');
-            exit;
-        }
-        break;
-    case 'edit':
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $device_id = $_POST['device_id'];
-            $name = $_POST['name'];
-            $is_active = isset($_POST['is_active']) ? 1 : 0;
-            $stmt = $pdo->prepare('UPDATE brands SET device_id = ?, name = ?, is_active = ? WHERE id = ?');
-            $stmt->execute([$device_id, $name, $is_active, $id]);
-            header('Location: brands.php');
-            exit;
-        }
-        $stmt = $pdo->prepare('SELECT * FROM brands WHERE id = ?');
-        $stmt->execute([$id]);
-        $brand = $stmt->fetch();
-        break;
-    case 'delete':
-        $stmt = $pdo->prepare('DELETE FROM brands WHERE id = ?');
-        $stmt->execute([$id]);
-        header('Location: brands.php');
-        exit;
-    default:
-        $stmt = $pdo->query('SELECT b.*, d.name as device_name FROM brands b JOIN devices d ON b.device_id = d.id ORDER BY d.name, b.name');
-        $brands = $stmt->fetchAll();
-        break;
-}
-$devices_stmt = $pdo->query('SELECT * FROM devices ORDER BY name ASC');
+$stmt = $pdo->query('SELECT b.*, d.name as device_name FROM brands b JOIN devices d ON b.device_id = d.id ORDER BY d.sort_order, b.name');
+$brands = $stmt->fetchAll();
+$devices_stmt = $pdo->query('SELECT * FROM devices ORDER BY sort_order ASC');
 $devices = $devices_stmt->fetchAll();
 ?>
 
-<div class="section-header">
+<div class="d-flex justify-content-between align-items-center mb-4">
     <h2 class="section-title">Gestione Marchi</h2>
+    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#brandModal" id="addBrandBtn">
+        <i class="fas fa-plus"></i> Aggiungi Marchio
+    </button>
 </div>
 
-<?php if ($action === 'list'): ?>
-    <a href="?action=add" class="btn btn-primary mb-4">Aggiungi Marchio</a>
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Nome</th>
-                <th>Dispositivo</th>
-                <th>Attivo</th>
-                <th>Azioni</th>
+<table class="table table-striped table-bordered">
+    <thead class="table-dark">
+        <tr>
+            <th>Nome</th>
+            <th>Dispositivo</th>
+            <th class="text-center">Attivo</th>
+            <th class="text-center">Azioni</th>
+        </tr>
+    </thead>
+    <tbody id="brandsTableBody">
+        <?php foreach ($brands as $brand): ?>
+            <tr id="brand-<?php echo $brand['id']; ?>">
+                <td><?php echo htmlspecialchars($brand['name'], ENT_QUOTES, 'UTF-8'); ?></td>
+                <td><?php echo htmlspecialchars($brand['device_name'], ENT_QUOTES, 'UTF-8'); ?></td>
+                <td class="text-center"><?php echo $brand['is_active'] ? '<i class="fas fa-check-circle text-success"></i>' : '<i class="fas fa-times-circle text-danger"></i>'; ?></td>
+                <td class="text-center">
+                    <button class="btn btn-sm btn-outline-primary edit-btn" data-id="<?php echo $brand['id']; ?>" data-bs-toggle="tooltip" title="Modifica">
+                        <i class="fas fa-edit"></i>
+                    </button>
+                    <button class="btn btn-sm btn-danger delete-btn" data-id="<?php echo $brand['id']; ?>" data-bs-toggle="tooltip" title="Elimina">
+                        <i class="fas fa-trash-alt"></i>
+                    </button>
+                </td>
             </tr>
-        </thead>
-        <tbody>
-            <?php foreach ($brands as $brand): ?>
-                <tr>
-                    <td><?php echo htmlspecialchars($brand['name']); ?></td>
-                    <td><?php echo htmlspecialchars($brand['device_name']); ?></td>
-                    <td><?php echo $brand['is_active'] ? 'Sì' : 'No'; ?></td>
-                    <td>
-                        <a href="?action=edit&id=<?php echo $brand['id']; ?>" class="btn btn-sm btn-outline-orange">Modifica</a>
-                        <a href="?action=delete&id=<?php echo $brand['id']; ?>" class="btn btn-sm btn-danger" onclick="return confirm('Sei sicuro?')">Elimina</a>
-                    </td>
-                </tr>
-            <?php endforeach; ?>
-        </tbody>
-    </table>
-<?php elseif ($action === 'add' || $action === 'edit'): ?>
-    <form method="POST">
-        <div class="form-group">
-            <label for="name" class="form-label">Nome</label>
-            <input type="text" class="form-control" id="name" name="name" value="<?php echo htmlspecialchars($brand['name'] ?? ''); ?>" required>
+        <?php endforeach; ?>
+    </tbody>
+</table>
+
+<!-- Modale per Aggiungi/Modifica Marchio -->
+<div class="modal fade" id="brandModal" tabindex="-1" aria-labelledby="brandModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="brandModalLabel">Aggiungi Marchio</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="brandForm">
+                    <input type="hidden" id="brandId" name="id">
+                    <div class="mb-3">
+                        <label for="name" class="form-label">Nome</label>
+                        <input type="text" class="form-control" id="name" name="name" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="device_id" class="form-label">Dispositivo</label>
+                        <select class="form-select" id="device_id" name="device_id" required>
+                            <?php foreach ($devices as $device): ?>
+                                <option value="<?php echo $device['id']; ?>"><?php echo htmlspecialchars($device['name'], ENT_QUOTES, 'UTF-8'); ?></option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+                    <div class="form-check mb-3">
+                        <input class="form-check-input" type="checkbox" id="is_active" name="is_active" value="1" checked>
+                        <label class="form-check-label" for="is_active">Attivo</label>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annulla</button>
+                <button type="button" class="btn btn-primary" id="saveBrandBtn">Salva</button>
+            </div>
         </div>
-        <div class="form-group">
-            <label for="device_id" class="form-label">Dispositivo</label>
-            <select class="form-control" id="device_id" name="device_id" required>
-                <?php foreach ($devices as $device): ?>
-                    <option value="<?php echo $device['id']; ?>" <?php echo isset($brand) && $brand['device_id'] == $device['id'] ? 'selected' : ''; ?>>
-                        <?php echo htmlspecialchars($device['name']); ?>
-                    </option>
-                <?php endforeach; ?>
-            </select>
-        </div>
-        <div class="form-group form-check">
-            <input type="checkbox" class="form-check-input" id="is_active" name="is_active" value="1" <?php echo (isset($brand) && $brand['is_active']) || !isset($brand) ? 'checked' : ''; ?>>
-            <label class="form-check-label" for="is_active">Attivo</label>
-        </div>
-        <button type="submit" class="btn btn-primary"><?php echo $action === 'add' ? 'Aggiungi' : 'Salva Modifiche'; ?></button>
-        <a href="brands.php" class="btn btn-secondary">Annulla</a>
-    </form>
-<?php endif; ?>
+    </div>
+</div>
 
 <?php include_once 'includes/footer.php'; ?>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const brandModal = new bootstrap.Modal(document.getElementById('brandModal'));
+    const modalTitle = document.getElementById('brandModalLabel');
+    const brandForm = document.getElementById('brandForm');
+    const brandIdInput = document.getElementById('brandId');
+    const nameInput = document.getElementById('name');
+    const deviceIdSelect = document.getElementById('device_id');
+    const isActiveCheckbox = document.getElementById('is_active');
+
+    function resetForm() {
+        brandForm.reset();
+        brandIdInput.value = '';
+        isActiveCheckbox.checked = true;
+        modalTitle.textContent = 'Aggiungi Marchio';
+    }
+
+    document.getElementById('addBrandBtn').addEventListener('click', () => {
+        resetForm();
+    });
+
+    document.getElementById('brandsTableBody').addEventListener('click', function(e) {
+        const editBtn = e.target.closest('.edit-btn');
+        if (editBtn) {
+            const id = editBtn.dataset.id;
+            fetch(`ajax_actions/brand_actions.php?action=get&id=${id}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'success') {
+                        brandIdInput.value = data.brand.id;
+                        nameInput.value = data.brand.name;
+                        deviceIdSelect.value = data.brand.device_id;
+                        isActiveCheckbox.checked = !!parseInt(data.brand.is_active);
+                        modalTitle.textContent = 'Modifica Marchio';
+                        brandModal.show();
+                    } else {
+                        alert('Errore nel recupero dei dati del marchio.');
+                    }
+                });
+        }
+    });
+
+    document.getElementById('saveBrandBtn').addEventListener('click', function() {
+        const formData = new FormData(brandForm);
+        formData.append('action', brandIdInput.value ? 'edit' : 'add');
+        if (!isActiveCheckbox.checked) {
+            formData.append('is_active', '0');
+        }
+
+        fetch('ajax_actions/brand_actions.php', {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 'success') {
+                brandModal.hide();
+                location.reload();
+            } else {
+                alert(data.message || 'Si è verificato un errore.');
+            }
+        });
+    });
+
+    document.getElementById('brandsTableBody').addEventListener('click', function(e) {
+        const deleteBtn = e.target.closest('.delete-btn');
+        if (deleteBtn) {
+            const id = deleteBtn.dataset.id;
+            if (confirm('Sei sicuro di voler eliminare questo marchio?')) {
+                const formData = new FormData();
+                formData.append('action', 'delete');
+                formData.append('id', id);
+
+                fetch('ajax_actions/brand_actions.php', {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'success') {
+                        document.getElementById(`brand-${id}`).remove();
+                    } else {
+                        alert(data.message || 'Si è verificato un errore.');
+                    }
+                });
+            }
+        }
+    });
+
+    const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+    tooltipTriggerList.map(function (tooltipTriggerEl) {
+        return new bootstrap.Tooltip(tooltipTriggerEl);
+    });
+});
+</script>

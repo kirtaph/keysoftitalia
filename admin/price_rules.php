@@ -1,219 +1,265 @@
 <?php
 include_once 'includes/header.php';
-
-// Logica per gestire le operazioni CRUD
-$action = $_GET['action'] ?? 'list';
-$id = $_GET['id'] ?? null;
-
-switch ($action) {
-    case 'add':
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $device_id = $_POST['device_id'];
-            $brand_id = $_POST['brand_id'] ?: null;
-            $model_id = $_POST['model_id'] ?: null;
-            $issue_id = $_POST['issue_id'];
-            $min_price = $_POST['min_price'];
-            $max_price = $_POST['max_price'] ?: null;
-            $notes = $_POST['notes'];
-            $is_active = isset($_POST['is_active']) ? 1 : 0;
-            $stmt = $pdo->prepare('INSERT INTO price_rules (device_id, brand_id, model_id, issue_id, min_price, max_price, notes, is_active) VALUES (?, ?, ?, ?, ?, ?, ?, ?)');
-            $stmt->execute([$device_id, $brand_id, $model_id, $issue_id, $min_price, $max_price, $notes, $is_active]);
-            header('Location: price_rules.php');
-            exit;
-        }
-        break;
-    case 'edit':
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $device_id = $_POST['device_id'];
-            $brand_id = $_POST['brand_id'] ?: null;
-            $model_id = $_POST['model_id'] ?: null;
-            $issue_id = $_POST['issue_id'];
-            $min_price = $_POST['min_price'];
-            $max_price = $_POST['max_price'] ?: null;
-            $notes = $_POST['notes'];
-            $is_active = isset($_POST['is_active']) ? 1 : 0;
-            $stmt = $pdo->prepare('UPDATE price_rules SET device_id = ?, brand_id = ?, model_id = ?, issue_id = ?, min_price = ?, max_price = ?, notes = ?, is_active = ? WHERE id = ?');
-            $stmt->execute([$device_id, $brand_id, $model_id, $issue_id, $min_price, $max_price, $notes, $is_active, $id]);
-            header('Location: price_rules.php');
-            exit;
-        }
-        $stmt = $pdo->prepare('SELECT * FROM price_rules WHERE id = ?');
-        $stmt->execute([$id]);
-        $rule = $stmt->fetch();
-        break;
-    case 'delete':
-        $stmt = $pdo->prepare('DELETE FROM price_rules WHERE id = ?');
-        $stmt->execute([$id]);
-        header('Location: price_rules.php');
-        exit;
-    default:
-        $stmt = $pdo->query('SELECT pr.*, d.name as device_name, b.name as brand_name, m.name as model_name, i.label as issue_label FROM price_rules pr JOIN devices d ON pr.device_id = d.id LEFT JOIN brands b ON pr.brand_id = b.id LEFT JOIN models m ON pr.model_id = m.id JOIN issues i ON pr.issue_id = i.id ORDER BY pr.id DESC');
-        $rules = $stmt->fetchAll();
-        break;
-}
-$devices_stmt = $pdo->query('SELECT * FROM devices ORDER BY name ASC');
+$stmt = $pdo->query('SELECT pr.*, d.name as device_name, b.name as brand_name, m.name as model_name, i.label as issue_label
+                     FROM price_rules pr
+                     JOIN devices d ON pr.device_id = d.id
+                     LEFT JOIN brands b ON pr.brand_id = b.id
+                     LEFT JOIN models m ON pr.model_id = m.id
+                     JOIN issues i ON pr.issue_id = i.id
+                     ORDER BY d.sort_order, b.name, m.name, i.sort_order');
+$rules = $stmt->fetchAll();
+$devices_stmt = $pdo->query('SELECT * FROM devices ORDER BY sort_order ASC');
 $devices = $devices_stmt->fetchAll();
 ?>
 
-<div class="section-header">
+<div class="d-flex justify-content-between align-items-center mb-4">
     <h2 class="section-title">Gestione Regole di Prezzo</h2>
+    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#priceRuleModal" id="addPriceRuleBtn">
+        <i class="fas fa-plus"></i> Aggiungi Regola
+    </button>
 </div>
 
-<?php if ($action === 'list'): ?>
-    <a href="?action=add" class="btn btn-primary mb-4">Aggiungi Regola di Prezzo</a>
-    <div class="table-responsive">
-        <table class="table">
-            <thead>
-                <tr>
-                    <th>Dispositivo</th>
-                    <th>Marchio</th>
-                    <th>Modello</th>
-                    <th>Problema</th>
-                    <th>Prezzo Min</th>
-                    <th>Prezzo Max</th>
-                    <th>Note</th>
-                    <th>Attivo</th>
-                    <th>Azioni</th>
+<div class="table-responsive">
+    <table class="table table-striped table-bordered">
+        <thead class="table-dark">
+            <tr>
+                <th>Problema</th>
+                <th>Dispositivo</th>
+                <th>Marchio</th>
+                <th>Modello</th>
+                <th>Prezzo Min</th>
+                <th>Prezzo Max</th>
+                <th class="text-center">Attivo</th>
+                <th class="text-center">Azioni</th>
+            </tr>
+        </thead>
+        <tbody id="priceRulesTableBody">
+            <?php foreach ($rules as $rule): ?>
+                <tr id="rule-<?php echo $rule['id']; ?>">
+                    <td><?php echo htmlspecialchars($rule['issue_label'], ENT_QUOTES, 'UTF-8'); ?></td>
+                    <td><?php echo htmlspecialchars($rule['device_name'], ENT_QUOTES, 'UTF-8'); ?></td>
+                    <td><?php echo htmlspecialchars($rule['brand_name'] ?? 'Tutti', ENT_QUOTES, 'UTF-8'); ?></td>
+                    <td><?php echo htmlspecialchars($rule['model_name'] ?? 'Tutti', ENT_QUOTES, 'UTF-8'); ?></td>
+                    <td>€ <?php echo htmlspecialchars(number_format($rule['min_price'], 2, ',', '.'), ENT_QUOTES, 'UTF-8'); ?></td>
+                    <td><?php echo $rule['max_price'] ? '€ ' . htmlspecialchars(number_format($rule['max_price'], 2, ',', '.'), ENT_QUOTES, 'UTF-8') : ''; ?></td>
+                    <td class="text-center"><?php echo $rule['is_active'] ? '<i class="fas fa-check-circle text-success"></i>' : '<i class="fas fa-times-circle text-danger"></i>'; ?></td>
+                    <td class="text-center">
+                        <button class="btn btn-sm btn-outline-primary edit-btn" data-id="<?php echo $rule['id']; ?>" data-bs-toggle="tooltip" title="Modifica">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button class="btn btn-sm btn-danger delete-btn" data-id="<?php echo $rule['id']; ?>" data-bs-toggle="tooltip" title="Elimina">
+                            <i class="fas fa-trash-alt"></i>
+                        </button>
+                    </td>
                 </tr>
-            </thead>
-            <tbody>
-                <?php foreach ($rules as $rule): ?>
-                    <tr>
-                        <td><?php echo htmlspecialchars($rule['device_name']); ?></td>
-                        <td><?php echo htmlspecialchars($rule['brand_name'] ?? 'N/A'); ?></td>
-                        <td><?php echo htmlspecialchars($rule['model_name'] ?? 'N/A'); ?></td>
-                        <td><?php echo htmlspecialchars($rule['issue_label']); ?></td>
-                        <td><?php echo htmlspecialchars($rule['min_price']); ?></td>
-                        <td><?php echo htmlspecialchars($rule['max_price']); ?></td>
-                        <td><?php echo htmlspecialchars($rule['notes']); ?></td>
-                        <td><?php echo $rule['is_active'] ? 'Sì' : 'No'; ?></td>
-                        <td>
-                            <a href="?action=edit&id=<?php echo $rule['id']; ?>" class="btn btn-sm btn-outline-orange">Modifica</a>
-                            <a href="?action=delete&id=<?php echo $rule['id']; ?>" class="btn btn-sm btn-danger" onclick="return confirm('Sei sicuro?')">Elimina</a>
-                        </td>
-                    </tr>
-                <?php endforeach; ?>
-            </tbody>
-        </table>
-    </div>
-<?php elseif ($action === 'add' || $action === 'edit'): ?>
-    <form method="POST">
-        <div class="row">
-            <div class="col-md-6">
-                <div class="form-group">
-                    <label for="device_id" class="form-label">Dispositivo</label>
-                    <select class="form-control" id="device_id" name="device_id" required>
-                        <option value="">Seleziona un dispositivo</option>
-                        <?php foreach ($devices as $device): ?>
-                            <option value="<?php echo $device['id']; ?>" <?php echo isset($rule) && $rule['device_id'] == $device['id'] ? 'selected' : ''; ?>>
-                                <?php echo htmlspecialchars($device['name']); ?>
-                            </option>
-                        <?php endforeach; ?>
-                    </select>
-                </div>
+            <?php endforeach; ?>
+        </tbody>
+    </table>
+</div>
+
+<!-- Modale per Aggiungi/Modifica Regola di Prezzo -->
+<div class="modal fade" id="priceRuleModal" tabindex="-1" aria-labelledby="priceRuleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="priceRuleModalLabel">Aggiungi Regola di Prezzo</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <div class="col-md-6">
-                <div class="form-group">
-                    <label for="brand_id" class="form-label">Marchio (opzionale)</label>
-                    <select class="form-control" id="brand_id" name="brand_id">
-                        <!-- Caricato dinamicamente con JS -->
-                    </select>
-                </div>
+            <div class="modal-body">
+                <form id="priceRuleForm">
+                    <input type="hidden" id="priceRuleId" name="id">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="device_id_modal" class="form-label">Dispositivo</label>
+                            <select class="form-select" id="device_id_modal" name="device_id" required>
+                                <option value="">Seleziona Dispositivo</option>
+                                <?php foreach ($devices as $device): ?>
+                                    <option value="<?php echo $device['id']; ?>"><?php echo htmlspecialchars($device['name'], ENT_QUOTES, 'UTF-8'); ?></option>
+                                <?php endforeach; ?>
+                            </select>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="issue_id_modal" class="form-label">Problema</label>
+                            <select class="form-select" id="issue_id_modal" name="issue_id" required>
+                                <option value="">Seleziona prima un dispositivo</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="brand_id_modal" class="form-label">Marchio (Opzionale)</label>
+                            <select class="form-select" id="brand_id_modal" name="brand_id">
+                                <option value="">Tutti</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="model_id_modal" class="form-label">Modello (Opzionale)</label>
+                            <select class="form-select" id="model_id_modal" name="model_id">
+                                <option value="">Tutti</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="min_price_modal" class="form-label">Prezzo Minimo</label>
+                            <input type="number" step="0.01" class="form-control" id="min_price_modal" name="min_price" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="max_price_modal" class="form-label">Prezzo Massimo (Opzionale)</label>
+                            <input type="number" step="0.01" class="form-control" id="max_price_modal" name="max_price">
+                        </div>
+                        <div class="col-12 mb-3">
+                            <label for="notes_modal" class="form-label">Note</label>
+                            <textarea class="form-control" id="notes_modal" name="notes" rows="2"></textarea>
+                        </div>
+                        <div class="col-12">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="is_active_modal" name="is_active" value="1" checked>
+                                <label class="form-check-label" for="is_active_modal">Attivo</label>
+                            </div>
+                        </div>
+                    </div>
+                </form>
             </div>
-            <div class="col-md-6">
-                <div class="form-group">
-                    <label for="model_id" class="form-label">Modello (opzionale)</label>
-                    <select class="form-control" id="model_id" name="model_id">
-                        <!-- Caricato dinamicamente con JS -->
-                    </select>
-                </div>
-            </div>
-            <div class="col-md-6">
-                <div class="form-group">
-                    <label for="issue_id" class="form-label">Problema</label>
-                    <select class="form-control" id="issue_id" name="issue_id" required>
-                        <!-- Caricato dinamicamente con JS -->
-                    </select>
-                </div>
-            </div>
-            <div class="col-md-6">
-                <div class="form-group">
-                    <label for="min_price" class="form-label">Prezzo Minimo</label>
-                    <input type="number" step="0.01" class="form-control" id="min_price" name="min_price" value="<?php echo htmlspecialchars($rule['min_price'] ?? ''); ?>" required>
-                </div>
-            </div>
-            <div class="col-md-6">
-                <div class="form-group">
-                    <label for="max_price" class="form-label">Prezzo Massimo (opzionale)</label>
-                    <input type="number" step="0.01" class="form-control" id="max_price" name="max_price" value="<?php echo htmlspecialchars($rule['max_price'] ?? ''); ?>">
-                </div>
-            </div>
-            <div class="col-md-12">
-                <div class="form-group">
-                    <label for="notes" class="form-label">Note</label>
-                    <input type="text" class="form-control" id="notes" name="notes" value="<?php echo htmlspecialchars($rule['notes'] ?? ''); ?>">
-                </div>
-            </div>
-            <div class="col-md-12">
-                <div class="form-group form-check">
-                    <input type="checkbox" class="form-check-input" id="is_active" name="is_active" value="1" <?php echo (isset($rule) && $rule['is_active']) || !isset($rule) ? 'checked' : ''; ?>>
-                    <label class="form-check-label" for="is_active">Attivo</label>
-                </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annulla</button>
+                <button type="button" class="btn btn-primary" id="savePriceRuleBtn">Salva</button>
             </div>
         </div>
-        <button type="submit" class="btn btn-primary"><?php echo $action === 'add' ? 'Aggiungi' : 'Salva Modifiche'; ?></button>
-        <a href="price_rules.php" class="btn btn-secondary">Annulla</a>
-    </form>
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const deviceSelect = document.getElementById('device_id');
-            const brandSelect = document.getElementById('brand_id');
-            const modelSelect = document.getElementById('model_id');
-            const issueSelect = document.getElementById('issue_id');
-
-            const selectedBrandId = '<?php echo $rule['brand_id'] ?? ''; ?>';
-            const selectedModelId = '<?php echo $rule['model_id'] ?? ''; ?>';
-            const selectedIssueId = '<?php echo $rule['issue_id'] ?? ''; ?>';
-
-            function loadOptions(url, selectElement, selectedValue = '', dataKey = null) {
-                fetch(url)
-                    .then(response => response.json())
-                    .then(data => {
-                        selectElement.innerHTML = `<option value="">${selectElement.id === 'brand_id' || selectElement.id === 'model_id' ? 'Tutti' : 'Seleziona...'}</option>`;
-                        let items = dataKey ? data[dataKey] : data;
-                        items.forEach(item => {
-                            const option = document.createElement('option');
-                            option.value = item.id;
-                            option.textContent = item.name || item.label;
-                            if (item.id == selectedValue) {
-                                option.selected = true;
-                            }
-                            selectElement.appendChild(option);
-                        });
-                    });
-            }
-
-            deviceSelect.addEventListener('change', function() {
-                const deviceSlug = this.options[this.selectedIndex].text.toLowerCase();
-                loadOptions(`../assets/ajax/get_brands.php?device=${deviceSlug}`, brandSelect, selectedBrandId, 'brands');
-                loadOptions(`../assets/ajax/get_issues.php?device=${deviceSlug}`, issueSelect, selectedIssueId, 'issues');
-                modelSelect.innerHTML = '<option value="">Tutti</option>';
-            });
-
-            brandSelect.addEventListener('change', function() {
-                loadOptions(`../assets/ajax/get_models.php?brand_id=${this.value}`, modelSelect, selectedModelId, 'models');
-            });
-
-            if (deviceSelect.value) {
-                const deviceSlug = deviceSelect.options[deviceSelect.selectedIndex].text.toLowerCase();
-                loadOptions(`../assets/ajax/get_brands.php?device=${deviceSlug}`, brandSelect, selectedBrandId, 'brands');
-                loadOptions(`../assets/ajax/get_issues.php?device=${deviceSlug}`, issueSelect, selectedIssueId, 'issues');
-                if(selectedBrandId) {
-                    loadOptions(`../assets/ajax/get_models.php?brand_id=${selectedBrandId}`, modelSelect, selectedModelId, 'models');
-                }
-            }
-        });
-    </script>
-<?php endif; ?>
+    </div>
+</div>
 
 <?php include_once 'includes/footer.php'; ?>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const priceRuleModal = new bootstrap.Modal(document.getElementById('priceRuleModal'));
+    const modalTitle = document.getElementById('priceRuleModalLabel');
+    const priceRuleForm = document.getElementById('priceRuleForm');
+    const priceRuleIdInput = document.getElementById('priceRuleId');
+    const deviceSelect = document.getElementById('device_id_modal');
+    const brandSelect = document.getElementById('brand_id_modal');
+    const modelSelect = document.getElementById('model_id_modal');
+    const issueSelect = document.getElementById('issue_id_modal');
+    const isActiveCheckbox = document.getElementById('is_active_modal');
+
+    function resetForm() {
+        priceRuleForm.reset();
+        priceRuleIdInput.value = '';
+        brandSelect.innerHTML = '<option value="">Tutti</option>';
+        modelSelect.innerHTML = '<option value="">Tutti</option>';
+        issueSelect.innerHTML = '<option value="">Seleziona prima un dispositivo</option>';
+        isActiveCheckbox.checked = true;
+        modalTitle.textContent = 'Aggiungi Regola di Prezzo';
+    }
+
+    function loadSelectOptions(url, selectElement, placeholder, selectedValue = null, isOptional = false) {
+        const placeholderText = isOptional ? `Tutti / ${placeholder}` : placeholder;
+        selectElement.innerHTML = `<option value="">${placeholderText}</option>`;
+        if (!url) return;
+
+        fetch(url)
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    let items = data.brands || data.models || data.issues;
+                    items.forEach(item => {
+                        const option = new Option(item.name || item.label, item.id);
+                        selectElement.add(option);
+                    });
+                    if (selectedValue) {
+                        selectElement.value = selectedValue;
+                    }
+                }
+            });
+    }
+
+    deviceSelect.addEventListener('change', function() {
+        const deviceId = this.value;
+        loadSelectOptions(deviceId ? `ajax_actions/brand_actions.php?action=get_by_device&device_id=${deviceId}` : null, brandSelect, 'Marchio', null, true);
+        loadSelectOptions(deviceId ? `ajax_actions/issue_actions.php?action=get_by_device&device_id=${deviceId}` : null, issueSelect, 'Seleziona Problema');
+        modelSelect.innerHTML = '<option value="">Tutti</option>';
+    });
+
+    brandSelect.addEventListener('change', function() {
+        const brandId = this.value;
+        loadSelectOptions(brandId ? `ajax_actions/model_actions.php?action=get_by_brand&brand_id=${brandId}` : null, modelSelect, 'Modello', null, true);
+    });
+
+    document.getElementById('addPriceRuleBtn').addEventListener('click', () => resetForm());
+
+    document.getElementById('priceRulesTableBody').addEventListener('click', function(e) {
+        const editBtn = e.target.closest('.edit-btn');
+        if (editBtn) {
+            const id = editBtn.dataset.id;
+            fetch(`ajax_actions/price_rule_actions.php?action=get&id=${id}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'success') {
+                        resetForm();
+                        const rule = data.rule;
+                        priceRuleIdInput.value = rule.id;
+                        deviceSelect.value = rule.device_id;
+
+                        // Carica e seleziona le opzioni in catena
+                        const deviceId = rule.device_id;
+                        loadSelectOptions(deviceId ? `ajax_actions/issue_actions.php?action=get_by_device&device_id=${deviceId}` : null, issueSelect, 'Seleziona Problema', rule.issue_id);
+                        loadSelectOptions(deviceId ? `ajax_actions/brand_actions.php?action=get_by_device&device_id=${deviceId}` : null, brandSelect, 'Marchio', rule.brand_id, true);
+                        if (rule.brand_id) {
+                            loadSelectOptions(`ajax_actions/model_actions.php?action=get_by_brand&brand_id=${rule.brand_id}`, modelSelect, 'Modello', rule.model_id, true);
+                        }
+
+                        document.getElementById('min_price_modal').value = rule.min_price;
+                        document.getElementById('max_price_modal').value = rule.max_price;
+                        document.getElementById('notes_modal').value = rule.notes;
+                        isActiveCheckbox.checked = !!parseInt(rule.is_active);
+                        modalTitle.textContent = 'Modifica Regola di Prezzo';
+                        priceRuleModal.show();
+                    } else {
+                        alert('Errore nel recupero dei dati.');
+                    }
+                });
+        }
+    });
+
+    document.getElementById('savePriceRuleBtn').addEventListener('click', function() {
+        const formData = new FormData(priceRuleForm);
+        formData.append('action', priceRuleIdInput.value ? 'edit' : 'add');
+        if (!isActiveCheckbox.checked) {
+            formData.set('is_active', '0');
+        }
+
+        fetch('ajax_actions/price_rule_actions.php', { method: 'POST', body: formData })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    priceRuleModal.hide();
+                    location.reload();
+                } else {
+                    alert(data.message || 'Si è verificato un errore.');
+                }
+            });
+    });
+
+    document.getElementById('priceRulesTableBody').addEventListener('click', function(e) {
+        const deleteBtn = e.target.closest('.delete-btn');
+        if (deleteBtn) {
+            if (confirm('Sei sicuro di voler eliminare questa regola?')) {
+                const id = deleteBtn.dataset.id;
+                const formData = new FormData();
+                formData.append('action', 'delete');
+                formData.append('id', id);
+
+                fetch('ajax_actions/price_rule_actions.php', { method: 'POST', body: formData })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.status === 'success') {
+                            document.getElementById(`rule-${id}`).remove();
+                        } else {
+                            alert(data.message || 'Si è verificato un errore.');
+                        }
+                    });
+            }
+        }
+    });
+
+    const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+    tooltipTriggerList.map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl));
+});
+</script>

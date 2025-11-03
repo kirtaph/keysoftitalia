@@ -1,23 +1,15 @@
 <?php
 declare(strict_types=1);
+ini_set('display_errors', '0');
+ini_set('log_errors', '1');
+ini_set('error_log', '/tmp/php_errors.log');
 session_start();
 require_once '../config/config.php';
 
 header('Content-Type: application/json');
 
 // --- PDO ready ---
-try {
-    if (!isset($pdo) || !$pdo instanceof PDO) {
-        // Assumo che in config.php hai $db_dsn, $db_user, $db_pass
-        $pdo = new PDO($db_dsn, $db_user, $db_pass, [
-            PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
-            PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
-        ]);
-    } else {
-        // assicuriamoci della fetch mode
-        $pdo->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
-    }
-} catch (PDOException $e) {
+if (!isset($pdo) || !$pdo instanceof PDO) {
     echo json_encode(['success' => false, 'message' => 'Errore di connessione al database.']);
     exit;
 }
@@ -39,21 +31,25 @@ if ($username === '' || $password === '') {
 
 try {
     // Attenzione: cambia i nomi colonna se nel tuo DB sono diversi
+    error_log("Attempting to log in user: " . $username);
     $stmt = $pdo->prepare('SELECT id, username, password FROM users WHERE username = :u LIMIT 1');
     $stmt->execute([':u' => $username]);
     $user = $stmt->fetch();
 
     if (!$user) {
+        error_log("User not found: " . $username);
         echo json_encode(['success' => false, 'message' => 'Username o password non validi.']);
         exit;
     }
 
     $stored = (string)$user['password'];
     $verified = false;
+    error_log("Stored hash: " . $stored);
 
     // 1) Hash moderni (bcrypt/argon2)
     if (preg_match('/^\$2y\$/', $stored) || preg_match('/^\$argon2(id|i)\$/', $stored)) {
         $verified = password_verify($password, $stored);
+        error_log("Password verification result: " . ($verified ? 'true' : 'false'));
 
         // Rehash se serve (es. cost diverso o migrazione algoritmo)
         if ($verified && password_needs_rehash($stored, PASSWORD_BCRYPT, ['cost' => 12])) {
