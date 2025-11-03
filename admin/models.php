@@ -121,11 +121,12 @@ $devices = $devices_stmt->fetchAll();
             const selectedBrandId = '<?php echo $model['brand_id'] ?? ''; ?>';
 
             function loadBrands(deviceId, selectedBrand = '') {
-                fetch(`ajax_get_brands.php?device_id=${deviceId}`)
+                const deviceSlug = deviceSelect.options[deviceSelect.selectedIndex].text.toLowerCase();
+                fetch(`../assets/ajax/get_brands.php?device=${deviceSlug}`)
                     .then(response => response.json())
                     .then(data => {
                         brandSelect.innerHTML = '<option value="">Seleziona un marchio</option>';
-                        data.forEach(brand => {
+                        data.brands.forEach(brand => {
                             const option = document.createElement('option');
                             option.value = brand.id;
                             option.textContent = brand.name;

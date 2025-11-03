@@ -175,12 +175,13 @@ $devices = $devices_stmt->fetchAll();
             const selectedModelId = '<?php echo $rule['model_id'] ?? ''; ?>';
             const selectedIssueId = '<?php echo $rule['issue_id'] ?? ''; ?>';
 
-            function loadOptions(url, selectElement, selectedValue = '') {
+            function loadOptions(url, selectElement, selectedValue = '', dataKey = null) {
                 fetch(url)
                     .then(response => response.json())
                     .then(data => {
                         selectElement.innerHTML = `<option value="">${selectElement.id === 'brand_id' || selectElement.id === 'model_id' ? 'Tutti' : 'Seleziona...'}</option>`;
-                        data.forEach(item => {
+                        let items = dataKey ? data[dataKey] : data;
+                        items.forEach(item => {
                             const option = document.createElement('option');
                             option.value = item.id;
                             option.textContent = item.name || item.label;
@@ -193,20 +194,22 @@ $devices = $devices_stmt->fetchAll();
             }
 
             deviceSelect.addEventListener('change', function() {
-                loadOptions(`ajax_get_brands.php?device_id=${this.value}`, brandSelect, selectedBrandId);
-                loadOptions(`ajax_get_issues.php?device_id=${this.value}`, issueSelect, selectedIssueId);
+                const deviceSlug = this.options[this.selectedIndex].text.toLowerCase();
+                loadOptions(`../assets/ajax/get_brands.php?device=${deviceSlug}`, brandSelect, selectedBrandId, 'brands');
+                loadOptions(`../assets/ajax/get_issues.php?device=${deviceSlug}`, issueSelect, selectedIssueId, 'issues');
                 modelSelect.innerHTML = '<option value="">Tutti</option>';
             });
 
             brandSelect.addEventListener('change', function() {
-                loadOptions(`ajax_get_models.php?brand_id=${this.value}`, modelSelect, selectedModelId);
+                loadOptions(`../assets/ajax/get_models.php?brand_id=${this.value}`, modelSelect, selectedModelId, 'models');
             });
 
             if (deviceSelect.value) {
-                loadOptions(`ajax_get_brands.php?device_id=${deviceSelect.value}`, brandSelect, selectedBrandId);
-                loadOptions(`ajax_get_issues.php?device_id=${deviceSelect.value}`, issueSelect, selectedIssueId);
+                const deviceSlug = deviceSelect.options[deviceSelect.selectedIndex].text.toLowerCase();
+                loadOptions(`../assets/ajax/get_brands.php?device=${deviceSlug}`, brandSelect, selectedBrandId, 'brands');
+                loadOptions(`../assets/ajax/get_issues.php?device=${deviceSlug}`, issueSelect, selectedIssueId, 'issues');
                 if(selectedBrandId) {
-                    loadOptions(`ajax_get_models.php?brand_id=${selectedBrandId}`, modelSelect, selectedModelId);
+                    loadOptions(`../assets/ajax/get_models.php?brand_id=${selectedBrandId}`, modelSelect, selectedModelId, 'models');
                 }
             }
         });
