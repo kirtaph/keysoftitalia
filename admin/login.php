@@ -2,6 +2,17 @@
 session_start();
 require_once '../config/config.php';
 
+// Ensure $pdo is initialized
+if (!isset($pdo) || !$pdo instanceof PDO) {
+    try {
+        $pdo = new PDO($db_dsn, $db_user, $db_pass); // Use your actual DSN, username, and password variables
+        $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+    } catch (PDOException $e) {
+        header('Location: index.php?error=Errore di connessione al database.');
+        exit;
+    }
+}
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $username = $_POST['username'];
     $password = $_POST['password'];
