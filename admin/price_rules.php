@@ -40,7 +40,7 @@ $devices = $devices_stmt->fetchAll();
                 <select id="brandFilter" class="form-select">
                     <option value="">Filtra per marchio</option>
                     <?php
-                    $brands_stmt = $pdo->query('SELECT name FROM brands ORDER BY name ASC');
+                    $brands_stmt = $pdo->query('SELECT DISTINCT name FROM brands ORDER BY name ASC');
                     $brands = $brands_stmt->fetchAll(PDO::FETCH_COLUMN);
                     foreach ($brands as $brand): ?>
                         <option value="<?php echo htmlspecialchars($brand, ENT_QUOTES, 'UTF-8'); ?>">
@@ -53,7 +53,7 @@ $devices = $devices_stmt->fetchAll();
                 <select id="issueFilter" class="form-select">
                     <option value="">Filtra per problema</option>
                     <?php
-                    $issues_stmt = $pdo->query('SELECT label FROM issues ORDER BY label ASC');
+                    $issues_stmt = $pdo->query('SELECT DISTINCT label FROM issues ORDER BY label ASC');
                     $issues = $issues_stmt->fetchAll(PDO::FETCH_COLUMN);
                     foreach ($issues as $issue): ?>
                         <option value="<?php echo htmlspecialchars($issue, ENT_QUOTES, 'UTF-8'); ?>">

@@ -20,7 +20,7 @@ $quotes = $stmt->fetchAll();
                 <select id="deviceFilter" class="form-select">
                     <option value="">Filtra per dispositivo</option>
                     <?php
-                    $devices_stmt = $pdo->query('SELECT name FROM devices ORDER BY name ASC');
+                    $devices_stmt = $pdo->query('SELECT DISTINCT name FROM devices ORDER BY name ASC');
                     $devices = $devices_stmt->fetchAll(PDO::FETCH_COLUMN);
                     foreach ($devices as $device): ?>
                         <option value="<?php echo htmlspecialchars($device, ENT_QUOTES, 'UTF-8'); ?>">
@@ -52,10 +52,10 @@ $quotes = $stmt->fetchAll();
         <tbody>
             <?php foreach ($quotes as $quote): ?>
                 <tr>
-                    <td><?php echo htmlspecialchars($quote['created_at'], ENT_QUOTES, 'UTF-8'); ?></td>
-                    <td><?php echo htmlspecialchars($quote['device_name'], ENT_QUOTES, 'UTF-8'); ?></td>
-                    <td><?php echo htmlspecialchars($quote['brand_text'], ENT_QUOTES, 'UTF-8'); ?></td>
-                    <td><?php echo htmlspecialchars($quote['model_text'], ENT_QUOTES, 'UTF-8'); ?></td>
+                    <td><?php echo htmlspecialchars($quote['created_at'] ?? '', ENT_QUOTES, 'UTF-8'); ?></td>
+                    <td><?php echo htmlspecialchars($quote['device_name'] ?? '', ENT_QUOTES, 'UTF-8'); ?></td>
+                    <td><?php echo htmlspecialchars($quote['brand_text'] ?? '', ENT_QUOTES, 'UTF-8'); ?></td>
+                    <td><?php echo htmlspecialchars($quote['model_text'] ?? '', ENT_QUOTES, 'UTF-8'); ?></td>
                     <td>
                         <?php
                             $problems = json_decode($quote['problems_json'], true);
@@ -66,7 +66,7 @@ $quotes = $stmt->fetchAll();
                             }
                         ?>
                     </td>
-                    <td><?php echo htmlspecialchars($quote['description'], ENT_QUOTES, 'UTF-8'); ?></td>
+                    <td><?php echo htmlspecialchars($quote['description'] ?? '', ENT_QUOTES, 'UTF-8'); ?></td>
                     <td>
                         <?php
                             if ($quote['est_min'] && $quote['est_max']) {
