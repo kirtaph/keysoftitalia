@@ -33,26 +33,24 @@ try {
         case 'add':
             $name = $_POST['name'] ?? '';
             $brand_id = $_POST['brand_id'] ?? null;
-            $year = !empty($_POST['year']) ? $_POST['year'] : null;
             $is_active = isset($_POST['is_active']) && $_POST['is_active'] == '1' ? 1 : 0;
             if (empty($name) || empty($brand_id)) {
                 throw new Exception('Nome e marchio sono obbligatori.');
             }
-            $stmt = $pdo->prepare('INSERT INTO models (name, brand_id, year, is_active) VALUES (?, ?, ?, ?)');
-            $stmt->execute([$name, $brand_id, $year, $is_active]);
+            $stmt = $pdo->prepare('INSERT INTO models (name, brand_id, is_active) VALUES (?, ?, ?)');
+            $stmt->execute([$name, $brand_id, $is_active]);
             echo json_encode(['status' => 'success', 'message' => 'Modello aggiunto con successo.']);
             break;
 
         case 'edit':
             $name = $_POST['name'] ?? '';
             $brand_id = $_POST['brand_id'] ?? null;
-            $year = !empty($_POST['year']) ? $_POST['year'] : null;
             $is_active = isset($_POST['is_active']) && $_POST['is_active'] == '1' ? 1 : 0;
             if (empty($name) || empty($brand_id) || empty($id)) {
                 throw new Exception('ID, nome e marchio sono obbligatori.');
             }
-            $stmt = $pdo->prepare('UPDATE models SET name = ?, brand_id = ?, year = ?, is_active = ? WHERE id = ?');
-            $stmt->execute([$name, $brand_id, $year, $is_active, $id]);
+            $stmt = $pdo->prepare('UPDATE models SET name = ?, brand_id = ?, is_active = ? WHERE id = ?');
+            $stmt->execute([$name, $brand_id, $is_active, $id]);
             echo json_encode(['status' => 'success', 'message' => 'Modello aggiornato con successo.']);
             break;
 

@@ -13,6 +13,27 @@ $devices = $devices_stmt->fetchAll();
     </button>
 </div>
 
+<div class="card mb-4">
+    <div class="card-header">Filtri e Ricerca</div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-md-6">
+                <input type="text" id="searchInput" class="form-control" placeholder="Cerca per nome...">
+            </div>
+            <div class="col-md-6">
+                <select id="deviceFilter" class="form-select">
+                    <option value="">Filtra per dispositivo</option>
+                    <?php foreach ($devices as $device): ?>
+                        <option value="<?php echo htmlspecialchars($device['name'], ENT_QUOTES, 'UTF-8'); ?>">
+                            <?php echo htmlspecialchars($device['name'], ENT_QUOTES, 'UTF-8'); ?>
+                        </option>
+                    <?php endforeach; ?>
+                </select>
+            </div>
+        </div>
+    </div>
+</div>
+
 <table class="table table-striped table-bordered">
     <thead class="table-dark">
         <tr>
@@ -173,5 +194,34 @@ document.addEventListener('DOMContentLoaded', function() {
     tooltipTriggerList.map(function (tooltipTriggerEl) {
         return new bootstrap.Tooltip(tooltipTriggerEl);
     });
+
+    const searchInput = document.getElementById('searchInput');
+    const deviceFilter = document.getElementById('deviceFilter');
+    const tableBody = document.getElementById('brandsTableBody');
+    const tableRows = tableBody.getElementsByTagName('tr');
+
+    function filterTable() {
+        const searchTerm = searchInput.value.toLowerCase();
+        const deviceTerm = deviceFilter.value.toLowerCase();
+
+        for (let i = 0; i < tableRows.length; i++) {
+            const nameCell = tableRows[i].getElementsByTagName('td')[0];
+            const deviceCell = tableRows[i].getElementsByTagName('td')[1];
+            if (nameCell && deviceCell) {
+                const nameText = nameCell.textContent.toLowerCase();
+                const deviceText = deviceCell.textContent.toLowerCase();
+                const nameMatch = nameText.includes(searchTerm);
+                const deviceMatch = deviceTerm === '' || deviceText.includes(deviceTerm);
+                if (nameMatch && deviceMatch) {
+                    tableRows[i].style.display = '';
+                } else {
+                    tableRows[i].style.display = 'none';
+                }
+            }
+        }
+    }
+
+    searchInput.addEventListener('keyup', filterTable);
+    deviceFilter.addEventListener('change', filterTable);
 });
 </script>
