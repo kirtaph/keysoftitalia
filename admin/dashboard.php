@@ -95,6 +95,15 @@ if (!isset($_SESSION['user_id'])) {
                         </div>
                     </div>
                 </div>
+                <div class="col-md-4 mb-4">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">Gestione Utenti</h5>
+                            <p class="card-text">Aggiungi, modifica o elimina gli utenti amministratori.</p>
+                            <a href="users.php" class="btn btn-primary">Vai</a>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </main>
