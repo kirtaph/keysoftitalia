@@ -13,11 +13,44 @@ $devices = $devices_stmt->fetchAll();
     </button>
 </div>
 
+<div class="card mb-4">
+    <div class="card-header">Filtri e Ricerca</div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-md-4">
+                <input type="text" id="searchInput" class="form-control" placeholder="Cerca per nome...">
+            </div>
+            <div class="col-md-4">
+                <select id="deviceFilter" class="form-select">
+                    <option value="">Filtra per dispositivo</option>
+                    <?php foreach ($devices as $device): ?>
+                        <option value="<?php echo htmlspecialchars($device['name'], ENT_QUOTES, 'UTF-8'); ?>">
+                            <?php echo htmlspecialchars($device['name'], ENT_QUOTES, 'UTF-8'); ?>
+                        </option>
+                    <?php endforeach; ?>
+                </select>
+            </div>
+            <div class="col-md-4">
+                <select id="brandFilter" class="form-select">
+                    <option value="">Filtra per marchio</option>
+                    <?php
+                    $brands_stmt = $pdo->query('SELECT name FROM brands ORDER BY name ASC');
+                    $brands = $brands_stmt->fetchAll(PDO::FETCH_COLUMN);
+                    foreach ($brands as $brand): ?>
+                        <option value="<?php echo htmlspecialchars($brand, ENT_QUOTES, 'UTF-8'); ?>">
+                            <?php echo htmlspecialchars($brand, ENT_QUOTES, 'UTF-8'); ?>
+                        </option>
+                    <?php endforeach; ?>
+                </select>
+            </div>
+        </div>
+    </div>
+</div>
+
 <table class="table table-striped table-bordered">
     <thead class="table-dark">
         <tr>
             <th>Nome</th>
-            <th>Anno</th>
             <th>Marchio</th>
             <th>Dispositivo</th>
             <th class="text-center">Attivo</th>
@@ -28,7 +61,6 @@ $devices = $devices_stmt->fetchAll();
         <?php foreach ($models as $model): ?>
             <tr id="model-<?php echo $model['id']; ?>">
                 <td><?php echo htmlspecialchars($model['name'], ENT_QUOTES, 'UTF-8'); ?></td>
-                <td><?php echo htmlspecialchars($model['year'], ENT_QUOTES, 'UTF-8'); ?></td>
                 <td><?php echo htmlspecialchars($model['brand_name'], ENT_QUOTES, 'UTF-8'); ?></td>
                 <td><?php echo htmlspecialchars($model['device_name'], ENT_QUOTES, 'UTF-8'); ?></td>
                 <td class="text-center"><?php echo $model['is_active'] ? '<i class="fas fa-check-circle text-success"></i>' : '<i class="fas fa-times-circle text-danger"></i>'; ?></td>
@@ -75,10 +107,6 @@ $devices = $devices_stmt->fetchAll();
                         <label for="name_modal" class="form-label">Nome Modello</label>
                         <input type="text" class="form-control" id="name_modal" name="name" required>
                     </div>
-                    <div class="mb-3">
-                        <label for="year_modal" class="form-label">Anno</label>
-                        <input type="number" class="form-control" id="year_modal" name="year">
-                    </div>
                     <div class="form-check mb-3">
                         <input class="form-check-input" type="checkbox" id="is_active_modal" name="is_active" value="1" checked>
                         <label class="form-check-label" for="is_active_modal">Attivo</label>
@@ -104,7 +132,6 @@ document.addEventListener('DOMContentLoaded', function() {
     const deviceSelect = document.getElementById('device_id_modal');
     const brandSelect = document.getElementById('brand_id_modal');
     const nameInput = document.getElementById('name_modal');
-    const yearInput = document.getElementById('year_modal');
     const isActiveCheckbox = document.getElementById('is_active_modal');
 
     function resetForm() {
@@ -155,7 +182,6 @@ document.addEventListener('DOMContentLoaded', function() {
                         deviceSelect.value = data.model.device_id;
                         loadBrands(data.model.device_id, data.model.brand_id);
                         nameInput.value = data.model.name;
-                        yearInput.value = data.model.year;
                         isActiveCheckbox.checked = !!parseInt(data.model.is_active);
                         modalTitle.textContent = 'Modifica Modello';
                         modelModal.show();
@@ -217,5 +243,40 @@ document.addEventListener('DOMContentLoaded', function() {
     tooltipTriggerList.map(function (tooltipTriggerEl) {
         return new bootstrap.Tooltip(tooltipTriggerEl);
     });
+
+    const searchInput = document.getElementById('searchInput');
+    const deviceFilter = document.getElementById('deviceFilter');
+    const brandFilter = document.getElementById('brandFilter');
+    const tableBody = document.getElementById('modelsTableBody');
+    const tableRows = tableBody.getElementsByTagName('tr');
+
+    function filterTable() {
+        const searchTerm = searchInput.value.toLowerCase();
+        const deviceTerm = deviceFilter.value.toLowerCase();
+        const brandTerm = brandFilter.value.toLowerCase();
+
+        for (let i = 0; i < tableRows.length; i++) {
+            const nameCell = tableRows[i].getElementsByTagName('td')[0];
+            const brandCell = tableRows[i].getElementsByTagName('td')[1];
+            const deviceCell = tableRows[i].getElementsByTagName('td')[2];
+            if (nameCell && brandCell && deviceCell) {
+                const nameText = nameCell.textContent.toLowerCase();
+                const brandText = brandCell.textContent.toLowerCase();
+                const deviceText = deviceCell.textContent.toLowerCase();
+                const nameMatch = nameText.includes(searchTerm);
+                const deviceMatch = deviceTerm === '' || deviceText.includes(deviceTerm);
+                const brandMatch = brandTerm === '' || brandText.includes(brandTerm);
+                if (nameMatch && deviceMatch && brandMatch) {
+                    tableRows[i].style.display = '';
+                } else {
+                    tableRows[i].style.display = 'none';
+                }
+            }
+        }
+    }
+
+    searchInput.addEventListener('keyup', filterTable);
+    deviceFilter.addEventListener('change', filterTable);
+    brandFilter.addEventListener('change', filterTable);
 });
 </script>

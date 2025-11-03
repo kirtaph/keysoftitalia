@@ -19,6 +19,53 @@ $devices = $devices_stmt->fetchAll();
     </button>
 </div>
 
+<div class="card mb-4">
+    <div class="card-header">Filtri e Ricerca</div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-md-3">
+                <input type="text" id="searchInput" class="form-control" placeholder="Cerca per problema...">
+            </div>
+            <div class="col-md-3">
+                <select id="deviceFilter" class="form-select">
+                    <option value="">Filtra per dispositivo</option>
+                    <?php foreach ($devices as $device): ?>
+                        <option value="<?php echo htmlspecialchars($device['name'], ENT_QUOTES, 'UTF-8'); ?>">
+                            <?php echo htmlspecialchars($device['name'], ENT_QUOTES, 'UTF-8'); ?>
+                        </option>
+                    <?php endforeach; ?>
+                </select>
+            </div>
+            <div class="col-md-3">
+                <select id="brandFilter" class="form-select">
+                    <option value="">Filtra per marchio</option>
+                    <?php
+                    $brands_stmt = $pdo->query('SELECT name FROM brands ORDER BY name ASC');
+                    $brands = $brands_stmt->fetchAll(PDO::FETCH_COLUMN);
+                    foreach ($brands as $brand): ?>
+                        <option value="<?php echo htmlspecialchars($brand, ENT_QUOTES, 'UTF-8'); ?>">
+                            <?php echo htmlspecialchars($brand, ENT_QUOTES, 'UTF-8'); ?>
+                        </option>
+                    <?php endforeach; ?>
+                </select>
+            </div>
+            <div class="col-md-3">
+                <select id="issueFilter" class="form-select">
+                    <option value="">Filtra per problema</option>
+                    <?php
+                    $issues_stmt = $pdo->query('SELECT label FROM issues ORDER BY label ASC');
+                    $issues = $issues_stmt->fetchAll(PDO::FETCH_COLUMN);
+                    foreach ($issues as $issue): ?>
+                        <option value="<?php echo htmlspecialchars($issue, ENT_QUOTES, 'UTF-8'); ?>">
+                            <?php echo htmlspecialchars($issue, ENT_QUOTES, 'UTF-8'); ?>
+                        </option>
+                    <?php endforeach; ?>
+                </select>
+            </div>
+        </div>
+    </div>
+</div>
+
 <div class="table-responsive">
     <table class="table table-striped table-bordered">
         <thead class="table-dark">
@@ -261,5 +308,43 @@ document.addEventListener('DOMContentLoaded', function() {
 
     const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
     tooltipTriggerList.map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl));
+
+    const searchInput = document.getElementById('searchInput');
+    const deviceFilter = document.getElementById('deviceFilter');
+    const brandFilter = document.getElementById('brandFilter');
+    const issueFilter = document.getElementById('issueFilter');
+    const tableBody = document.getElementById('priceRulesTableBody');
+    const tableRows = tableBody.getElementsByTagName('tr');
+
+    function filterTable() {
+        const searchTerm = searchInput.value.toLowerCase();
+        const deviceTerm = deviceFilter.value.toLowerCase();
+        const brandTerm = brandFilter.value.toLowerCase();
+        const issueTerm = issueFilter.value.toLowerCase();
+
+        for (let i = 0; i < tableRows.length; i++) {
+            const issueCell = tableRows[i].getElementsByTagName('td')[0];
+            const deviceCell = tableRows[i].getElementsByTagName('td')[1];
+            const brandCell = tableRows[i].getElementsByTagName('td')[2];
+            if (issueCell && deviceCell && brandCell) {
+                const issueText = issueCell.textContent.toLowerCase();
+                const deviceText = deviceCell.textContent.toLowerCase();
+                const brandText = brandCell.textContent.toLowerCase();
+                const issueMatch = issueText.includes(searchTerm) || issueText.includes(issueTerm);
+                const deviceMatch = deviceTerm === '' || deviceText.includes(deviceTerm);
+                const brandMatch = brandTerm === '' || brandText.includes(brandTerm);
+                if (issueMatch && deviceMatch && brandMatch) {
+                    tableRows[i].style.display = '';
+                } else {
+                    tableRows[i].style.display = 'none';
+                }
+            }
+        }
+    }
+
+    searchInput.addEventListener('keyup', filterTable);
+    deviceFilter.addEventListener('change', filterTable);
+    brandFilter.addEventListener('change', filterTable);
+    issueFilter.addEventListener('change', filterTable);
 });
 </script>
