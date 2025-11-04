@@ -36,7 +36,7 @@ $contact_endpoint = url('ajax/contact_submit.php');
   <meta property="og:image" content="<?= asset('images/og-image.jpg'); ?>">
 
   <!-- CSS di pagina -->
-  <link rel="stylesheet" href="<?= asset('css/pages/contatti.css'); ?>">
+  <link rel="stylesheet" href="<?= asset_version('css/pages/contatti.css'); ?>">
 </head>
 <body>
 

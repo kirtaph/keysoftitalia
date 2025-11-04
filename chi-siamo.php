@@ -33,7 +33,7 @@ $breadcrumbs = [
   <meta property="og:image" content="<?= asset('images/og-image.jpg'); ?>">
 
   <!-- CSS di pagina -->
-  <link rel="stylesheet" href="<?= asset('css/pages/chi-siamo.css'); ?>">
+  <link rel="stylesheet" href="<?= asset_version('css/pages/chi-siamo.css'); ?>">
 </head>
 <body>
 

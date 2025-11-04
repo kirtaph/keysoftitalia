@@ -31,7 +31,7 @@ $breadcrumbs = [
       'keywords'    => $page_keywords,
       'url'         => url('preventivo.php')
   ]); ?>
-  <link rel="stylesheet" href="<?php echo asset('css/pages/preventivo.css'); ?>">
+  <link rel="stylesheet" href="<?php echo asset_version('css/pages/preventivo.css'); ?>">
 </head>
 <body data-aos-easing="ease-in-out" data-aos-duration="800" data-aos-once="true">
 

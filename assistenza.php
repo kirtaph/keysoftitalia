@@ -28,7 +28,7 @@ $breadcrumbs = [
         'keywords' => $page_keywords,
         'url' => url('assistenza.php')
     ]); ?>
-    <link rel="stylesheet" href="<?php echo asset('css/pages/assistenza.css'); ?>">
+    <link rel="stylesheet" href="<?php echo asset_version('css/pages/assistenza.css'); ?>">
 </head>
 <body data-aos-easing="ease-in-out" data-aos-duration="800" data-aos-once="true">
 
