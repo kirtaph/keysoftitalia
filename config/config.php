@@ -9,6 +9,49 @@ if (!defined('BASE_PATH')) {
     define('BASE_PATH', rtrim(str_replace('\\', '/', dirname(__DIR__)), '/') . '/');
 }
 
+if (!defined('KS_TZ')) define('KS_TZ', 'Europe/Rome');
+/**
+ * ===== Store Opening Hours (config globale) =====
+ * - Fuso orario negozio
+ * - Orari base per giorno della settimana (1=Lun ... 7=Dom)
+ * - Eccezioni per data specifica (YYYY-MM-DD): array di intervalli o [] = chiuso
+ * - Avvisi per data (messaggini mostrati nel box orari)
+ */
+
+
+if (!function_exists('ks_store_hours_base')) {
+  function ks_store_hours_base(): array {
+    return [
+      1 => [['09:00','13:00'], ['17:00','20:30']], // Lun
+      2 => [['09:00','13:00'], ['17:00','20:30']], // Mar
+      3 => [['09:00','13:00'], ['17:00','20:30']], // Mer
+      4 => [['09:00','13:00']],                    // Gio (solo mattina)
+      5 => [['09:00','13:00'], ['17:00','20:30']], // Ven
+      6 => [['09:00','13:00'], ['17:00','20:30']], // Sab
+      7 => [],                                      // Dom chiuso
+    ];
+  }
+}
+
+if (!function_exists('ks_store_hours_exceptions')) {
+  function ks_store_hours_exceptions(): array {
+    return [
+      // Esempi (modifica/aggiungi quando serve)
+      // '2025-12-24' => [['09:00','13:00'], ['16:00','18:00']], // Vigilia orario ridotto
+      // '2025-12-25' => [],                                     // Natale chiuso
+    ];
+  }
+}
+
+if (!function_exists('ks_store_hours_notices')) {
+  function ks_store_hours_notices(): array {
+    return [
+      // '2025-12-24' => 'Orario ridotto (Vigilia).',
+      // '2025-12-25' => 'Chiuso per festività.',
+    ];
+  }
+}
+
 // Helpers (funzioni comuni, autoDetectBaseUrl, ecc.)
 require_once BASE_PATH . 'assets/php/functions.php';
 
@@ -43,18 +86,7 @@ if (!defined('ADDRESS')) {
     define('ADDRESS', COMPANY_FULL_ADDRESS);
 }
 
-// Orari apertura
-if (!defined('OPENING_HOURS')) {
-    define('OPENING_HOURS', [
-        'monday'    => ['open' => '09:00', 'close' => '19:00'],
-        'tuesday'   => ['open' => '09:00', 'close' => '19:00'],
-        'wednesday' => ['open' => '09:00', 'close' => '19:00'],
-        'thursday'  => ['open' => '09:00', 'close' => '19:00'],
-        'friday'    => ['open' => '09:00', 'close' => '19:00'],
-        'saturday'  => ['open' => '09:00', 'close' => '13:00'],
-        'sunday'    => 'chiuso'
-    ]);
-}
+
 
 /* ==========================================================================
    GOOGLE ANALYTICS

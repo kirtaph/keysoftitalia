@@ -100,25 +100,25 @@ $canonical        = url(ltrim($_SERVER['REQUEST_URI'] ?? '', '/'));
 
 <!-- Schema.org JSON-LD (dinamico) -->
 <?php
-$openingSpecs = [];
-if (is_array(OPENING_HOURS)) {
-    // Lunedì–Venerdì
-    $openingSpecs[] = [
-        '@type'    => 'OpeningHoursSpecification',
-        'dayOfWeek'=> ['Monday','Tuesday','Wednesday','Thursday','Friday'],
-        'opens'    => OPENING_HOURS['monday']['open'] ?? '09:00',
-        'closes'   => OPENING_HOURS['monday']['close'] ?? '19:00',
-    ];
-    // Sabato (se presente)
-    if (isset(OPENING_HOURS['saturday']['open'], OPENING_HOURS['saturday']['close'])) {
-        $openingSpecs[] = [
-            '@type'    => 'OpeningHoursSpecification',
-            'dayOfWeek'=> 'Saturday',
-            'opens'    => OPENING_HOURS['saturday']['open'],
-            'closes'   => OPENING_HOURS['saturday']['close'],
-        ];
-    }
-}
+// $openingSpecs = [];
+// if (is_array(OPENING_HOURS)) {
+//     // Lunedì–Venerdì
+//     $openingSpecs[] = [
+//         '@type'    => 'OpeningHoursSpecification',
+//         'dayOfWeek'=> ['Monday','Tuesday','Wednesday','Thursday','Friday'],
+//         'opens'    => OPENING_HOURS['monday']['open'] ?? '09:00',
+//         'closes'   => OPENING_HOURS['monday']['close'] ?? '19:00',
+//     ];
+//     // Sabato (se presente)
+//     if (isset(OPENING_HOURS['saturday']['open'], OPENING_HOURS['saturday']['close'])) {
+//         $openingSpecs[] = [
+//             '@type'    => 'OpeningHoursSpecification',
+//             'dayOfWeek'=> 'Saturday',
+//             'opens'    => OPENING_HOURS['saturday']['open'],
+//             'closes'   => OPENING_HOURS['saturday']['close'],
+//         ];
+//     }
+// }
 
 $schema = [
     '@context'  => 'https://schema.org',
@@ -137,7 +137,7 @@ $schema = [
         'addressCountry'  => 'IT'
     ],
     // Se vuoi inserire le coordinate, aggiungi qui 'geo' => ['@type'=>'GeoCoordinates','latitude'=>..., 'longitude'=>...]
-    'openingHoursSpecification' => $openingSpecs,
+    //'openingHoursSpecification' => $openingSpecs,
     'sameAs' => array_values(array_filter([
         SOCIAL_FACEBOOK,
         SOCIAL_INSTAGRAM,

@@ -401,3 +401,104 @@ if (session_status() === PHP_SESSION_NONE) {
 
 // Definisci BASE_URL subito
 autoDetectBaseUrl();
+
+/* ===== Opening Hours (contatti.php) — usa config globale ================== */
+$KS_TZ = new DateTimeZone(KS_TZ);
+
+/** Helpers base **/
+function ks_dt_at(DateTime $base, string $hm): DateTime {
+  [$h,$m] = array_map('intval', explode(':', $hm));
+  $d = (clone $base); $d->setTime($h,$m,0);
+  return $d;
+}
+function ks_day_label(int $N): string {
+  static $d = [1=>'Lunedì',2=>'Martedì',3=>'Mercoledì',4=>'Giovedì',5=>'Venerdì',6=>'Sabato',7=>'Domenica'];
+  return $d[$N] ?? '';
+}
+function ks_human_diff(DateTime $from, DateTime $to): string {
+  $i = $from->diff($to);
+  $parts = [];
+  if ($i->d>0) $parts[] = $i->d.'g';
+  if ($i->h>0) $parts[] = $i->h.'h';
+  if ($i->i>0) $parts[] = $i->i.'m';
+  return $parts ? implode(' ', $parts) : 'meno di 1m';
+}
+
+/** Orari per una data specifica (considera eccezioni) */
+function ks_intervals_for_date(DateTime $date): array {
+  $base = ks_store_hours_base();
+  $exc  = ks_store_hours_exceptions();
+  $key  = $date->format('Y-m-d');
+  if (array_key_exists($key, $exc)) return $exc[$key];        // eccezione del giorno
+  $dow = (int)$date->format('N');
+  return $base[$dow] ?? [];
+}
+
+/** Stato apertura adesso */
+function ks_is_open_now(DateTime $now): array {
+  $intervals = ks_intervals_for_date($now);
+  foreach ($intervals as [$s,$e]) {
+    $start = ks_dt_at($now, $s);
+    $end   = ks_dt_at($now, $e);
+    if ($now >= $start && $now < $end) {
+      return ['open'=>true, 'start'=>$start, 'end'=>$end];
+    }
+  }
+  return ['open'=>false, 'start'=>null, 'end'=>null];
+}
+
+/** Prossima apertura (oggi più prossimi 14 giorni) */
+function ks_next_open_after(DateTime $now, int $horizonDays = 14): ?DateTime {
+  // oggi: slot successivi
+  foreach (ks_intervals_for_date($now) as [$s, $e]) {
+    $start = ks_dt_at($now, $s);
+    if ($start > $now) return $start;
+  }
+  // giorni successivi
+  for ($i=1; $i<=max(1,$horizonDays); $i++) {
+    $d = (clone $now)->modify("+$i day");
+    $list = ks_intervals_for_date($d);
+    if (!empty($list)) {
+      return ks_dt_at($d, $list[0][0]);
+    }
+  }
+  return null;
+}
+
+/** Formatta intervalli in stringa */
+function ks_format_intervals(array $intervals): string {
+  if (empty($intervals)) return '<span class="text-danger">Chiuso</span>';
+  $fmt = array_map(fn($p)=> sprintf('%s - %s', $p[0], $p[1]), $intervals);
+  return implode(' / ', $fmt);
+}
+
+/* Stato attuale + prossima variazione */
+$__now     = new DateTime('now', $KS_TZ);
+$__state   = ks_is_open_now($__now);
+$__noticeMap = ks_store_hours_notices();
+$__todayKey  = $__now->format('Y-m-d');
+$__todayNotice = $__noticeMap[$__todayKey] ?? null;
+
+$__chip_open   = $__state['open'];
+$__chip_class  = $__chip_open ? 'oh-chip--open' : 'oh-chip--closed';
+$__chip_icon   = $__chip_open ? 'ri-checkbox-circle-line' : 'ri-close-circle-line';
+$__chip_label  = $__chip_open ? 'Aperti ora' : 'Chiusi ora';
+
+if ($__state['open']) {
+  $__note = 'Chiude tra ' . ks_human_diff($__now, $__state['end']) . ' (alle ' . $__state['end']->format('H:i') . ')';
+} else {
+  $nxt = ks_next_open_after($__now);
+  $__note = $nxt ? 'Riapre ' . ($nxt->format('Ymd')===$__now->format('Ymd') ? 'alle ' : ks_day_label((int)$nxt->format('N')).' alle ')
+             . $nxt->format('H:i') . ' (tra ' . ks_human_diff($__now,$nxt) . ')' : '';
+}
+
+/* Per la tabella: base settimanale, ma sostituisci “oggi” con l’eventuale eccezione */
+$__base = ks_store_hours_base();
+$__table = [];
+for ($d=1; $d<=7; $d++) {
+  if ($d === (int)$__now->format('N')) {
+    $__table[$d] = ks_intervals_for_date($__now);
+  } else {
+    $__table[$d] = $__base[$d] ?? [];
+  }
+}

@@ -74,18 +74,95 @@ if (!defined('BASE_PATH')) {
           <a href="<?php echo YOUTUBE_URL; ?>" target="_blank" rel="noopener" class="social-link social-youtube" aria-label="YouTube"><i class="ri-youtube-fill"></i></a>
           <a href="<?php echo TIKTOK_URL; ?>" target="_blank" rel="noopener" class="social-link social-tiktok" aria-label="TikTok"><i class="ri-tiktok-fill"></i></a>
         </div>
+<br>
+        <div class="footer-hours fo-box">
+  <h4 class="footer-title d-flex align-items-center gap-2 mb-2">
+    <i class="ri-time-line" aria-hidden="true"></i> Orari di Apertura
+  </h4>
 
-        <div class="opening-hours-box">
-          <h4 class="footer-title text-orange">Orari di Apertura</h4>
-          <div class="opening-hour-item"><span>Lun-Sab</span><span><strong>9:00-13:00 / 17:00-20.30</strong></span></div>
-          <div class="opening-hour-item"><span>Giovedì</span><span><strong>9:00-13:00</strong></span></div>
-          <div class="opening-hour-item"><span>Domenica</span><span class="text-red"><strong>Chiuso</strong></span></div>
-        </div>
+  <?php
+    $tz   = new DateTimeZone(KS_TZ);
+    $now  = new DateTime('now', $tz);
 
-        <div class="footer-map-box">
+    $state   = ks_is_open_now($now);
+    $open    = $state['open'];
+    $chipCls = $open ? 'fo-chip fo-chip--open' : 'fo-chip fo-chip--closed';
+    $chipIco = $open ? 'ri-checkbox-circle-line' : 'ri-close-circle-line';
+    $chipTxt = $open ? 'Aperti' : 'Chiusi';
+
+    if ($open) {
+      $note = 'Chiude alle '.$state['end']->format('H:i').' (tra '.ks_human_diff($now, $state['end']).')';
+    } else {
+      $nxt  = ks_next_open_after($now);
+      $note = $nxt
+        ? 'Riapre '.($nxt->format('Ymd')===$now->format('Ymd') ? 'alle '.$nxt->format('H:i') : ks_day_label((int)$nxt->format('N')).' alle '.$nxt->format('H:i'))
+          .' (tra '.ks_human_diff($now, $nxt).')'
+        : 'Chiuso';
+    }
+
+    // Avviso speciale (da config)
+    $todayKey = $now->format('Y-m-d');
+    $todayNotice = (ks_store_hours_notices()[$todayKey] ?? null);
+
+    // Raggruppa giorni con identici intervalli (base settimanale)
+    function fo_group_by_intervals(array $base): array {
+      $groups = [];
+      for ($d=1; $d<=7; $d++) {
+        $ints = $base[$d] ?? [];
+        $key  = json_encode($ints);
+        if (!isset($groups[$key])) $groups[$key] = ['days'=>[], 'intervals'=>$ints];
+        $groups[$key]['days'][] = $d;
+      }
+      return array_values($groups);
+    }
+    function fo_days_compact(array $days): string {
+      $abbr = [1=>'Lun',2=>'Mar',3=>'Mer',4=>'Gio',5=>'Ven',6=>'Sab',7=>'Dom'];
+      sort($days);
+      $ranges = [];
+      $s = $p = null;
+      foreach ($days as $d) {
+        if ($s===null){ $s=$p=$d; continue; }
+        if ($d===$p+1){ $p=$d; continue; }
+        $ranges[] = [$s,$p]; $s=$p=$d;
+      }
+      $ranges[] = [$s,$p];
+      return implode(', ', array_map(fn($r) => $r[0]===$r[1] ? $abbr[$r[0]] : $abbr[$r[0]].'–'.$abbr[$r[1]], $ranges));
+    }
+
+    $base   = ks_store_hours_base();            // schema standard
+    $groups = fo_group_by_intervals($base);     // righe compatte
+    $todayN = (int)$now->format('N');           // per evidenziare oggi
+  ?>
+
+  <div class="fo-status mb-2">
+    <span class="<?= $chipCls; ?>"><i class="<?= $chipIco; ?>" aria-hidden="true"></i> <?= $chipTxt; ?></span>
+    <small class="fo-note"><?= $note; ?></small>
+    <?php if (!empty($todayNotice)): ?>
+      <small class="fo-special" title="<?= htmlspecialchars($todayNotice, ENT_QUOTES, 'UTF-8'); ?>">
+        <i class="ri-megaphone-line" aria-hidden="true"></i>
+      </small>
+    <?php endif; ?>
+  </div>
+
+  <div class="fo-list">
+    <?php foreach ($groups as $g):
+      $label = fo_days_compact($g['days']);
+      $isTodayGroup = in_array($todayN, $g['days'], true);
+      $cls = $isTodayGroup ? 'opening-hour-item fo-item is-today' : 'opening-hour-item fo-item';
+      $time = empty($g['intervals']) ? '<span class="text-red"><strong>Chiuso</strong></span>' : ks_format_intervals($g['intervals']);
+    ?>
+      <div class="<?= $cls; ?>">
+        <span><?= $label; ?></span>
+        <span><strong><?= $time; ?></strong></span>
+      </div>
+    <?php endforeach; ?>
+  </div>
+</div>
+
+        <!-- <div class="footer-map-box">
           <i class="ri-map-pin-line" aria-hidden="true"></i>
           <div class="footer-map-title">Mappa del negozio</div>
-          <!-- Embed reale di Google Maps (sostituisci src con il tuo generato) -->
+
           <iframe 
             src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d7189.563886109397!2d16.752903976408206!3d40.57454714601821!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x134770f123f4ba59%3A0x8e9307ff05e9cee0!2sKey%20Soft%20Italia!5e1!3m2!1sit!2sit!4v1759516864357!5m2!1sit!2sit"
             width="100%" 
@@ -98,7 +175,7 @@ if (!defined('BASE_PATH')) {
             aria-label="Mappa interattiva di Key Soft Italia a Ginosa (TA)">
           </iframe>
           <a href="<?php echo GOOGLE_MAPS_LINK; ?>" target="_blank" rel="noopener" class="footer-map-link">Visualizza su Google Maps</a>
-        </div>
+        </div> -->
       </div>
     </div>
 

@@ -23,12 +23,57 @@
                     <span><?php echo COMPANY_EMAIL; ?></span>
                 </a>
       </div>
-      <div class="header-info">
-                <span class="header-info-item" aria-label="Orari di apertura">
-                    <i class="ri-time-line"></i>
-                    <small>Lun–Sab 9:30–13:00 / 17.30-20.30 • Gio 9:30–13:00</small>
-                </span>
-      </div>
+<div class="header-info">
+  <span class="header-info-item top-hours" aria-label="Stato orari e prossima chiusura/apertura">
+    
+    <?php
+      // Usa helpers globali già caricati da functions.php
+      $tz   = new DateTimeZone(KS_TZ);
+      $now  = new DateTime('now', $tz);
+
+      $state   = ks_is_open_now($now);
+      $open    = $state['open'];
+      $chipCls = $open ? 'top-chip top-chip--open' : 'top-chip top-chip--closed';
+      $chipIco = $open ? 'ri-checkbox-circle-line' : 'ri-close-circle-line';
+      $chipTxt = $open ? 'Aperti' : 'Chiusi';
+
+      if ($open) {
+        $note = 'Chiude alle '.$state['end']->format('H:i').' (tra '.ks_human_diff($now, $state['end']).')';
+      } else {
+        $nxt  = ks_next_open_after($now);
+        $note = $nxt
+          ? 'Riapre '.($nxt->format('Ymd') === $now->format('Ymd')
+              ? 'alle '.$nxt->format('H:i')
+              : ks_day_label((int)$nxt->format('N')).' alle '.$nxt->format('H:i'))
+            .' (tra '.ks_human_diff($now, $nxt).')'
+          : 'Chiuso';
+      }
+
+      // Info compatta "Oggi: 09:00-13:00 / 17:00-20:30" come tooltip
+      $todayIntervals = ks_intervals_for_date($now);
+      $todayShort = empty($todayIntervals) ? 'Oggi: chiuso' : 'Oggi: '.ks_format_intervals($todayIntervals);
+
+      // Avviso speciale (eccezioni/notices) opzionale
+      $notices = ks_store_hours_notices();
+      $todayKey = $now->format('Y-m-d');
+      $todayNotice = $notices[$todayKey] ?? null;
+    ?>
+
+    <span class="<?= $chipCls; ?>">
+      <i class="<?= $chipIco; ?>" aria-hidden="true"></i> <?= $chipTxt; ?>
+    </span>
+
+    <small class="top-hours-note" title="<?= htmlspecialchars(strip_tags($todayShort), ENT_QUOTES, 'UTF-8'); ?>">
+      <?= $note; ?>
+    </small>
+
+    <?php if (!empty($todayNotice)): ?>
+      <span class="top-hours-special" title="<?= htmlspecialchars($todayNotice, ENT_QUOTES, 'UTF-8'); ?>">
+        <i class="ri-megaphone-line" aria-hidden="true"></i>
+      </span>
+    <?php endif; ?>
+  </span>
+</div>
     </div>
   </div>
 </div>
