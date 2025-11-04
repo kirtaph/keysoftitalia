@@ -58,6 +58,14 @@ try {
             if (empty($id)) {
                 throw new Exception('ID del marchio non fornito.');
             }
+
+            // Check for associated models before deleting
+            $stmt = $pdo->prepare('SELECT COUNT(*) FROM models WHERE brand_id = ?');
+            $stmt->execute([$id]);
+            if ($stmt->fetchColumn() > 0) {
+                throw new Exception('Impossibile eliminare il marchio perché esistono modelli associati. Rimuovere prima i modelli.');
+            }
+
             $stmt = $pdo->prepare('DELETE FROM brands WHERE id = ?');
             $stmt->execute([$id]);
             echo json_encode(['status' => 'success', 'message' => 'Marchio eliminato con successo.']);
