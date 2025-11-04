@@ -111,6 +111,7 @@ if (!defined('BASE_PATH')) {
         <a href="<?php echo url('privacy.php'); ?>" class="footer-bottom-link">Privacy Policy</a>
         <a href="<?php echo url('termini.php'); ?>" class="footer-bottom-link">Termini di Servizio</a>
         <a href="<?php echo url('cookie.php'); ?>" class="footer-bottom-link">Cookie Policy</a>
+        <a href="<?php echo url('admin'); ?>" class="footer-bottom-link">Amministrazione</a>
       </div>
     </div>
   </div>
