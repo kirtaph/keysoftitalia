@@ -1,220 +1,138 @@
 <?php
-/**
- * Process Contact Form
- * Handles contact form submissions
- */
-
+declare(strict_types=1);
 session_start();
-require_once '../../config/config.php';
-require_once 'functions.php';
-require_once 'database.php';
 
-// Check if request is POST
+require_once __DIR__ . '/../config/config.php'; // $pdo, costanti, helpers
+require_once __DIR__ . '/../assets/php/functions.php'; // $pdo, costanti, helpers
+
+header('Content-Type: application/json; charset=UTF-8');
+
+
+$respond = function (bool $ok, string $msg, array $extra = [], int $code = 200) {
+  http_response_code($code);
+  echo json_encode(array_merge(['success' => $ok, 'message' => $msg], $extra));
+  exit;
+};
+
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-    header('Location: ' . url('contatti.php'));
-    exit;
+  $respond(false, 'Metodo non consentito.', [], 405);
 }
 
-// Verify CSRF token
-if (!isset($_POST['csrf_token']) || $_POST['csrf_token'] !== $_SESSION['csrf_token']) {
-    $_SESSION['error'] = 'Token di sicurezza non valido. Riprova.';
-    header('Location: ' . url('contatti.php'));
+// --- CSRF
+if (empty($_POST['csrf_token']) || $_POST['csrf_token'] !== ($_SESSION['csrf_token'] ?? '')) {
+  if (is_ajax_request()) {
+    http_response_code(403);
+    header('Content-Type: application/json; charset=UTF-8');
+    echo json_encode(['ok'=>false, 'error'=>'csrf']);
     exit;
+  }
+  header('Location: ' . url('errore.php?code=csrf')); exit;
 }
 
-// Validate required fields
-$required_fields = ['name', 'email', 'phone', 'subject', 'message', 'privacy'];
+/* Honeypot: aggiungi nel form <input type="text" name="website" class="d-none" autocomplete="off"> */
+if (!empty($_POST['website'] ?? '')) {
+  // Risposta "ok" silenziosa per i bot
+  $respond(true, 'Grazie! Ti ricontatteremo a breve.');
+}
+
+/* Anti-flood base: max 5 invii/10 minuti per sessione */
+$_SESSION['contact_flood'] = array_filter($_SESSION['contact_flood'] ?? [], fn($t) => $t > time() - 600);
+if (count($_SESSION['contact_flood']) >= 5) {
+  $respond(false, 'Hai inviato troppi messaggi. Riprova più tardi.', [], 429);
+}
+
+/* Helpers */
+$clean = static function ($v, int $max = 500) {
+  $v = trim((string)$v);
+  $v = preg_replace('/\s+/u', ' ', $v);
+  return mb_substr($v, 0, $max);
+};
+$phoneClean = static function ($p) {
+  $p = preg_replace('/[^\d+\s]/', '', (string)$p);
+  return mb_substr(trim($p), 0, 30);
+};
+$emailValid = static fn($e) => (bool)filter_var($e, FILTER_VALIDATE_EMAIL);
+
+/* Input */
+$name    = $clean($_POST['name']    ?? '', 80);
+$surname = $clean($_POST['surname'] ?? '', 80);
+$email   = $clean($_POST['email']   ?? '', 190);
+$phone   = $phoneClean($_POST['phone'] ?? '');
+$subject = strtolower($clean($_POST['subject'] ?? 'altro', 30));
+$message = $clean($_POST['message'] ?? '', 4000);
+$privacy = isset($_POST['privacy']) && in_array($_POST['privacy'], ['on','1','true','yes'], true);
+
+/* Validazione minima */
 $errors = [];
-
-foreach ($required_fields as $field) {
-    if (empty($_POST[$field])) {
-        $errors[] = "Il campo " . ucfirst($field) . " è obbligatorio.";
-    }
+if (mb_strlen($name) < 2)        $errors['name']    = 'Nome troppo corto.';
+if (mb_strlen($surname) < 2)     $errors['surname'] = 'Cognome troppo corto.';
+if (!$emailValid($email))        $errors['email']   = 'Email non valida.';
+if (mb_strlen($message) < 10)    $errors['message'] = 'Messaggio troppo breve.';
+if (!$privacy)                   $errors['privacy'] = 'Devi accettare la privacy policy.';
+if ($errors) {
+  $respond(false, 'Controlla i campi evidenziati.', ['errors' => $errors], 422);
 }
 
-// Validate email
-if (!empty($_POST['email']) && !filter_var($_POST['email'], FILTER_VALIDATE_EMAIL)) {
-    $errors[] = "L'indirizzo email non è valido.";
-}
+/* Mappa subject -> tipo */
+$subjectMap = [
+  'riparazione' => 'RIPARAZIONE',
+  'preventivo'  => 'PREVENTIVO',
+  'assistenza'  => 'ASSISTENZA TECNICA',
+  'vendita'     => 'INFORMAZIONI VENDITA',
+  'altro'       => 'ALTRO',
+];
+$tipo = $subjectMap[$subject] ?? 'ALTRO';
 
-// Validate phone
-if (!empty($_POST['phone']) && !preg_match('/^[0-9\s\+\-\(\)]+$/', $_POST['phone'])) {
-    $errors[] = "Il numero di telefono non è valido.";
-}
+/* Payload per send_assistance_email (usa i campi della tua funzione) */
+$payload = [
+  // campi attesi dalla tua funzione
+  'assistance_type'   => $tipo,                           // es. DOMICILIO/LAB/… qui usiamo la categoria richiesta
+  'name'              => trim($name . ' ' . $surname),
+  'phone'             => $phone,
+  'email'             => $email,
+  'device_type'       => 'N/D',                           // non presente nel form contatti
+  'address'           => '',                              // non presente nel form contatti
+  'problem_description'=> $message,                       // testo del messaggio
+  'urgency'           => 'normale',
+  'time_preference'   => 'qualsiasi',
 
-// Check for errors
-if (!empty($errors)) {
-    $_SESSION['errors'] = $errors;
-    $_SESSION['form_data'] = $_POST;
-    header('Location: ' . url('contatti.php'));
-    exit;
-}
+  // extra utili
+  'subject'           => $tipo,
+  'source'            => 'Form Contatti Sito',
+];
 
-// Sanitize input data
-$name = sanitize_input($_POST['name']);
-$email = sanitize_input($_POST['email']);
-$phone = sanitize_input($_POST['phone']);
-$subject = sanitize_input($_POST['subject']);
-$message = sanitize_input($_POST['message']);
-$newsletter = isset($_POST['newsletter']) ? 1 : 0;
+/* Opzioni aggiuntive (se la tua funzione le supporta) */
+$tz  = defined('KS_TZ') ? KS_TZ : 'Europe/Rome';
+$opts = [
+  'meta'    => [
+    'ip'        => $_SERVER['REMOTE_ADDR'] ?? '',
+    'ua'        => $_SERVER['HTTP_USER_AGENT'] ?? '',
+    'referer'   => $_SERVER['HTTP_REFERER'] ?? '',
+    'submitted' => (new DateTime('now', new DateTimeZone($tz)))->format('Y-m-d H:i:s'),
+  ],
+  // 'subject' => "[Contatti] {$tipo} – {$name} {$surname}", // se la tua funzione accetta override del subject
+];
 
-// Save to database
 try {
-    $db = Database::getInstance();
-    $conn = $db->getConnection();
-    
-    // Insert contact request
-    $stmt = $conn->prepare("
-        INSERT INTO contact_requests (name, email, phone, subject, message, newsletter, created_at)
-        VALUES (?, ?, ?, ?, ?, ?, NOW())
-    ");
-    
-    $stmt->bind_param("sssssi", $name, $email, $phone, $subject, $message, $newsletter);
-    
-    if (!$stmt->execute()) {
-        throw new Exception("Errore nel salvataggio della richiesta.");
-    }
-    
-    $contact_id = $conn->insert_id;
-    
-    // Add to newsletter if requested
-    if ($newsletter) {
-        $stmt_newsletter = $conn->prepare("
-            INSERT IGNORE INTO newsletter_subscribers (email, name, subscribed_at)
-            VALUES (?, ?, NOW())
-        ");
-        $stmt_newsletter->bind_param("ss", $email, $name);
-        $stmt_newsletter->execute();
-    }
-    
-    // Prepare email content
-    $email_subject = "Nuova richiesta di contatto: " . $subject;
-    $email_body = "
-    <html>
-    <head>
-        <style>
-            body { font-family: Arial, sans-serif; }
-            .container { max-width: 600px; margin: 0 auto; padding: 20px; }
-            .header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 20px; text-align: center; }
-            .content { background: #f8f9fa; padding: 20px; margin-top: 20px; }
-            .field { margin-bottom: 15px; }
-            .label { font-weight: bold; color: #333; }
-            .value { color: #666; margin-top: 5px; }
-            .footer { text-align: center; margin-top: 30px; color: #666; font-size: 12px; }
-        </style>
-    </head>
-    <body>
-        <div class='container'>
-            <div class='header'>
-                <h2>Nuova Richiesta di Contatto</h2>
-            </div>
-            <div class='content'>
-                <div class='field'>
-                    <div class='label'>Nome:</div>
-                    <div class='value'>$name</div>
-                </div>
-                <div class='field'>
-                    <div class='label'>Email:</div>
-                    <div class='value'>$email</div>
-                </div>
-                <div class='field'>
-                    <div class='label'>Telefono:</div>
-                    <div class='value'>$phone</div>
-                </div>
-                <div class='field'>
-                    <div class='label'>Oggetto:</div>
-                    <div class='value'>$subject</div>
-                </div>
-                <div class='field'>
-                    <div class='label'>Messaggio:</div>
-                    <div class='value'>" . nl2br($message) . "</div>
-                </div>
-                <div class='field'>
-                    <div class='label'>Newsletter:</div>
-                    <div class='value'>" . ($newsletter ? 'Sì' : 'No') . "</div>
-                </div>
-            </div>
-            <div class='footer'>
-                <p>Richiesta ricevuta il " . date('d/m/Y H:i') . "</p>
-                <p>ID Richiesta: #$contact_id</p>
-            </div>
-        </div>
-    </body>
-    </html>
-    ";
-    
-    // Send email notification
-    if (send_email(EMAIL_INFO, $email_subject, $email_body)) {
-        // Send auto-reply to customer
-        $auto_reply_subject = "Abbiamo ricevuto la tua richiesta - " . SITE_NAME;
-        $auto_reply_body = "
-        <html>
-        <head>
-            <style>
-                body { font-family: Arial, sans-serif; }
-                .container { max-width: 600px; margin: 0 auto; padding: 20px; }
-                .header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 30px; text-align: center; }
-                .content { padding: 30px; }
-                .button { display: inline-block; padding: 12px 30px; background: #4a00e0; color: white; text-decoration: none; border-radius: 5px; margin-top: 20px; }
-                .footer { background: #f8f9fa; padding: 20px; text-align: center; margin-top: 30px; }
-            </style>
-        </head>
-        <body>
-            <div class='container'>
-                <div class='header'>
-                    <h1>Grazie per averci contattato!</h1>
-                </div>
-                <div class='content'>
-                    <p>Ciao <strong>$name</strong>,</p>
-                    <p>Abbiamo ricevuto la tua richiesta e ti risponderemo al più presto possibile, generalmente entro 24 ore lavorative.</p>
-                    <p><strong>Riepilogo della tua richiesta:</strong></p>
-                    <div style='background: #f8f9fa; padding: 15px; border-radius: 5px; margin: 20px 0;'>
-                        <p><strong>Oggetto:</strong> $subject</p>
-                        <p><strong>Messaggio:</strong><br>" . nl2br($message) . "</p>
-                    </div>
-                    <p>Nel frattempo, puoi contattarci per urgenze:</p>
-                    <ul>
-                        <li>Telefono: <strong>" . PHONE_PRIMARY . "</strong></li>
-                        <li>WhatsApp: <strong>" . WHATSAPP_NUMBER . "</strong></li>
-                    </ul>
-                    <center>
-                        <a href='" . url('servizi.php') . "' class='button'>Scopri i Nostri Servizi</a>
-                    </center>
-                </div>
-                <div class='footer'>
-                    <p>Seguici sui social:</p>
-                    <p>
-                        <a href='" . SOCIAL_FACEBOOK . "'>Facebook</a> | 
-                        <a href='" . SOCIAL_INSTAGRAM . "'>Instagram</a>
-                    </p>
-                    <p style='color: #666; font-size: 12px; margin-top: 20px;'>
-                        " . SITE_NAME . " - " . COMPANY_ADDRESS . "<br>
-                        P.IVA: " . COMPANY_VAT . "
-                    </p>
-                </div>
-            </div>
-        </body>
-        </html>
-        ";
-        
-        send_email($email, $auto_reply_subject, $auto_reply_body);
-    }
-    
-    // Set success message
-    $_SESSION['success'] = 'Grazie per averci contattato! Ti risponderemo al più presto.';
-    
-    // Clear form data
-    unset($_SESSION['form_data']);
-    
-    // Redirect back
-    header('Location: ' . url('contatti.php?success=1'));
-    exit;
-    
-} catch (Exception $e) {
-    error_log("Contact form error: " . $e->getMessage());
-    $_SESSION['error'] = 'Si è verificato un errore. Riprova più tardi.';
-    $_SESSION['form_data'] = $_POST;
-    header('Location: ' . url('contatti.php'));
-    exit;
+  if (!function_exists('send_assistance_email')) {
+    throw new RuntimeException('Funzione send_assistance_email non disponibile.');
+  }
+
+  $res = send_assistance_email($payload, $opts);
+
+  // Normalizziamo il risultato in (success,message)
+  $ok  = is_array($res) ? ($res['success'] ?? $res['ok'] ?? false) : (bool)$res;
+  $msg = is_array($res) ? ($res['message'] ?? ($ok ? 'Messaggio inviato con successo!' : 'Errore durante l’invio.')) 
+                        : ($ok ? 'Messaggio inviato con successo!' : 'Errore durante l’invio.');
+
+  $_SESSION['contact_flood'][] = time();
+
+  if ($ok) {
+    $respond(true, $msg);
+  }
+  $respond(false, $msg, [], 200);
+
+} catch (Throwable $e) {
+  // error_log('send_assistance_email failed: '.$e->getMessage());
+  $respond(false, 'Si è verificato un problema con l’invio. Riprova tra poco o contattaci telefonicamente.', [], 500);
 }
-?>

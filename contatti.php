@@ -134,9 +134,10 @@ $contact_endpoint = url('ajax/contact_submit.php');
       <div class="row g-5">
         <!-- FORM -->
         <div class="col-lg-6" data-aos="fade-right">
-          <div class="contact-form-wrapper">
-            <h2 class="section-title">Invia un messaggio</h2>
+                        <h2 class="section-title">Invia un messaggio</h2>
             <p class="section-subtitle mb-4">Compila il form e ti risponderemo entro 24 ore</p>
+          <div class="contact-form-wrapper">
+
 
             <form id="contactForm"
                   class="contact-form"
@@ -288,94 +289,394 @@ $contact_endpoint = url('ajax/contact_submit.php');
       </div>
     </div>
   </section>
+<!-- ACCESSIBILITÀ & PARCHEGGIO -->
+<section class="section section-accessibility" id="accessibilita">
+  <div class="container">
+    <div class="section-header text-center" data-aos="fade-up">
+      <h2 class="section-title">Accessibilità &amp; Parcheggio</h2>
+      <p class="section-subtitle">Info pratiche per raggiungerci senza stress</p>
+    </div>
 
-  <!-- FAQ -->
-  <section class="section section-faq bg-light">
-    <div class="container">
-      <div class="section-header text-center" data-aos="fade-up">
-        <h2 class="section-title">Domande Frequenti</h2>
-        <p class="section-subtitle">Le risposte alle domande più comuni</p>
-      </div>
-
-      <div class="row justify-content-center" data-aos="fade-up" data-aos-delay="100">
-        <div class="col-lg-8">
-          <div class="accordion" id="faqAccordion">
-            <div class="accordion-item">
-              <h3 class="accordion-header">
-                <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#faq1">
-                  <i class="ri-question-line me-2" aria-hidden="true"></i>Quali sono i vostri orari di apertura?
-                </button>
-              </h3>
-              <div id="faq1" class="accordion-collapse collapse show" data-bs-parent="#faqAccordion">
-                <div class="accordion-body">
-                  Siamo aperti dal lunedì al venerdì dalle 9:00 alle 19:00 (orario continuato) e il sabato dalle 9:00 alle 13:00. La domenica siamo chiusi.
-                </div>
-              </div>
+    <div class="row g-4">
+      <!-- Accessibilità -->
+      <div class="col-lg-6" data-aos="fade-right">
+        <div class="acp-card">
+          <div class="acp-row">
+            <i class="ri-door-open-line" aria-hidden="true"></i>
+            <div>
+              <div class="acp-label">Ingresso</div>
+              <div class="acp-text">Accesso a raso (senza gradini). Luce porta ≈ 90&nbsp;cm. <span class="acp-note"></span></div>
             </div>
-
-            <div class="accordion-item">
-              <h3 class="accordion-header">
-                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq2">
-                  <i class="ri-question-line me-2" aria-hidden="true"></i>Offrite servizio di ritiro e consegna?
-                </button>
-              </h3>
-              <div id="faq2" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
-                <div class="accordion-body">
-                  Sì, offriamo ritiro e consegna a domicilio per Ginosa e comuni limitrofi. Il servizio ha un costo aggiuntivo variabile in base alla distanza.
-                </div>
-              </div>
+          </div>
+          <div class="acp-row">
+            <i class="ri-wheelchair-line" aria-hidden="true"></i>
+            <div>
+              <div class="acp-label">Mobilità ridotta</div>
+              <div class="acp-text">Spazio manovra interno ≈ 120&nbsp;cm. Assistenza su richiesta all’ingresso.</div>
             </div>
-
-            <div class="accordion-item">
-              <h3 class="accordion-header">
-                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq3">
-                  <i class="ri-question-line me-2" aria-hidden="true"></i>Quanto tempo serve per una riparazione?
-                </button>
-              </h3>
-              <div id="faq3" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
-                <div class="accordion-body">
-                  Per le riparazioni più comuni offriamo servizio express in 24-48 ore. Per interventi complessi possono servire 3-5 giorni lavorativi.
-                </div>
-              </div>
+          </div>
+          <div class="acp-row">
+            <i class="ri-notification-3-line" aria-hidden="true"></i>
+            <div>
+              <div class="acp-label">Campanello/Supporto</div>
+              <div class="acp-text">Nessun campanello, supporto in negozio per salita/discesa.</div>
             </div>
-
-            <div class="accordion-item">
-              <h3 class="accordion-header">
-                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq4">
-                  <i class="ri-question-line me-2" aria-hidden="true"></i>Posso avere un preventivo telefonico?
-                </button>
-              </h3>
-              <div id="faq4" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
-                <div class="accordion-body">
-                  Possiamo fornire una stima indicativa per telefono; per un preventivo preciso è necessaria una diagnosi in sede. La diagnosi è gratuita e senza impegno.
-                </div>
-              </div>
-            </div>
-
+          </div>
+          <div class="acp-help alert alert-light mt-2">
+            <i class="ri-hand-heart-line" aria-hidden="true"></i>
+            Hai bisogno di aiuto al marciapiede? <a href="tel:<?= str_replace(' ', '', COMPANY_PHONE); ?>">Chiamaci</a> e usciamo noi.
           </div>
         </div>
       </div>
 
-    </div>
-  </section>
-
-  <!-- CTA -->
-  <section class="section section-cta" id="section-cta">
-    <div class="container">
-      <div class="cta-box text-center" data-aos="zoom-in">
-        <h2 class="cta-title">Preferisci contattarci direttamente?</h2>
-        <p class="cta-subtitle mb-4">Scegli il metodo che preferisci per contattarci immediatamente</p>
-        <div class="cta-buttons">
-          <a href="<?= whatsapp_link('Ciao Key Soft Italia!'); ?>" target="_blank" rel="noopener" class="btn btn-success btn-lg">
-            <i class="ri-whatsapp-line"></i> WhatsApp
-          </a>
-          <a href="tel:<?= str_replace(' ', '', COMPANY_PHONE); ?>" class="btn btn-primary btn-lg">
-            <i class="ri-phone-line"></i> Chiama Ora
-          </a>
+      <!-- Parcheggio & Trasporti -->
+      <div class="col-lg-6" data-aos="fade-left">
+        <div class="acp-card">
+          <div class="acp-row">
+            <i class="ri-parking-box-line" aria-hidden="true"></i>
+            <div>
+              <div class="acp-label">Parcheggi vicini</div>
+              <div class="acp-text">Stalli lungo Via Diaz, V.le Martiri D'Ungheria e vie adiacenti. <span class="acp-note"></span></div>
+            </div>
+          </div>
+         <div class="acp-row">
+            <i class="ri-wheelchair-line" aria-hidden="true"></i>
+            <div>
+              <div class="acp-label">Parcheggi disabili</div>
+              <div class="acp-text">Stalli per Disabili disponibili all'ingresso. <span class="acp-note"></span></div>
+            </div>
+          </div>
+          <div class="acp-row">
+            <i class="ri-road-map-line" aria-hidden="true"></i>
+            <div>
+              <div class="acp-label">Indicazioni</div>
+              <div class="acp-text">Siamo in <?= COMPANY_ADDRESS; ?>, 74013 <?= COMPANY_CITY; ?> (TA).</div>
+            </div>
+          </div>
+          <div class="acp-help alert alert-light mt-2">
+            <a href="<?= GOOGLE_MAPS_LINK; ?>" target="_blank" rel="noopener">
+              <i class="ri-map-pin-line"></i> Apri in Google Maps
+            </a>
+          </div>
         </div>
       </div>
     </div>
-  </section>
+  </div>
+</section>
+
+<!-- TEMPI DI RISPOSTA (SLA) -->
+<section class="section section-sla">
+  <div class="container">
+    <div class="section-header text-center" data-aos="fade-up">
+      <h2 class="section-title">Tempi di Risposta</h2>
+      <p class="section-subtitle">Stime reali basate sulla nostra operatività</p>
+    </div>
+
+    <div class="row g-4 justify-content-center">
+      <div class="col-md-4" data-aos="zoom-in">
+        <div class="sla-card sla--wa">
+          <div class="sla-icon"><i class="ri-whatsapp-line" aria-hidden="true"></i></div>
+          <div class="sla-title">WhatsApp</div>
+          <div class="sla-time">~ 15 minuti</div>
+          <div class="sla-note">Durante l’orario di apertura</div>
+        </div>
+      </div>
+      <div class="col-md-4" data-aos="zoom-in" data-aos-delay="100">
+        <div class="sla-card sla--tel">
+          <div class="sla-icon"><i class="ri-phone-line" aria-hidden="true"></i></div>
+          <div class="sla-title">Telefono</div>
+          <div class="sla-time">Immediato</div>
+          <div class="sla-note">In negozio o da laboratorio</div>
+        </div>
+      </div>
+      <div class="col-md-4" data-aos="zoom-in" data-aos-delay="200">
+        <div class="sla-card sla--mail">
+          <div class="sla-icon"><i class="ri-mail-send-line" aria-hidden="true"></i></div>
+          <div class="sla-title">Email</div>
+          <div class="sla-time">entro 24&nbsp;ore</div>
+          <div class="sla-note">Risposte dettagliate e tracciate</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- AGGIUNGI AI CONTATTI (vCard) -->
+<section class="section section-vcard" id="vcard">
+  <div class="container">
+    <div class="vc-simple" data-aos="zoom-in">
+      <div class="vc-simple-text">
+        <h3 class="vc-simple-title">
+          <i class="ri-contacts-book-2-line" aria-hidden="true"></i>
+          Aggiungi ai contatti
+        </h3>
+        <p class="vc-simple-subtitle">
+          Salva in rubrica i nostri riferimenti: telefono, WhatsApp, email e indirizzo.
+        </p>
+        <small class="vc-simple-note">
+          Compatibile con iOS, Android, Outlook e Google Contacts.
+        </small>
+      </div>
+      <div class="vc-simple-actions">
+        <a class="btn vc-btn vc-btn--light btn-lg" href="<?= url('vcard.php'); ?>">
+          <i class="ri-download-2-line" aria-hidden="true"></i> Scarica vCard (.vcf)
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section class="section section-faq bg-light" id="faq">
+  <div class="container">
+    <div class="section-header text-center" data-aos="fade-up">
+      <h2 class="section-title">Domande Frequenti</h2>
+      <p class="section-subtitle">Risposte chiare su servizi, tempi e garanzie</p>
+    </div>
+
+    <?php
+      // Piccolo helper per mostrare gli orari di OGGI in modo dinamico
+      $tz        = new DateTimeZone(KS_TZ);
+      $now       = new DateTime('now', $tz);
+      $todayStr  = strip_tags( ks_format_intervals( ks_intervals_for_date($now) ) );
+    ?>
+
+    <div class="row justify-content-center" data-aos="fade-up" data-aos-delay="100">
+      <div class="col-lg-8">
+        <div class="accordion" id="faqAccordion">
+
+          <!-- Orari -->
+          <div class="accordion-item">
+            <h3 class="accordion-header">
+              <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#faq1">
+                <i class="ri-time-line me-2" aria-hidden="true"></i>Quali sono i vostri orari di apertura?
+              </button>
+            </h3>
+            <div id="faq1" class="accordion-collapse collapse show" data-bs-parent="#faqAccordion">
+              <div class="accordion-body">
+                Oggi: <strong><?= $todayStr ?: 'Chiuso'; ?></strong>.  
+                Gli orari completi e lo stato “aperti/chiusi” in tempo reale sono nel box <a href="#opening-hours">Orari di Apertura</a> e nella topbar.
+              </div>
+            </div>
+          </div>
+
+          <!-- Appuntamento sì/no -->
+          <div class="accordion-item">
+            <h3 class="accordion-header">
+              <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq2">
+                <i class="ri-calendar-check-line me-2" aria-hidden="true"></i>Serve appuntamento o posso venire direttamente?
+              </button>
+            </h3>
+            <div id="faq2" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+              <div class="accordion-body">
+                Puoi venire senza appuntamento. Se vuoi velocizzare diagnosi e presa in carico, scrivici prima su WhatsApp: compilando due info essenziali arriviamo pronti.
+              </div>
+            </div>
+          </div>
+
+          <!-- Diagnosi/preventivo -->
+          <div class="accordion-item">
+            <h3 class="accordion-header">
+              <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq3">
+                <i class="ri-search-eye-line me-2" aria-hidden="true"></i>La diagnosi è a pagamento?
+              </button>
+            </h3>
+            <div id="faq3" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+              <div class="accordion-body">
+                La diagnosi è <strong>gratuita e senza impegno</strong>. Prima di procedere con qualsiasi riparazione ti comunichiamo costi, tempi e garanzie.
+              </div>
+            </div>
+          </div>
+
+          <!-- Tempi riparazioni -->
+          <div class="accordion-item">
+            <h3 class="accordion-header">
+              <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq4">
+                <i class="ri-timer-line me-2" aria-hidden="true"></i>Quanto tempo serve per una riparazione?
+              </button>
+            </h3>
+            <div id="faq4" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+              <div class="accordion-body">
+                Per le riparazioni più comuni su smartphone/PC offriamo servizio <strong>express 24–48h</strong>.  
+                Interventi complessi (es. <em>microsaldature</em> su scheda logica) richiedono in media <strong>3–5 giorni lavorativi</strong>.  
+                Se servono ricambi non in stock, i tempi dipendono dalla fornitura: ti aggiorniamo noi.
+              </div>
+            </div>
+          </div>
+
+          <!-- Ricambi & Garanzia -->
+          <div class="accordion-item">
+            <h3 class="accordion-header">
+              <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq5">
+                <i class="ri-shield-check-line me-2" aria-hidden="true"></i>Usate ricambi originali? Che garanzia ho?
+              </button>
+            </h3>
+            <div id="faq5" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+              <div class="accordion-body">
+                Utilizziamo <strong>ricambi originali</strong> quando disponibili, oppure <strong>ricambi top quality/OEM</strong> testati in laboratorio.  
+                Ogni intervento è coperto da <strong>garanzia su ricambio e lavorazione</strong> (durata e condizioni sono indicate nel preventivo e nel documento di consegna).
+              </div>
+            </div>
+          </div>
+
+          <!-- Dati & Privacy -->
+          <div class="accordion-item">
+            <h3 class="accordion-header">
+              <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq6">
+                <i class="ri-lock-2-line me-2" aria-hidden="true"></i>Perdo i miei dati? Come gestite la privacy?
+              </button>
+            </h3>
+            <div id="faq6" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+              <div class="accordion-body">
+                In genere <strong>non perdi i dati</strong>. Se un intervento può comportare rischio per i dati, ti informiamo prima e proponiamo un <strong>backup</strong>.  
+                Trattiamo i dispositivi nel rispetto della <strong>privacy</strong> e del principio di <em>minimo accesso</em>. Su richiesta eseguiamo <strong>wipe sicuro</strong> prima della riconsegna.
+              </div>
+            </div>
+          </div>
+
+          <!-- Ritiro & Consegna -->
+          <div class="accordion-item">
+            <h3 class="accordion-header">
+              <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq7">
+                <i class="ri-truck-line me-2" aria-hidden="true"></i>Fate ritiro e consegna a domicilio?
+              </button>
+            </h3>
+            <div id="faq7" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+              <div class="accordion-body">
+                Sì, su <strong>Ginosa e comuni limitrofi</strong>. Il costo dipende dalla distanza e dall’urgenza.  
+                Contattaci su WhatsApp per una quotazione rapida e per fissare giorno/ora.
+              </div>
+            </div>
+          </div>
+
+          <!-- Assistenza remota -->
+          <div class="accordion-item">
+            <h3 class="accordion-header">
+              <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq8">
+                <i class="ri-remote-control-2-line me-2" aria-hidden="true"></i>Fornite assistenza remota?
+              </button>
+            </h3>
+            <div id="faq8" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+              <div class="accordion-body">
+                Certo. Scarica <strong>AnyDesk/TeamViewer</strong>, condividi l’ID e interveniamo da remoto.  
+                Trovi la sezione dedicata più su (“Assistenza remota”) con pulsanti di <em>download</em> e invio ID via WhatsApp.
+              </div>
+            </div>
+          </div>
+
+          <!-- Ricondizionati -->
+          <div class="accordion-item">
+            <h3 class="accordion-header">
+              <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq9">
+                <i class="ri-smartphone-line me-2" aria-hidden="true"></i>Vendete smartphone/PC ricondizionati?
+              </button>
+            </h3>
+            <div id="faq9" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+              <div class="accordion-body">
+                Sì, selezione <strong>ricondizionati</strong> testati in laboratorio e <strong>garantiti</strong>, con accessori e scontrino/fattura.  
+                Passa in negozio per disponibilità e valutazione <em>permuta</em> dell’usato.
+              </div>
+            </div>
+          </div>
+
+          <!-- Pagamenti & Fattura -->
+          <div class="accordion-item">
+            <h3 class="accordion-header">
+              <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq10">
+                <i class="ri-receipt-line me-2" aria-hidden="true"></i>Quali pagamenti accettate? Fate fattura?
+              </button>
+            </h3>
+            <div id="faq10" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+              <div class="accordion-body">
+                Accettiamo <strong>contanti, carte e bancomat</strong>. Rilasciamo <strong>scontrino o fattura</strong> (anche per aziende) su richiesta.
+              </div>
+            </div>
+          </div>
+
+          <!-- Pellicole MyShape & protezioni -->
+          <div class="accordion-item">
+            <h3 class="accordion-header">
+              <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq11">
+                <i class="ri-scissors-cut-line me-2" aria-hidden="true"></i>Fate pellicole su misura (MyShape)?
+              </button>
+            </h3>
+            <div id="faq11" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+              <div class="accordion-body">
+                Sì: <strong>taglio su misura</strong> in negozio (display e retro) con finiture a scelta.  
+                Applichiamo noi per una resa perfetta e garantita.
+              </div>
+            </div>
+          </div>
+
+        </div><!-- /accordion -->
+      </div>
+    </div>
+  </div>
+</section>
+
+ <!-- CTA -->
+<section class="section section-cta" id="section-cta">
+  <div class="container">
+    <?php
+      $tz   = new DateTimeZone(KS_TZ);
+      $now  = new DateTime('now', $tz);
+      $st   = ks_is_open_now($now);
+      $open = $st['open'];
+
+      $chipCls = $open ? 'cta-chip cta-chip--open' : 'cta-chip cta-chip--closed';
+      $chipIco = $open ? 'ri-checkbox-circle-line' : 'ri-close-circle-line';
+      $chipTxt = $open ? 'Aperti ora' : 'Chiusi ora';
+
+      if ($open) {
+        $note = 'Chiude alle '.$st['end']->format('H:i').' (tra '.ks_human_diff($now, $st['end']).')';
+      } else {
+        $nxt  = ks_next_open_after($now);
+        $note = $nxt
+          ? 'Riapre '.($nxt->format('Ymd')===$now->format('Ymd') ? 'alle '.$nxt->format('H:i') : ks_day_label((int)$nxt->format('N')).' alle '.$nxt->format('H:i'))
+            .' (tra '.ks_human_diff($now, $nxt).')'
+          : 'Chiuso';
+      }
+    ?>
+
+    <div class="cta-panel" data-aos="zoom-in">
+      <div class="row align-items-center g-4">
+        <!-- Testo -->
+        <div class="col-lg-7">
+          <div class="d-flex align-items-center gap-2 mb-2">
+            <span class="<?= $chipCls; ?>"><i class="<?= $chipIco; ?>" aria-hidden="true"></i> <?= $chipTxt; ?></span>
+            <small class="cta-note"><?= $note; ?></small>
+          </div>
+          <h2 class="cta-title">Parliamo adesso?</h2>
+          <p class="cta-subtitle">Scegli il canale che preferisci: rispondiamo davvero.</p>
+
+          <!-- micro-SLA -->
+          <ul class="cta-sla list-unstyled d-flex flex-wrap gap-3 mb-0">
+            <li><i class="ri-whatsapp-line" aria-hidden="true"></i> WhatsApp <strong>~15 min</strong></li>
+            <li><i class="ri-phone-line" aria-hidden="true"></i> Telefono <strong>immediato</strong></li>
+            <li><i class="ri-mail-send-line" aria-hidden="true"></i> Email <strong>entro 24h</strong></li>
+          </ul>
+        </div>
+
+        <!-- Bottoni -->
+        <div class="col-lg-5">
+          <div class="cta-buttons">
+            <a href="<?= whatsapp_link('Ciao Key Soft Italia!'); ?>" target="_blank" rel="noopener" class="btn cta-btn cta-btn--wa btn-lg w-100">
+              <i class="ri-whatsapp-line"></i> Scrivici su WhatsApp
+            </a>
+            <a href="tel:<?= str_replace(' ', '', COMPANY_PHONE); ?>" class="btn cta-btn cta-btn--tel btn-lg w-100">
+              <i class="ri-phone-line"></i> Chiama Ora
+            </a>
+            <a href="mailto:<?= COMPANY_EMAIL; ?>" class="btn cta-btn cta-btn--mail btn-lg w-100">
+              <i class="ri-mail-line"></i> Invia Email
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
 
   <?php include 'includes/footer.php'; ?>
 
