@@ -295,17 +295,49 @@ $contact_endpoint = url('ajax/contact_submit.php');
             <?php endif; ?>
 
             <div class="opening-hours-list oh-list mt-3">
-                <?php for ($d=1; $d<=7; $d++): 
-                $is_today = ($d === (int)$__now->format('N'));
-                $row_cls  = $is_today ? 'oh-row is-today' : 'oh-row';
-                $intervals = $__table[$d] ?? [];
-                ?>
-                <div class="<?= $row_cls; ?>">
-                    <span class="oh-day"><?= ks_day_label($d); ?></span>
-                    <strong class="oh-time"><?= ks_format_intervals($intervals); ?></strong>
-                </div>
-                <?php endfor; ?>
-            </div>
+  <?php 
+  $tz   = new DateTimeZone(defined('KS_TZ') ? KS_TZ : 'Europe/Rome');
+  $now  = (isset($now) && $now instanceof DateTime) ? $now : new DateTime('now', $tz);
+  for ($d=1; $d<=7; $d++):
+        $date = ks_date_for_iso_dow($now, $d);
+
+        // Orari dal DB (via ks_intervals_for_date) con fallback automatico
+        $intervals = ks_intervals_for_date($date);
+
+        // Notice per la riga (DB exceptions/holidays → fallback array)
+        $row_notice = null;
+        if (function_exists('ks_hours_notice_for_date')) {
+          $row_notice = ks_hours_notice_for_date($date);
+        } else {
+          if (function_exists('ks_db_date_exception')) {
+            $exc = ks_db_date_exception($date->format('Y-m-d'));
+            if (!empty($exc['found']) && !empty($exc['notice'])) $row_notice = $exc['notice'];
+          }
+          if (!$row_notice && function_exists('ks_holiday_rule_for_date')) {
+            $hol = ks_holiday_rule_for_date($date);
+            if ($hol && !empty($hol['notice'])) $row_notice = $hol['notice'];
+          }
+          if (!$row_notice) {
+            $map = ks_store_hours_notices();
+            $row_notice = $map[$date->format('Y-m-d')] ?? null;
+          }
+        }
+
+        $is_today = ($d === (int)$now->format('N'));
+        $row_cls  = $is_today ? 'oh-row is-today' : 'oh-row';
+  ?>
+    <div class="<?= $row_cls; ?>">
+      <span class="oh-day"><?= ks_day_label($d); ?></span>
+      <span class="oh-time">
+        <strong><?= ks_format_intervals($intervals); ?></strong>
+        <?php if ($row_notice && $is_today): ?>
+          <em class="oh-note d-block small"><?= htmlspecialchars($row_notice, ENT_QUOTES, 'UTF-8'); ?></em>
+        <?php endif; ?>
+      </span>
+    </div>
+  <?php endfor; ?>
+</div>
+            
             </div>
           </div>
         </div>
@@ -313,6 +345,7 @@ $contact_endpoint = url('ajax/contact_submit.php');
       </div>
     </div>
   </section>
+  
 <!-- ACCESSIBILITÀ & PARCHEGGIO -->
 <section class="section section-accessibility" id="accessibilita">
   <div class="container">

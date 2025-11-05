@@ -40,6 +40,16 @@ require_once '../config/config.php';
                             <li class="nav-item"><a href="price_rules.php" class="nav-link">Regole di Prezzo</a></li>
                             <li class="nav-item"><a href="quotes.php" class="nav-link">Preventivi</a></li>
                             <li class="nav-item"><a href="users.php" class="nav-link">Utenti</a></li>
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    Orari di Apertura
+                                </a>
+                                <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                    <li><a class="dropdown-item" href="weekly_hours.php">Orario Settimanale</a></li>
+                                    <li><a class="dropdown-item" href="holidays.php">Festività</a></li>
+                                    <li><a class="dropdown-item" href="exceptions.php">Eccezioni</a></li>
+                                </ul>
+                            </li>
                             <li class="nav-item"><a href="logout.php" class="nav-link">Logout</a></li>
                         </ul>
                     </nav>
