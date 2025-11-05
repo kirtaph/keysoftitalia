@@ -33,13 +33,20 @@ require_once '../config/config.php';
                     <nav class="nav-main">
                         <ul class="nav-menu">
                             <li class="nav-item"><a href="dashboard.php" class="nav-link">Dashboard</a></li>
-                            <li class="nav-item"><a href="devices.php" class="nav-link">Dispositivi</a></li>
-                            <li class="nav-item"><a href="brands.php" class="nav-link">Marchi</a></li>
-                            <li class="nav-item"><a href="models.php" class="nav-link">Modelli</a></li>
-                            <li class="nav-item"><a href="issues.php" class="nav-link">Problemi</a></li>
-                            <li class="nav-item"><a href="price_rules.php" class="nav-link">Regole di Prezzo</a></li>
-                            <li class="nav-item"><a href="quotes.php" class="nav-link">Preventivi</a></li>
-                            <li class="nav-item"><a href="users.php" class="nav-link">Utenti</a></li>
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    Preventivi
+                                </a>
+                                <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                            <li class="dropdown-item"><a href="devices.php" class="nav-link">Dispositivi</a></li>
+                            <li class="dropdown-item"><a href="brands.php" class="nav-link">Marchi</a></li>
+                            <li class="dropdown-item"><a href="models.php" class="nav-link">Modelli</a></li>
+                            <li class="dropdown-item"><a href="issues.php" class="nav-link">Problemi</a></li>
+                            <li class="dropdown-item"><a href="price_rules.php" class="nav-link">Regole di Prezzo</a></li>
+                            <li class="dropdown-item"><a href="quotes.php" class="nav-link">Preventivi</a></li>
+                            </ul>
+                            </li>
+                            
                             <li class="nav-item dropdown">
                                 <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                                     Orari di Apertura
@@ -50,6 +57,7 @@ require_once '../config/config.php';
                                     <li><a class="dropdown-item" href="exceptions.php">Eccezioni</a></li>
                                 </ul>
                             </li>
+                            <li class="nav-item"><a href="users.php" class="nav-link">Utenti</a></li>
                             <li class="nav-item"><a href="logout.php" class="nav-link">Logout</a></li>
                         </ul>
                     </nav>
