@@ -272,57 +272,77 @@ $contact_endpoint = url('ajax/contact_submit.php');
                 <i class="ri-hand-pointer-line" aria-hidden="true"></i> Clicca per interagire
             </button>
             </div>
+<?php
+  $tz   = new DateTimeZone(defined('KS_TZ') ? KS_TZ : 'Europe/Rome');
+  $now  = (isset($now) && $now instanceof DateTime) ? $now : new DateTime('now', $tz);
+        $state   = ks_is_open_now($now);
+      $open    = $state['open'];
+      $chipCls = $open ? 'oh-chip--open' : 'oh-chip--closed';
+      $chipIco = $open ? 'ri-checkbox-circle-line' : 'ri-close-circle-line';
+      $chipTxt = $open ? 'Aperti' : 'Chiusi';
+      if ($open) {
+        $note = 'Chiude alle '.$state['end']->format('H:i').' (tra '.ks_human_diff($now, $state['end']).')';
+      } else {
+        $nxt  = ks_next_open_after($now);
+        $note = $nxt
+          ? 'Riapre '.($nxt->format('Ymd') === $now->format('Ymd')
+              ? 'alle '.$nxt->format('H:i')
+              : ks_day_label((int)$nxt->format('N')).' alle '.$nxt->format('H:i'))
+            .' (tra '.ks_human_diff($now, $nxt).')'
+          : 'Chiuso';
+      }
+      $todayNotice = null;
 
+if (function_exists('ks_hours_notice_for_date')) {
+  $todayNotice = ks_hours_notice_for_date($now);
+} else {
+  // fallback slim se non hai la funzione aggregata
+  if (function_exists('ks_db_date_exception')) {
+    $exc = ks_db_date_exception($now->format('Y-m-d'));
+    if (!empty($exc['found']) && !empty($exc['notice'])) {
+      $todayNotice = trim((string)$exc['notice']);
+    }
+  }
+  if (!$todayNotice && function_exists('ks_holiday_rule_for_date')) {
+    $hol = ks_holiday_rule_for_date($now);
+    if ($hol && !empty($hol['notice'])) {
+      $todayNotice = trim((string)$hol['notice']);
+    }
+  }
+  if (!$todayNotice) {
+    $map = ks_store_hours_notices();
+    $todayNotice = $map[$now->format('Y-m-d')] ?? null;
+  }
+}
+      ?>
             <div class="opening-hours-box oh-box mt-4" id="opening-hours">
             <div class="oh-head d-flex align-items-center justify-content-between">
                 <h4 class="mb-0">
                 <i class="ri-time-line" aria-hidden="true"></i> Orari di Apertura
                 </h4>
-                <span class="oh-chip <?= $__chip_class; ?>">
-                <i class="<?= $__chip_icon; ?>" aria-hidden="true"></i> <?= $__chip_label; ?>
+                <span class="oh-chip <?= $chipCls; ?>">
+                <i class="<?= $chipIco; ?>" aria-hidden="true"></i> <?= $chipTxt; ?>
                 </span>
             </div>
 
-            <?php if (!empty($__todayNotice)): ?>
+            <?php if (!empty($todayNotice)): ?>
                 <div class="oh-alert oh-alert--special mt-2">
                 <i class="ri-megaphone-line" aria-hidden="true"></i>
-                <?= htmlspecialchars($__todayNotice, ENT_QUOTES, 'UTF-8'); ?>
+                <?= htmlspecialchars($todayNotice, ENT_QUOTES, 'UTF-8'); ?>
                 </div>
             <?php endif; ?>
 
-            <?php if (!empty($__note)): ?>
-                <div class="oh-note small text-muted mt-1"><?= $__note; ?></div>
+            <?php if (!empty($note)): ?>
+                <div class="oh-note small text-muted mt-1"><?= $note; ?></div>
             <?php endif; ?>
 
             <div class="opening-hours-list oh-list mt-3">
   <?php 
-  $tz   = new DateTimeZone(defined('KS_TZ') ? KS_TZ : 'Europe/Rome');
-  $now  = (isset($now) && $now instanceof DateTime) ? $now : new DateTime('now', $tz);
   for ($d=1; $d<=7; $d++):
         $date = ks_date_for_iso_dow($now, $d);
 
         // Orari dal DB (via ks_intervals_for_date) con fallback automatico
         $intervals = ks_intervals_for_date($date);
-
-        // Notice per la riga (DB exceptions/holidays → fallback array)
-        $row_notice = null;
-        if (function_exists('ks_hours_notice_for_date')) {
-          $row_notice = ks_hours_notice_for_date($date);
-        } else {
-          if (function_exists('ks_db_date_exception')) {
-            $exc = ks_db_date_exception($date->format('Y-m-d'));
-            if (!empty($exc['found']) && !empty($exc['notice'])) $row_notice = $exc['notice'];
-          }
-          if (!$row_notice && function_exists('ks_holiday_rule_for_date')) {
-            $hol = ks_holiday_rule_for_date($date);
-            if ($hol && !empty($hol['notice'])) $row_notice = $hol['notice'];
-          }
-          if (!$row_notice) {
-            $map = ks_store_hours_notices();
-            $row_notice = $map[$date->format('Y-m-d')] ?? null;
-          }
-        }
-
         $is_today = ($d === (int)$now->format('N'));
         $row_cls  = $is_today ? 'oh-row is-today' : 'oh-row';
   ?>
@@ -330,9 +350,6 @@ $contact_endpoint = url('ajax/contact_submit.php');
       <span class="oh-day"><?= ks_day_label($d); ?></span>
       <span class="oh-time">
         <strong><?= ks_format_intervals($intervals); ?></strong>
-        <?php if ($row_notice && $is_today): ?>
-          <em class="oh-note d-block small"><?= htmlspecialchars($row_notice, ENT_QUOTES, 'UTF-8'); ?></em>
-        <?php endif; ?>
       </span>
     </div>
   <?php endfor; ?>

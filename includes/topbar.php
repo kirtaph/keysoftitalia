@@ -53,10 +53,29 @@
       $todayIntervals = ks_intervals_for_date($now);
       $todayShort = empty($todayIntervals) ? 'Oggi: chiuso' : 'Oggi: '.ks_format_intervals($todayIntervals);
 
-      // Avviso speciale (eccezioni/notices) opzionale
-      $notices = ks_store_hours_notices();
-      $todayKey = $now->format('Y-m-d');
-      $todayNotice = $notices[$todayKey] ?? null;
+$todayNotice = null;
+
+if (function_exists('ks_hours_notice_for_date')) {
+  $todayNotice = ks_hours_notice_for_date($now);
+} else {
+  // fallback slim se non hai la funzione aggregata
+  if (function_exists('ks_db_date_exception')) {
+    $exc = ks_db_date_exception($now->format('Y-m-d'));
+    if (!empty($exc['found']) && !empty($exc['notice'])) {
+      $todayNotice = trim((string)$exc['notice']);
+    }
+  }
+  if (!$todayNotice && function_exists('ks_holiday_rule_for_date')) {
+    $hol = ks_holiday_rule_for_date($now);
+    if ($hol && !empty($hol['notice'])) {
+      $todayNotice = trim((string)$hol['notice']);
+    }
+  }
+  if (!$todayNotice) {
+    $map = ks_store_hours_notices();
+    $todayNotice = $map[$now->format('Y-m-d')] ?? null;
+  }
+}
     ?>
 
     <span class="<?= $chipCls; ?>">

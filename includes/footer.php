@@ -102,7 +102,29 @@ if (!defined('BASE_PATH')) {
 
     // Avviso speciale (da config)
     $todayKey = $now->format('Y-m-d');
-    $todayNotice = (ks_store_hours_notices()[$todayKey] ?? null);
+    $todayNotice = null;
+
+if (function_exists('ks_hours_notice_for_date')) {
+  $todayNotice = ks_hours_notice_for_date($now);
+} else {
+  // fallback slim se non hai la funzione aggregata
+  if (function_exists('ks_db_date_exception')) {
+    $exc = ks_db_date_exception($now->format('Y-m-d'));
+    if (!empty($exc['found']) && !empty($exc['notice'])) {
+      $todayNotice = trim((string)$exc['notice']);
+    }
+  }
+  if (!$todayNotice && function_exists('ks_holiday_rule_for_date')) {
+    $hol = ks_holiday_rule_for_date($now);
+    if ($hol && !empty($hol['notice'])) {
+      $todayNotice = trim((string)$hol['notice']);
+    }
+  }
+  if (!$todayNotice) {
+    $map = ks_store_hours_notices();
+    $todayNotice = $map[$now->format('Y-m-d')] ?? null;
+  }
+}
 
     // Raggruppa giorni con identici intervalli (base settimanale)
     function fo_group_by_intervals(array $base): array {
