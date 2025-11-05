@@ -127,6 +127,30 @@ $contact_endpoint = url('ajax/contact_submit.php');
   </div>
 </section>
 
+<!-- AGGIUNGI AI CONTATTI (vCard) -->
+<section class="section section-vcard" id="vcard">
+  <div class="container">
+    <div class="vc-simple" data-aos="zoom-in">
+      <div class="vc-simple-text">
+        <h3 class="vc-simple-title">
+          <i class="ri-contacts-book-2-line" aria-hidden="true"></i>
+          Aggiungi ai contatti
+        </h3>
+        <p class="vc-simple-subtitle">
+          Salva in rubrica i nostri riferimenti: telefono, WhatsApp, email e indirizzo.
+        </p>
+        <small class="vc-simple-note">
+          Compatibile con iOS, Android, Outlook e Google Contacts.
+        </small>
+      </div>
+      <div class="vc-simple-actions">
+        <a class="btn vc-btn vc-btn--light btn-lg" href="<?= url('vcard.php'); ?>">
+          <i class="ri-download-2-line" aria-hidden="true"></i> Scarica vCard (.vcf)
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
 
   <!-- FORM + MAP -->
   <section class="section section-contact-main" id="modulo-contatto">
@@ -401,30 +425,7 @@ $contact_endpoint = url('ajax/contact_submit.php');
   </div>
 </section>
 
-<!-- AGGIUNGI AI CONTATTI (vCard) -->
-<section class="section section-vcard" id="vcard">
-  <div class="container">
-    <div class="vc-simple" data-aos="zoom-in">
-      <div class="vc-simple-text">
-        <h3 class="vc-simple-title">
-          <i class="ri-contacts-book-2-line" aria-hidden="true"></i>
-          Aggiungi ai contatti
-        </h3>
-        <p class="vc-simple-subtitle">
-          Salva in rubrica i nostri riferimenti: telefono, WhatsApp, email e indirizzo.
-        </p>
-        <small class="vc-simple-note">
-          Compatibile con iOS, Android, Outlook e Google Contacts.
-        </small>
-      </div>
-      <div class="vc-simple-actions">
-        <a class="btn vc-btn vc-btn--light btn-lg" href="<?= url('vcard.php'); ?>">
-          <i class="ri-download-2-line" aria-hidden="true"></i> Scarica vCard (.vcf)
-        </a>
-      </div>
-    </div>
-  </div>
-</section>
+
 
 <!-- FAQ -->
 <section class="section section-faq bg-light" id="faq">
@@ -614,7 +615,7 @@ $contact_endpoint = url('ajax/contact_submit.php');
   </div>
 </section>
 
- <!-- CTA -->
+<!-- CTA (minimal, orange) -->
 <section class="section section-cta" id="section-cta">
   <div class="container">
     <?php
@@ -623,10 +624,7 @@ $contact_endpoint = url('ajax/contact_submit.php');
       $st   = ks_is_open_now($now);
       $open = $st['open'];
 
-      $chipCls = $open ? 'cta-chip cta-chip--open' : 'cta-chip cta-chip--closed';
-      $chipIco = $open ? 'ri-checkbox-circle-line' : 'ri-close-circle-line';
       $chipTxt = $open ? 'Aperti ora' : 'Chiusi ora';
-
       if ($open) {
         $note = 'Chiude alle '.$st['end']->format('H:i').' (tra '.ks_human_diff($now, $st['end']).')';
       } else {
@@ -638,41 +636,34 @@ $contact_endpoint = url('ajax/contact_submit.php');
       }
     ?>
 
-    <div class="cta-panel" data-aos="zoom-in">
-      <div class="row align-items-center g-4">
-        <!-- Testo -->
-        <div class="col-lg-7">
-          <div class="d-flex align-items-center gap-2 mb-2">
-            <span class="<?= $chipCls; ?>"><i class="<?= $chipIco; ?>" aria-hidden="true"></i> <?= $chipTxt; ?></span>
-            <small class="cta-note"><?= $note; ?></small>
-          </div>
-          <h2 class="cta-title">Parliamo adesso?</h2>
-          <p class="cta-subtitle">Scegli il canale che preferisci: rispondiamo davvero.</p>
-
-          <!-- micro-SLA -->
-          <ul class="cta-sla list-unstyled d-flex flex-wrap gap-3 mb-0">
-            <li><i class="ri-whatsapp-line" aria-hidden="true"></i> WhatsApp <strong>~15 min</strong></li>
-            <li><i class="ri-phone-line" aria-hidden="true"></i> Telefono <strong>immediato</strong></li>
-            <li><i class="ri-mail-send-line" aria-hidden="true"></i> Email <strong>entro 24h</strong></li>
-          </ul>
-        </div>
-
-        <!-- Bottoni -->
-        <div class="col-lg-5">
-          <div class="cta-buttons">
-            <a href="<?= whatsapp_link('Ciao Key Soft Italia!'); ?>" target="_blank" rel="noopener" class="btn cta-btn cta-btn--wa btn-lg w-100">
-              <i class="ri-whatsapp-line"></i> Scrivici su WhatsApp
-            </a>
-            <a href="tel:<?= str_replace(' ', '', COMPANY_PHONE); ?>" class="btn cta-btn cta-btn--tel btn-lg w-100">
-              <i class="ri-phone-line"></i> Chiama Ora
-            </a>
-            <a href="mailto:<?= COMPANY_EMAIL; ?>" class="btn cta-btn cta-btn--mail btn-lg w-100">
-              <i class="ri-mail-line"></i> Invia Email
-            </a>
-          </div>
-        </div>
+    <div class="cta-min" data-aos="zoom-in">
+      <div class="cta-min__top">
+        <span class="cta-min__chip <?= $open ? 'is-open' : 'is-closed'; ?>">
+          <i class="ri-time-line" aria-hidden="true"></i> <?= $chipTxt; ?>
+        </span>
+        <small class="cta-min__note"><?= $note; ?></small>
       </div>
+
+      <h2 class="cta-min__title">Contattaci ora</h2>
+
+      <div class="cta-min__buttons">
+        <a class="cta-min__btn is-fill" href="<?= whatsapp_link('Ciao Key Soft Italia!'); ?>" target="_blank" rel="noopener" aria-label="Contattaci su WhatsApp, risposta circa 15 minuti">
+          <span class="ico ico--wa"><i class="ri-whatsapp-line" aria-hidden="true"></i></span>
+          <span class="label">WhatsApp</span>
+          <span class="sla">(≈15 min)</span>
+        </a>
+
+        <a class="cta-min__btn is-ghost" href="tel:<?= str_replace(' ', '', COMPANY_PHONE); ?>" aria-label="Chiamaci, risposta immediata">
+          <span class="ico ico--tel"><i class="ri-phone-line" aria-hidden="true"></i></span>
+          <span class="label">Chiama</span>
+          <span class="sla">(immediato)</span>
+        </a>
+      </div>
+
+      <a class="cta-min__email" href="mailto:<?= COMPANY_EMAIL; ?>"><i class="ri-mail-line" aria-hidden="true"></i> Email (entro 24h)</a>
     </div>
+  </div>
+</section>
 
   </div>
 </section>

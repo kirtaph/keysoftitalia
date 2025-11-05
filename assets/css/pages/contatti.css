@@ -305,90 +305,88 @@
 }
 .accordion-body{ padding: var(--ks-spacing-4) var(--ks-spacing-5); color: var(--ks-text-secondary); }
 
-/* ===== CTA ORANGE THEME (override) ===== */
+/* ===== CTA MINIMAL (scoped: cta-min*) =================================== */
 .section-cta{ padding: var(--ks-spacing-16) 0; }
 
-.section-cta .cta-panel{
-  position: relative; overflow: hidden;
-  border-radius: var(--ks-radius-2xl);
-  padding: clamp(20px, 3vw, 36px);
-  color: #fff;
-  /* solo arancione, niente blu */
+.cta-min{
+  --panel-radius: 22px;
+  --btn-height: 52px;
   background:
-    radial-gradient(1200px 500px at -10% -20%, rgba(255,255,255,.12), transparent 60%),
-    radial-gradient(900px 400px at 110% 120%, rgba(255,255,255,.10), transparent 60%),
+    radial-gradient(900px 380px at 110% 120%, rgba(255,255,255,.10), transparent 60%),
     linear-gradient(135deg, var(--ks-orange) 0%, var(--ks-orange-hover) 100%);
+  color:#fff;
+  border-radius: var(--panel-radius);
+  padding: clamp(16px, 2.6vw, 28px);
+  border: 1px solid rgba(255,255,255,.14);
   box-shadow: var(--ks-shadow-lg);
-  border: 1px solid rgba(255,255,255,.12);
 }
 
-/* chip stato (neutro, coerente col pannello arancione) */
-.section-cta .cta-chip{
-  display:inline-flex; align-items:center; gap:6px;
-  padding: 6px 12px; border-radius: 999px; font-weight: 800; font-size: 12px;
-  border:1px solid rgba(255,255,255,.25); background: rgba(255,255,255,.12);
-  backdrop-filter: blur(6px); color:#fff;
+.cta-min__top{
+  display:flex; align-items:center; justify-content:space-between; gap:10px;
+  margin-bottom: 6px;
 }
-.section-cta .cta-chip--open{ background: rgba(255,255,255,.18); }
-.section-cta .cta-chip--closed{ background: rgba(0,0,0,.18); border-color: rgba(0,0,0,.28); }
-
-.section-cta .cta-note{ opacity:.95; }
-
-.section-cta .cta-title{
-  font-weight: 900; margin: 4px 0 4px 0;
-  font-size: clamp(24px, 3.2vw, 36px);
-  color: var(--ks-white)
+.cta-min__chip{
+  display:inline-flex; align-items:center; gap:8px;
+  padding: 6px 10px; border-radius:999px; font-weight:800; font-size:12px;
+  background: rgba(255,255,255,.16); border:1px solid rgba(255,255,255,.24);
 }
-.section-cta .cta-subtitle{ opacity:.95; margin-bottom: 10px; }
+.cta-min__chip.is-closed{ background: rgba(0,0,0,.18); border-color: rgba(0,0,0,.28); }
+.cta-min__note{ opacity:.95; }
 
-/* micro-SLA: pill arancione soft */
-.section-cta .cta-sla li{
-  background: rgba(255,255,255,.10);
-  border: 1px solid rgba(255,255,255,.22);
-  border-radius: 10px; padding: 6px 10px;
-  font-size: 14px; display:flex; align-items:center; gap:8px; color:#fff;
-}
-.section-cta .cta-sla i{ font-size: 16px; opacity:.95; }
-
-/* bottoni */
-.section-cta .cta-buttons{ display: grid; gap: 10px; }
-.section-cta .cta-btn{
-  display:inline-flex; align-items:center; justify-content:center; gap:8px;
-  border-radius: 12px; font-weight: 800; letter-spacing:.2px;
-  border: 2px solid transparent; transform: translateY(0);
-  transition: transform .15s ease, box-shadow .2s ease, border-color .2s ease, background .2s ease, color .2s ease;
-}
-.section-cta .cta-btn i{ font-size: 20px; }
-
-/* WhatsApp (manteniamo brand green) */
-.section-cta .cta-btn--wa{
-  background: #25D366; color:#0b3d24; border-color:#1ec158;
-}
-.section-cta .cta-btn--wa:hover{ transform: translateY(-2px); box-shadow: 0 8px 22px rgba(37,211,102,.35); }
-
-/* Telefono: pulsante bianco su arancione */
-.section-cta .cta-btn--tel{
-  background: #ffffff; color: var(--ks-orange); border-color: #ffffff;
-}
-.section-cta .cta-btn--tel:hover{
-  transform: translateY(-2px);
-  box-shadow: 0 8px 22px rgba(0,0,0,.18);
+.cta-min__title{
+  margin: 4px 0 14px; font-weight:900; color:#fff;
+  font-size: clamp(22px, 2.4vw, 28px); letter-spacing:.2px;
 }
 
-/* Email: outline bianco */
-.section-cta .cta-btn--mail{
-  background: transparent; color:#fff; border-color: #fff;
+/* Bottoni */
+.cta-min__buttons{
+  display:grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 10px; align-items:center; margin-bottom: 8px;
 }
-.section-cta .cta-btn--mail:hover{
-  transform: translateY(-2px);
-  background: rgba(255,255,255,.12);
-  box-shadow: 0 8px 22px rgba(0,0,0,.18);
+.cta-min__btn{
+  position:relative; display:flex; align-items:center; justify-content:center; gap:10px;
+  height: var(--btn-height);
+  border-radius: 14px; font-weight:800; line-height:1; letter-spacing:.2px;
+  border:2px solid transparent; transform: translateY(0);
+  transition: transform .15s ease, box-shadow .2s ease, background .2s ease, color .2s ease, border-color .2s ease;
 }
+.cta-min__btn .label{ margin-top:1px; }
+.cta-min__btn .sla{ opacity:.9; font-weight:700; font-size: 0.95rem; }
 
-/* responsive */
-@media (max-width: 992px){
-  .section-cta .cta-panel{ padding: 22px; }
-  .section-cta .cta-buttons{ grid-template-columns: 1fr; }
+/* Variante fill (bianco su arancione) */
+.cta-min__btn.is-fill{
+  background:#fff; color: var(--ks-orange); border-color:#fff;
+}
+.cta-min__btn.is-fill:hover{ transform: translateY(-2px); box-shadow: 0 8px 22px rgba(0,0,0,.16); }
+
+/* Variante ghost (outline bianco) */
+.cta-min__btn.is-ghost{
+  background: transparent; color:#fff; border-color:#fff;
+}
+.cta-min__btn.is-ghost:hover{ transform: translateY(-2px); background: rgba(255,255,255,.10); box-shadow: 0 8px 22px rgba(0,0,0,.18); }
+
+/* Iconcine tonde, piccole (non invadenti) */
+.cta-min__btn .ico{
+  width: 28px; height: 28px; border-radius: 999px; display:grid; place-items:center;
+  background: rgba(0,0,0,.06);
+}
+.cta-min__btn .ico i{ font-size: 18px; }
+
+/* Colori icone: WA con accenno verde, telefono bianco */
+.cta-min__btn .ico.ico--wa i{ color:#25D366; }
+.cta-min__btn .ico.ico--tel i{ color:#ffffff; }
+
+/* Link email sottile */
+.cta-min__email{
+  display:inline-flex; align-items:center; gap:8px; margin-top: 4px;
+  color:#fff; opacity:.92; text-decoration: underline;
+}
+.cta-min__email:hover{ opacity:1; }
+
+/* Mobile tight */
+@media (max-width: 576px){
+  .cta-min__top{ flex-direction:column; align-items:flex-start; }
+  .cta-min__email{ justify-content:center; width:100%; }
 }
 /* ===== ACCESSIBILITÀ & PARCHEGGIO (acp-) ===== */
 .section-accessibility{ padding: var(--ks-spacing-16) 0; background: var(--ks-gray-50); }
@@ -424,7 +422,7 @@
 .sla--mail .sla-icon{ background:#efe9ff; color:#8b5cf6; }
 
 /* ===== VCARD SIMPLE (full orange, testi bianchi) ===== */
-.section-vcard{ padding: var(--ks-spacing-14) 0; }
+.section-vcard{ padding: var(--ks-spacing-16); }
 
 .vc-simple{
   display:flex; gap:20px; align-items:center; justify-content:space-between; flex-wrap:wrap;
@@ -454,9 +452,11 @@
 .vc-btn--light:hover{
   transform: translateY(-2px);
   box-shadow: 0 8px 22px rgba(0,0,0,.18);
+  font-size: 1rem
 }
 
 @media (max-width: 992px){
   .vc-simple{ text-align:center; justify-content:center; }
   .vc-simple-actions{ width:100%; justify-content:center; }
+  .section-vcard{ padding: var(--ks-spacing-12); }
 }

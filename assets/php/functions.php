@@ -12,6 +12,11 @@ if (!defined('BASE_PATH')) {
     define('BASE_PATH', rtrim(str_replace('\\', '/', dirname(dirname(__DIR__))), '/') . '/');
 }
 
+// Ensure PHPMailer is loaded
+if (file_exists(BASE_PATH . 'vendor/autoload.php')) {
+    require_once BASE_PATH . 'vendor/autoload.php';
+}
+
 /* ---------------------------------------------------------
  |  URL helpers: BASE_URL robusto anche in sottocartella,
  |  dietro proxy (X-Forwarded-*) e con php -S
@@ -405,6 +410,109 @@ autoDetectBaseUrl();
 /* ===== Opening Hours (contatti.php) — usa config globale ================== */
 $KS_TZ = new DateTimeZone(KS_TZ);
 
+// -- DB helpers sicuri (usano $pdo se c'è; altrimenti fallback) --
+if (!function_exists('ks_db')) {
+  function ks_db(): ?PDO {
+    global $pdo;
+    return ($pdo instanceof PDO) ? $pdo : null;
+  }
+}
+if (!function_exists('ks_table_exists')) {
+  function ks_table_exists(string $t): bool {
+    $db = ks_db(); if (!$db) return false;
+    try { $db->query("SELECT 1 FROM `$t` LIMIT 1"); return true; }
+    catch (Throwable $e) { return false; }
+  }
+}
+
+// Orari settimanali dal DB (ks_store_hours_weekly)
+if (!function_exists('ks_db_weekly_intervals')) {
+  function ks_db_weekly_intervals(int $dow): array {
+    $db = ks_db(); if (!$db || !ks_table_exists('ks_store_hours_weekly')) return [];
+    $q = $db->prepare("SELECT open_time, close_time
+                       FROM ks_store_hours_weekly
+                       WHERE active=1 AND dow=:d
+                       ORDER BY seg ASC");
+    $q->execute([':d'=>$dow]);
+    $out = [];
+    foreach ($q->fetchAll(PDO::FETCH_ASSOC) as $r) {
+      $out[] = [substr($r['open_time'],0,5), substr($r['close_time'],0,5)];
+    }
+    return $out;
+  }
+}
+
+// Eccezioni puntuali (ks_store_hours_exceptions)
+if (!function_exists('ks_db_date_exception')) {
+  function ks_db_date_exception(string $ymd): array {
+    $db = ks_db(); if (!$db || !ks_table_exists('ks_store_hours_exceptions')) return ['found'=>false];
+    $q = $db->prepare("SELECT open_time, close_time, is_closed
+                       FROM ks_store_hours_exceptions
+                       WHERE date=:d
+                       ORDER BY seg ASC");
+    $q->execute([':d'=>$ymd]);
+    $rows = $q->fetchAll(PDO::FETCH_ASSOC);
+    if (!$rows) return ['found'=>false];
+
+    $intervals = []; $hasIntervals=false; $allClosed=false;
+    foreach ($rows as $r) {
+      if ((int)$r['is_closed'] === 1 && $r['open_time'] === null && $r['close_time'] === null) $allClosed = true;
+      if ($r['open_time'] !== null && $r['close_time'] !== null) {
+        $hasIntervals = true;
+        $intervals[] = [substr($r['open_time'],0,5), substr($r['close_time'],0,5)];
+      }
+    }
+    if ($hasIntervals) return ['found'=>true,'intervals'=>$intervals];
+    if ($allClosed)    return ['found'=>true,'intervals'=>[]];
+    return ['found'=>true,'intervals'=>null]; // solo notice (se lo usi altrove)
+  }
+}
+
+/* EASTER date (per regole ricorrenti) */
+if (!function_exists('ks_easter_date')) {
+  function ks_easter_date(int $year, ?DateTimeZone $tz = null): DateTime {
+    $tz = $tz ?: new DateTimeZone(defined('KS_TZ') ? KS_TZ : 'Europe/Rome');
+    // algoritmo anonimo gregoriano
+    $a=$year%19;$b=intdiv($year,100);$c=$year%100;$d=intdiv($b,4);$e=$b%4;$f=intdiv($b+8,25);
+    $g=intdiv($b-$f+1,3);$h=(19*$a+$b-$d-$g+15)%30;$i=intdiv($c,4);$k=$c%4;$l=(32+2*$e+2*$i-$h-$k)%7;
+    $m=intdiv($a+11*$h+22*$l,451);$month=intdiv($h+$l-7*$m+114,31);$day=(($h+$l-7*$m+114)%31)+1;
+    return (new DateTime("$year-$month-$day 00:00:00", $tz));
+  }
+}
+
+/* HOLIDAYS ricorrenti da DB */
+if (!function_exists('ks_holiday_rule_for_date')) {
+  function ks_holiday_rule_for_date(DateTime $d): ?array {
+    $db = ks_db(); 
+    if (!$db || !ks_table_exists('ks_store_holidays')) return null;
+
+    $y=(int)$d->format('Y'); $m=(int)$d->format('n'); $day=(int)$d->format('j');
+    try {
+      // fixed mm-dd
+      $q1 = $db->prepare("SELECT name, is_closed, notice
+                          FROM ks_store_holidays
+                          WHERE active=1 AND rule_type='fixed' AND month=:m AND day=:d
+                          LIMIT 1");
+      $q1->execute([':m'=>$m, ':d'=>$day]);
+      if ($row = $q1->fetch(PDO::FETCH_ASSOC)) {
+        return ['closed'=>(bool)$row['is_closed'], 'notice'=>$row['notice'] ?: $row['name']];
+      }
+      // easter offsets
+      $e = ks_easter_date($y, $d->getTimezone());
+      $diffDays = (int)$e->diff((clone $d)->setTime(0,0,0))->format('%r%a');
+      $q2 = $db->query("SELECT offset_days, name, is_closed, notice
+                        FROM ks_store_holidays
+                        WHERE active=1 AND rule_type='easter'");
+      foreach ($q2->fetchAll(PDO::FETCH_ASSOC) as $r) {
+        if ((int)$r['offset_days'] === $diffDays) {
+          return ['closed'=>(bool)$r['is_closed'], 'notice'=>$r['notice'] ?: $r['name']];
+        }
+      }
+      return null;
+    } catch (Throwable $e) { return null; }
+  }
+}
+
 /** Helpers base **/
 function ks_dt_at(DateTime $base, string $hm): DateTime {
   [$h,$m] = array_map('intval', explode(':', $hm));
@@ -424,12 +532,25 @@ function ks_human_diff(DateTime $from, DateTime $to): string {
   return $parts ? implode(' ', $parts) : 'meno di 1m';
 }
 
-/** Orari per una data specifica (considera eccezioni) */
+/** Orari per una data specifica (DB-first con fallback agli array di config) */
 function ks_intervals_for_date(DateTime $date): array {
+  // 1) Eccezione puntuale da DB → override completo del giorno
+  $excDb = ks_db_date_exception($date->format('Y-m-d'));
+  if ($excDb['found']) {
+    if (is_array($excDb['intervals'])) return $excDb['intervals']; // intervalli impostati
+    if ($excDb['intervals'] === [])    return [];                   // chiuso tutto il giorno
+    // se solo notice -> continua su DB weekly / array
+  }
+
+  // 2) Weekly da DB (se presente)
+  $weekly = ks_db_weekly_intervals((int)$date->format('N'));
+  if (!empty($weekly)) return $weekly;
+
+  // 3) Fallback: i TUOI array di config (come avevi già)
   $base = ks_store_hours_base();
-  $exc  = ks_store_hours_exceptions();
+  $excA = ks_store_hours_exceptions(); // eccezioni hardcoded (opzionali)
   $key  = $date->format('Y-m-d');
-  if (array_key_exists($key, $exc)) return $exc[$key];        // eccezione del giorno
+  if (array_key_exists($key, $excA)) return $excA[$key];
   $dow = (int)$date->format('N');
   return $base[$dow] ?? [];
 }
@@ -501,4 +622,15 @@ for ($d=1; $d<=7; $d++) {
   } else {
     $__table[$d] = $__base[$d] ?? [];
   }
+}
+
+function ks_hours_notice_for_date(DateTime $date): ?string {
+  $exc = ks_db_date_exception($date->format('Y-m-d'));
+  if ($exc['found'] && !empty($exc['notice'])) return $exc['notice'];
+  $hol = ks_holiday_rule_for_date($date);
+  if ($hol && !empty($hol['notice'])) return $hol['notice'];
+  // Fallback al tuo array notices
+  $map = ks_store_hours_notices();
+  $k = $date->format('Y-m-d');
+  return $map[$k] ?? null;
 }
