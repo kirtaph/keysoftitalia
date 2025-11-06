@@ -157,98 +157,117 @@ $contact_endpoint = url('ajax/contact_submit.php');
     <div class="container">
       <div class="row g-5">
         <!-- FORM -->
-        <div class="col-lg-6" data-aos="fade-right">
-                        <h2 class="section-title">Invia un messaggio</h2>
-            <p class="section-subtitle mb-4">Compila il form e ti risponderemo entro 24 ore</p>
-          <div class="contact-form-wrapper">
+<div class="col-lg-6" data-aos="fade-right">
 
 
-            <form id="contactForm"
-                  class="contact-form"
-                  method="post"
-                  action="<?= $contact_endpoint; ?>"
-                  data-ajax="true"
-                  novalidate>
-              <?= csrf_field(); ?>
+  <h2 class="section-title">Invia un messaggio</h2>
+  
+  <!-- Shortcut cards -->
+  <div class="contact-shortcuts contact-shortcuts--compact mb-4">
+    <a class="cs-card" href="<?= url('preventivo.php'); ?>" aria-label="Vai alla pagina Preventivo">
+      <div class="cs-ico"><i class="ri-file-list-3-line" aria-hidden="true"></i></div>
+      <div class="cs-text">
+        <h3 class="cs-title">Preventivo</h3>
+        <p class="cs-sub">Richiedi un preventivo</p>
+      </div>
+      <i class="ri-arrow-right-up-line cs-go" aria-hidden="true"></i>
+    </a>
 
-              <!-- Honeypot antispam -->
-              <input type="text" name="website" autocomplete="off" tabindex="-1" class="hp-field" aria-hidden="true">
+    <a class="cs-card" href="<?= url('assistenza.php'); ?>" aria-label="Vai alla pagina Assistenza">
+      <div class="cs-ico"><i class="ri-tools-line" aria-hidden="true"></i></div>
+      <div class="cs-text">
+        <h3 class="cs-title">Assistenza</h3>
+        <p class="cs-sub">Supporto tecnico</p>
+      </div>
+      <i class="ri-arrow-right-up-line cs-go" aria-hidden="true"></i>
+    </a>
 
-              <div class="row g-3">
-                <div class="col-md-6">
-                  <div class="form-group">
-                    <label class="form-label" for="cf-name">Nome *</label>
-                    <input id="cf-name" type="text" class="form-control" name="name" required>
-                  </div>
-                </div>
-                <div class="col-md-6">
-                  <div class="form-group">
-                    <label class="form-label" for="cf-surname">Cognome *</label>
-                    <input id="cf-surname" type="text" class="form-control" name="surname" required>
-                  </div>
-                </div>
+    <a class="cs-card" href="<?= url('vendita-usato.php'); ?>" aria-label="Vai alla pagina Vendita Usato">
+      <div class="cs-ico"><i class="ri-recycle-line" aria-hidden="true"></i></div>
+      <div class="cs-text">
+        <h3 class="cs-title">Vendita</h3>
+        <p class="cs-sub">Vendi il tuo usato</p>
+      </div>
+      <i class="ri-arrow-right-up-line cs-go" aria-hidden="true"></i>
+    </a>
+  </div>
+  <p class="section-subtitle mb-4">Oppure compila il form e ti risponderemo entro 24 ore</p>
+  <div class="contact-form-wrapper">
+    
+    <form id="contactForm"
+          class="contact-form"
+          method="post"
+          action="<?= $contact_endpoint; ?>"
+          data-ajax="true"
+          novalidate>
+      <?= csrf_field(); ?>
 
-                <div class="col-md-6">
-                  <div class="form-group">
-                    <label class="form-label" for="cf-email">Email *</label>
-                    <input id="cf-email" type="email" class="form-control" name="email" required>
-                  </div>
-                </div>
-                <div class="col-md-6">
-                  <div class="form-group">
-                    <label class="form-label" for="cf-phone">Telefono</label>
-                    <input id="cf-phone" type="tel" class="form-control" name="phone" placeholder="000 000 0000" inputmode="tel">
-                  </div>
-                </div>
+      <!-- Honeypot antispam -->
+      <input type="text" name="website" autocomplete="off" tabindex="-1" class="hp-field" aria-hidden="true">
 
-                <div class="col-12">
-                  <div class="form-group">
-                    <label class="form-label" for="cf-subject">Oggetto *</label>
-                    <select id="cf-subject" class="form-select" name="subject" required>
-                      <option value="">Seleziona un argomento</option>
-                      <option value="riparazione">Richiesta Riparazione</option>
-                      <option value="preventivo">Richiesta Preventivo</option>
-                      <option value="assistenza">Assistenza Tecnica</option>
-                      <option value="vendita">Informazioni Vendita</option>
-                      <option value="altro">Altro</option>
-                    </select>
-                  </div>
-                </div>
+      <!-- Subject nascosto per compatibilità backend -->
+      <input type="hidden" name="subject" value="Contatto dal sito - Form Contatti">
 
-                <div class="col-12">
-                  <div class="form-group">
-                    <label class="form-label" for="cf-message">Messaggio *</label>
-                    <textarea id="cf-message" class="form-control" name="message" rows="5" required placeholder="Descrivi la tua richiesta..."></textarea>
-                  </div>
-                </div>
-
-                <div class="col-12">
-                  <div class="form-check">
-                    <input class="form-check-input" type="checkbox" id="privacy" name="privacy" required>
-                    <label class="form-check-label" for="privacy">
-                      Accetto la <a href="<?= url('privacy.php'); ?>" target="_blank" rel="noopener">privacy policy</a> *
-                    </label>
-                  </div>
-                </div>
-
-                <div class="col-12">
-                  <button type="submit" class="btn btn-primary btn-lg w-100">
-                    <i class="ri-send-plane-line"></i> Invia Messaggio
-                  </button>
-                </div>
-              </div>
-
-              <div class="alert alert-success mt-3 d-none" id="successMessage" role="status" aria-live="polite">
-                <i class="ri-check-line"></i> Messaggio inviato con successo! Ti risponderemo presto.
-              </div>
-
-              <div class="alert alert-danger mt-3 d-none" id="errorMessage" role="alert" aria-live="assertive">
-                <i class="ri-error-warning-line"></i> Si è verificato un errore. Riprova più tardi.
-              </div>
-            </form>
+      <div class="row g-3">
+        <div class="col-md-6">
+          <div class="form-group">
+            <label class="form-label" for="cf-name">Nome *</label>
+            <input id="cf-name" type="text" class="form-control" name="name" required>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="form-group">
+            <label class="form-label" for="cf-surname">Cognome *</label>
+            <input id="cf-surname" type="text" class="form-control" name="surname" required>
           </div>
         </div>
 
+        <div class="col-md-6">
+          <div class="form-group">
+            <label class="form-label" for="cf-email">Email *</label>
+            <input id="cf-email" type="email" class="form-control" name="email" required>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="form-group">
+            <label class="form-label" for="cf-phone">Telefono</label>
+            <input id="cf-phone" type="tel" class="form-control" name="phone" placeholder="000 000 0000" inputmode="tel">
+          </div>
+        </div>
+
+        <div class="col-12">
+          <div class="form-group">
+            <label class="form-label" for="cf-message">Messaggio *</label>
+            <textarea id="cf-message" class="form-control" name="message" rows="5" required placeholder="Descrivi la tua richiesta..."></textarea>
+          </div>
+        </div>
+
+        <div class="col-12">
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" id="privacy" name="privacy" required>
+            <label class="form-check-label" for="privacy">
+              Accetto la <a href="<?= url('privacy.php'); ?>" target="_blank" rel="noopener">privacy policy</a> *
+            </label>
+          </div>
+        </div>
+
+        <div class="col-12">
+          <button type="submit" class="btn btn-primary btn-lg w-100">
+            <i class="ri-send-plane-line"></i> Invia Messaggio
+          </button>
+        </div>
+      </div>
+
+      <div class="alert alert-success mt-3 d-none" id="successMessage" role="status" aria-live="polite">
+        <i class="ri-check-line"></i> Messaggio inviato con successo! Ti risponderemo presto.
+      </div>
+
+      <div class="alert alert-danger mt-3 d-none" id="errorMessage" role="alert" aria-live="assertive">
+        <i class="ri-error-warning-line"></i> Si è verificato un errore. Riprova più tardi.
+      </div>
+    </form>
+  </div>
+</div>
         <!-- MAP + HOURS -->
         <div class="col-lg-6" data-aos="fade-left">
           <div class="map-wrapper">

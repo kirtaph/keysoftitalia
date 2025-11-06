@@ -165,11 +165,124 @@
   border-color: var(--ks-blue);
   box-shadow: 0 0 0 3px rgba(59,130,246,.12);
 }
-.contact-form textarea.form-control{ min-height: 300px; resize: vertical; }
+.contact-form textarea.form-control{ min-height: 288px; resize: vertical; }
 .contact-form .form-check-input{ width:20px;height:20px;border:2px solid var(--ks-gray-300); }
 .contact-form .form-check-input:checked{ background-color: var(--ks-blue); border-color: var(--ks-blue); }
 .hp-field{ display:none !important; } /* honeypot */
 #successMessage,#errorMessage{ transition: opacity .2s ease; }
+
+/* ===== Contact Shortcuts (cards sopra il form) ===== */
+.contact-shortcuts {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--ks-spacing-3);
+}
+
+.cs-card {
+  --cs-bg: #fff;
+  --cs-bd: var(--ks-gray-200);
+  --cs-ico: var(--ks-orange);
+  --cs-ico-bg: rgba(255, 122, 0, 0.10);
+
+  display: flex;
+  align-items: center;
+  gap: var(--ks-spacing-3);
+  padding: var(--ks-spacing-4);
+  border: 1px solid var(--cs-bd);
+  border-radius: var(--ks-radius-xl);
+  background: var(--cs-bg);
+  text-decoration: none;
+  box-shadow: var(--ks-shadow-sm);
+  transition: transform .25s ease, box-shadow .25s ease, border-color .25s ease, background .25s ease;
+  position: relative;
+}
+
+.cs-card:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--ks-shadow-lg);
+  border-color: var(--ks-orange);
+  background: linear-gradient(0deg, rgba(255,122,0,0.06), rgba(255,122,0,0.06)), #fff;
+}
+
+.cs-ico {
+  width: 52px;
+  height: 52px;
+  min-width: 52px;
+  display: grid;
+  place-items: center;
+  background: var(--cs-ico-bg);
+  border-radius: 14px;
+  transition: transform .25s ease, background .25s ease;
+}
+
+.cs-card:hover .cs-ico { transform: scale(1.06) rotate(-2deg); }
+.cs-ico i { font-size: 26px; color: var(--cs-ico); }
+
+.cs-text { flex: 1; }
+.cs-title {
+  margin: 0 0 2px 0;
+  font-size: var(--ks-text-base);
+  font-weight: var(--ks-font-semibold);
+  color: var(--ks-text-primary);
+}
+.cs-sub {
+  margin: 0;
+  font-size: var(--ks-text-sm);
+  color: var(--ks-text-secondary);
+}
+.cs-go {
+  font-size: 20px;
+  color: var(--ks-orange);
+  opacity: .8;
+  transition: transform .25s ease, opacity .25s ease;
+}
+.cs-card:hover .cs-go { transform: translateX(2px) translateY(-2px); opacity: 1; }
+
+/* Responsive */
+@media (max-width: 992px) {
+  .contact-shortcuts { grid-template-columns: 1fr; }
+}
+/* === Fix layout: uguale altezza + griglia fluida 3→2→1 === */
+.contact-shortcuts {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--ks-spacing-3);
+  align-items: stretch;               /* allunga tutte le celle */
+  grid-auto-rows: 1fr;                /* righe con altezza uniforme */
+}
+
+/* Compatta dimensioni */
+.contact-shortcuts--compact .cs-card {
+  padding: var(--ks-spacing-3) var(--ks-spacing-4);
+  height: 100%;
+  min-height: 96px;                   /* evita “saltellamenti” */
+}
+.contact-shortcuts--compact .cs-ico {
+  width: 44px; height: 44px; min-width: 44px; border-radius: 12px;
+}
+.contact-shortcuts--compact .cs-ico i { font-size: 22px; }
+.contact-shortcuts--compact .cs-title { font-size: var(--ks-text-base); }
+.contact-shortcuts--compact .cs-sub {
+  font-size: var(--ks-text-sm);
+  line-height: 1.35;
+  display: -webkit-box;               /* clamp a 2 righe per uniformare */
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.contact-shortcuts--compact .cs-go { font-size: 18px; }
+
+/* Hover armonizzato (resta arancio brand) */
+.cs-card { transition: transform .2s ease, box-shadow .2s ease, border-color .2s ease, background .2s ease; }
+.cs-card:hover { transform: translateY(-2px); }
+
+/* Breakpoint: 2 colonne su viewport medio, 1 su mobile */
+@media (max-width: 1200px) {
+  .contact-shortcuts { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 768px) {
+  .contact-shortcuts { grid-template-columns: 1fr; }
+}
 
 /* ===== MAP & HOURS ===== */
 /* ===== MAP EMBED ===== */

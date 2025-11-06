@@ -130,7 +130,6 @@ $breadcrumbs = [
                 <input type="text" class="form-control" id="model_other" name="model_other" placeholder="Scrivi il modello">
               </div>
             </div>
-            <small class="form-text text-muted d-block mt-1">Se non selezioni il modello, la stima sarà “<em>a partire da</em>” per quella marca.</small>
           </div>
 
           <div class="ks-actions">

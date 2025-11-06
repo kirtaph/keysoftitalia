@@ -344,39 +344,21 @@ $page_keywords = "riparazioni smartphone ginosa, assistenza computer taranto, ri
       <p class="section-subtitle">Smartphone e dispositivi ricondizionati con garanzia 12 mesi</p>
     </div>
 
-    <!-- Swiper -->
     <div class="swiper recond-swiper">
-      <div class="swiper-wrapper">
-        <?php
-        // Esempio mockup (in futuro sostituire con query DB)
-        $products = [
-          ["title" => "iPhone 13 Ricondizionato", "price" => "499,00", "img" => asset('img/recond/iphone13.avif')],
-          ["title" => "Samsung Galaxy S21", "price" => "399,00", "img" => asset('img/recond/galaxys21.avif')],
-          ["title" => "MacBook Air M1", "price" => "799,00", "img" => asset('img/recond/macbookair.avif')],
-          ["title" => "iPad Pro 11\"", "price" => "599,00", "img" => asset('img/recond/ipadpro.avif')],
-          ["title" => "Xiaomi Redmi Note 12", "price" => "249,00", "img" => asset('img/recond/redminote12.avif')],
-        ];
-
-        $delay = 200; // Delay staggered per card
-        foreach ($products as $p): ?>
-          <div class="swiper-slide">
-            <div class="recond-card" data-aos="fade-up" data-aos-duration="600" data-aos-delay="<?php echo $delay; ?>">
-              <img src="<?php echo $p['img']; ?>" alt="<?php echo $p['title']; ?>" class="recond-img" loading="lazy">
-              <div class="recond-body">
-                <h4 class="recond-title"><?php echo $p['title']; ?></h4>
-                <div class="recond-price">€ <?php echo $p['price']; ?></div>
-                <a href="<?php echo url('ricondizionati.php'); ?>" class="btn btn-primary btn-sm w-100 mt-3" aria-label="Dettagli su <?php echo $p['title']; ?>">
-                  <i class="ri-shopping-cart-2-line"></i> Dettagli
-                </a>
-              </div>
-            </div>
-          </div>
-        <?php $delay += 100; endforeach; ?>
-      </div>
-
-      <!-- Pagination -->
+      <div class="swiper-wrapper" id="recond-swiper-wrapper"></div>
       <div class="swiper-pagination"></div>
     </div>
+
+    <!-- CTA catalogo completo -->
+    <div class="text-center mt-4">
+      <a href="<?php echo url('ricondizionati.php'); ?>" class="btn btn-outline-primary">
+        Scopri tutti i nostri ricondizionati
+      </a>
+    </div>
+
+    <noscript>
+      <p class="text-center mt-3">Attiva JavaScript per vedere i prodotti in evidenza.</p>
+    </noscript>
   </div>
 </section>
 
@@ -582,7 +564,127 @@ $page_keywords = "riparazioni smartphone ginosa, assistenza computer taranto, ri
     </div>
   </div>
 </section>
+<?php
+  // Numero WhatsApp e base URL per link
+  $ks_wa = preg_replace('/\D+/', '', COMPANY_WHATSAPP);
+  if (strpos($ks_wa, '39') !== 0) { $ks_wa = '39'.$ks_wa; } // prefisso IT se manca
+?>
+<script>
+(function() {
+  const wrapper = document.getElementById('recond-swiper-wrapper');
+  const endpoint = '<?php echo asset("ajax/get_refurbished.php?featured=1&limit=5"); ?>';
 
+  // utilità
+  const esc = s => String(s ?? '').replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+  const buildWaLink = (p) => {
+    const title = p.title || '';
+    const price = p.price || '';
+    const sku   = p.sku   || '';
+    const page  = p.url   || (window.KS_SITE_URL + '/ricondizionati.php?sku=' + encodeURIComponent(sku));
+    const msg =
+      `Ciao Key Soft Italia! 👋%0A` +
+      `Ho appena visto questo prodotto sul sito e vorrei avere informazioni:%0A%0A` +
+      `• Prodotto: ${encodeURIComponent(title)}%0A` +
+      (sku   ? `• SKU: ${encodeURIComponent(sku)}%0A` : '') +
+      (price ? `• Prezzo: € ${encodeURIComponent(price)}%0A` : '') +
+      `• Link: ${encodeURIComponent(page)}%0A%0A` +
+      `Mi potete rispondere qui? Grazie!`;
+    return `https://wa.me/${window.KS_WA_NUMBER}?text=${msg}`;
+  };
+
+  const cardSlide = (p, delay) => {
+    const title = esc(p.title);
+    const price = esc(p.price);
+    const img   = p.img;
+    const url   = p.url;
+    const sku   = esc(p.sku || '');
+    // Proviamo a leggere storage/grade dal titolo (già arrivano nel title).
+    // Se in futuro li vuoi separati, passali dall'endpoint come fields dedicati.
+    const storageMatch = p.storage;
+    const gradeMatch   = p.grade;
+
+    const chips = `
+      <div class="recond-chips" aria-hidden="true">
+        ${gradeMatch   ? `<span class="recond-chip grade">Grado ${esc(gradeMatch)}</span>` : ``}
+        ${storageMatch ? `<span class="recond-chip storage">${esc(storageMatch)}GB</span>` : ``}
+      </div>`;
+
+    const waHref = buildWaLink(p);
+
+    return `
+      <div class="swiper-slide">
+        <div class="recond-card" data-aos="fade-up" data-aos-duration="600" data-aos-delay="${delay}">
+          <div class="recond-img-wrap">
+            <img src="${img}" alt="${title}" class="recond-img" loading="lazy">
+            ${chips}
+          </div>
+          <div class="recond-body">
+            <h4 class="recond-title">${title}</h4>
+            <div class="recond-price">€ ${price}</div>
+            <a href="${waHref}" target="_blank" rel="noopener" class="btn-wa w-100 mt-3"
+               aria-label="Richiedi info su ${title} via WhatsApp">
+              <i class="ri-shopping-cart-2-line"></i> Acquista
+            </a>
+          </div>
+        </div>
+      </div>
+    `;
+  };
+
+  fetch(endpoint, { credentials: 'same-origin' })
+    .then(r => r.json())
+    .then(json => {
+      if (!json || !json.ok) throw new Error('Risposta non valida');
+      const items = json.products || [];
+      if (!items.length) {
+        wrapper.innerHTML = `
+          <div class="swiper-slide">
+            <div class="recond-card text-center p-4">
+              <p class="mb-0">Nessun prodotto in evidenza al momento.</p>
+            </div>
+          </div>
+        `;
+      } else {
+        let delay = 200;
+        wrapper.innerHTML = items.map(p => {
+          const html = cardSlide(p, delay);
+          delay += 100;
+          return html;
+        }).join('');
+      }
+
+      new Swiper('.recond-swiper', {
+        slidesPerView: 1.2,
+        spaceBetween: 16,
+        pagination: { el: '.swiper-pagination', clickable: true },
+        breakpoints: {
+          576: { slidesPerView: 2 },
+          992: { slidesPerView: 3 },
+          1200:{ slidesPerView: 4 }
+        }
+      });
+
+      if (window.AOS && typeof AOS.refreshHard === 'function') AOS.refreshHard();
+      else if (window.AOS && typeof AOS.refresh === 'function') AOS.refresh();
+    })
+    .catch(err => {
+      console.error(err);
+      wrapper.innerHTML = `
+        <div class="swiper-slide">
+          <div class="recond-card text-center p-4">
+            <p class="mb-1">Impossibile caricare i prodotti.</p>
+            <small class="text-muted">Riprova più tardi.</small>
+          </div>
+        </div>
+      `;
+      new Swiper('.recond-swiper', {
+        slidesPerView: 1.2,
+        spaceBetween: 16,
+        pagination: { el: '.swiper-pagination', clickable: true },
+      });
+    });
+})();
+</script>
     <?php include 'includes/footer.php'; ?>
 
 
