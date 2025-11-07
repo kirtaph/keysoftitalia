@@ -77,6 +77,27 @@ include_once 'includes/header.php';
     </div>
 </div>
 
+<!-- Macro-categoria Ricondizionati -->
+<div class="mb-5">
+    <h3 class="mb-4">Gestione Ricondizionati</h3>
+    <div class="row">
+        <div class="col-lg-3 col-md-6 mb-4">
+            <div class="card text-center">
+                <div class="card-body">
+                    <i class="fas fa-mobile-android-alt fa-3x mb-3"></i>
+                    <h5 class="card-title">Prodotti Ricondizionati</h5>
+                    <?php
+                        $stmt = $pdo->query('SELECT COUNT(*) FROM refurbished_products WHERE is_available = 1');
+                        $count = $stmt->fetchColumn();
+                    ?>
+                    <p class="card-text">Ci sono <?php echo $count; ?> prodotti disponibili.</p>
+                    <a href="refurbished_products.php" class="btn btn-primary">Gestisci</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 <!-- Macro-categoria Orari di Apertura -->
 <div class="mb-5">
     <h3 class="mb-4">Gestione Orari di Apertura</h3>

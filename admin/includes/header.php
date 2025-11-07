@@ -18,6 +18,31 @@ require_once '../config/config.php';
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="../assets/css/main.css">
     <link rel="stylesheet" href="../assets/css/components.css">
+    <style>
+        .image-thumbnail {
+            position: relative;
+            cursor: move;
+        }
+        .cover-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            color: white;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            font-weight: bold;
+        }
+        .image-thumbnail.is-cover .cover-overlay {
+            display: flex;
+        }
+        .sortable-images .col-md-3 {
+            padding: 5px;
+        }
+    </style>
 </head>
 <body>
     <div class="header">
@@ -45,6 +70,14 @@ require_once '../config/config.php';
                             <li class="dropdown-item"><a href="price_rules.php" class="nav-link">Regole di Prezzo</a></li>
                             <li class="dropdown-item"><a href="quotes.php" class="nav-link">Preventivi</a></li>
                             </ul>
+                            </li>
+                             <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownRicondizionati" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    Ricondizionati
+                                </a>
+                                <ul class="dropdown-menu" aria-labelledby="navbarDropdownRicondizionati">
+                                    <li><a class="dropdown-item" href="refurbished_products.php">Prodotti</a></li>
+                                </ul>
                             </li>
                             
                             <li class="nav-item dropdown">

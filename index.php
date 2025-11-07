@@ -350,9 +350,9 @@ $page_keywords = "riparazioni smartphone ginosa, assistenza computer taranto, ri
     </div>
 
     <!-- CTA catalogo completo -->
-    <div class="text-center mt-4">
-      <a href="<?php echo url('ricondizionati.php'); ?>" class="btn btn-outline-primary">
-        Scopri tutti i nostri ricondizionati
+    <div class="text-center mt-5" data-aos="fade-up" data-aos-duration="600" data-aos-delay="800">
+      <a href="<?php echo url('servizi.php'); ?>" class="btn btn-primary" aria-label="Scopri tutti i nostri ricondizionati">
+        Scopri tutti i nostri ricondizionati <i class="ri-arrow-right-line"></i>
       </a>
     </div>
 
@@ -565,11 +565,15 @@ $page_keywords = "riparazioni smartphone ginosa, assistenza computer taranto, ri
   </div>
 </section>
 <?php
-  // Numero WhatsApp e base URL per link
-  $ks_wa = preg_replace('/\D+/', '', COMPANY_WHATSAPP);
-  if (strpos($ks_wa, '39') !== 0) { $ks_wa = '39'.$ks_wa; } // prefisso IT se manca
+  // Normalizza numero per wa.me (solo cifre, con prefisso 39)
+  $ks_wa = preg_replace('/\D+/', '', COMPANY_WHATSAPP ?? '');
+  if ($ks_wa !== '' && strpos($ks_wa, '39') !== 0) { $ks_wa = '39' . $ks_wa; }
 ?>
+
 <script>
+
+  window.KS_WA_NUMBER = '<?php echo $ks_wa; ?>';
+
 (function() {
   const wrapper = document.getElementById('recond-swiper-wrapper');
   const endpoint = '<?php echo asset("ajax/get_refurbished.php?featured=1&limit=5"); ?>';
@@ -587,7 +591,6 @@ $page_keywords = "riparazioni smartphone ginosa, assistenza computer taranto, ri
       `• Prodotto: ${encodeURIComponent(title)}%0A` +
       (sku   ? `• SKU: ${encodeURIComponent(sku)}%0A` : '') +
       (price ? `• Prezzo: € ${encodeURIComponent(price)}%0A` : '') +
-      `• Link: ${encodeURIComponent(page)}%0A%0A` +
       `Mi potete rispondere qui? Grazie!`;
     return `https://wa.me/${window.KS_WA_NUMBER}?text=${msg}`;
   };
@@ -603,11 +606,25 @@ $page_keywords = "riparazioni smartphone ginosa, assistenza computer taranto, ri
     const storageMatch = p.storage;
     const gradeMatch   = p.grade;
 
-    const chips = `
-      <div class="recond-chips" aria-hidden="true">
-        ${gradeMatch   ? `<span class="recond-chip grade">Grado ${esc(gradeMatch)}</span>` : ``}
-        ${storageMatch ? `<span class="recond-chip storage">${esc(storageMatch)}GB</span>` : ``}
-      </div>`;
+// mappa classi colore per GRADO
+function gradeClass(g){
+  if (g === 'A+' || g === 'APlus' || g === 'A_PLUS') return 'grade-a-plus';
+  if (g === 'A') return 'grade-a';
+  if (g === 'B') return 'grade-b';
+  if (g === 'C') return 'grade-c';
+  if (g === 'D') return 'grade-d';
+  return '';
+}
+
+const chips = `
+  <div class="recond-chips" aria-hidden="true">
+    <div class="recond-chips-left">
+      ${storageMatch ? `<span class="recond-chip storage">${esc(storageMatch)}GB</span>` : ``}
+    </div>
+    <div class="recond-chips-right">
+      ${gradeMatch ? `<span class="recond-chip grade ${gradeClass(gradeMatch)}">Grado ${esc(gradeMatch)}</span>` : ``}
+    </div>
+  </div>`;
 
     const waHref = buildWaLink(p);
 

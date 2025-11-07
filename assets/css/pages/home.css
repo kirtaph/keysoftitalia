@@ -417,6 +417,33 @@
 .btn-wa:hover { filter: brightness(0.95); color: #fff !important; }
 .btn-wa i { font-size: 18px; }
 
+/* Wrapper: esteso per gestire sinistra/destra */
+.recond-chips{
+  position:absolute; top:10px; left:10px; right:10px;
+  display:flex; justify-content:space-between; pointer-events:none;
+}
+
+/* Pile sinistra/destra (così puoi avere più chip per lato) */
+.recond-chips-left, .recond-chips-right{
+  display:grid; gap:6px; justify-items:start;
+}
+
+.recond-chip{
+  pointer-events:auto;            /* clickabili se servisse */
+  font-size:12px; line-height:1;
+  padding:6px 10px; border-radius:999px;
+  background:#fff; border:1px solid rgba(0,0,0,.08);
+  box-shadow:0 2px 8px rgba(0,0,0,.06); white-space:nowrap;
+}
+
+/* Colori per GRADO */
+.recond-chip.grade { color:#222; font-weight:600; }
+.recond-chip.grade.grade-a-plus { background:#e7f7ed; border-color:#b5e3c6; } /* verde più “premium” */
+.recond-chip.grade.grade-a      { background:#eefcf1; border-color:#cdeed6; } /* verde chiaro */
+.recond-chip.grade.grade-b      { background:#fff6e5; border-color:#ffd89a; } /* ambra */
+.recond-chip.grade.grade-c      { background:#ffede8; border-color:#ffb9a6; } /* arancio/rosso chiaro */
+.recond-chip.grade.grade-d      { background:#ffe6e6; border-color:#ff9b9b; } /* rosso */
+
 /* ===== WHY US SECTION ===== */
 .section-why-us {
   background: var(--ks-gray-50);

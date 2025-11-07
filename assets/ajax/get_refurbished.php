@@ -77,7 +77,7 @@ try {
 }
 
 // Mapping output
-$baseCover = asset('img/recond/placeholder.avif'); // metti un placeholder reale
+$baseCover = asset('img/recond/placeholder.jpg'); // metti un placeholder reale
 $out = [];
 foreach ($rows as $r) {
   $titleBits = array_filter([$r['brand'] ?? null, $r['model'] ?? null]);
