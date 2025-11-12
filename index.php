@@ -337,11 +337,11 @@ $page_keywords = "riparazioni smartphone ginosa, assistenza computer taranto, ri
 </section>
 
 <!-- RECONDITIONED SECTION -->
-<section class="section section-recond" role="region" aria-label="Dispositivi ricondizionati in evidenza" data-aos="fade-up" data-aos-duration="1000" data-aos-once="true">
+<section class="section section-recond" role="region" aria-label="I nostri prodotti in evidenza" data-aos="fade-up" data-aos-duration="1000" data-aos-once="true">
   <div class="container">
     <div class="section-header text-center" data-aos="zoom-in" data-aos-duration="800" data-aos-delay="100">
-      <h2 class="section-title">Ricondizionati in evidenza</h2>
-      <p class="section-subtitle">Smartphone e dispositivi ricondizionati con garanzia 12 mesi</p>
+      <h2 class="section-title">I nostri prodotti in evidenza</h2>
+      <p class="section-subtitle">Smartphone e altri dispositivi in offerta speciale</p>
     </div>
 
     <div class="swiper recond-swiper">
@@ -351,8 +351,8 @@ $page_keywords = "riparazioni smartphone ginosa, assistenza computer taranto, ri
 
     <!-- CTA catalogo completo -->
     <div class="text-center mt-5" data-aos="fade-up" data-aos-duration="600" data-aos-delay="800">
-      <a href="<?php echo url('servizi.php'); ?>" class="btn btn-primary" aria-label="Scopri tutti i nostri ricondizionati">
-        Scopri tutti i nostri ricondizionati <i class="ri-arrow-right-line"></i>
+      <a href="<?php echo url('prodotti.php'); ?>" class="btn btn-primary" aria-label="Scopri tutti i nostri ricondizionati">
+        Scopri tutti i nostri prodotti <i class="ri-arrow-right-line"></i>
       </a>
     </div>
 
@@ -403,7 +403,7 @@ $page_keywords = "riparazioni smartphone ginosa, assistenza computer taranto, ri
   <div class="container">
     <div class="row g-4">
       <!-- Richiedi Preventivo -->
-      <div class="col-lg-6">
+      <div class="col-lg-4">
         <div class="cta-card cta-orange" data-aos="slide-right" data-aos-duration="800" data-aos-delay="200">
           <div class="cta-icon">
             <i class="ri-file-list-3-line" aria-hidden="true"></i>
@@ -415,9 +415,21 @@ $page_keywords = "riparazioni smartphone ginosa, assistenza computer taranto, ri
           </a>
         </div>
       </div>
-
+      <!-- Prenota Riparazione -->
+      <div class="col-lg-4">
+        <div class="cta-card cta-blue" data-aos="slide-center" data-aos-duration="800" data-aos-delay="200">
+          <div class="cta-icon">
+            <i class="ri-edit-line" aria-hidden="true"></i>
+          </div>
+          <h3 class="cta-title">Prenota riparazione</h3>
+          <p class="cta-text">Accesso prioritario in laboratorio: scegli giorno e ora, attendi la conferma.</p>
+          <a href="<?php echo url('prenota-riparazione.php'); ?>" class="btn btn-cta" aria-label="Prenota riparazione online">
+            <i class="ri-edit-line"></i> Prenota ora
+          </a>
+        </div>
+      </div>
       <!-- Vendi il tuo usato -->
-      <div class="col-lg-6">
+      <div class="col-lg-4">
         <div class="cta-card cta-green" data-aos="slide-left" data-aos-duration="800" data-aos-delay="300">
           <div class="cta-icon">
             <i class="ri-recycle-line" aria-hidden="true"></i>
@@ -576,7 +588,7 @@ $page_keywords = "riparazioni smartphone ginosa, assistenza computer taranto, ri
 
 (function() {
   const wrapper = document.getElementById('recond-swiper-wrapper');
-  const endpoint = '<?php echo asset("ajax/get_refurbished.php?featured=1&limit=5"); ?>';
+  const endpoint = '<?php echo asset("ajax/get_products.php?featured=1&limit=5"); ?>';
 
   // utilità
   const esc = s => String(s ?? '').replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
@@ -608,6 +620,8 @@ $page_keywords = "riparazioni smartphone ginosa, assistenza computer taranto, ri
 
 // mappa classi colore per GRADO
 function gradeClass(g){
+  if (g === 'Nuovo') return 'grade-new';
+  if (g === 'Expo') return 'grade-expo';
   if (g === 'A+' || g === 'APlus' || g === 'A_PLUS') return 'grade-a-plus';
   if (g === 'A') return 'grade-a';
   if (g === 'B') return 'grade-b';
@@ -616,13 +630,31 @@ function gradeClass(g){
   return '';
 }
 
+// mappa classi colore per GRADO
+function gradeLabel(g){
+  if (g === 'Nuovo') return 'Nuovo';
+  if (g === 'Expo') return 'Da Vetrina';
+  if (g === 'A+' || g === 'APlus' || g === 'A_PLUS') return 'Grado A+';
+  if (g === 'A') return 'Grado A';
+  if (g === 'B') return 'Grado B';
+  if (g === 'C') return 'Grado C';
+  if (g === 'D') return 'Grado D';
+  return '';
+}
+
+// label per storage
+function storageLabel(s){
+  if (s >= '1024') return (s / 1024) + 'TB';
+  else return s + 'GB';
+}
+
 const chips = `
   <div class="recond-chips" aria-hidden="true">
     <div class="recond-chips-left">
-      ${storageMatch ? `<span class="recond-chip storage">${esc(storageMatch)}GB</span>` : ``}
+      ${storageMatch ? `<span class="recond-chip storage">${storageLabel(storageMatch)}</span>` : ``}
     </div>
     <div class="recond-chips-right">
-      ${gradeMatch ? `<span class="recond-chip grade ${gradeClass(gradeMatch)}">Grado ${esc(gradeMatch)}</span>` : ``}
+      ${gradeMatch ? `<span class="recond-chip grade ${gradeClass(gradeMatch)}">${gradeLabel(gradeMatch)}</span>` : ``}
     </div>
   </div>`;
 

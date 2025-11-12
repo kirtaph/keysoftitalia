@@ -438,6 +438,8 @@
 
 /* Colori per GRADO */
 .recond-chip.grade { color:#222; font-weight:600; }
+.recond-chip.grade.grade-new { background:#eb3d5a; color: #ffffff; border-color:#e3b5c7; } /* verde più “premium” */
+.recond-chip.grade.grade-expo { background:#6d6d6d; border-color:#a0a0a0; } /* verde più “premium” */
 .recond-chip.grade.grade-a-plus { background:#e7f7ed; border-color:#b5e3c6; } /* verde più “premium” */
 .recond-chip.grade.grade-a      { background:#eefcf1; border-color:#cdeed6; } /* verde chiaro */
 .recond-chip.grade.grade-b      { background:#fff6e5; border-color:#ffd89a; } /* ambra */
@@ -561,8 +563,9 @@
 }
 
 /* Varianti */
-.cta-orange { background: #ff6b35; }
-.cta-green { background: #25d366; }
+.cta-orange { background: var(--ks-orange) }
+.cta-green { background:var(--ks-green); }
+.cta-blue { background: var(--ks-blue); }
 
 /* Icona */
 .cta-icon {
@@ -588,12 +591,14 @@
   font-weight: 700;
   margin-bottom: 0.8rem;
   z-index: 2;
+  color: #ffffff
 }
 .cta-text {
   font-size: 1rem;
   margin-bottom: 1.8rem;
   opacity: 0.95;
   z-index: 2;
+  color: #ffffff;
 }
 
 /* Bottone */
@@ -610,8 +615,9 @@
   z-index: 2;
   transition: all 0.25s ease;
 }
-.cta-orange .btn-cta { color: #ff6b35; }
-.cta-green .btn-cta { color: #25d366; }
+.cta-orange .btn-cta { color: var(--ks-orange); }
+.cta-green .btn-cta { color: var(--ks-green); }
+.cta-blue .btn-cta { color: var(--ks-blue); }
 
 .btn-cta:hover {
   background: #f1f1f1;

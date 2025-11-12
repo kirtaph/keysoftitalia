@@ -76,7 +76,7 @@ require_once '../config/config.php';
                                     Ricondizionati
                                 </a>
                                 <ul class="dropdown-menu" aria-labelledby="navbarDropdownRicondizionati">
-                                    <li><a class="dropdown-item" href="refurbished_products.php">Prodotti</a></li>
+                                    <li><a class="dropdown-item" href="products.php">Prodotti</a></li>
                                 </ul>
                             </li>
                             

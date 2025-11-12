@@ -48,7 +48,7 @@ $current_page = get_current_page();
               </div>
             </li>
 
-            <li class="nav-item"><a href="<?php echo url('ricondizionati.php'); ?>" class="nav-link <?php echo $current_page == 'ricondizionati' ? 'active' : ''; ?>"><i class="ri-smartphone-line"></i> Ricondizionati</a></li>
+            <li class="nav-item"><a href="<?php echo url('prodotti.php'); ?>" class="nav-link <?php echo $current_page == 'prodotti' ? 'active' : ''; ?>"><i class="ri-smartphone-line"></i> Prodotti</a></li>
             <li class="nav-item"><a href="<?php echo url('video.php'); ?>" class="nav-link <?php echo $current_page == 'video' ? 'active' : ''; ?>"><i class="ri-play-circle-line"></i> Video</a></li>
             <li class="nav-item"><a href="<?php echo url('contatti.php'); ?>" class="nav-link <?php echo $current_page == 'contatti' ? 'active' : ''; ?>"><i class="ri-map-pin-line"></i> Contatti</a></li>
           </ul>

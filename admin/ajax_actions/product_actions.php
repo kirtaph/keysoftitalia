@@ -10,7 +10,7 @@ try {
         case 'list':
             $stmt = $pdo->query("
                 SELECT rp.*, m.name as model_name, b.name as brand_name
-                FROM refurbished_products rp
+                FROM products rp
                 JOIN models m ON rp.model_id = m.id
                 JOIN brands b ON m.brand_id = b.id
                 ORDER BY rp.created_at DESC
@@ -24,7 +24,7 @@ try {
             if (!$id) {
                 throw new Exception('ID prodotto non fornito.');
             }
-            $stmt = $pdo->prepare('SELECT * FROM refurbished_products WHERE id = ?');
+            $stmt = $pdo->prepare('SELECT * FROM products WHERE id = ?');
             $stmt->execute([$id]);
             $product = $stmt->fetch(PDO::FETCH_ASSOC);
 
@@ -47,7 +47,7 @@ try {
 
             if ($action === 'add') {
                 $stmt = $pdo->prepare(
-                    'INSERT INTO refurbished_products (model_id, sku, color, storage_gb, grade, price_eur, short_desc, full_desc, is_available, is_featured) 
+                    'INSERT INTO products (model_id, sku, color, storage_gb, grade, price_eur, short_desc, full_desc, is_available, is_featured) 
                      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)'
                 );
                 $stmt->execute([
@@ -57,7 +57,7 @@ try {
                 $productId = $pdo->lastInsertId();
             } else {
                 $stmt = $pdo->prepare(
-                    'UPDATE refurbished_products SET model_id = ?, sku = ?, color = ?, storage_gb = ?, grade = ?, 
+                    'UPDATE products SET model_id = ?, sku = ?, color = ?, storage_gb = ?, grade = ?, 
                      price_eur = ?, short_desc = ?, full_desc = ?, is_available = ?, is_featured = ? WHERE id = ?'
                 );
                 $stmt->execute([
@@ -124,7 +124,7 @@ try {
             $images = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
             // Delete product (images in DB will be deleted by ON DELETE CASCADE)
-            $stmt = $pdo->prepare('DELETE FROM refurbished_products WHERE id = ?');
+            $stmt = $pdo->prepare('DELETE FROM products WHERE id = ?');
             $stmt->execute([$id]);
 
             // Delete image files from filesystem

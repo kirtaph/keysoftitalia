@@ -6,13 +6,13 @@ $models = $models_stmt->fetchAll();
 ?>
 
 <div class="d-flex justify-content-between align-items-center mb-4">
-    <h2 class="section-title">Gestione Prodotti Ricondizionati</h2>
+    <h2 class="section-title">Gestione Prodotti</h2>
     <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#productModal" id="addProductBtn">
         <i class="fas fa-plus"></i> Aggiungi Prodotto
     </button>
 </div>
 
-<!-- Refurbished Products Table -->
+<!-- Products Table -->
 <table class="table table-striped table-bordered">
     <thead class="table-dark">
         <tr>
@@ -79,6 +79,8 @@ $models = $models_stmt->fetchAll();
                             <div class="mb-3">
                                 <label for="grade" class="form-label">Grado</label>
                                 <select class="form-select" id="grade" name="grade">
+                                    <option value="Nuovo">Nuovo</option>
+                                    <option value="Expo">Expo</option>
                                     <option value="A+">A+</option>
                                     <option value="A">A</option>
                                     <option value="B">B</option>
@@ -141,7 +143,7 @@ document.addEventListener('DOMContentLoaded', function() {
     let sortable;
 
     function fetchProducts() {
-        fetch('ajax_actions/refurbished_product_actions.php?action=list')
+        fetch('ajax_actions/product_actions.php?action=list')
             .then(response => response.json())
             .then(data => {
                 if (data.status === 'success') {
@@ -190,7 +192,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
         if (editBtn) {
             const id = editBtn.dataset.id;
-            fetch(`ajax_actions/refurbished_product_actions.php?action=get&id=${id}`)
+            fetch(`ajax_actions/product_actions.php?action=get&id=${id}`)
                 .then(response => response.json())
                 .then(data => {
                     if (data.status === 'success') {
@@ -250,7 +252,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 formData.append('action', 'delete');
                 formData.append('id', id);
 
-                fetch('ajax_actions/refurbished_product_actions.php', {
+                fetch('ajax_actions/product_actions.php', {
                     method: 'POST',
                     body: formData
                 })
@@ -284,7 +286,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     imageDetailsData.append('sort_order[]', id);
                 });
 
-                fetch('ajax_actions/refurbished_product_actions.php', {
+                fetch('ajax_actions/product_actions.php', {
                     method: 'POST',
                     body: imageDetailsData
                 });
@@ -294,7 +296,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const formData = new FormData(productForm);
         formData.append('action', productIdInput.value ? 'edit' : 'add');
         
-        fetch('ajax_actions/refurbished_product_actions.php', {
+        fetch('ajax_actions/product_actions.php', {
             method: 'POST',
             body: formData
         })
@@ -325,7 +327,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 formData.append('action', 'delete_image');
                 formData.append('id', id);
 
-                fetch('ajax_actions/refurbished_product_actions.php', {
+                fetch('ajax_actions/product_actions.php', {
                     method: 'POST',
                     body: formData
                 })
