@@ -1,161 +1,152 @@
 <?php
 /**
- * Key Soft Italia — 404 Not Found
- * Questa pagina mantiene struttura Header/Footer come il resto del sito.
+ * Key Soft Italia - 404 Not Found (layout semplice)
  */
 http_response_code(404);
+require_once __DIR__ . '/config/config.php';
 
-// BASE_PATH fallback se non definito
-if (!defined('BASE_PATH')) {
-    define('BASE_PATH', rtrim(str_replace('\\', '/', __DIR__), '/') . '/');
-}
+// Meta
+$page_title       = "Ops! Pagina non trovata (404) - Key Soft Italia";
+$page_description = "La pagina che cerchi non esiste più o è stata spostata. Torna alla Home o contattaci.";
+$noindex          = true;
 
-// Config principale (carica helpers, costanti, BASE_URL, ecc.)
-require_once BASE_PATH . 'config/config.php';
+// Helper
+$h = static fn($s)=>htmlspecialchars((string)$s, ENT_QUOTES, 'UTF-8');
+$u = static fn($p='') => function_exists('url') ? url($p) : '/' . ltrim($p,'/');
 
-// --- SEO / Meta
-$page_title       = "Pagina non trovata (404) | " . (defined('SITE_NAME') ? SITE_NAME : 'Sito');
-$page_description = "La pagina che cerchi potrebbe essere stata spostata o non esiste più.";
-$page_keywords    = "404, pagina non trovata, errore";
-$noindex          = true; // usato nei partials/head se previsto
+// Dati / link
+$reqUri   = $_SERVER['REQUEST_URI'] ?? '';
+$email    = defined('COMPANY_EMAIL') ? COMPANY_EMAIL : 'info@example.com';
+$phone    = defined('COMPANY_PHONE') ? COMPANY_PHONE : '';
+$phoneUri = $phone ? 'tel:'.preg_replace('/\s+/', '', $phone) : '#';
 
-// --- Helpers sicuri
-$baseUrl = defined('BASE_URL') ? rtrim(BASE_URL, '/') . '/' : '/';
-$h = static function ($s) { return htmlspecialchars((string)$s, ENT_QUOTES, 'UTF-8'); };
+$addrLine = trim((defined('COMPANY_ADDRESS')?COMPANY_ADDRESS:'') . ', ' . (defined('COMPANY_CITY')?COMPANY_CITY:''), ', ');
+$mapsQ    = $addrLine ? rawurlencode($addrLine) : '';
+$mapsUrl  = $mapsQ ? "https://www.google.com/maps/search/?api=1&query={$mapsQ}" : '#';
 
-// URL helper soft: prova url(), altrimenti concatena BASE_URL
-$u = static function ($path='') use ($baseUrl) {
-    if (function_exists('url')) return url($path);
-    $path = ltrim($path, '/');
-    return $baseUrl . $path;
-};
+$waRaw    = defined('COMPANY_WHATSAPP') ? preg_replace('/\D+/', '', COMPANY_WHATSAPP) : '';
+$waMsg    = rawurlencode("Ciao! Link non funzionante: {$reqUri}");
+$waLink   = $waRaw ? "https://wa.me/{$waRaw}?text={$waMsg}" : $u('contatti.php');
 
-// Dati utili
-$reqUri   = isset($_SERVER['REQUEST_URI']) ? $_SERVER['REQUEST_URI'] : '';
-$referrer = isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : '';
-
-// Link rapidi
+// Pagine interne (adatta gli slug se diversi)
 $homeUrl   = $u('/');
-$servizi   = $u('servizi.php');
 $contatti  = $u('contatti.php');
-$shopRic   = $u('ricondizionati.php'); // se esiste
-$searchUrl = $u('cerca.php');          // se esiste
-
-// Contatti (fallback)
-$companyPhone   = defined('COMPANY_PHONE') ? COMPANY_PHONE : '';
-$companyWhats   = defined('COMPANY_WHATSAPP') ? COMPANY_WHATSAPP : '';
-$telLink        = $companyPhone ? ('tel:' . preg_replace('/\s+/', '', $companyPhone)) : '#';
-$waNumberDigits = $companyWhats ? preg_replace('/\D+/', '', $companyWhats) : '';
-$waLink         = $waNumberDigits
-    ? ('https://wa.me/' . $waNumberDigits . '?text=' . rawurlencode("Ciao! Ho trovato un link rotto: " . $reqUri))
-    : '#';
-
-// Breadcrumbs (se usi un componente, potrai ignorare questo blocco HTML)
-$breadcrumbs = [
-    ['label' => 'Home', 'url' => $homeUrl],
-    ['label' => 'Errore 404', 'url' => '']
-];
-
-// Percorsi partials
-$headPath    = BASE_PATH . 'includes/head.php';
-$headerPath  = BASE_PATH . 'includes/header.php';
-$footerPath  = BASE_PATH . 'includes/footer.php';
-$scriptsPath = BASE_PATH . 'includes/scripts.php';
+$servizi   = $u('servizi.php');
+$blog      = $u('blog.php');          // se non esiste, puoi togliere la card
+$preventivo= $u('preventivo.php');    // “Pricing” -> Preventivo
+$documenti = $u('faq.php');           // “Documentation” -> FAQ/Documentazione
 ?>
 <!DOCTYPE html>
 <html lang="it">
 <head>
-<?php if (is_file($headPath)): ?>
-  <?php include $headPath; ?>
-<?php else: ?>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <?php include 'includes/head.php'; ?>
   <title><?= $h($page_title); ?></title>
   <meta name="description" content="<?= $h($page_description); ?>">
-  <?php if (!empty($noindex)): ?>
-    <meta name="robots" content="noindex, follow">
-  <?php endif; ?>
-  <!-- Fallback CSS minimo se non usi il partial -->
-  <style>
-    .ks-404 { padding: 80px 0 48px; text-align:center; }
-    .ks-404 h1 { font-size: clamp(48px, 6vw, 88px); line-height: 1; margin-bottom: 8px; font-weight: 800; letter-spacing: -0.02em; }
-    .ks-404 p.lead { font-size: clamp(16px, 2.2vw, 20px); color: #555; margin-bottom: 28px; }
-    .ks-404 .btn { margin: 6px 6px; padding: 12px 18px; border-radius: 12px; text-decoration:none; display:inline-block; }
-    .btn-primary{ background:#0d6efd; color:#fff; }
-    .btn-outline{ border:1px solid #0d6efd; color:#0d6efd; background:#fff; }
-    .ks-404 .search { max-width: 680px; margin: 18px auto 8px; display:flex; gap:8px; }
-    .ks-404 input[type="search"]{ flex:1; padding:12px 14px; border:1px solid #ddd; border-radius:12px; }
-    .ks-404 .grid { display:grid; grid-template-columns: repeat( auto-fit, minmax(220px, 1fr) ); gap:14px; margin-top: 22px; }
-    .ks-card { border:1px solid #eee; border-radius:16px; padding:18px; text-align:left; transition:.2s; background:#fff; }
-    .ks-card:hover { transform: translateY(-2px); box-shadow:0 10px 24px rgba(0,0,0,.06); }
-    .ks-card .title { font-weight:700; margin-bottom:6px; }
-    .ks-crumbs { font-size: 14px; margin: 10px auto 0; text-align:center; color:#666;}
-    .ks-crumbs a { color: inherit; text-decoration: none; }
-    .ks-crumbs span { opacity:.8; }
-    .container { width: min(1100px, 92%); margin: 0 auto; }
-    .muted { color:#777; font-size:13px; }
-  </style>
-<?php endif; ?>
+  <?php if(!empty($noindex)): ?><meta name="robots" content="noindex,follow"><?php endif; ?>
+  <meta property="og:title" content="<?= $h($page_title); ?>">
+  <meta property="og:description" content="<?= $h($page_description); ?>">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://<?= $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI']; ?>">
+  <link rel="stylesheet" href="<?= asset_version('css/pages/404.css'); ?>">
 </head>
 <body>
 
-<?php if (is_file($headerPath)) include $headerPath; ?>
+<?php include 'includes/header.php'; ?>
 
-<main class="ks-404">
+<main class="ks-404-simple">
   <div class="container">
-    <!-- Breadcrumbs leggeri (se non usi i tuoi) -->
-    <nav class="ks-crumbs" aria-label="breadcrumb">
-      <?php foreach ($breadcrumbs as $i => $b): ?>
-        <?php if (!empty($b['url']) && $i < count($breadcrumbs)-1): ?>
-          <a href="<?= $h($b['url']); ?>"><?= $h($b['label']); ?></a> &nbsp;/&nbsp;
-        <?php else: ?>
-          <span><?= $h($b['label']); ?></span>
-        <?php endif; ?>
-      <?php endforeach; ?>
-    </nav>
-
-    <h1>404</h1>
-    <p class="lead">Ops! La pagina che cerchi non esiste più, è stata spostata oppure l’URL è errato.</p>
-
-    <!-- Ricerca -->
-    <form class="search" action="<?= $h($searchUrl); ?>" method="get" role="search">
-      <input type="search" name="q" placeholder="Cerca nel sito (modello, servizio, contatto…)" aria-label="Cerca">
-      <button class="btn btn-primary" type="submit">Cerca</button>
-    </form>
-
-    <!-- CTA principali -->
-    <div style="margin-top:14px;">
-      <a class="btn btn-outline" href="<?= $h($homeUrl); ?>">Torna alla Home</a>
-      <a class="btn btn-outline" href="<?= $h($servizi); ?>">Vai ai Servizi</a>
-      <a class="btn btn-outline" href="<?= $h($shopRic); ?>">Ricondizionati</a>
-      <a class="btn btn-primary" href="<?= $h($contatti); ?>">Contattaci</a>
+    <div class="text-center head">
+      <img src="assets/img/404.png" width="40%" aria-hidden="true">
+      <h1 class="title">Oops, la pagina che cerchi non esiste!</h1>
+      <p class="subtitle">
+        <strong>Tranquillo:</strong> ti riportiamo sulla strada giusta. Esplora i link qui sotto oppure contattaci.
+      </p>
     </div>
 
-    <!-- Pannelli utili -->
-    <section class="grid" style="margin-top:26px;">
-      <a class="ks-card" href="<?= $h($contatti); ?>">
-        <div class="title">Assistenza & Riparazioni</div>
-        <div class="text">Prenota un intervento, richiedi diagnosi o un ritiro a domicilio.</div>
-      </a>
-      <a class="ks-card" href="<?= $h($shopRic); ?>">
-        <div class="title">Dispositivi Ricondizionati</div>
-        <div class="text">iPhone, Samsung, tablet e notebook garantiti e testati.</div>
-      </a>
-      <a class="ks-card" href="<?= $h($servizi); ?>">
-        <div class="title">Tutti i Servizi</div>
-        <div class="text">Reti, videosorveglianza, consulenza IT, protezione schermi MyShape.</div>
-      </a>
-      <a class="ks-card" href="<?= $h($waLink); ?>">
-        <div class="title">Segnala link rotto</div>
-        <div class="text">Scrivici su WhatsApp: ci aiuti a sistemare più in fretta.</div>
-      </a>
-    </section>
+    <div class="cards row g-3 g-md-4">
+      <div class="col-12 col-md-4">
+        <a class="info-card" href="mailto:<?= $h($email); ?>">
+          <div class="ic"><i class="ri-mail-line"></i></div>
+          <div class="txt">
+            <div class="label">Email</div>
+            <div class="value"><?= $h($email); ?></div>
+          </div>
+        </a>
+      </div>
+      <div class="col-12 col-md-4">
+        <a class="info-card" href="<?= $h($mapsUrl); ?>" target="_blank" rel="noopener">
+          <div class="ic"><i class="ri-map-pin-line"></i></div>
+          <div class="txt">
+            <div class="label">Indirizzo</div>
+            <div class="value"><?= $h($addrLine ?: 'Via Diaz 46, Ginosa'); ?></div>
+          </div>
+        </a>
+      </div>
+      <div class="col-12 col-md-4">
+        <a class="info-card" href="<?= $h($phoneUri); ?>">
+          <div class="ic"><i class="ri-phone-line"></i></div>
+          <div class="txt">
+            <div class="label">Telefono</div>
+            <div class="value"><?= $h($phone ?: '—'); ?></div>
+          </div>
+        </a>
+      </div>
 
+      <?php /* Se il blog non esiste ancora, commenta questa card */ ?>
+      <div class="col-12 col-md-4">
+        <a class="info-card" href="<?= $h($blog); ?>">
+          <div class="ic"><i class="ri-pushpin-line"></i></div>
+          <div class="txt">
+            <div class="label">Blog</div>
+            <div class="value">Articoli e novità dal negozio</div>
+          </div>
+        </a>
+      </div>
+
+      <div class="col-12 col-md-4">
+        <a class="info-card" href="<?= $h($preventivo); ?>">
+          <div class="ic"><i class="ri-currency-line"></i></div>
+          <div class="txt">
+            <div class="label">Preventivo</div>
+            <div class="value">Vuoi un prezzo al volo?</div>
+          </div>
+        </a>
+      </div>
+
+      <div class="col-12 col-md-4">
+        <a class="info-card" href="<?= $h($documenti); ?>">
+          <div class="ic"><i class="ri-file-list-2-line"></i></div>
+          <div class="txt">
+            <div class="label">Documentazione</div>
+            <div class="value">FAQ, condizioni e garanzie</div>
+          </div>
+        </a>
+      </div>
+    </div>
+
+    <div class="divider"><span>oppure</span></div>
+
+    <div class="cta text-center">
+      <a href="<?= $homeUrl; ?>" class="btn btn-brand">
+        <i class="ri-home-4-line me-1"></i> Vai alla Home
+      </a>
+      <a href="<?= $waLink; ?>" class="btn btn-whatsapp">
+        <i class="ri-whatsapp-line me-1"></i> WhatsApp
+      </a>
+      <a href="<?= $contatti; ?>" class="btn btn-outline">
+        <i class="ri-customer-service-2-line me-1"></i> Apri ticket
+      </a>
+    </div>
+
+    <?php if (defined('ENV') && strtolower((string)constant('ENV'))==='dev'): ?>
+      <p class="muted text-center mt-3">
+        Debug (DEV): URI <code><?= $h($reqUri); ?></code>
+      </p>
+    <?php endif; ?>
   </div>
 </main>
 
-<?php if (is_file($footerPath)) include $footerPath; ?>
-
-<?php if (is_file($scriptsPath)) include $scriptsPath; ?>
+<?php include 'includes/footer.php'; ?>
+<script src="<?= asset('js/main.js'); ?>" defer></script>
 </body>
 </html>

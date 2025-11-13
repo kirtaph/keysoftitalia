@@ -1,0 +1,52 @@
+.ks-404-simple { padding: clamp(48px, 6vw, 80px) 0; }
+.ks-404-simple .head { max-width: 760px; margin: 0 auto 24px; }
+.ks-404-simple .emoji { font-size: 36px; margin-bottom: 8px; }
+.ks-404-simple .title { font-weight: 800; letter-spacing:-.02em; font-size: clamp(24px, 4vw, 34px); }
+.ks-404-simple .subtitle { color: var(--ks-text-secondary); max-width: 680px; margin: 8px auto 24px; }
+
+.ks-404-simple .info-card{
+  display:flex; align-items:center; gap:12px;
+  border:1px solid var(--ks-gray-200); border-radius:16px;
+  padding:16px 18px; background:#fff; height:100%;
+  text-decoration:none; transition:transform .2s, box-shadow .2s, border-color .2s;
+}
+.ks-404-simple .info-card:hover{
+  transform: translateY(-2px);
+  box-shadow: var(--ks-shadow-md);
+  border-color: var(--ks-orange);
+}
+.ks-404-simple .info-card .ic{
+  width:40px; height:40px; border-radius:12px;
+  background: var(--ks-gray-100); display:flex; align-items:center; justify-content:center; flex:0 0 40px;
+}
+.ks-404-simple .info-card .ic i{ font-size:20px; color: var(--ks-dark); }
+.ks-404-simple .info-card .label{ font-weight:600; color: var(--ks-text-primary); }
+.ks-404-simple .info-card .value{ color: var(--ks-text-secondary); font-size: 14px; }
+
+.ks-404-simple .divider{
+  margin: 22px auto; max-width: 860px; position: relative; text-align:center; color: var(--ks-text-secondary);
+}
+.ks-404-simple .divider::before{
+  content:""; position:absolute; left:0; right:0; top:50%; transform:translateY(-50%);
+  height:1px; background: var(--ks-gray-200);
+}
+.ks-404-simple .divider span{ background:#fff; padding:0 10px; position:relative; z-index:1; }
+
+.ks-404-simple .cta{ display:flex; gap:10px; justify-content:center; flex-wrap:wrap; margin-top: 10px; }
+.ks-404-simple .btn{
+  display:inline-flex; align-items:center; gap:6px; border-radius:12px;
+  padding:12px 16px; font-weight:600; border:1px solid transparent; text-decoration:none;
+}
+.ks-404-simple .btn-brand{ background: var(--ks-orange); color:#fff; border-color: var(--ks-orange); }
+.ks-404-simple .btn-brand:hover{ background: var(--ks-orange-hover); border-color: var(--ks-orange-hover); }
+.ks-404-simple .btn-outline{ background:#fff; color: var(--ks-orange); border-color: var(--ks-orange); }
+.ks-404-simple .btn-outline:hover{ background: var(--ks-orange); color:#fff; }
+
+.ks-404-simple .btn-whatsapp{
+  background: #25D366; color:#fff; border-color:#25D366;
+}
+.ks-404-simple .btn-whatsapp:hover{
+  filter: brightness(0.95);
+}
+
+.ks-404-simple .muted{ color: var(--ks-text-secondary); font-size: 12px; }
