@@ -96,7 +96,7 @@ $ld_flyers = [
     <meta property="og:url" content="<?php echo htmlspecialchars($canonical_url); ?>">
     <meta property="og:image" content="<?php echo asset('images/og-image.jpg'); ?>">
 
-    <link rel="stylesheet" href="<?php echo asset('css/pages/volantini.css'); ?>">
+    <link rel="stylesheet" href="<?php echo asset_version('css/pages/volantini.css'); ?>">
 </head>
 <body data-aos-easing="ease-in-out" data-aos-duration="800" data-aos-once="true">
 <?php include 'includes/header.php'; ?>
