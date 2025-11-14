@@ -209,12 +209,27 @@ $ld_flyers = [
         <h5 class="modal-title" id="flyerViewerTitle">Sfoglia il volantino</h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Chiudi"></button>
       </div>
-      <div class="modal-body p-0 flyer-modal-body">
-        <iframe id="flyerViewerFrame"
-                src=""
-                loading="lazy"
-                title="Viewer volantino"
-                style="width:100%;height:80vh;border:none;"></iframe>
+
+      <div class="modal-body flyer-modal-body">
+        <!-- TOOLBAR -->
+        <div class="pdfjs-toolbar">
+          <div class="pdfjs-page-indicator">
+            Pagina <span id="pdfPageCurrent">1</span> di <span id="pdfPageTotal">1</span>
+          </div>
+          <div class="pdfjs-zoom-controls">
+            <button type="button" class="btn btn-sm btn-outline-light" data-pdf-zoom-out>
+              &minus;
+            </button>
+            <button type="button" class="btn btn-sm btn-outline-light ms-2" data-pdf-zoom-in>
+              +
+            </button>
+          </div>
+        </div>
+
+        <!-- VIEWER -->
+        <div id="flyerPdfViewer" class="pdfjs-viewer">
+          <div class="pdfjs-loading">Caricamento volantino...</div>
+        </div>
       </div>
     </div>
   </div>
@@ -234,6 +249,8 @@ $ld_flyers = [
 <script src="<?php echo asset('js/main.js'); ?>"></script>
 <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
 <script>AOS.init();</script>
+<!-- PDF.js (viewer integrato) -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
 
 <script>
 (function(){
@@ -246,6 +263,11 @@ $ld_flyers = [
 
   if (!grid || !tabs.length) return;
 
+  const params      = new URLSearchParams(window.location.search);
+  const slugParam   = params.get('flyer'); // slug passato da home
+  const STATUS_ORDER = ['current', 'upcoming', 'archived'];
+
+  // ---------- UI helpers ----------
   function setActiveTab(status){
     tabs.forEach(btn => {
       const isActive = btn.getAttribute('data-status') === status;
@@ -277,6 +299,34 @@ $ld_flyers = [
     msgBox.classList.remove('is-loading');
   }
 
+  function formatDate(str){
+    if (!str) return '';
+    const parts = str.split('-'); // YYYY-MM-DD
+    if (parts.length !== 3) return str;
+    return parts[2] + '/' + parts[1] + '/' + parts[0];
+  }
+
+  function formatPeriod(start, end){
+    if (!start && !end) return '';
+    if (!end) return 'Valido dal ' + formatDate(start);
+    return 'Valido dal ' + formatDate(start) + ' al ' + formatDate(end);
+  }
+
+  // ---------- FETCH ----------
+  function fetchFlyers(status){
+    const url = new URL(FLYERS_ENDPOINT, window.location.origin);
+    url.searchParams.set('status', status);
+
+    return fetch(url.toString(), {
+      headers: { 'X-Requested-With': 'XMLHttpRequest' }
+    })
+    .then(res => {
+      if (!res.ok) throw new Error('HTTP ' + res.status);
+      return res.json();
+    });
+  }
+
+  // ---------- RENDER ----------
   function renderFlyers(flyers, status){
     clearGrid();
     counter.textContent = flyers.length;
@@ -375,15 +425,16 @@ $ld_flyers = [
         btnView.className = 'btn btn-primary btn-sm';
         btnView.setAttribute('data-bs-toggle', 'modal');
         btnView.setAttribute('data-bs-target', '#flyerViewerModal');
-        btnView.dataset.pdf = f.pdf_url;
+        btnView.dataset.pdf   = f.pdf_url;
         btnView.dataset.title = f.title;
+        btnView.dataset.slug  = f.slug; // IMPORTANTE per apertura da ?flyer=slug
         btnView.innerHTML = '<i class="ri-eye-line me-1" aria-hidden="true"></i> Sfoglia online';
         actions.appendChild(btnView);
 
         const linkDownload = document.createElement('a');
-        linkDownload.href = f.pdf_url;
+        linkDownload.href   = f.pdf_url;
         linkDownload.target = '_blank';
-        linkDownload.rel = 'noopener';
+        linkDownload.rel    = 'noopener';
         linkDownload.className = 'btn btn-outline-secondary btn-sm';
         linkDownload.innerHTML = '<i class="ri-download-2-line me-1" aria-hidden="true"></i> Scarica PDF';
         actions.appendChild(linkDownload);
@@ -404,53 +455,68 @@ $ld_flyers = [
     });
   }
 
-  function formatPeriod(start, end){
-    if (!start && !end) return '';
-    if (!end) return 'Valido dal ' + formatDate(start);
-    return 'Valido dal ' + formatDate(start) + ' al ' + formatDate(end);
-  }
+  // ---------- LOAD + opzionale apertura slug ----------
+  function loadFlyers(status, opts){
+    opts = opts || {};
+    const focusSlug = opts.focusSlug || null;
 
-  function formatDate(str){
-    if (!str) return '';
-    // str tipo YYYY-MM-DD
-    const parts = str.split('-');
-    if (parts.length !== 3) return str;
-    return parts[2] + '/' + parts[1] + '/' + parts[0];
-  }
-
-  function loadFlyers(status){
     setActiveTab(status);
     showLoading();
 
-    const url = new URL(FLYERS_ENDPOINT, window.location.origin);
-    url.searchParams.set('status', status);
-
-    fetch(url.toString(), {
-      headers: { 'X-Requested-With': 'XMLHttpRequest' }
-    })
-      .then(res => {
-        if (!res.ok) throw new Error('HTTP ' + res.status);
-        return res.json();
-      })
+    return fetchFlyers(status)
       .then(data => {
         hideLoading();
+
         if (!data || !data.ok){
           msgBox.textContent = 'Si è verificato un errore durante il caricamento dei volantini.';
           counter.textContent = '0';
           clearGrid();
-          return;
+          return { found: false };
         }
-        renderFlyers(data.flyers || [], status);
+
+        const flyers = data.flyers || [];
+        renderFlyers(flyers, status);
+
+        let found = false;
+        if (focusSlug){
+          const btn = grid.querySelector('button[data-slug="' + CSS.escape(focusSlug) + '"]');
+          if (btn){
+            // apre la modale del volantino target
+            btn.click();
+            found = true;
+          }
+        }
+
+        return { found: found };
       })
       .catch(() => {
         hideLoading();
         msgBox.textContent = 'Si è verificato un problema di connessione. Riprova tra qualche istante.';
         counter.textContent = '0';
         clearGrid();
+        return { found: false };
       });
   }
 
-  // Bind tabs
+  async function initPage(){
+    // Se abbiamo uno slug in query (?flyer=xxx)
+    if (slugParam){
+      for (const st of STATUS_ORDER){
+        const res = await loadFlyers(st, { focusSlug: slugParam });
+        if (res && res.found){
+          return; // trovato, abbiamo aperto la modale
+        }
+      }
+      // Slug non trovato in nessuno stato: mostro comunque "in corso"
+      await loadFlyers('current');
+      return;
+    }
+
+    // Caso normale: nessun slug, carico "in corso"
+    await loadFlyers('current');
+  }
+
+  // ---------- Bind tabs ----------
   tabs.forEach(btn => {
     btn.addEventListener('click', () => {
       const status = btn.getAttribute('data-status') || 'current';
@@ -458,33 +524,195 @@ $ld_flyers = [
     });
   });
 
-  // Primo load
-  loadFlyers('current');
+  // ---------- Init ----------
+  initPage();
 })();
 </script>
 
 <script>
-// Gestione modal viewer PDF
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', function () {
   const viewerModal = document.getElementById('flyerViewerModal');
-  const iframe      = document.getElementById('flyerViewerFrame');
+  const viewerEl    = document.getElementById('flyerPdfViewer');
   const titleEl     = document.getElementById('flyerViewerTitle');
 
-  if (!viewerModal || !iframe) return;
+  const pageCurrentEl = document.getElementById('pdfPageCurrent');
+  const pageTotalEl   = document.getElementById('pdfPageTotal');
+  const zoomInBtn     = document.querySelector('[data-pdf-zoom-in]');
+  const zoomOutBtn    = document.querySelector('[data-pdf-zoom-out]');
 
-  viewerModal.addEventListener('show.bs.modal', event => {
+  if (!viewerModal || !viewerEl) return;
+
+  // Fallback: se PDF.js non è caricato, apro il PDF in nuova scheda
+  if (typeof window['pdfjsLib'] === 'undefined') {
+    viewerModal.addEventListener('show.bs.modal', function (event) {
+      const button = event.relatedTarget;
+      const pdfUrl = button?.getAttribute('data-pdf');
+      if (pdfUrl) {
+        window.open(pdfUrl, '_blank', 'noopener');
+      }
+    });
+    return;
+  }
+
+  // Config worker PDF.js
+  pdfjsLib.GlobalWorkerOptions.workerSrc =
+    "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
+
+  let pdfDoc      = null;
+  let currentScale = 1.2;
+  const ZOOM_STEP  = 0.2;
+  const ZOOM_MIN   = 0.7;
+  const ZOOM_MAX   = 2.0;
+
+  let scrollRafId = null;
+
+  function setPageIndicator(current, total) {
+    if (pageCurrentEl) pageCurrentEl.textContent = String(current || 1);
+    if (pageTotalEl)   pageTotalEl.textContent   = String(total || 1);
+  }
+
+  function updateCurrentPageOnScroll() {
+    if (!pdfDoc) return;
+
+    const canvases = viewerEl.querySelectorAll('.pdfjs-page-canvas');
+    if (!canvases.length) return;
+
+    const containerRect   = viewerEl.getBoundingClientRect();
+    const viewportCenterY = containerRect.top + viewerEl.clientHeight / 2;
+
+    let bestPage = 1;
+    let bestScore = Infinity;
+
+    canvases.forEach(canvas => {
+      const rect = canvas.getBoundingClientRect();
+      const canvasCenterY = rect.top + rect.height / 2;
+      const score = Math.abs(canvasCenterY - viewportCenterY);
+      if (score < bestScore) {
+        bestScore = score;
+        bestPage  = parseInt(canvas.dataset.pageNumber || '1', 10);
+      }
+    });
+
+    setPageIndicator(bestPage, pdfDoc.numPages || 1);
+  }
+
+  function bindScrollIndicator() {
+    viewerEl.addEventListener('scroll', () => {
+      if (scrollRafId) cancelAnimationFrame(scrollRafId);
+      scrollRafId = requestAnimationFrame(updateCurrentPageOnScroll);
+    });
+  }
+
+  function renderAllPages() {
+    if (!pdfDoc) return;
+
+    viewerEl.innerHTML = '';
+    const numPages = pdfDoc.numPages || 1;
+    setPageIndicator(1, numPages);
+
+    const renderPromises = [];
+    for (let pageNum = 1; pageNum <= numPages; pageNum++) {
+      renderPromises.push(
+        pdfDoc.getPage(pageNum).then(page => {
+          const viewport = page.getViewport({ scale: currentScale });
+
+          const canvas = document.createElement('canvas');
+          canvas.className = 'pdfjs-page-canvas';
+          canvas.dataset.pageNumber = String(pageNum);
+
+          const context = canvas.getContext('2d');
+          canvas.width  = viewport.width;
+          canvas.height = viewport.height;
+
+          viewerEl.appendChild(canvas);
+
+          const renderContext = { canvasContext: context, viewport: viewport };
+          return page.render(renderContext).promise;
+        })
+      );
+    }
+
+    return Promise.all(renderPromises).then(() => {
+      // dopo il render iniziale forzo l'update del contatore
+      updateCurrentPageOnScroll();
+    }).catch((error) => {
+      console.error('Errore rendering PDF:', error);
+      viewerEl.innerHTML =
+        '<div class="pdfjs-error">Impossibile visualizzare il volantino. ' +
+        '<a href="' + encodeURI(pdfDoc._transport._params.url) +
+        '" target="_blank" rel="noopener">Apri il PDF in una nuova scheda</a>.</div>';
+    });
+  }
+
+  function loadPdf(url) {
+    viewerEl.innerHTML = '<div class="pdfjs-loading">Caricamento volantino...</div>';
+    pdfDoc = null;
+    currentScale = 1.2;
+
+    const loadingTask = pdfjsLib.getDocument(url);
+    loadingTask.promise.then(function (pdf) {
+      pdfDoc = pdf;
+      return renderAllPages();
+    }).catch(function (error) {
+      console.error('Errore PDF.js:', error);
+      viewerEl.innerHTML =
+        '<div class="pdfjs-error">Impossibile caricare il volantino. ' +
+        '<a href="' + encodeURI(url) +
+        '" target="_blank" rel="noopener">Apri il PDF in una nuova scheda</a>.</div>';
+    });
+  }
+
+  function applyZoom(delta) {
+    if (!pdfDoc) return;
+
+    const container = viewerEl;
+    const prevScrollRatio = container.scrollTop / (container.scrollHeight || 1);
+
+    let nextScale = currentScale + delta;
+    nextScale = Math.max(ZOOM_MIN, Math.min(ZOOM_MAX, nextScale));
+    if (nextScale === currentScale) return;
+
+    currentScale = nextScale;
+    renderAllPages().then(() => {
+      // riposiziono lo scroll più o meno dove stava
+      container.scrollTop = prevScrollRatio * (container.scrollHeight || 1);
+    });
+  }
+
+  // Zoom +/-
+  if (zoomInBtn) {
+    zoomInBtn.addEventListener('click', function () {
+      applyZoom(ZOOM_STEP);
+    });
+  }
+  if (zoomOutBtn) {
+    zoomOutBtn.addEventListener('click', function () {
+      applyZoom(-ZOOM_STEP);
+    });
+  }
+
+  // Bind scroll per l'indicatore pagina
+  bindScrollIndicator();
+
+  // Apertura modale: carico il PDF e setto il titolo
+  viewerModal.addEventListener('show.bs.modal', function (event) {
     const button = event.relatedTarget;
     const pdfUrl = button?.getAttribute('data-pdf');
     const title  = button?.getAttribute('data-title') || 'Sfoglia il volantino';
 
-    if (titleEl) titleEl.textContent = title;
+    if (titleEl) {
+      titleEl.textContent = title;
+    }
     if (pdfUrl) {
-      iframe.src = pdfUrl + '#view=FitH';
+      loadPdf(pdfUrl);
     }
   });
 
-  viewerModal.addEventListener('hidden.bs.modal', () => {
-    iframe.src = '';
+  // Chiusura modale: pulisco
+  viewerModal.addEventListener('hidden.bs.modal', function () {
+    viewerEl.innerHTML = '';
+    pdfDoc = null;
+    setPageIndicator(1, 1);
   });
 });
 </script>

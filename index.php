@@ -10,6 +10,31 @@ if (!defined('BASE_PATH')) {
 
 require_once BASE_PATH . 'config/config.php';
 
+// Volantino del momento per la home
+$featured_flyer = null;
+
+try {
+    $today = date('Y-m-d');
+
+    $stmt = $pdo->prepare("
+        SELECT id, title, slug, description, start_date, end_date, cover_image, pdf_file
+        FROM flyers
+        WHERE status = 1
+          AND show_home = 1
+          AND start_date <= :today
+          AND end_date >= :today
+        ORDER BY start_date DESC
+        LIMIT 1
+    ");
+    $stmt->execute([':today' => $today]);
+    $featured_flyer = $stmt->fetch(PDO::FETCH_ASSOC) ?: null;
+} catch (Throwable $e) {
+    if (defined('APP_DEBUG') && APP_DEBUG) {
+        error_log('home featured flyer error: ' . $e->getMessage());
+    }
+}
+
+
 // SEO Meta
 $page_title = "Key Soft Italia - L'universo della Tecnologia | Riparazioni, Vendita e Assistenza a Ginosa";
 $page_description = "Key Soft Italia a Ginosa - Riparazioni in 24h, vendita dispositivi ricondizionati, assistenza informatica, sviluppo web. Il tuo partner tecnologico di fiducia dal 2008.";
@@ -362,42 +387,117 @@ $page_keywords = "riparazioni smartphone ginosa, assistenza computer taranto, ri
   </div>
 </section>
 
-<!-- WHY US -->
-<section class="section section-why-us" role="region" aria-label="Perché scegliere noi" data-aos="fade-up" data-aos-duration="1000" data-aos-once="true">
+<?php if (!empty($featured_flyer)): 
+
+  $baseUrl = rtrim(BASE_URL, '/') . '/';
+
+  $flyer_cover_url = !empty($featured_flyer['cover_image'])
+      ? $baseUrl . ltrim($featured_flyer['cover_image'], '/')
+      : null;
+
+  $start_date = $featured_flyer['start_date'] ?? null;
+  $end_date   = $featured_flyer['end_date']   ?? null;
+
+  $period_label = '';
+  if ($start_date && $end_date) {
+      $period_label = sprintf(
+          'Offerte valide dal %s al %s',
+          date('d/m/Y', strtotime($start_date)),
+          date('d/m/Y', strtotime($end_date))
+      );
+  }
+
+  // Badge intelligente: "Appena uscito" / "Ultimi giorni"
+  $badge_label = '';
+  if ($start_date && $end_date) {
+      $today = new DateTimeImmutable(date('Y-m-d'));
+      $start = new DateTimeImmutable($start_date);
+      $end   = new DateTimeImmutable($end_date);
+
+      if ($today >= $start && $today <= $start->modify('+2 days')) {
+          $badge_label = '🆕 Appena uscito';
+      } elseif ($today >= $end->modify('-2 days') && $today <= $end) {
+          $badge_label = '⏰ Ultimi giorni';
+      }
+  }
+
+  $flyer_url = url('volantini.php?flyer=' . urlencode($featured_flyer['slug']));
+?>
+<section class="section section-featured-flyer"
+         aria-labelledby="volantino-momento"
+         data-aos="fade-up"
+         data-aos-delay="50">
   <div class="container">
-    <div class="section-header text-center" data-aos="zoom-in" data-aos-duration="800" data-aos-delay="100">
-      <h2 class="section-title">Perché scegliere Key Soft Italia</h2>
-      <p class="section-subtitle">Non solo riparazioni: il nostro valore aggiunto in ogni servizio</p>
-    </div>
-    <div class="row g-4">
-      <?php 
-      $advantages = [
-          ["icon" => "ri-shield-check-line", "title" => "Ricondizionati Certificati", "text" => "Ogni dispositivo è testato e garantito 12 mesi, come nuovo."],
-          ["icon" => "ri-headphone-line", "title" => "Assistenza Continua", "text" => "Supporto dedicato anche dopo la vendita, sempre disponibili."],
-          ["icon" => "ri-global-line", "title" => "Consulenza IT & Reti", "text" => "Soluzioni su misura per aziende, networking e sicurezza."],
-          ["icon" => "ri-smartphone-line", "title" => "Telefonia & Casa", "text" => "Offerte su SIM, internet, luce e gas: risparmio garantito."],
-          ["icon" => "ri-code-s-slash-line", "title" => "Innovazione & Sviluppo", "text" => "Web, e-commerce e software per far crescere la tua attività."],
-          ["icon" => "ri-community-line", "title" => "Affidabilità dal 2004", "text" => "Siamo un punto di riferimento per famiglie e aziende."],
-      ];
-      $delay = 200;
-      foreach ($advantages as $a): ?>
-      <div class="col-lg-4 col-md-6">
-        <div class="advantage-card" data-aos="fade-up" data-aos-duration="600" data-aos-delay="<?php echo $delay; ?>">
-          <div class="advantage-icon"><i class="<?php echo $a['icon']; ?>" aria-hidden="true"></i></div>
-          <h4 class="advantage-title"><?php echo $a['title']; ?></h4>
-          <p class="advantage-text"><?php echo $a['text']; ?></p>
+    <div class="row g-4 align-items-center">
+      <div class="col-md-5"
+           data-aos="fade-right"
+           data-aos-delay="120">
+        <a href="<?php echo $flyer_url; ?>" class="featured-flyer-cover-link">
+          <div class="featured-flyer-cover">
+            <?php if ($flyer_cover_url): ?>
+              <img src="<?php echo htmlspecialchars($flyer_cover_url); ?>"
+                  alt="Volantino: <?php echo htmlspecialchars($featured_flyer['title']); ?>"
+                  loading="lazy">
+            <?php else: ?>
+              <div class="featured-flyer-placeholder">
+                <i class="ri-price-tag-3-line" aria-hidden="true"></i>
+              </div>
+            <?php endif; ?>
+          </div>
+        </a>
+      </div>
+
+      <!-- Testo + CTA -->
+<div class="col-md-7"
+           data-aos="fade-left"
+           data-aos-delay="160">
+        <div class="featured-flyer-content">
+          <p class="featured-flyer-eyebrow">Volantino del momento</p>
+
+          <h2 id="volantino-momento" class="featured-flyer-title">
+            <?php echo htmlspecialchars($featured_flyer['title']); ?>
+          </h2>
+
+          <?php if ($period_label): ?>
+            <p class="featured-flyer-period">
+              <?php echo htmlspecialchars($period_label); ?>
+            </p>
+          <?php endif; ?>
+
+          <?php if (!empty($badge_label)): ?>
+            <p class="featured-flyer-badge">
+              <?php echo htmlspecialchars($badge_label); ?>
+            </p>
+          <?php endif; ?>
+
+          <p class="featured-flyer-desc">
+            <?php
+            if (!empty($featured_flyer['description'])) {
+              echo nl2br(htmlspecialchars($featured_flyer['description']));
+            } else {
+              echo 'Scopri tutte le offerte del volantino: smartphone, PC, ricondizionati e servizi Key Soft Italia.';
+            }
+            ?>
+          </p>
+
+          <div class="featured-flyer-actions">
+            <a href="<?php echo $flyer_url; ?>" class="btn btn-primary btn-lg">
+              <i class="ri-eye-line me-1" aria-hidden="true"></i>
+              Sfoglia il volantino
+            </a>
+          </div>
+
+          <p class="featured-flyer-note small text-muted mt-2">
+            Le offerte sono soggette a disponibilità in negozio. Chiedi sempre conferma in cassa.
+          </p>
         </div>
       </div>
-      <?php $delay += 100; endforeach; ?>
-    </div>
-    <div class="text-center mt-5" data-aos="fade-up" data-aos-duration="600" data-aos-delay="800">
-      <a href="<?php echo url('chi-siamo.php'); ?>" class="btn btn-primary" aria-label="Scopri di più su Key Soft Italia">
-        Scopri di più <i class="ri-arrow-right-line"></i>
-      </a>
     </div>
   </div>
 </section>
+<?php endif; ?>
 
+<?php if (!empty($featured_flyer)): ?>
 <!-- CTA PANELS -->
 <section class="section section-cta-panels" role="region" aria-label="Azioni rapide" data-aos="fade-up" data-aos-duration="1000" data-aos-once="true">
   <div class="container">
@@ -444,6 +544,92 @@ $page_keywords = "riparazioni smartphone ginosa, assistenza computer taranto, ri
     </div>
   </div>
 </section>
+<?php endif; ?>
+
+<!-- WHY US -->
+<section class="section section-why-us" role="region" aria-label="Perché scegliere noi" data-aos="fade-up" data-aos-duration="1000" data-aos-once="true">
+  <div class="container">
+    <div class="section-header text-center" data-aos="zoom-in" data-aos-duration="800" data-aos-delay="100">
+      <h2 class="section-title">Perché scegliere Key Soft Italia</h2>
+      <p class="section-subtitle">Non solo riparazioni: il nostro valore aggiunto in ogni servizio</p>
+    </div>
+    <div class="row g-4">
+      <?php 
+      $advantages = [
+          ["icon" => "ri-shield-check-line", "title" => "Ricondizionati Certificati", "text" => "Ogni dispositivo è testato e garantito 12 mesi, come nuovo."],
+          ["icon" => "ri-headphone-line", "title" => "Assistenza Continua", "text" => "Supporto dedicato anche dopo la vendita, sempre disponibili."],
+          ["icon" => "ri-global-line", "title" => "Consulenza IT & Reti", "text" => "Soluzioni su misura per aziende, networking e sicurezza."],
+          ["icon" => "ri-smartphone-line", "title" => "Telefonia & Casa", "text" => "Offerte su SIM, internet, luce e gas: risparmio garantito."],
+          ["icon" => "ri-code-s-slash-line", "title" => "Innovazione & Sviluppo", "text" => "Web, e-commerce e software per far crescere la tua attività."],
+          ["icon" => "ri-community-line", "title" => "Affidabilità dal 2004", "text" => "Siamo un punto di riferimento per famiglie e aziende."],
+      ];
+      $delay = 200;
+      foreach ($advantages as $a): ?>
+      <div class="col-lg-4 col-md-6">
+        <div class="advantage-card" data-aos="fade-up" data-aos-duration="600" data-aos-delay="<?php echo $delay; ?>">
+          <div class="advantage-icon"><i class="<?php echo $a['icon']; ?>" aria-hidden="true"></i></div>
+          <h4 class="advantage-title"><?php echo $a['title']; ?></h4>
+          <p class="advantage-text"><?php echo $a['text']; ?></p>
+        </div>
+      </div>
+      <?php $delay += 100; endforeach; ?>
+    </div>
+    <div class="text-center mt-5" data-aos="fade-up" data-aos-duration="600" data-aos-delay="800">
+      <a href="<?php echo url('chi-siamo.php'); ?>" class="btn btn-primary" aria-label="Scopri di più su Key Soft Italia">
+        Scopri di più <i class="ri-arrow-right-line"></i>
+      </a>
+    </div>
+  </div>
+</section>
+
+<?php if (empty($featured_flyer)): ?>
+<!-- CTA PANELS -->
+<section class="section section-cta-panels" role="region" aria-label="Azioni rapide" data-aos="fade-up" data-aos-duration="1000" data-aos-once="true">
+  <div class="container">
+    <div class="row g-4">
+      <!-- Richiedi Preventivo -->
+      <div class="col-lg-4">
+        <div class="cta-card cta-orange" data-aos="slide-right" data-aos-duration="800" data-aos-delay="200">
+          <div class="cta-icon">
+            <i class="ri-file-list-3-line" aria-hidden="true"></i>
+          </div>
+          <h3 class="cta-title">Richiedi Preventivo</h3>
+          <p class="cta-text">Ottieni un preventivo gratuito per riparazioni, consulenza IT o qualsiasi altro servizio.</p>
+          <a href="<?php echo url('preventivo.php'); ?>" class="btn btn-cta" aria-label="Richiedi preventivo gratuito">
+            <i class="ri-file-list-3-line"></i> Richiedi ora
+          </a>
+        </div>
+      </div>
+      <!-- Prenota Riparazione -->
+      <div class="col-lg-4">
+        <div class="cta-card cta-blue" data-aos="slide-center" data-aos-duration="800" data-aos-delay="200">
+          <div class="cta-icon">
+            <i class="ri-edit-line" aria-hidden="true"></i>
+          </div>
+          <h3 class="cta-title">Prenota riparazione</h3>
+          <p class="cta-text">Accesso prioritario in laboratorio: scegli giorno e ora, attendi la conferma.</p>
+          <a href="<?php echo url('prenota-riparazione.php'); ?>" class="btn btn-cta" aria-label="Prenota riparazione online">
+            <i class="ri-edit-line"></i> Prenota ora
+          </a>
+        </div>
+      </div>
+      <!-- Vendi il tuo usato -->
+      <div class="col-lg-4">
+        <div class="cta-card cta-green" data-aos="slide-left" data-aos-duration="800" data-aos-delay="300">
+          <div class="cta-icon">
+            <i class="ri-recycle-line" aria-hidden="true"></i>
+          </div>
+          <h3 class="cta-title">Vendi il tuo usato</h3>
+          <p class="cta-text">Anche se rotto! Valutiamo e acquistiamo il tuo dispositivo usato al miglior prezzo.</p>
+          <a href="<?php echo url('servizi/vendita.php#permuta'); ?>" class="btn btn-cta" aria-label="Vendi il tuo dispositivo usato">
+            <i class="ri-recycle-line"></i> Vendi ora
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<?php endif; ?>
 
 <!-- PARTNER BRANDS -->
 <section class="section section-brands" role="region" aria-label="I nostri partner" data-aos="fade-up" data-aos-duration="1000" data-aos-once="true">

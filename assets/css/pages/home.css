@@ -626,7 +626,7 @@
 
 /* ===== PARTNER BRANDS ===== */
 .section-brands {
-  background: var(--ks-gray-50);
+  background: #ffffff;
   padding: var(--ks-spacing-16) 0;
 }
 
@@ -824,4 +824,467 @@
 a:focus, button:focus {
   outline: 2px solid var(--ks-orange);
   outline-offset: 2px;
+}
+
+/**
+ * Key Soft Italia - Home
+ * Sezione "Volantino del momento"
+ */
+
+/* ===== SECTION WRAPPER ===== */
+.section-featured-flyer {
+  padding: var(--ks-spacing-16, 4rem) 0;
+  background: radial-gradient(circle at top left,
+              rgba(249,115,22,0.10) 0%,
+              transparent 55%),
+              linear-gradient(180deg,
+              #ffffff 0%,
+              #f9fafb 100%);
+  border-top: 1px solid var(--ks-gray-100, #e5e7eb);
+  border-bottom: 1px solid var(--ks-gray-100, #e5e7eb);
+}
+
+.section-featured-flyer .row {
+  align-items: center;
+}
+
+/* ===== COVER ===== */
+.featured-flyer-cover-link {
+  display: block;
+  text-decoration: none;
+}
+
+.featured-flyer-cover {
+  position: relative;
+  border-radius: var(--ks-radius-2xl, 1.5rem);
+  overflow: hidden;
+  background: linear-gradient(135deg,
+              rgba(15,23,42,0.80),
+              rgba(30,64,175,0.85));
+  box-shadow: 0 18px 40px rgba(15,23,42,0.35);
+  transform-origin: center;
+  transform-style: preserve-3d;
+  animation: featuredFlyerFloat 12s ease-in-out infinite;
+  transition:
+    transform .45s ease,
+    box-shadow .45s ease,
+    filter .45s ease;
+}
+
+.featured-flyer-cover img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+/* placeholder, se non c'è cover */
+.featured-flyer-placeholder {
+  width: 100%;
+  padding-top: 140%; /* rapporto verticale */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: radial-gradient(circle at 20% 0,
+              rgba(249,115,22,0.3) 0%,
+              rgba(15,23,42,1) 45%,
+              #020617 100%);
+}
+.featured-flyer-placeholder i {
+  font-size: 3rem;
+  color: #fff;
+}
+
+/* “luce” che attraversa la cover */
+.featured-flyer-cover::before {
+  content: '';
+  position: absolute;
+  inset: -40%;
+  background: linear-gradient(120deg,
+              rgba(255,255,255,0.0) 0%,
+              rgba(255,255,255,0.55) 45%,
+              rgba(255,255,255,0.0) 100%);
+  transform: translateX(-70%) rotate(10deg);
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* hover: tilt + glow + riflesso */
+.featured-flyer-cover-link:hover .featured-flyer-cover,
+.featured-flyer-cover-link:focus-visible .featured-flyer-cover {
+  animation: none;
+  transform: translateY(-8px) rotate(-1.5deg);
+  box-shadow: 0 24px 55px rgba(15,23,42,0.45);
+  filter: saturate(1.05);
+}
+
+.featured-flyer-cover-link:hover .featured-flyer-cover::before,
+.featured-flyer-cover-link:focus-visible .featured-flyer-cover::before {
+  animation: featuredFlyerSheen 900ms ease-out forwards;
+}
+
+/* leggero “galleggiamento” continuo */
+@keyframes featuredFlyerFloat {
+  0%, 100% {
+    transform: translateY(0) rotate(-1deg);
+  }
+  50% {
+    transform: translateY(-6px) rotate(1deg);
+  }
+}
+
+/* riflesso che scorre sulla cover */
+@keyframes featuredFlyerSheen {
+  0% {
+    opacity: 0;
+    transform: translateX(-70%) rotate(10deg);
+  }
+  20% {
+    opacity: 0.55;
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(60%) rotate(10deg);
+  }
+}
+
+/* ===== CONTENT ===== */
+.featured-flyer-content {
+  max-width: 540px;
+  margin-left: auto;
+}
+
+.featured-flyer-eyebrow {
+  font-size: .85rem;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  font-weight: 600;
+  color: var(--ks-orange, #f97316);
+  margin-bottom: .4rem;
+}
+
+.featured-flyer-title {
+  font-size: 2rem;
+  font-weight: 800;
+  color: var(--ks-text-primary, #111827);
+  margin-bottom: .35rem;
+}
+
+.featured-flyer-period {
+  font-size: .95rem;
+  color: var(--ks-text-secondary, #4b5563);
+  margin-bottom: .3rem;
+}
+
+.featured-flyer-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: .35rem;
+  padding: .18rem .75rem;
+  border-radius: var(--ks-radius-full, 999px);
+  background: rgba(249,115,22,0.10);
+  color: var(--ks-orange, #f97316);
+  font-size: .8rem;
+  font-weight: 600;
+  margin-bottom: .7rem;
+}
+
+.featured-flyer-desc {
+  font-size: .97rem;
+  color: var(--ks-text-secondary, #4b5563);
+  margin-bottom: 1rem;
+}
+
+.featured-flyer-actions .btn {
+  border-radius: var(--ks-radius-lg, .9rem);
+  padding: .75rem 2.1rem;
+  font-weight: 600;
+  box-shadow: 0 10px 25px rgba(249,115,22,0.35);
+  border-width: 0;
+}
+
+.featured-flyer-actions .btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 14px 30px rgba(249,115,22,0.45);
+}
+
+.featured-flyer-note {
+  font-size: .8rem;
+  color: var(--ks-text-muted, #6b7280);
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 992px) {
+  .section-featured-flyer {
+    padding: var(--ks-spacing-12, 3rem) 0;
+  }
+
+  .featured-flyer-content {
+    max-width: none;
+    margin: 0;
+  }
+
+  .featured-flyer-title {
+    font-size: 1.6rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .section-featured-flyer .row {
+    text-align: center;
+  }
+
+  .featured-flyer-cover {
+    max-width: 320px;
+    margin: 0 auto 1.75rem;
+  }
+
+  .featured-flyer-content {
+    text-align: center;
+  }
+
+  .featured-flyer-actions .btn {
+    width: 100%;
+  }
+}
+
+/* ==== FEATURED FLYER – DIMENSIONI COVER PIÙ COMPATTE ==== */
+
+/* allineo la col di sinistra e centro la cover */
+.section-featured-flyer .col-md-5 {
+  display: flex;
+  justify-content: center;
+}
+
+/* desktop: cover più piccola (A4 ridotta) */
+.featured-flyer-cover {
+  max-width: 240px;         /* prima era “a piacere”, ora la stringiamo */
+}
+
+/* schermi molto grandi: ancora un filo più compatta */
+@media (min-width: 1400px) {
+  .featured-flyer-cover {
+    max-width: 220px;
+  }
+}
+
+/* mobile: comunque compatta, ma un po' più grande che su desktop */
+@media (max-width: 768px) {
+  .featured-flyer-cover {
+    max-width: 260px;
+    margin: 0 auto 1.75rem;
+  }
+}
+
+/* ==== FEATURED FLYER – SFONDO EVIDENZIATO ==== */
+.section-featured-flyer {
+  position: relative;
+  padding: var(--ks-spacing-16, 4rem) 0;
+  background:
+    radial-gradient(circle at 0% 0%,   rgba(249,115,22,0.20) 0%, transparent 55%),
+    radial-gradient(circle at 100% 100%, rgba(56,189,248,0.18) 0%, transparent 60%),
+    linear-gradient(180deg, #ffffff 0%, #f3f4f6 55%, #ffffff 100%);
+  border-top: 1px solid var(--ks-gray-100, #e5e7eb);
+  border-bottom: 1px solid var(--ks-gray-100, #e5e7eb);
+  overflow: hidden;
+}
+
+.section-featured-flyer::before {
+  content: '';
+  position: absolute;
+  inset: 6%;
+  border-radius: var(--ks-radius-3xl, 1.75rem);
+  border: 1px solid rgba(249,115,22,0.22);
+  box-shadow: 0 18px 40px rgba(15,23,42,0.15);
+  pointer-events: none;
+}
+
+.section-featured-flyer .container {
+  position: relative;
+  z-index: 1;
+}
+
+/* === RESET SEZIONE VOLANTINO DEL MOMENTO === */
+
+/* Sfondo sezione: grigio chiaro uniforme */
+.section-featured-flyer {
+  position: relative;
+  padding: 3.5rem 0;
+  background: var(--ks-gray-50, #f3f4f6);
+  border-top: 1px solid var(--ks-gray-100, #e5e7eb);
+  border-bottom: 1px solid var(--ks-gray-100, #e5e7eb);
+  overflow: visible;
+}
+
+/* Elimina la cornice gigante che avevamo messo prima */
+.section-featured-flyer::before {
+  content: none !important;
+}
+
+/* La row diventa una card centrale pulita */
+.section-featured-flyer .row.g-4 {
+  max-width: 960px;
+  margin: 0 auto;
+  background: var(--ks-bg-primary, #ffffff);
+  border-radius: var(--ks-radius-2xl, 1.5rem);
+  padding: 1.75rem 1.75rem;
+  box-shadow: var(--ks-shadow-md, 0 10px 25px rgba(15,23,42,0.1));
+}
+
+/* Colonna cover centrata verticalmente */
+.section-featured-flyer .col-md-5 {
+  display: flex;
+  justify-content: center;
+}
+
+/* Cover A4 ridotta, con ombra sobria */
+.featured-flyer-cover {
+  max-width: 210px; /* desktop */
+  border-radius: var(--ks-radius-xl, 1.25rem);
+  overflow: hidden;
+  background: #0f172a;
+  box-shadow: 0 10px 24px rgba(15,23,42,0.35);
+  transform: none;
+  animation: none;
+  transition: transform .25s ease, box-shadow .25s ease;
+}
+
+.featured-flyer-cover img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+/* Placeholder se manca la cover */
+.featured-flyer-placeholder {
+  width: 100%;
+  padding-top: 140%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: radial-gradient(circle at 30% 0,
+               rgba(249,115,22,0.35) 0%,
+               #020617 50%,
+               #020617 100%);
+}
+.featured-flyer-placeholder i {
+  font-size: 2.6rem;
+  color: #fff;
+}
+
+/* Hover leggero, niente lucine che attraversano la cover */
+.featured-flyer-cover-link:hover .featured-flyer-cover,
+.featured-flyer-cover-link:focus-visible .featured-flyer-cover {
+  transform: translateY(-4px);
+  box-shadow: 0 16px 32px rgba(15,23,42,0.45);
+}
+
+/* mobile: un filo più grande, ma sempre compatta */
+@media (max-width: 768px) {
+  .featured-flyer-cover {
+    max-width: 230px;
+    margin: 0 auto 1.5rem;
+  }
+}
+
+/* Contenuto allineato allo stile delle altre section */
+.featured-flyer-content {
+  max-width: 520px;
+  margin-left: auto;
+}
+
+.featured-flyer-eyebrow {
+  font-size: .8rem;
+  letter-spacing: .16em;
+  text-transform: uppercase;
+  font-weight: 600;
+  color: var(--ks-orange, #f97316);
+  margin-bottom: .35rem;
+}
+
+.featured-flyer-title {
+  font-size: 1.8rem;
+  font-weight: 800;
+  color: var(--ks-text-primary, #111827);
+  margin-bottom: .25rem;
+}
+
+.featured-flyer-period {
+  font-size: .95rem;
+  color: var(--ks-text-secondary, #4b5563);
+  margin-bottom: .25rem;
+}
+
+.featured-flyer-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: .25rem;
+  padding: .15rem .7rem;
+  border-radius: var(--ks-radius-full, 999px);
+  background: rgba(249,115,22,0.08);
+  color: var(--ks-orange, #f97316);
+  font-size: .78rem;
+  font-weight: 600;
+  margin-bottom: .6rem;
+}
+
+.featured-flyer-desc {
+  font-size: .95rem;
+  color: var(--ks-text-secondary, #4b5563);
+  margin-bottom: 1rem;
+}
+
+/* Bottone come gli altri della home */
+.featured-flyer-actions .btn {
+  border-radius: var(--ks-radius-lg, .9rem);
+  padding: .75rem 2rem;
+  font-weight: 600;
+  background-color: var(--ks-orange, #f97316);
+  border-color: var(--ks-orange, #f97316);
+  box-shadow: 0 8px 20px rgba(249,115,22,0.35);
+}
+
+.featured-flyer-actions .btn:hover {
+  background-color: var(--ks-orange-hover, #ea580c);
+  border-color: var(--ks-orange-hover, #ea580c);
+  transform: translateY(-1px);
+  box-shadow: 0 12px 26px rgba(249,115,22,0.45);
+}
+
+.featured-flyer-note {
+  font-size: .8rem;
+  color: var(--ks-text-muted, #6b7280);
+  margin-top: .75rem;
+}
+
+@media (max-width: 992px) {
+  .section-featured-flyer {
+    padding: 3rem 0;
+  }
+
+  .section-featured-flyer .row.g-4 {
+    padding: 1.5rem 1.25rem;
+  }
+
+  .featured-flyer-content {
+    max-width: none;
+    margin: 0;
+  }
+
+  .featured-flyer-title {
+    font-size: 1.5rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .section-featured-flyer .row.g-4 {
+    text-align: center;
+  }
+
+  .featured-flyer-content {
+    text-align: center;
+  }
+
+  .featured-flyer-actions .btn {
+    width: 100%;
+  }
 }

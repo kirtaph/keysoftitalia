@@ -370,3 +370,143 @@
     margin-bottom: .5rem;
   }
 }
+
+/* ===== PDF.js viewer in modale volantini ===== */
+
+.flyer-modal-dialog {
+  max-width: 1140px;
+}
+
+.flyer-modal-body {
+  padding: 0;
+  background: #020617;
+}
+
+.pdfjs-viewer {
+  height: 80vh;
+  overflow: auto;
+  padding: 1.5rem 1rem;
+  background: radial-gradient(circle at top,
+              rgba(15,23,42,0.8) 0%,
+              #020617 55%);
+}
+
+.pdfjs-page-canvas {
+  display: block;
+  margin: 0 auto 1rem;
+  box-shadow: 0 12px 30px rgba(0,0,0,0.7);
+  border-radius: 4px;
+  background: #111827;
+}
+
+.pdfjs-loading,
+.pdfjs-error {
+  color: #e5e7eb;
+  text-align: center;
+  padding: 2rem 1rem;
+  font-size: 0.95rem;
+}
+
+.pdfjs-error a {
+  color: #f97316;
+  text-decoration: underline;
+}
+
+/* ===== MODALE VOLANTINI + PDF.js ===== */
+
+.flyer-modal-dialog {
+  max-width: 1140px;
+}
+
+.flyer-modal-body {
+  padding: 0;
+  background: #020617;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Toolbar in alto */
+.pdfjs-toolbar {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: .5rem 1rem;
+  border-bottom: 1px solid #111827;
+  background: linear-gradient(90deg, #020617 0%, #0b1120 100%);
+  color: #e5e7eb;
+  font-size: .85rem;
+}
+
+.pdfjs-page-indicator span {
+  font-weight: 600;
+}
+
+/* Bottoni zoom più “touch friendly” */
+.pdfjs-zoom-controls .btn {
+  min-width: 2.3rem;
+  height: 2.3rem;
+  padding: 0;
+  border-radius: 999px;
+  border-color: rgba(248,250,252,.7);
+  color: #e5e7eb;
+}
+
+.pdfjs-zoom-controls .btn:hover {
+  background-color: #e5e7eb;
+  color: #020617;
+}
+
+/* Viewer scrollabile sotto la toolbar */
+.pdfjs-viewer {
+  flex: 1 1 auto;
+  height: auto;
+  max-height: 80vh;
+  overflow: auto;
+  padding: 1.5rem 1rem;
+  background: radial-gradient(circle at top,
+              rgba(15,23,42,0.8) 0%,
+              #020617 55%);
+}
+
+/* Pagine */
+.pdfjs-page-canvas {
+  display: block;
+  margin: 0 auto 1rem;
+  box-shadow: 0 12px 30px rgba(0,0,0,0.7);
+  border-radius: 4px;
+  background: #111827;
+}
+
+/* Messaggi */
+.pdfjs-loading,
+.pdfjs-error {
+  color: #e5e7eb;
+  text-align: center;
+  padding: 2rem 1rem;
+  font-size: 0.95rem;
+}
+
+.pdfjs-error a {
+  color: #f97316;
+  text-decoration: underline;
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+  .flyer-modal-dialog {
+    max-width: 100%;
+    margin: .5rem;
+  }
+
+  .pdfjs-toolbar {
+    padding: .4rem .7rem;
+    font-size: .8rem;
+  }
+
+  .pdfjs-zoom-controls .btn {
+    min-width: 2.2rem;
+    height: 2.2rem;
+    width: auto;
+  }
+}
