@@ -70,7 +70,7 @@ include_once 'includes/header.php';
 
 <!-- Macro-categoria Ricondizionati -->
 <div class="mb-5">
-    <h3 class="mb-4">Gestione Prodotti</h3>
+    <h3 class="mb-4">Gestione Offerte</h3>
     <div class="row">
         <div class="col-lg-3 col-md-6 mb-4">
             <div class="card text-center">
@@ -83,6 +83,20 @@ include_once 'includes/header.php';
                     ?>
                     <p class="card-text">Ci sono <?php echo $count; ?> prodotti disponibili.</p>
                     <a href="products.php" class="btn btn-primary">Gestisci</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-3 col-md-6 mb-4">
+            <div class="card text-center">
+                <div class="card-body">
+                    <i class="fas fa-solid fa-tag fa-3x mb-3"></i>
+                    <h5 class="card-title">Volantini</h5>
+                    <?php
+                        $stmt = $pdo->query('SELECT COUNT(*) FROM flyers WHERE status = 1');
+                        $count = $stmt->fetchColumn();
+                    ?>
+                    <p class="card-text">Ci sono <?php echo $count; ?> volantini disponibili.</p>
+                    <a href="flyers.php" class="btn btn-primary">Gestisci</a>
                 </div>
             </div>
         </div>

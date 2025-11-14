@@ -73,10 +73,11 @@ require_once '../config/config.php';
                             </li>
                              <li class="nav-item dropdown">
                                 <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownRicondizionati" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                    Ricondizionati
+                                    Offerte
                                 </a>
                                 <ul class="dropdown-menu" aria-labelledby="navbarDropdownRicondizionati">
                                     <li><a class="dropdown-item" href="products.php">Prodotti</a></li>
+                                    <li><a class="dropdown-item" href="flyers.php">Volantini</a></li>
                                 </ul>
                             </li>
                             

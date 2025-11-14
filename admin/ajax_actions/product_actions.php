@@ -41,27 +41,28 @@ try {
             $id = $_POST['id'] ?? null;
             $model_id = $_POST['model_id'];
             $sku = $_POST['sku'];
+            $list_price = $_POST['list_price'] ?: null;
             $price_eur = $_POST['price_eur'];
             $is_available = isset($_POST['is_available']) ? 1 : 0;
             $is_featured = isset($_POST['is_featured']) ? 1 : 0;
 
             if ($action === 'add') {
                 $stmt = $pdo->prepare(
-                    'INSERT INTO products (model_id, sku, color, storage_gb, grade, price_eur, short_desc, full_desc, is_available, is_featured) 
-                     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)'
+                    'INSERT INTO products (model_id, sku, color, storage_gb, grade, list_price, price_eur, short_desc, full_desc, is_available, is_featured) 
+                     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)'
                 );
                 $stmt->execute([
-                    $model_id, $sku, $_POST['color'], $_POST['storage_gb'], $_POST['grade'], $price_eur, 
+                    $model_id, $sku, $_POST['color'], $_POST['storage_gb'], $_POST['grade'], $list_price, $price_eur, 
                     $_POST['short_desc'], $_POST['full_desc'], $is_available, $is_featured
                 ]);
                 $productId = $pdo->lastInsertId();
             } else {
                 $stmt = $pdo->prepare(
                     'UPDATE products SET model_id = ?, sku = ?, color = ?, storage_gb = ?, grade = ?, 
-                     price_eur = ?, short_desc = ?, full_desc = ?, is_available = ?, is_featured = ? WHERE id = ?'
+                     list_price = ?, price_eur = ?, short_desc = ?, full_desc = ?, is_available = ?, is_featured = ? WHERE id = ?'
                 );
                 $stmt->execute([
-                    $model_id, $sku, $_POST['color'], $_POST['storage_gb'], $_POST['grade'], $price_eur, 
+                    $model_id, $sku, $_POST['color'], $_POST['storage_gb'], $_POST['grade'], $list_price, $price_eur, 
                     $_POST['short_desc'], $_POST['full_desc'], $is_available, $is_featured, $id
                 ]);
                 $productId = $id;

@@ -1,0 +1,372 @@
+/**
+ * Key Soft Italia - Volantini Page Styles
+ * Stili specifici per la pagina Volantini & Offerte
+ */
+
+/* ========== HERO ========== */
+.hero-flyers {
+  position: relative;
+  background: linear-gradient(135deg, #1a1f2b 0%, #262b40 40%, #ff6b35 100%);
+  padding: 7rem 0 5rem;
+  overflow: hidden;
+  text-align: center;
+}
+
+.hero-flyers .container {
+  position: relative;
+  z-index: 2;
+}
+
+.hero-flyers .hero-icon i {
+  font-size: 3rem;
+  color: var(--ks-orange, #ff6b35);
+}
+
+.hero-flyers .hero-title {
+  font-size: 3rem;
+  font-weight: 800;
+  color: var(--ks-text-white);
+  margin: 1rem 0;
+}
+
+.hero-flyers .text-gradient {
+  background: linear-gradient(90deg, var(--ks-orange, #ff6b35) 0%, #ffd166 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.hero-flyers .hero-subtitle {
+  color: rgba(255,255,255,0.88);
+  max-width: 720px;
+  margin: 0 auto 2rem;
+}
+
+.hero-flyers .hero-cta .btn {
+  border-radius: var(--ks-radius-lg);
+}
+
+.hero-flyers .hero-pattern {
+  position: absolute;
+  top: 0;
+  right: -25%;
+  width: 70%;
+  height: 100%;
+  opacity: 0.08;
+  background-image: url("data:image/svg+xml,%3Csvg width='120' height='120' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23ffffff' fill-opacity='0.16'%3E%3Ccircle cx='10' cy='10' r='2'/%3E%3Ccircle cx='40' cy='40' r='2'/%3E%3Ccircle cx='70' cy='20' r='2'/%3E%3Ccircle cx='90' cy='70' r='2'/%3E%3Ccircle cx='20' cy='80' r='2'/%3E%3C/g%3E%3C/svg%3E");
+}
+
+/* ========== SECTION BASE ========== */
+.section-flyers {
+  padding: var(--ks-spacing-20, 5rem) 0;
+  background: #fff;
+}
+
+.section-flyers .section-title {
+  margin-bottom: .5rem;
+}
+
+.section-flyers .section-subtitle {
+  max-width: 680px;
+  margin: 0 auto 1.5rem;
+}
+
+/* ========== FILTER TABS ========== */
+.flyers-filters {
+  display: flex;
+  justify-content: center;
+  gap: .75rem;
+  margin-top: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.flyer-tab {
+  border: 1px solid var(--ks-gray-200, #e5e7eb);
+  background: var(--ks-bg-primary, #ffffff);
+  color: var(--ks-text-secondary, #4b5563);
+  border-radius: var(--ks-radius-full, 999px);
+  padding: .5rem 1.25rem;
+  font-size: .95rem;
+  font-weight: 500;
+  display: inline-flex;
+  align-items: center;
+  gap: .25rem;
+  cursor: pointer;
+  transition: background .2s ease, color .2s ease, box-shadow .2s ease, transform .2s ease;
+}
+
+.flyer-tab:hover {
+  box-shadow: var(--ks-shadow-sm, 0 1px 3px rgba(15,23,42,0.12));
+  transform: translateY(-1px);
+}
+
+.flyer-tab.is-active {
+  background: var(--ks-orange, #ff6b35);
+  border-color: var(--ks-orange, #ff6b35);
+  color: #fff;
+  box-shadow: var(--ks-shadow-md, 0 6px 15px rgba(249,115,22,0.35));
+}
+
+/* ========== META & MESSAGGI ========== */
+.flyers-meta {
+  font-size: .9rem;
+}
+
+.flyers-message {
+  min-height: 1.5rem;
+  font-size: .95rem;
+  color: var(--ks-text-secondary, #4b5563);
+}
+
+.flyers-message.is-loading {
+  color: var(--ks-orange, #ff6b35);
+}
+
+/* ========== CARD VOLANTINO ========== */
+.flyer-card {
+  background: var(--ks-bg-primary, #ffffff);
+  border-radius: var(--ks-radius-2xl, 1.5rem);
+  box-shadow: var(--ks-shadow-md, 0 8px 20px rgba(15,23,42,0.1));
+  border: 1px solid var(--ks-gray-100, #e5e7eb);
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  transition: transform .25s ease, box-shadow .25s ease, border-color .25s ease;
+}
+
+.flyer-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--ks-shadow-xl, 0 14px 30px rgba(15,23,42,0.16));
+  border-color: var(--ks-orange, #ff6b35);
+}
+
+.flyer-card-header {
+  display: flex;
+  gap: var(--ks-spacing-4, 1.25rem);
+  padding: var(--ks-spacing-5, 1.5rem) var(--ks-spacing-5, 1.5rem) var(--ks-spacing-4, 1.25rem);
+  border-bottom: 1px solid var(--ks-gray-100, #e5e7eb);
+}
+
+.flyer-cover {
+  width: 110px;
+  flex-shrink: 0;
+}
+
+.flyer-cover img {
+  width: 100%;
+  height: 150px;
+  object-fit: cover;
+  border-radius: var(--ks-radius-xl, 1rem);
+  box-shadow: var(--ks-shadow-sm, 0 4px 10px rgba(15,23,42,0.15));
+}
+
+.flyer-cover-placeholder {
+  width: 100%;
+  height: 150px;
+  border-radius: var(--ks-radius-xl, 1rem);
+  background: linear-gradient(135deg, rgba(249,115,22,0.12), rgba(30,64,175,0.08));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.flyer-cover-placeholder i {
+  font-size: 2.2rem;
+  color: var(--ks-orange, #ff6b35);
+}
+
+.flyer-meta {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: .35rem;
+}
+
+.flyer-title {
+  font-size: var(--ks-text-xl, 1.25rem);
+  font-weight: var(--ks-font-bold, 700);
+  color: var(--ks-text-primary, #111827);
+  margin: 0;
+}
+
+.flyer-period {
+  font-size: .95rem;
+  color: var(--ks-text-secondary, #4b5563);
+  margin: 0;
+}
+
+.flyer-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .35rem;
+  margin-top: .25rem;
+}
+
+/* badge base */
+.flyer-badge {
+  font-size: .75rem;
+  font-weight: 600;
+  border-radius: var(--ks-radius-full, 999px);
+  padding: .2rem .7rem;
+}
+
+/* stato */
+.flyer-badge-current {
+  background: rgba(34,197,94,0.12);
+  color: #15803d;
+  border: 1px solid rgba(34,197,94,0.45);
+}
+
+.flyer-badge-upcoming {
+  background: rgba(59,130,246,0.12);
+  color: #1d4ed8;
+  border: 1px solid rgba(59,130,246,0.45);
+}
+
+.flyer-badge-archived {
+  background: rgba(148,163,184,0.16);
+  color: #4b5563;
+  border: 1px solid rgba(148,163,184,0.4);
+}
+
+/* evidenza home */
+.flyer-badge-highlight {
+  background: rgba(249,115,22,0.12);
+  color: var(--ks-orange, #ff6b35);
+  border-radius: var(--ks-radius-full, 999px);
+  padding: .2rem .6rem;
+  font-size: .75rem;
+  border: 1px dashed rgba(249,115,22,0.6);
+}
+
+/* BODY */
+.flyer-card-body {
+  padding: var(--ks-spacing-4, 1.25rem) var(--ks-spacing-5, 1.5rem) var(--ks-spacing-5, 1.5rem);
+  display: flex;
+  flex-direction: column;
+  gap: .75rem;
+  flex: 1;
+}
+
+.flyer-description {
+  font-size: .95rem;
+  color: var(--ks-text-secondary, #4b5563);
+  margin-bottom: .25rem;
+}
+
+.flyer-note {
+  font-size: .85rem;
+}
+
+/* ACTIONS */
+.flyer-card-actions {
+  margin-top: auto;
+  display: flex;
+  flex-wrap: wrap;
+  gap: .5rem;
+}
+
+.flyer-card-actions .btn {
+  border-radius: var(--ks-radius-lg, .8rem);
+  font-weight: 600;
+}
+
+.flyer-card-actions .btn-outline-secondary {
+  border-width: 1px;
+}
+
+/* ========== MODAL VIEWER PDF ========== */
+.flyer-modal-dialog {
+  max-width: 1140px;
+}
+
+.flyer-modal-body iframe {
+  width: 100%;
+  height: 80vh;
+}
+
+/* ========== CTA ========== */
+.section-cta {
+  background: #fff;
+  padding: 5rem 0;
+}
+
+.section-cta .cta-title {
+  color: var(--ks-text-primary, #111827);
+  font-size: 2.2rem;
+  font-weight: 700;
+}
+
+.section-cta .cta-subtitle {
+  color: var(--ks-text-secondary, #4b5563);
+  margin-bottom: 2rem;
+}
+
+.section-cta .btn {
+  border-radius: var(--ks-radius-lg, .9rem);
+  padding: .8rem 2rem;
+  font-weight: 600;
+}
+
+.section-cta .btn-success {
+  background-color: #25d366;
+  border-color: #25d366;
+}
+
+.section-cta .btn-success:hover {
+  background-color: #1ebe5a;
+  border-color: #1ebe5a;
+}
+
+/* ========== RESPONSIVE ========== */
+@media (max-width: 992px) {
+  .flyer-card-header {
+    flex-direction: row;
+  }
+}
+
+@media (max-width: 768px) {
+  .hero-flyers {
+    padding: var(--ks-spacing-12, 3rem) 0;
+  }
+
+  .hero-flyers .hero-title {
+    font-size: var(--ks-text-3xl, 2rem);
+  }
+
+  .hero-flyers .hero-subtitle {
+    font-size: var(--ks-text-base, 1rem);
+  }
+
+  .flyer-card-header {
+    flex-direction: column;
+    text-align: left;
+  }
+
+  .flyer-cover {
+    width: 100%;
+  }
+
+  .flyer-cover img,
+  .flyer-cover-placeholder {
+    height: 200px;
+  }
+
+  .flyer-card-actions {
+    flex-direction: column;
+  }
+
+  .flyer-card-actions .btn,
+  .flyer-card-actions a.btn {
+    width: 100%;
+  }
+
+  .section-cta .cta-title {
+    font-size: var(--ks-text-3xl, 2rem);
+  }
+
+  .cta-buttons .btn {
+    width: 100%;
+    margin-bottom: .5rem;
+  }
+}

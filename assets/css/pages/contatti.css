@@ -29,7 +29,7 @@
 /* niente overlap con l'hero + pattern leggero come i Valori */
 .section-contact-cards{
   margin-top: 0 !important;
-  padding: var(--ks-spacing-20) 0;
+  padding: var(--ks-spacing-10) 0;
   background: var(--ks-gray-50);
   position: relative;
 }
@@ -571,5 +571,5 @@
 @media (max-width: 992px){
   .vc-simple{ text-align:center; justify-content:center; }
   .vc-simple-actions{ width:100%; justify-content:center; }
-  .section-vcard{ padding: var(--ks-spacing-12); }
+  .section-vcard{ padding: var(--ks-spacing-4); }
 }
