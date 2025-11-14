@@ -672,6 +672,9 @@ document.addEventListener('DOMContentLoaded', () => {
     gradeEl.textContent = enriched.grade ? (enriched.grade==='Nuovo'?'Nuovo':'Grado '+enriched.grade) : '';
     gradeEl.className = 'grade-pill ' + (enriched.grade ? gradeClass(enriched.grade) : '');
 
+    const storageEl = document.getElementById('pmStorage');
+    storageEl.textContent = enriched.storage ? formatStorage(enriched.storage) : '';
+
     // descrizioni
     document.getElementById('pmExcerpt').textContent = (enriched.short_desc || p.short_desc || '').toString().trim();
     document.getElementById('pmFull').innerHTML = (enriched.full_desc || p.full_desc)

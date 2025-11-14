@@ -93,11 +93,12 @@ $countSql = "
 $stmt = $pdo->prepare($countSql);
 $stmt->execute($params);
 $total = (int)($stmt->fetchColumn() ?: 0);
+error_log("Total products found: $total");
 
 /** ------ Query items ------ */
 $sql = "
 SELECT
-  p.id, p.sku, p.price_eur, p.short_desc, p.full_desc, p.grade, p.storage_gb, p.color,
+  p.id, p.sku, p.list_price, p.price_eur, p.short_desc, p.full_desc, p.grade, p.storage_gb, p.color,
   p.is_available, p.is_featured,
   b.name AS brand, m.name AS model, d.name AS device,
   COALESCE(MAX(CASE WHEN pi.is_cover=1 THEN pi.path END), MAX(pi.path)) AS image_path
@@ -141,6 +142,7 @@ $items = array_map(function($r) use ($baseCover){
     'grade'       => $r['grade'] ?? null,
     'storage'     => !empty($r['storage_gb']) ? (int)$r['storage_gb'] : null,
     'color'       => $r['color'] ?? null,
+    'list_price'  => isset($r['list_price']) ? number_format((float)$r['list_price'], 2, ',', '.') : null,
     'price'       => number_format((float)$r['price_eur'], 2, ',', '.'),
     'img'         => $img,
     'sku'         => $r['sku'],

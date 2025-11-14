@@ -13,7 +13,7 @@ if ($sku === '') { echo json_encode(['ok'=>false,'error'=>'missing sku']); exit;
 
 try {
   $stmt = $pdo->prepare("
-    SELECT p.id, p.sku, p.price_eur, p.short_desc, p.full_desc, p.grade, p.storage_gb, p.color,
+    SELECT p.id, p.sku, p.list_price, p.price_eur, p.short_desc, p.full_desc, p.grade, p.storage_gb, p.color,
            b.name AS brand, m.name AS model
     FROM products p
     JOIN models  m ON p.model_id = m.id
@@ -32,10 +32,12 @@ try {
   echo json_encode([
     'ok'=>true,
     'product'=>[
-      'sku'       => $r['sku'],
-      'full_desc' => $r['full_desc'],
-      'images'    => $imgs,
-      'specs'     => [
+      'sku'         => $r['sku'],
+      'list_price'  => isset($r['list_price']) ? number_format((float)$r['list_price'], 2, ',', '.') : null,
+      'price'       => number_format((float)$r['price_eur'], 2, ',', '.'),
+      'full_desc'   => $r['full_desc'],
+      'images'      => $imgs,
+      'specs'       => [
         'Marca'    => $r['brand'],
         'Modello'  => $r['model'],
         'Colore'   => $r['color'],
