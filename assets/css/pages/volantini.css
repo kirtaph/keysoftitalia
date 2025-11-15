@@ -3,58 +3,7 @@
  * Stili specifici per la pagina Volantini & Offerte
  */
 
-/* ========== HERO ========== */
-.hero-flyers {
-  position: relative;
-  background: linear-gradient(135deg, #1a1f2b 0%, #262b40 40%, #ff6b35 100%);
-  padding: 7rem 0 5rem;
-  overflow: hidden;
-  text-align: center;
-}
 
-.hero-flyers .container {
-  position: relative;
-  z-index: 2;
-}
-
-.hero-flyers .hero-icon i {
-  font-size: 3rem;
-  color: var(--ks-orange, #ff6b35);
-}
-
-.hero-flyers .hero-title {
-  font-size: 3rem;
-  font-weight: 800;
-  color: var(--ks-text-white);
-  margin: 1rem 0;
-}
-
-.hero-flyers .text-gradient {
-  background: linear-gradient(90deg, var(--ks-orange, #ff6b35) 0%, #ffd166 100%);
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
-}
-
-.hero-flyers .hero-subtitle {
-  color: rgba(255,255,255,0.88);
-  max-width: 720px;
-  margin: 0 auto 2rem;
-}
-
-.hero-flyers .hero-cta .btn {
-  border-radius: var(--ks-radius-lg);
-}
-
-.hero-flyers .hero-pattern {
-  position: absolute;
-  top: 0;
-  right: -25%;
-  width: 70%;
-  height: 100%;
-  opacity: 0.08;
-  background-image: url("data:image/svg+xml,%3Csvg width='120' height='120' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23ffffff' fill-opacity='0.16'%3E%3Ccircle cx='10' cy='10' r='2'/%3E%3Ccircle cx='40' cy='40' r='2'/%3E%3Ccircle cx='70' cy='20' r='2'/%3E%3Ccircle cx='90' cy='70' r='2'/%3E%3Ccircle cx='20' cy='80' r='2'/%3E%3C/g%3E%3C/svg%3E");
-}
 
 /* ========== SECTION BASE ========== */
 .section-flyers {
@@ -285,37 +234,102 @@
   height: 80vh;
 }
 
-/* ========== CTA ========== */
-.section-cta {
-  background: #fff;
-  padding: 5rem 0;
+/* ===== CTA finale volantini (stile chiaro, coerente col sito) ===== */
+
+.section-cta-flyers {
+  background: var(--ks-gray-50, #f3f4f6);
+  padding: var(--ks-spacing-16, 4rem) 0;
 }
 
-.section-cta .cta-title {
+.section-cta-flyers .cta-flyers-box {
+  margin: 0 auto;
+  background: #ffffff;
+  border-radius: var(--ks-radius-2xl, 1.5rem);
+  padding: 2.5rem 2rem;
+  border: 1px solid var(--ks-gray-200, #e5e7eb);
+  box-shadow: var(--ks-shadow-md, 0 10px 25px rgba(15,23,42,0.08));
+}
+
+.section-cta-flyers .cta-title {
   color: var(--ks-text-primary, #111827);
-  font-size: 2.2rem;
-  font-weight: 700;
+  font-size: 2rem;
+  font-weight: 800;
+  margin-bottom: .5rem;
 }
 
-.section-cta .cta-subtitle {
+.section-cta-flyers .cta-subtitle {
   color: var(--ks-text-secondary, #4b5563);
-  margin-bottom: 2rem;
+  margin-bottom: 1.5rem;
+  font-size: .98rem;
 }
 
-.section-cta .btn {
+/* Bottoni */
+.section-cta-flyers .cta-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: .75rem;
+  margin-bottom: 1rem;
+}
+
+.section-cta-flyers .cta-buttons .btn {
   border-radius: var(--ks-radius-lg, .9rem);
-  padding: .8rem 2rem;
+  padding: .75rem 1.6rem;
   font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: .4rem;
 }
 
-.section-cta .btn-success {
-  background-color: #25d366;
-  border-color: #25d366;
+/* WhatsApp (verde classico) */
+.section-cta-flyers .btn-whatsapp {
+  background-color: #25D366;
+  border-color: #25D366;
+  color: #0b1723;
+  box-shadow: 0 8px 18px rgba(16,185,129,0.35);
+}
+.section-cta-flyers .btn-whatsapp:hover {
+  background-color: #1ebe5c;
+  border-color: #1ebe5c;
+  color: #020617;
 }
 
-.section-cta .btn-success:hover {
-  background-color: #1ebe5a;
-  border-color: #1ebe5a;
+/* Outline primari: usiamo l'arancio del sito */
+.section-cta-flyers .btn-outline-primary {
+  border-color: var(--ks-orange, #f97316);
+  color: var(--ks-orange, #f97316);
+  background: #ffffff;
+}
+.section-cta-flyers .btn-outline-primary:hover {
+  background-color: var(--ks-orange, #f97316);
+  color: #ffffff;
+}
+
+/* Nota sotto */
+.section-cta-flyers .cta-flyers-note {
+  font-size: .82rem;
+  color: var(--ks-text-muted, #6b7280);
+  margin: 0;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .section-cta-flyers {
+    padding: var(--ks-spacing-12, 3rem) 0;
+  }
+
+  .section-cta-flyers .cta-flyers-box {
+    padding: 2rem 1.5rem;
+  }
+
+  .section-cta-flyers .cta-title {
+    font-size: 1.6rem;
+  }
+
+  .section-cta-flyers .cta-buttons .btn {
+    width: 100%;
+    justify-content: center;
+  }
 }
 
 /* ========== RESPONSIVE ========== */
@@ -510,3 +524,214 @@
     width: auto;
   }
 }
+
+/* Pan con il mouse */
+.pdfjs-viewer {
+  cursor: grab;
+}
+
+.pdfjs-viewer.pdfjs-grabbing {
+  cursor: grabbing;
+}
+
+/* Volantini scaduti (archivio) */
+.flyer-card.flyer-card-expired {
+  opacity: 0.8;
+  filter: grayscale(0.3);
+}
+
+.flyer-card.flyer-card-expired .flyer-title {
+  color: var(--ks-text-secondary, #6b7280);
+}
+
+.flyer-card.flyer-card-expired .flyer-badge-archived {
+  background-color: var(--ks-gray-300, #d1d5db);
+  color: var(--ks-text-primary, #111827);
+}
+
+.flyer-card.flyer-card-expired .flyer-card-actions {
+  opacity: 0.9;
+}
+
+/* ===== RECONDITIONED SECTION ===== */
+.section-recond {
+  background: var(--ks-bg-primary);
+  padding: var(--ks-spacing-16) 0;
+}
+
+.recond-card {
+  background: var(--ks-bg-primary);
+  border: 1px solid var(--ks-gray-200);
+  border-radius: var(--ks-radius-xl);
+  overflow: hidden;
+  box-shadow: var(--ks-shadow-sm);
+  transition: all var(--ks-transition-base);
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.recond-card:hover {
+  transform: translateY(-5px);
+  box-shadow: var(--ks-shadow-lg);
+  border-color: var(--ks-orange);
+}
+
+.recond-img {
+  width: 100%;
+  height: 180px;
+  object-fit: scale-down;
+}
+
+.recond-body {
+  padding: var(--ks-spacing-4);
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.recond-title {
+  font-size: var(--ks-text-base);
+  font-weight: var(--ks-font-semibold);
+  color: var(--ks-text-primary);
+  margin-bottom: var(--ks-spacing-2);
+}
+
+.recond-price {
+  font-size: var(--ks-text-lg);
+  font-weight: var(--ks-font-bold);
+  color: var(--ks-orange);
+}
+
+/* Swiper custom */
+.recond-swiper {
+  padding-bottom: var(--ks-spacing-10);
+  padding-top: var(--ks-spacing-4);
+}
+.swiper-pagination-bullet {
+  background: var(--ks-orange);
+  opacity: 0.7;
+}
+.swiper-pagination-bullet-active {
+  opacity: 1;
+}
+
+/* Reconditioned Swiper Fix */
+.recond-swiper .swiper-slide {
+  display: flex;
+  justify-content: center;
+  height: auto;
+}
+
+.recond-card {
+  width: 88vw;
+  max-width: 320px;
+}
+
+@media (min-width: 768px) {
+  .recond-card {
+    width: 100%;
+    max-width: 280px;
+  }
+}
+@media (min-width: 1200px) {
+  .recond-card {
+    max-width: 300px;
+  }
+}
+/* --- Ricondizionati: card --- */
+.recond-card {
+  border: 1px solid #eee;
+  border-radius: 16px;
+  overflow: hidden;
+  background: #fff;
+  box-shadow: 0 4px 16px rgba(0,0,0,.05);
+}
+
+.recond-img-wrap {
+  position: relative;
+  aspect-ratio: 4/3;            /* mantiene proporzioni eleganti */
+  background: #fafafa;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.recond-img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+}
+
+/* chips in alto a destra */
+.recond-chips {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  display: grid;
+  gap: 6px;
+  justify-items: end;
+}
+
+.recond-chip {
+  font-size: 12px;
+  line-height: 1;
+  padding: 6px 10px;
+  border-radius: 999px;
+  background: rgba(255,255,255,.95);
+  border: 1px solid rgba(0,0,0,.08);
+  box-shadow: 0 2px 8px rgba(0,0,0,.06);
+  white-space: nowrap;
+}
+.recond-chip.storage { }
+.recond-chip.grade   { background: #fff7ec; border-color: #ffd6a6; }
+
+/* body */
+.recond-body { padding: 14px 14px 16px; }
+.recond-title { font-size: 15px; font-weight: 600; margin: 0 0 6px; color: #222; }
+.recond-price { font-size: 18px; font-weight: 700; color: #ff6a00; }
+
+/* bottone WhatsApp */
+.btn-wa {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 100%;
+  gap: 8px;
+  background:var(--ks-orange);
+  border: none;
+  color: #fff !important;
+  font-weight: 600;
+  border-radius: 12px;
+  padding: 10px 14px;
+}
+.btn-wa:hover { filter: brightness(0.95); color: #fff !important; }
+.btn-wa i { font-size: 18px; }
+
+/* Wrapper: esteso per gestire sinistra/destra */
+.recond-chips{
+  position:absolute; top:10px; left:10px; right:10px;
+  display:flex; justify-content:space-between; pointer-events:none;
+}
+
+/* Pile sinistra/destra (così puoi avere più chip per lato) */
+.recond-chips-left, .recond-chips-right{
+  display:grid; gap:6px; justify-items:start;
+}
+
+.recond-chip{
+  pointer-events:auto;            /* clickabili se servisse */
+  font-size:12px; line-height:1;
+  padding:6px 10px; border-radius:999px;
+  background:#fff; border:1px solid rgba(0,0,0,.08);
+  box-shadow:0 2px 8px rgba(0,0,0,.06); white-space:nowrap;
+}
+
+/* Colori per GRADO */
+.recond-chip.grade { color:#222; font-weight:600; }
+.recond-chip.grade.grade-new { background:#eb3d5a; color: #ffffff; border-color:#e3b5c7; } /* verde più “premium” */
+.recond-chip.grade.grade-expo { background:#6d6d6d; border-color:#a0a0a0; } /* verde più “premium” */
+.recond-chip.grade.grade-a-plus { background:#e7f7ed; border-color:#b5e3c6; } /* verde più “premium” */
+.recond-chip.grade.grade-a      { background:#eefcf1; border-color:#cdeed6; } /* verde chiaro */
+.recond-chip.grade.grade-b      { background:#fff6e5; border-color:#ffd89a; } /* ambra */
+.recond-chip.grade.grade-c      { background:#ffede8; border-color:#ffb9a6; } /* arancio/rosso chiaro */
+.recond-chip.grade.grade-d      { background:#ffe6e6; border-color:#ff9b9b; } /* rosso */

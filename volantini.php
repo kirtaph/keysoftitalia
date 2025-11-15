@@ -185,19 +185,71 @@ $ld_flyers = [
 </section>
 
 <!-- CTA FINALE -->
-<section class="section section-cta text-center" aria-labelledby="cta-volantini">
-  <div class="container" data-aos="zoom-in">
-    <h2 id="cta-volantini" class="cta-title">Hai visto un’offerta che ti interessa?</h2>
-    <p class="cta-subtitle">Scrivici su WhatsApp o passa in negozio: ti aiutiamo a scegliere il dispositivo giusto per te.</p>
-    <div class="cta-buttons">
-      <a href="<?php echo whatsappLink(COMPANY_WHATSAPP, 'Ciao! Ho visto un volantino sul sito e vorrei maggiori informazioni.'); ?>"
-         class="btn btn-success btn-lg me-2">
-        <i class="ri-whatsapp-line" aria-hidden="true"></i> Scrivici su WhatsApp
-      </a>
-      <a href="<?php echo url('contatti.php'); ?>" class="btn btn-outline-primary btn-lg">
-        <i class="ri-store-2-line" aria-hidden="true"></i> Come raggiungerci
+<section class="section section-cta section-cta-flyers" aria-labelledby="cta-volantini">
+  <div class="container">
+    <div class="cta-flyers-box text-center" data-aos="zoom-in">
+      <h2 id="cta-volantini" class="cta-title">
+        Hai visto un’offerta che ti interessa?
+      </h2>
+      <p class="cta-subtitle">
+        Inviaci uno screenshot del volantino o del prodotto:
+        ti aiutiamo a scegliere il dispositivo giusto per te.
+      </p>
+
+      <div class="cta-buttons">
+        <!-- WhatsApp -->
+        <a href="<?php echo whatsappLink(COMPANY_WHATSAPP, 'Ciao! Ho visto un volantino sul sito e vorrei maggiori informazioni.'); ?>"
+           class="btn btn-whatsapp btn-lg">
+          <i class="ri-whatsapp-line" aria-hidden="true"></i>
+          Scrivici su WhatsApp
+        </a>
+
+        <!-- Chiamata -->
+        <a href="tel:<?php echo preg_replace('/\s+/', '', COMPANY_PHONE); ?>"
+           class="btn btn-outline-primary btn-lg">
+          <i class="ri-phone-line" aria-hidden="true"></i>
+          Chiamaci in negozio
+        </a>
+
+        <!-- Come raggiungerci -->
+        <a href="<?php echo url('contatti.php'); ?>"
+           class="btn btn-outline-primary btn-lg">
+          <i class="ri-map-pin-line" aria-hidden="true"></i>
+          Come raggiungerci
+        </a>
+      </div>
+
+      <p class="cta-flyers-note">
+        Rispondiamo durante gli orari di apertura del negozio.  
+        Per urgenze, il canale più rapido è WhatsApp.
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- RECONDITIONED SECTION -->
+<section class="section section-recond" role="region" aria-label="I nostri prodotti in evidenza" data-aos="fade-up" data-aos-duration="1000" data-aos-once="true">
+  <div class="container">
+    <div class="section-header text-center" data-aos="zoom-in" data-aos-duration="800" data-aos-delay="100">
+      <h2 class="section-title">Altre offerte in evidenza</h2>
+      <p class="section-subtitle">Smartphone e altri dispositivi in offerta speciale</p>
+    </div>
+
+    <div class="swiper recond-swiper">
+      <div class="swiper-wrapper" id="recond-swiper-wrapper"></div>
+      <div class="swiper-pagination"></div>
+    </div>
+
+    <!-- CTA catalogo completo -->
+    <div class="text-center mt-5" data-aos="fade-up" data-aos-duration="600" data-aos-delay="800">
+      <a href="<?php echo url('prodotti.php'); ?>" class="btn btn-primary" aria-label="Scopri tutti i nostri ricondizionati">
+        Scopri tutti i nostri prodotti <i class="ri-arrow-right-line"></i>
       </a>
     </div>
+
+    <noscript>
+      <p class="text-center mt-3">Attiva JavaScript per vedere i prodotti in evidenza.</p>
+    </noscript>
   </div>
 </section>
 
@@ -327,133 +379,148 @@ $ld_flyers = [
   }
 
   // ---------- RENDER ----------
-  function renderFlyers(flyers, status){
-    clearGrid();
-    counter.textContent = flyers.length;
+ function renderFlyers(flyers, status){
+  clearGrid();
+  counter.textContent = flyers.length;
 
-    if (!flyers.length){
-      msgBox.textContent = statusEmptyMessage(status);
-      return;
+  if (!flyers.length){
+    msgBox.textContent = statusEmptyMessage(status);
+    return;
+  }
+
+  msgBox.textContent = '';
+
+  let delay = 0;
+
+  flyers.forEach(f => {
+    delay += 80;
+
+    // capire se il volantino è scaduto/archiviato
+    const isExpired =
+      status === 'archived' ||
+      (f.status_code && f.status_code === 'archived') ||
+      (typeof f.is_expired !== 'undefined' && !!f.is_expired);
+
+    const col = document.createElement('div');
+    col.className = 'col-md-6 col-lg-4';
+    col.setAttribute('data-aos', 'fade-up');
+    col.setAttribute('data-aos-delay', String(delay));
+
+    const card = document.createElement('article');
+    card.className = 'flyer-card h-100';
+    if (isExpired) {
+      card.classList.add('flyer-card-expired');
     }
 
-    msgBox.textContent = '';
+    // HEADER
+    const header = document.createElement('header');
+    header.className = 'flyer-card-header';
 
-    let delay = 0;
+    const coverWrap = document.createElement('div');
+    coverWrap.className = 'flyer-cover';
 
-    flyers.forEach(f => {
-      delay += 80;
+    if (f.cover_image_url){
+      const img = document.createElement('img');
+      img.src = f.cover_image_url;
+      img.alt = 'Copertina volantino ' + f.title;
+      img.loading = 'lazy';
+      coverWrap.appendChild(img);
+    } else {
+      const placeholder = document.createElement('div');
+      placeholder.className = 'flyer-cover-placeholder';
+      placeholder.innerHTML = '<i class="ri-price-tag-3-line"></i>';
+      coverWrap.appendChild(placeholder);
+    }
 
-      const col = document.createElement('div');
-      col.className = 'col-md-6 col-lg-4';
-      col.setAttribute('data-aos', 'fade-up');
-      col.setAttribute('data-aos-delay', String(delay));
+    const meta = document.createElement('div');
+    meta.className = 'flyer-meta';
 
-      const card = document.createElement('article');
-      card.className = 'flyer-card h-100';
+    const titleEl = document.createElement('h3');
+    titleEl.className = 'flyer-title';
+    titleEl.textContent = f.title;
 
-      // HEADER
-      const header = document.createElement('header');
-      header.className = 'flyer-card-header';
+    const periodEl = document.createElement('p');
+    periodEl.className = 'flyer-period';
+    periodEl.textContent = formatPeriod(f.start_date, f.end_date);
 
-      const coverWrap = document.createElement('div');
-      coverWrap.className = 'flyer-cover';
+    const badgesWrap = document.createElement('div');
+    badgesWrap.className = 'flyer-badges';
 
-      if (f.cover_image_url){
-        const img = document.createElement('img');
-        img.src = f.cover_image_url;
-        img.alt = 'Copertina volantino ' + f.title;
-        img.loading = 'lazy';
-        coverWrap.appendChild(img);
-      } else {
-        const placeholder = document.createElement('div');
-        placeholder.className = 'flyer-cover-placeholder';
-        placeholder.innerHTML = '<i class="ri-price-tag-3-line"></i>';
-        coverWrap.appendChild(placeholder);
-      }
+    const statusBadge = document.createElement('span');
+    statusBadge.className = 'badge flyer-badge flyer-badge-' + (f.status_code || status || 'current');
+    statusBadge.textContent = f.status_label || '';
+    badgesWrap.appendChild(statusBadge);
 
-      const meta = document.createElement('div');
-      meta.className = 'flyer-meta';
+    if (f.show_home && !isExpired){
+      const homeBadge = document.createElement('span');
+      homeBadge.className = 'badge flyer-badge-highlight';
+      homeBadge.textContent = 'In evidenza';
+      badgesWrap.appendChild(homeBadge);
+    }
 
-      const titleEl = document.createElement('h3');
-      titleEl.className = 'flyer-title';
-      titleEl.textContent = f.title;
+    meta.appendChild(titleEl);
+    meta.appendChild(periodEl);
+    meta.appendChild(badgesWrap);
 
-      const periodEl = document.createElement('p');
-      periodEl.className = 'flyer-period';
-      periodEl.textContent = formatPeriod(f.start_date, f.end_date);
+    header.appendChild(coverWrap);
+    header.appendChild(meta);
 
-      const badgesWrap = document.createElement('div');
-      badgesWrap.className = 'flyer-badges';
+    // BODY
+    const body = document.createElement('div');
+    body.className = 'flyer-card-body';
 
-      const statusBadge = document.createElement('span');
-      statusBadge.className = 'badge flyer-badge flyer-badge-' + (f.status_code || 'current');
-      statusBadge.textContent = f.status_label || '';
-      badgesWrap.appendChild(statusBadge);
+    if (f.description){
+      const desc = document.createElement('p');
+      desc.className = 'flyer-description';
+      desc.textContent = f.description;
+      body.appendChild(desc);
+    }
 
-      if (f.show_home){
-        const homeBadge = document.createElement('span');
-        homeBadge.className = 'badge flyer-badge-highlight';
-        homeBadge.textContent = 'In evidenza';
-        badgesWrap.appendChild(homeBadge);
-      }
+    // ACTIONS
+    const actions = document.createElement('div');
+    actions.className = 'flyer-card-actions';
 
-      meta.appendChild(titleEl);
-      meta.appendChild(periodEl);
-      meta.appendChild(badgesWrap);
+    if (isExpired) {
+      // ✅ NESSUN ELEMENTO CLICCABILE
+      const note = document.createElement('p');
+      note.className = 'flyer-note small text-muted mb-0';
+      note.textContent = 'Volantino scaduto • offerte non più valide';
+      actions.appendChild(note);
+    } else if (f.pdf_url) {
+      const btnView = document.createElement('button');
+      btnView.type = 'button';
+      btnView.className = 'btn btn-primary btn-sm';
+      btnView.setAttribute('data-bs-toggle', 'modal');
+      btnView.setAttribute('data-bs-target', '#flyerViewerModal');
+      btnView.dataset.pdf   = f.pdf_url;
+      btnView.dataset.title = f.title;
+      btnView.dataset.slug  = f.slug; // usato per l’apertura da ?flyer=slug
+      btnView.innerHTML = '<i class="ri-eye-line me-1" aria-hidden="true"></i> Sfoglia online';
+      actions.appendChild(btnView);
 
-      header.appendChild(coverWrap);
-      header.appendChild(meta);
+      const linkDownload = document.createElement('a');
+      linkDownload.href   = f.pdf_url;
+      linkDownload.target = '_blank';
+      linkDownload.rel    = 'noopener';
+      linkDownload.className = 'btn btn-outline-secondary btn-sm';
+      linkDownload.innerHTML = '<i class="ri-download-2-line me-1" aria-hidden="true"></i> Scarica PDF';
+      actions.appendChild(linkDownload);
+    } else {
+      const note = document.createElement('p');
+      note.className = 'flyer-note small text-muted mb-0';
+      note.textContent = 'PDF non disponibile per questo volantino.';
+      actions.appendChild(note);
+    }
 
-      // BODY
-      const body = document.createElement('div');
-      body.className = 'flyer-card-body';
+    body.appendChild(actions);
 
-      if (f.description){
-        const desc = document.createElement('p');
-        desc.className = 'flyer-description';
-        desc.textContent = f.description;
-        body.appendChild(desc);
-      }
+    card.appendChild(header);
+    card.appendChild(body);
 
-      // ACTIONS
-      const actions = document.createElement('div');
-      actions.className = 'flyer-card-actions';
-
-      if (f.pdf_url){
-        const btnView = document.createElement('button');
-        btnView.type = 'button';
-        btnView.className = 'btn btn-primary btn-sm';
-        btnView.setAttribute('data-bs-toggle', 'modal');
-        btnView.setAttribute('data-bs-target', '#flyerViewerModal');
-        btnView.dataset.pdf   = f.pdf_url;
-        btnView.dataset.title = f.title;
-        btnView.dataset.slug  = f.slug; // IMPORTANTE per apertura da ?flyer=slug
-        btnView.innerHTML = '<i class="ri-eye-line me-1" aria-hidden="true"></i> Sfoglia online';
-        actions.appendChild(btnView);
-
-        const linkDownload = document.createElement('a');
-        linkDownload.href   = f.pdf_url;
-        linkDownload.target = '_blank';
-        linkDownload.rel    = 'noopener';
-        linkDownload.className = 'btn btn-outline-secondary btn-sm';
-        linkDownload.innerHTML = '<i class="ri-download-2-line me-1" aria-hidden="true"></i> Scarica PDF';
-        actions.appendChild(linkDownload);
-      } else {
-        const note = document.createElement('p');
-        note.className = 'flyer-note small text-muted mb-0';
-        note.textContent = 'PDF non disponibile per questo volantino.';
-        actions.appendChild(note);
-      }
-
-      body.appendChild(actions);
-
-      card.appendChild(header);
-      card.appendChild(body);
-
-      col.appendChild(card);
-      grid.appendChild(col);
-    });
-  }
+    col.appendChild(card);
+    grid.appendChild(col);
+  });
+}
 
   // ---------- LOAD + opzionale apertura slug ----------
   function loadFlyers(status, opts){
@@ -546,7 +613,7 @@ document.addEventListener('DOMContentLoaded', function () {
   if (typeof window['pdfjsLib'] === 'undefined') {
     viewerModal.addEventListener('show.bs.modal', function (event) {
       const button = event.relatedTarget;
-      const pdfUrl = button?.getAttribute('data-pdf');
+      const pdfUrl = button && button.getAttribute('data-pdf');
       if (pdfUrl) {
         window.open(pdfUrl, '_blank', 'noopener');
       }
@@ -554,17 +621,17 @@ document.addEventListener('DOMContentLoaded', function () {
     return;
   }
 
-  // Config worker PDF.js
+  // Worker PDF.js
   pdfjsLib.GlobalWorkerOptions.workerSrc =
     "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
 
-  let pdfDoc      = null;
+  let pdfDoc       = null;
   let currentScale = 1.2;
   const ZOOM_STEP  = 0.2;
   const ZOOM_MIN   = 0.7;
   const ZOOM_MAX   = 2.0;
 
-  let scrollRafId = null;
+  let scrollRafId  = null;
 
   function setPageIndicator(current, total) {
     if (pageCurrentEl) pageCurrentEl.textContent = String(current || 1);
@@ -580,7 +647,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const containerRect   = viewerEl.getBoundingClientRect();
     const viewportCenterY = containerRect.top + viewerEl.clientHeight / 2;
 
-    let bestPage = 1;
+    let bestPage  = 1;
     let bestScore = Infinity;
 
     canvases.forEach(canvas => {
@@ -633,7 +700,6 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     return Promise.all(renderPromises).then(() => {
-      // dopo il render iniziale forzo l'update del contatore
       updateCurrentPageOnScroll();
     }).catch((error) => {
       console.error('Errore rendering PDF:', error);
@@ -674,12 +740,11 @@ document.addEventListener('DOMContentLoaded', function () {
 
     currentScale = nextScale;
     renderAllPages().then(() => {
-      // riposiziono lo scroll più o meno dove stava
       container.scrollTop = prevScrollRatio * (container.scrollHeight || 1);
     });
   }
 
-  // Zoom +/-
+  // Bottoni zoom +/-
   if (zoomInBtn) {
     zoomInBtn.addEventListener('click', function () {
       applyZoom(ZOOM_STEP);
@@ -691,14 +756,130 @@ document.addEventListener('DOMContentLoaded', function () {
     });
   }
 
-  // Bind scroll per l'indicatore pagina
+  // Indicatore pagina su scroll
   bindScrollIndicator();
+
+  // 🔥 Gesture: pinch, double-tap e pan con mouse
+  bindGestureControls();
+
+  function bindGestureControls() {
+    /* === DESKTOP: pan con mouse === */
+    let isDragging      = false;
+    let dragStartX      = 0;
+    let dragStartY      = 0;
+    let scrollStartLeft = 0;
+    let scrollStartTop  = 0;
+
+    viewerEl.addEventListener('mousedown', function (e) {
+      if (e.button !== 0) return; // solo tasto sinistro
+      isDragging = true;
+      viewerEl.classList.add('pdfjs-grabbing');
+      dragStartX      = e.clientX;
+      dragStartY      = e.clientY;
+      scrollStartLeft = viewerEl.scrollLeft;
+      scrollStartTop  = viewerEl.scrollTop;
+      e.preventDefault();
+    });
+
+    window.addEventListener('mousemove', function (e) {
+      if (!isDragging) return;
+      const dx = e.clientX - dragStartX;
+      const dy = e.clientY - dragStartY;
+      viewerEl.scrollLeft = scrollStartLeft - dx;
+      viewerEl.scrollTop  = scrollStartTop  - dy;
+    });
+
+    window.addEventListener('mouseup', function () {
+      if (!isDragging) return;
+      isDragging = false;
+      viewerEl.classList.remove('pdfjs-grabbing');
+    });
+
+    /* === MOBILE: pinch to zoom + double tap === */
+    let pinchStartDist  = null;
+    let pinchStartScale = null;
+    let lastTapTime     = 0;
+    let lastTapX        = 0;
+    let lastTapY        = 0;
+
+    function getTouchDistance(t1, t2) {
+      const dx = t1.clientX - t2.clientX;
+      const dy = t1.clientY - t2.clientY;
+      return Math.sqrt(dx * dx + dy * dy);
+    }
+
+    viewerEl.addEventListener('touchstart', function (e) {
+      if (e.touches.length === 2) {
+        pinchStartDist  = getTouchDistance(e.touches[0], e.touches[1]);
+        pinchStartScale = currentScale;
+      }
+    }, { passive: true });
+
+    viewerEl.addEventListener('touchmove', function (e) {
+      if (e.touches.length === 2 && pinchStartDist) {
+        const newDist = getTouchDistance(e.touches[0], e.touches[1]);
+        const factor  = newDist / pinchStartDist;
+        let targetScale = pinchStartScale * factor;
+        targetScale = Math.max(ZOOM_MIN, Math.min(ZOOM_MAX, targetScale));
+
+        const diff = targetScale - currentScale;
+        // soglia per non rerenderizzare a ogni pixel di movimento
+        if (Math.abs(diff) > 0.08) {
+          applyZoom(diff);
+        }
+
+        e.preventDefault(); // evito lo scroll della pagina mentre pincho
+      }
+    }, { passive: false });
+
+    viewerEl.addEventListener('touchend', function (e) {
+      if (e.touches.length < 2) {
+        pinchStartDist  = null;
+        pinchStartScale = null;
+      }
+
+      // double-tap zoom (solo se non è stato un pinch)
+      if (e.touches.length === 0 && !pinchStartDist && e.changedTouches && e.changedTouches.length === 1) {
+        const touch = e.changedTouches[0];
+        const now   = Date.now();
+        const TAP_DELAY  = 300; // ms
+        const TAP_RADIUS = 40;  // px
+
+        if (lastTapTime && (now - lastTapTime) < TAP_DELAY) {
+          const dx = touch.clientX - lastTapX;
+          const dy = touch.clientY - lastTapY;
+          if ((dx * dx + dy * dy) < (TAP_RADIUS * TAP_RADIUS)) {
+            // double tap riconosciuto
+            e.preventDefault();
+            applyZoom(ZOOM_STEP);
+            lastTapTime = 0;
+            return;
+          }
+        }
+
+        lastTapTime = now;
+        lastTapX = touch.clientX;
+        lastTapY = touch.clientY;
+      }
+    });
+
+    viewerEl.addEventListener('touchcancel', function () {
+      pinchStartDist  = null;
+      pinchStartScale = null;
+    });
+
+    /* === DESKTOP: double-click zoom === */
+    viewerEl.addEventListener('dblclick', function (e) {
+      e.preventDefault();
+      applyZoom(ZOOM_STEP);
+    });
+  }
 
   // Apertura modale: carico il PDF e setto il titolo
   viewerModal.addEventListener('show.bs.modal', function (event) {
     const button = event.relatedTarget;
-    const pdfUrl = button?.getAttribute('data-pdf');
-    const title  = button?.getAttribute('data-title') || 'Sfoglia il volantino';
+    const pdfUrl = button && button.getAttribute('data-pdf');
+    const title  = button && button.getAttribute('data-title') || 'Sfoglia il volantino';
 
     if (titleEl) {
       titleEl.textContent = title;
@@ -716,6 +897,163 @@ document.addEventListener('DOMContentLoaded', function () {
   });
 });
 </script>
+<?php
+  // Normalizza numero per wa.me (solo cifre, con prefisso 39)
+  $ks_wa = preg_replace('/\D+/', '', COMPANY_WHATSAPP ?? '');
+  if ($ks_wa !== '' && strpos($ks_wa, '39') !== 0) { $ks_wa = '39' . $ks_wa; }
+?>
 
+<script>
+
+  window.KS_WA_NUMBER = '<?php echo $ks_wa; ?>';
+
+(function() {
+  const wrapper = document.getElementById('recond-swiper-wrapper');
+  const endpoint = '<?php echo asset("ajax/get_products.php?featured=1&limit=5"); ?>';
+
+  // utilità
+  const esc = s => String(s ?? '').replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+  const buildWaLink = (p) => {
+    const title = p.title || '';
+    const price = p.price || '';
+    const sku   = p.sku   || '';
+    const page  = p.url   || (window.KS_SITE_URL + '/ricondizionati.php?sku=' + encodeURIComponent(sku));
+    const msg =
+      `Ciao Key Soft Italia! 👋%0A` +
+      `Ho appena visto questo prodotto sul sito e vorrei avere informazioni:%0A%0A` +
+      `• Prodotto: ${encodeURIComponent(title)}%0A` +
+      (sku   ? `• SKU: ${encodeURIComponent(sku)}%0A` : '') +
+      (price ? `• Prezzo: € ${encodeURIComponent(price)}%0A` : '') +
+      `Mi potete rispondere qui? Grazie!`;
+    return `https://wa.me/${window.KS_WA_NUMBER}?text=${msg}`;
+  };
+
+  const cardSlide = (p, delay) => {
+    const title = esc(p.title);
+    const price = esc(p.price);
+    const img   = p.img;
+    const url   = p.url;
+    const sku   = esc(p.sku || '');
+    // Proviamo a leggere storage/grade dal titolo (già arrivano nel title).
+    // Se in futuro li vuoi separati, passali dall'endpoint come fields dedicati.
+    const storageMatch = p.storage;
+    const gradeMatch   = p.grade;
+
+// mappa classi colore per GRADO
+function gradeClass(g){
+  if (g === 'Nuovo') return 'grade-new';
+  if (g === 'Expo') return 'grade-expo';
+  if (g === 'A+' || g === 'APlus' || g === 'A_PLUS') return 'grade-a-plus';
+  if (g === 'A') return 'grade-a';
+  if (g === 'B') return 'grade-b';
+  if (g === 'C') return 'grade-c';
+  if (g === 'D') return 'grade-d';
+  return '';
+}
+
+// mappa classi colore per GRADO
+function gradeLabel(g){
+  if (g === 'Nuovo') return 'Nuovo';
+  if (g === 'Expo') return 'Da Vetrina';
+  if (g === 'A+' || g === 'APlus' || g === 'A_PLUS') return 'Grado A+';
+  if (g === 'A') return 'Grado A';
+  if (g === 'B') return 'Grado B';
+  if (g === 'C') return 'Grado C';
+  if (g === 'D') return 'Grado D';
+  return '';
+}
+
+// label per storage
+function storageLabel(s){
+  if (s >= '1024') return (s / 1024) + 'TB';
+  else return s + 'GB';
+}
+
+const chips = `
+  <div class="recond-chips" aria-hidden="true">
+    <div class="recond-chips-left">
+      ${storageMatch ? `<span class="recond-chip storage">${storageLabel(storageMatch)}</span>` : ``}
+    </div>
+    <div class="recond-chips-right">
+      ${gradeMatch ? `<span class="recond-chip grade ${gradeClass(gradeMatch)}">${gradeLabel(gradeMatch)}</span>` : ``}
+    </div>
+  </div>`;
+
+    const waHref = buildWaLink(p);
+
+    return `
+      <div class="swiper-slide">
+        <div class="recond-card" data-aos="fade-up" data-aos-duration="600" data-aos-delay="${delay}">
+          <div class="recond-img-wrap">
+            <img src="${img}" alt="${title}" class="recond-img" loading="lazy">
+            ${chips}
+          </div>
+          <div class="recond-body">
+            <h4 class="recond-title">${title}</h4>
+            <div class="recond-price">€ ${price}</div>
+            <a href="${waHref}" target="_blank" rel="noopener" class="btn-wa w-100 mt-3"
+               aria-label="Richiedi info su ${title} via WhatsApp">
+              <i class="ri-shopping-cart-2-line"></i> Acquista
+            </a>
+          </div>
+        </div>
+      </div>
+    `;
+  };
+
+  fetch(endpoint, { credentials: 'same-origin' })
+    .then(r => r.json())
+    .then(json => {
+      if (!json || !json.ok) throw new Error('Risposta non valida');
+      const items = json.products || [];
+      if (!items.length) {
+        wrapper.innerHTML = `
+          <div class="swiper-slide">
+            <div class="recond-card text-center p-4">
+              <p class="mb-0">Nessun prodotto in evidenza al momento.</p>
+            </div>
+          </div>
+        `;
+      } else {
+        let delay = 200;
+        wrapper.innerHTML = items.map(p => {
+          const html = cardSlide(p, delay);
+          delay += 100;
+          return html;
+        }).join('');
+      }
+
+      new Swiper('.recond-swiper', {
+        slidesPerView: 1.2,
+        spaceBetween: 16,
+        pagination: { el: '.swiper-pagination', clickable: true },
+        breakpoints: {
+          576: { slidesPerView: 2 },
+          992: { slidesPerView: 3 },
+          1200:{ slidesPerView: 4 }
+        }
+      });
+
+      if (window.AOS && typeof AOS.refreshHard === 'function') AOS.refreshHard();
+      else if (window.AOS && typeof AOS.refresh === 'function') AOS.refresh();
+    })
+    .catch(err => {
+      console.error(err);
+      wrapper.innerHTML = `
+        <div class="swiper-slide">
+          <div class="recond-card text-center p-4">
+            <p class="mb-1">Impossibile caricare i prodotti.</p>
+            <small class="text-muted">Riprova più tardi.</small>
+          </div>
+        </div>
+      `;
+      new Swiper('.recond-swiper', {
+        slidesPerView: 1.2,
+        spaceBetween: 16,
+        pagination: { el: '.swiper-pagination', clickable: true },
+      });
+    });
+})();
+</script>
 </body>
 </html>
