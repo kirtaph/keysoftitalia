@@ -45,8 +45,6 @@
 
 .product-content{ padding: var(--ks-spacing-5); display:flex; flex-direction:column; flex:1; }
 .product-brand{ font-size:12px; letter-spacing:.4px; color: var(--ks-text-muted); text-transform:uppercase; margin-bottom:4px; }
-.product-title{ font-size: var(--ks-text-lg); font-weight: var(--ks-font-semibold); color: var(--ks-text-primary);
-  margin:0 0 10px; line-height: 1.2; min-height: 2.4em; }
 .product-highlights{ margin-bottom: 10px; }
 .highlight-item{ display:flex; align-items:center; gap:8px; color: var(--ks-text-secondary); font-size: 14px; }
 .highlight-item i{ color: var(--ks-green); }
@@ -172,7 +170,6 @@
 .product-card--compact .product-image img{ max-height: 100%; width: auto; object-fit: contain; }
 
 .product-card--compact .product-content{ padding: 14px 16px 16px; display:flex; flex-direction:column; gap:10px; }
-.product-card--compact .product-title{ margin:0; font-size: 15.5px; font-weight:700; color: var(--ks-text-primary); min-height: 2.6em; line-height:1.3; }
 .product-card--compact .product-price .price-current{ color:#e65100; font-weight:900; font-size: 20px; }
 
 /* CTA: Dettagli (ghost) + Acquista (arancio pieno) */
@@ -248,7 +245,6 @@
 .product-card--compact .product-image{ margin-top:43px; height:180px; background:#ffffff; display:flex; align-items:center; justify-content:center; }
 .product-card--compact .product-image img{ max-height:100%; width:auto; object-fit:contain; }
 .product-card--compact .product-content{ position:relative; padding:14px 16px 16px; display:flex; flex-direction:column; gap:10px; }
-.product-card--compact .product-title{ margin:0; font-size:15.5px; font-weight:700; color:var(--ks-text-primary); min-height:2.6em; line-height:1.3; }
 .product-card--compact .product-price .price-current{ color:#e65100; font-weight:900; font-size:20px; }
 .product-card--compact .product-actions{ margin-top:4px; display:grid; grid-template-columns:1fr 1fr; gap:10px; }
 @media (max-width:576px){ .product-card--compact .product-actions{ grid-template-columns:1fr; } }
@@ -311,3 +307,105 @@
 .pg-btn.is-active{ border-color:var(--ks-orange); background:var(--ks-orange-light); color:var(--ks-text-primary); }
 .pg-btn[disabled]{ opacity:.5; cursor:not-allowed; }
 .pg-ellipsis{ align-self:center; color:var(--ks-gray-500); }
+
+/* chip sconto */
+.offer-chip{
+  display:inline-flex; align-items:center; gap:6px;
+  padding:4px 8px; border-radius:999px;
+  background: #fee2e2; color:#b91c1c; /* rosso soft */
+  font-weight:800; font-size:12px; border:1px solid #fecaca;
+  box-shadow: var(--ks-shadow-sm);
+}
+
+/* prezzi */
+.product-price{ display:flex; align-items:baseline; gap:8px; }
+.price-old{ text-decoration: line-through; opacity:.6; font-weight:700; }
+.price-current{ font-weight:900; }
+
+
+#catalogo .product-grid-item{ height:100%; }
+
+/* Card compatta */
+#catalogo .product-card{
+  --pc-pad:12px;
+  --pc-radius:16px;
+  background:#fff;
+  border:1px solid var(--ks-gray-200);
+  border-radius:var(--pc-radius);
+  box-shadow:var(--ks-shadow-sm);
+  overflow:hidden;
+  height:100%;
+  display:flex;
+  flex-direction:column;
+  transition:transform .18s ease, box-shadow .18s ease, border-color .18s ease;
+}
+#catalogo .product-card:hover{ transform:translateY(-2px); box-shadow:var(--ks-shadow-lg); }
+
+/* pill in alto (solo storage sx + grado dx) */
+#catalogo .product-card .pc-top{
+  position:absolute; inset-block-start:8px; inset-inline:10px;
+  display:flex; justify-content:space-between; align-items:center; pointer-events:none;
+}
+#catalogo .cap-pill,
+#catalogo .grade-pill{
+  pointer-events:auto;
+  padding:4px 10px; border-radius:999px; font-size:.78rem; font-weight:700; line-height:1;
+  background:var(--ks-gray-100); color:var(--ks-text-primary); border:1px solid var(--ks-gray-200);
+}
+#catalogo .grade-pill{ background:#f1f5ff; color:#1f4dd6; border-color:#dbe5ff; }
+#catalogo .grade-pill.grade--new{ background:#ffe9ef; color:#c61e49; border-color:#ffd0db; }
+#catalogo .grade-pill.grade--aplus{ background:#eafaf2; color:#177d4b; border-color:#cdeede; }
+
+/* immagine + badge sconto grande in overlay */
+#catalogo .product-image{
+  position:relative;
+  margin:42px 10px 0;       /* più vicino al bordo alto, meno aria */
+  border-radius:14px;
+  height:180px;             /* altezza compatta e costante */
+  background:var(--ks-gray-100);
+  display:grid; place-items:center;
+  overflow:hidden;
+}
+#catalogo .product-image img{ max-width:100%; max-height:100%; object-fit:contain; }
+
+#catalogo .offer-badge{
+  position:absolute; top:10px; right:10px;
+  width:54px; height:54px; border-radius:50%;
+  background:var(--ks-orange); color:#fff; font-weight:800; font-size:.9rem;
+  display:grid; place-items:center; box-shadow:0 8px 16px rgba(255,122,0,.25);
+}
+
+/* contenuto */
+#catalogo .product-content{ padding:10px var(--pc-pad) var(--pc-pad); display:flex; flex-direction:column; gap:8px; }
+#catalogo .product-title{
+  margin:0; font-weight:800; font-size:1rem; line-height:1.22;
+  display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden;
+}
+/* marca sotto il titolo: più piccola, grigia, non in grassetto */
+#catalogo .product-brand{
+  margin-top:2px; font-size:.9rem; font-weight:400; color:var(--ks-text-secondary); letter-spacing:.1px;
+  text-transform:none; line-height:1.2;
+}
+
+/* prezzi più compatti */
+#catalogo .product-price{ display:flex; align-items:baseline; gap:8px; margin-top:2px; }
+#catalogo .product-price .price-old{
+  color:var(--ks-gray-500); text-decoration:line-through; font-weight:600; font-size:.95rem;
+}
+#catalogo .product-price .price-current{
+  color:var(--ks-orange); font-weight:900; font-size:1.15rem;
+}
+
+/* azioni: meno alte e strette */
+#catalogo .product-actions{
+  display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:6px;
+}
+#catalogo .product-actions .btn{ height:40px; border-radius:12px; font-weight:800; }
+
+/* overlay non disponibile */
+#catalogo .product-card.is-unavailable .pc-overlay{
+  position:absolute; inset:0; background:rgba(0,0,0,.45); display:grid; place-items:center;
+}
+#catalogo .product-card.is-unavailable .pc-o-text{
+  color:#fff; font-weight:800; background:rgba(0,0,0,.5); padding:6px 10px; border-radius:999px;
+}

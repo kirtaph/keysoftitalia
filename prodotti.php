@@ -312,25 +312,26 @@ document.addEventListener('DOMContentLoaded', () => {
     filtersWrap: document.getElementById('filtersContent')
   };
 
-  // ==== STATO ================================================================
-  const STATE = {
-    featured: 0, // in catalogo mostriamo tutto
-    page: 1,
-    per: 20,
-    sort: 'featured',     // featured | price_asc | price_desc | newest
-    brand_id: null,       // <— numerico
-    device_slug: '',      // <— stringa
-    grade: '',
-    min_price: null,
-    max_price: null,
-    storage_min: null,
-    storage_max: null,
-    q: '',
-    available: 1
-  };
+// --- STATO ---
+const STATE = {
+  featured: 0,
+  page: 1,
+  per: 20,
+  sort: 'featured',
+  brand_id: null,
+  device_slug: '',
+  grade: '',
+  min_price: null,
+  max_price: null,
+  storage_min: null,
+  storage_max: null,
+  q: '',
+  available: null // <— null = tutti; 1 = solo disponibili
+};
 
   // per chip marca + split titolo
   let BRAND_LIST = []; // array di nomi brand (per matchare l'inizio del titolo)
+  let FR_CTRL = null; // AbortController per cancellare i fetch sovrapposti
 
   // ==== INIT ================================================================
   attachEvents();
@@ -412,7 +413,9 @@ document.addEventListener('DOMContentLoaded', () => {
     setter(el.fGrade,    usp.get('grade'));
     setter(el.fPrice,    joinPrice(usp.get('min_price'), usp.get('max_price')));
     setter(el.fQuery,    usp.get('q'));
-    if (usp.has('available')) el.fAvail.checked = usp.get('available') === '1';
+    if (el.fAvail){
+    el.fAvail.checked = usp.get('available') === '1'; // solo se presente
+  }
     setter(el.fSort, fixSortForUi(usp.get('sort') || 'featured'));
     setter(el.fPer,  usp.get('per') || '20');
 
@@ -429,7 +432,7 @@ document.addEventListener('DOMContentLoaded', () => {
     STATE.brand_id    = el.fBrand?.value ? Number(el.fBrand.value) : null;
     STATE.grade       = el.fGrade?.value || '';
     STATE.q           = (el.fQuery?.value || '').trim();
-    STATE.available   = el.fAvail?.checked ? 1 : 0;
+    STATE.available = (el.fAvail && el.fAvail.checked) ? 1 : null;
     STATE.sort        = normalizeSort(el.fSort?.value || 'featured');
     STATE.per         = parseInt(el.fPer?.value || '20', 10) || 20;
 
@@ -464,23 +467,63 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // ==== FETCH + RENDER =======================================================
-  async function fetchAndRender(){
-    renderSkeletons(10);
-    const url = ENDPOINT_PRODUCTS + '?' + buildQuery(STATE);
-    try{
-      const res = await fetch(url, {credentials:'same-origin'});
-      const json = await res.json();
+async function fetchAndRender(){
+  // skeleton prima del fetch
+  renderSkeletons(10);
 
-      if (!json || json.ok === false){ renderError('Errore di caricamento.'); return; }
+  // aborta un eventuale fetch precedente
+  try { FR_CTRL?.abort(); } catch {}
+  FR_CTRL = new AbortController();
 
-      const norm = normalizeResponse(json, {page: STATE.page, per: STATE.per});
-      renderProducts(norm.items);
-      renderPager(norm.total, norm.page, norm.per);
-      if (el.count) el.count.textContent = `${norm.total} prodotti`;
-    } catch {
-      renderError('Errore di rete.');
+  const url = ENDPOINT_PRODUCTS + '?' + buildQuery(STATE) + '&_ts=' + Date.now(); // cache-buster
+  try {
+    const res = await fetch(url, {
+      credentials: 'same-origin',
+      headers: { 'X-Requested-With': 'XMLHttpRequest' },
+      signal: FR_CTRL.signal
+    });
+
+    if (!res.ok) {
+      // prova a leggere il body per loggare eventuali errori PHP
+      let snippet = '';
+      try { snippet = (await res.text()).slice(0, 280); } catch {}
+      console.error('HTTP error', res.status, snippet);
+      throw new Error(`HTTP ${res.status}`);
     }
+
+    // parse robusto: JSON o testo che contiene JSON
+    const ct = res.headers.get('content-type') || '';
+    let json;
+    if (ct.includes('application/json')) {
+      json = await res.json();
+    } else {
+      const txt = await res.text();
+      try { json = JSON.parse(txt); }
+      catch (e) {
+        console.error('Non-JSON response snippet:', txt.slice(0, 280));
+        throw new Error('Risposta non valida dal server');
+      }
+    }
+
+    // backend ha una chiave ok=false?
+    if (typeof json === 'object' && 'ok' in json && json.ok === false) {
+      const msg = json.error || 'Errore dal backend';
+      console.error('Backend error:', msg);
+      throw new Error(msg);
+    }
+
+    const norm = normalizeResponse(json, { page: STATE.page, per: STATE.per });
+    renderProducts(norm.items);
+    renderPager(norm.total, norm.page, norm.per);
+    if (el.count) el.count.textContent = `${norm.total} prodotti`;
+  } catch (err) {
+    if (err?.name === 'AbortError') return; // ignoriamo fetch abortiti per nuovo caricamento
+    console.error('fetchAndRender failed:', err);
+    renderError(`Errore di caricamento${err?.message ? ` (${err.message})` : ''}.`);
+  } finally {
+    FR_CTRL = null;
   }
+}
 
   function buildQuery(s){
     const p = new URLSearchParams();
@@ -496,7 +539,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (s.storage_min!=null) p.set('storage_min', String(s.storage_min));
     if (s.storage_max!=null) p.set('storage_max', String(s.storage_max));
     if (s.q) p.set('q', s.q);
-    p.set('available', String(s.available));
+    if (s.available === 1) p.set('available','1');
     return p.toString();
   }
 
@@ -536,90 +579,116 @@ document.addEventListener('DOMContentLoaded', () => {
     return { items: raw.map(normalizeProduct), total, page, per };
   }
 
-  function normalizeProduct(x){
-    // immagine assoluta
-    let img = x.img || x.image || '';
-    if (img && !/^https?:\/\//i.test(img)) {
-      img = '<?= rtrim(BASE_URL,"/"); ?>/' + String(img).replace(/^\/+/, '');
-    }
-    return {
-      id:  x.sku || x.id || '',
-      sku: x.sku || '',
-      title: (x.title||'').trim(),
-      price: x.price,
-      grade: x.grade || '',
-      storage: x.storage || null,
-      short_desc: x.excerpt || x.short_desc || '',
-      full_desc:  x.full_desc || '',
-      is_available: ('is_available' in x) ? !!(+x.is_available) : true,
-      url: x.url || '',
-      image: img
-    };
+function normalizeProduct(x){
+  let img = x.img || x.image || '';
+  if (img && !/^https?:\/\//i.test(img)) {
+    img = '<?= rtrim(BASE_URL,"/"); ?>/' + String(img).replace(/^\/+/, '');
+  }
+  const list_price = x.list_price ?? x.list_price_eur ?? null;
+  const price      = x.price;
+
+  return {
+    id:  x.sku || x.id || '',
+    sku: x.sku || '',
+    title: (x.title||'').trim(),
+    price,
+    list_price,
+    discountPct: computeDiscount(price, list_price), // <-- nuovo
+    grade: x.grade || '',
+    storage: x.storage || null,
+    short_desc: x.excerpt || x.short_desc || '',
+    full_desc:  x.full_desc || '',
+    is_available: ('is_available' in x) ? !!(+x.is_available) : true,
+    url: x.url || '',
+    image: img
+  };
+}
+
+function parsePrice(val){
+  if (val == null) return 0;
+  if (typeof val === 'number') return val;
+  const s = String(val).trim()
+    .replace(/\./g, '')     // rimuovi separatore migliaia
+    .replace(',', '.')      // virgola -> punto
+    .replace(/[^\d.]/g,''); // togli simboli
+  const n = parseFloat(s);
+  return isNaN(n) ? 0 : n;
+}
+
+function getDiscountPct(p){
+  const lp = parsePrice(p.list_price);
+  const pr = parsePrice(p.price);
+  if (lp > 0 && pr > 0 && pr < lp) return Math.round((lp - pr) / lp * 100);
+  return 0;
+}
+
+function renderProducts(items){
+  LAST_ITEMS = items || [];
+  if (!el.grid) return;
+
+  if (!items || !items.length){ renderError('Nessun prodotto trovato. Modifica i filtri.'); return; }
+
+  el.grid.innerHTML = '';
+  for (const p of items){
+    const {brand, modelRest} = splitBrandFromTitle(p.title);
+    const storage     = formatStorage(p.storage);
+    const unavailable = !p.is_available;
+    const disc        = (typeof p.discountPct === 'number') ? p.discountPct : getDiscountPct(p);
+
+    const card = document.createElement('div');
+    card.className = 'product-grid-item';
+    card.innerHTML = `
+      <article class="product-card product-card--compact ${unavailable?'is-unavailable':''}" data-sku="${esc(p.sku)}">
+        <div class="pc-top">
+          ${storage ? `<span class="cap-pill">${esc(storage)}</span>` : ''}
+          ${p.grade ? `<span class="grade-pill ${gradeClass(p.grade)}">${p.grade==='Nuovo'?'Nuovo':'Grado '+esc(p.grade)}</span>` : ''}
+        </div>
+
+        ${unavailable ? `<div class="pc-overlay"><span class="pc-o-text"><i class="ri-forbid-2-line"></i> Non disponibile</span></div>` : ''}
+
+        <div class="product-image">
+          ${disc ? `<span class="offer-badge">-${disc}%</span>` : ''}
+          <img src="${esc(p.image)}" alt="${esc(p.title)}" loading="lazy">
+        </div>
+
+        <div class="product-content">
+          <h3 class="product-title">${esc(modelRest || p.title)}</h3>
+          ${brand ? `<div class="product-brand">${esc(brand)}</div>` : ''}
+
+          <div class="product-price">
+            ${disc ? `<span class="price-old">€ ${formatEuro(p.list_price)}</span>` : ''}
+            <span class="price-current">€ ${formatEuro(p.price)}</span>
+          </div>
+
+          <div class="product-actions" data-no-link>
+            <button class="btn btn-outline-primary btn-sm js-details" data-sku="${esc(p.sku)}" ${unavailable?'disabled':''}>
+              <i class="ri-information-line"></i> Dettagli
+            </button>
+            <button class="btn btn-primary btn-sm js-buy" data-sku="${esc(p.sku)}" data-title="${esc(p.title)}" ${unavailable?'disabled':''}>
+              <i class="ri-shopping-cart-line"></i> Acquista
+            </button>
+          </div>
+
+          ${p.url ? `<a class="stretched-link" href="${esc(p.url)}" aria-label="Apri ${esc(p.title)}"></a>` : ''}
+        </div>
+      </article>`;
+    el.grid.appendChild(card);
   }
 
-  function renderProducts(items){
-    LAST_ITEMS = items || [];
-    if (!el.grid) return;
-
-    if (!items || !items.length){
-      renderError('Nessun prodotto trovato. Modifica i filtri.');
-      return;
-    }
-
-    el.grid.innerHTML = '';
-    for (const p of items){
-      const {brand, modelRest} = splitBrandFromTitle(p.title);
-      const storage = formatStorage(p.storage);
-      const unavailable = !p.is_available;
-
-      const card = document.createElement('div');
-      card.className = 'product-grid-item';
-      card.innerHTML = `
-        <article class="product-card product-card--compact ${unavailable?'is-unavailable':''}" data-sku="${esc(p.sku)}">
-          <div class="pc-top">
-            ${storage ? `<span class="cap-pill">${esc(storage)}</span>` : ''}
-            ${p.grade ? `<span class="grade-pill ${gradeClass(p.grade)}">${p.grade==='Nuovo'?'Nuovo':'Grado '+esc(p.grade)}</span>` : ''}
-          </div>
-
-          ${unavailable ? `<div class="pc-overlay"><span class="pc-o-text"><i class="ri-forbid-2-line"></i> Non disponibile</span></div>` : ''}
-
-          <div class="product-image">
-            <img src="${esc(p.image)}" alt="${esc(p.title)}" loading="lazy">
-          </div>
-
-          <div class="product-content">
-            <h3 class="product-title">${esc(brand)} ${esc(modelRest || p.title)}</h3>
-            <div class="product-price"><span class="price-current">€ ${formatEuro(p.price)}</span></div>
-
-            <div class="product-actions" data-no-link>
-              <button class="btn btn-outline-primary btn-sm js-details" data-sku="${esc(p.sku)}" ${unavailable?'disabled':''}>
-                <i class="ri-information-line"></i> Dettagli
-              </button>
-              <button class="btn btn-primary btn-sm js-buy" data-sku="${esc(p.sku)}" data-title="${esc(p.title)}" ${unavailable?'disabled':''}>
-                <i class="ri-shopping-cart-line"></i> Acquista
-              </button>
-            </div>
-
-            ${p.url ? `<a class="stretched-link" href="${esc(p.url)}" aria-label="Apri ${esc(p.title)}"></a>` : ''}
-          </div>
-        </article>`;
-      el.grid.appendChild(card);
-    }
-
-    // bind CTA
-    el.grid.querySelectorAll('.js-buy').forEach(b=>{
-      b.addEventListener('click', () => {
-        const sku = b.getAttribute('data-sku');
-        const prod = LAST_ITEMS.find(x => x.sku === sku);
-        const message = `Ciao Key Soft Italia, vorrei acquistare ${prod?.title||''} (SKU: ${sku}).`;
-        const url = Utils.whatsappLink(message, { utm_campaign:'prodotti-purchase', utm_content: sku });
-        window.open(url, '_blank');
-      });
+  // bind CTA (come prima)
+  el.grid.querySelectorAll('.js-buy').forEach(b=>{
+    b.addEventListener('click', () => {
+      const sku = b.getAttribute('data-sku');
+      const prod = LAST_ITEMS.find(x => x.sku === sku);
+      const message = `Ciao Key Soft Italia, vorrei acquistare ${prod?.title||''} (SKU: ${sku}).`;
+      const url = Utils.whatsappLink(message, { utm_campaign:'prodotti-purchase', utm_content: sku });
+      window.open(url, '_blank');
     });
-    el.grid.querySelectorAll('.js-details').forEach(b=>{
-      b.addEventListener('click', () => openProductModalBySku(b.getAttribute('data-sku')));
-    });
-  }
+  });
+  el.grid.querySelectorAll('.js-details').forEach(b=>{
+    b.addEventListener('click', () => openProductModalBySku(b.getAttribute('data-sku')));
+  });
+}
 
   // ==== PAGINAZIONE ==========================================================
   function renderPager(total, page, per){
@@ -661,11 +730,16 @@ document.addEventListener('DOMContentLoaded', () => {
   async function openProductModal(p){
     const enriched = await enrichProduct(p).catch(()=>p);
     const mEl = document.getElementById('productModal');
-
+    // prezzo in modale (con listino barrato se presente)
+    const disc = computeDiscount(enriched.price ?? p.price, enriched.list_price ?? p.list_price);
+    const pmPrice = document.getElementById('pmPrice');
+    pmPrice.innerHTML = `
+      ${ (enriched.list_price ?? p.list_price) && disc ? `<span class="price-old me-2">€ ${formatEuro(enriched.list_price ?? p.list_price)}</span>` : '' }
+      <span class="price-current">€ ${formatEuro(enriched.price ?? p.price)}</span>
+`;
     // header + pill
     document.getElementById('pmTitle').textContent = "Dettagli Prodotto";
     document.getElementById('pmName').textContent  = enriched.title || p.title;
-    document.getElementById('pmPrice').textContent = '€ ' + formatEuro(enriched.price ?? p.price);
     document.getElementById('pmSku').textContent   = enriched.sku ? `SKU: ${enriched.sku}` : '';
 
     const gradeEl = document.getElementById('pmGrade');
@@ -699,11 +773,23 @@ document.addEventListener('DOMContentLoaded', () => {
       });
     }
 
-    // azioni
-    document.getElementById('pmBuy').href = Utils.whatsappLink(
-      `Ciao Key Soft Italia, vorrei acquistare ${enriched.title||p.title} (SKU: ${enriched.sku||p.sku}).`,
-      { utm_campaign:'prodotti-modal-buy', utm_content: enriched.sku||p.sku }
-    );
+ // bottone Acquista: forza apertura nuova scheda
+const pmBuy = document.getElementById('pmBuy');
+const waUrl = Utils.whatsappLink(
+  `Ciao Key Soft Italia, ho visto sul vostro sito questo prodotto ${(enriched.title||p.title)} (SKU: ${(enriched.sku||p.sku)}).`,
+  { utm_campaign:'prodotti-modal-buy', utm_content: (enriched.sku||p.sku) }
+);
+if (pmBuy){
+  pmBuy.setAttribute('href', waUrl);
+  pmBuy.setAttribute('target','_blank');
+  pmBuy.setAttribute('rel','noopener');
+  pmBuy.addEventListener('click', (ev) => {
+    // se fosse un <button> senza href o bootstrap lo blocca:
+    ev.preventDefault();
+    window.open(waUrl, '_blank', 'noopener');
+  }, { once:true });
+}
+
     document.getElementById('pmShare').onclick = () => shareProduct(enriched);
 
     if (window.bootstrap && bootstrap.Modal){
@@ -739,11 +825,6 @@ document.addEventListener('DOMContentLoaded', () => {
   function normalizeSort(v){ return (v||'featured').replace('-', '_'); }
   function fixSortForUi(v){ return (v||'featured').replace('_','-'); }
 
-  function formatEuro(val){
-    const n = parseFloat(String(val).replace(/\./g,'').replace(',', '.'));
-    if (isNaN(n)) return String(val);
-    return n.toLocaleString('it-IT', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-  }
   function formatStorage(v){
     const n = +v || 0; if (!n) return '';
     if (n >= 1024 && n % 1024 === 0) return (n/1024)+'TB';
@@ -783,6 +864,28 @@ document.addEventListener('DOMContentLoaded', () => {
     window.open('https://www.facebook.com/sharer/sharer.php?u='+encodeURIComponent(shareUrl),'_blank',`width=600,height=600,top=${t},left=${l}`);
   }
 });
+
+// --- helper numerico robusto IT -> Number
+function toNumber(val){
+  if (val == null) return NaN;
+  if (typeof val === 'number') return val;
+  const s = String(val).trim().replace(/\./g,'').replace(',', '.').replace(/[^\d.]/g,'');
+  const n = parseFloat(s);
+  return isNaN(n) ? NaN : n;
+}
+
+function formatEuro(val){
+  const n = toNumber(val);
+  if (isNaN(n)) return String(val ?? '');
+  return n.toLocaleString('it-IT',{minimumFractionDigits:2, maximumFractionDigits:2});
+}
+
+// percentuale sconto arrotondata
+function computeDiscount(price, list){
+  const p = toNumber(price), l = toNumber(list);
+  if (isNaN(p) || isNaN(l) || l <= 0 || p >= l) return 0;
+  return Math.round(((l - p) / l) * 100);
+}
 </script>
 
 </body>

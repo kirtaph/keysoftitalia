@@ -235,10 +235,13 @@ $ld_flyers = [
       <p class="section-subtitle">Smartphone e altri dispositivi in offerta speciale</p>
     </div>
 
-    <div class="swiper recond-swiper">
-      <div class="swiper-wrapper" id="recond-swiper-wrapper"></div>
-      <div class="swiper-pagination"></div>
-    </div>
+<?php
+$recond_id = 'recond-flyer';     // id univoco per la pagina
+$recond_limit = 8;              // quanti prodotti
+$recond_featured = 1;           // solo vetrina per home
+$recond_title = '';
+include __DIR__.'/includes/recond_swiper.php';
+?>
 
     <!-- CTA catalogo completo -->
     <div class="text-center mt-5" data-aos="fade-up" data-aos-duration="600" data-aos-delay="800">
@@ -896,164 +899,6 @@ document.addEventListener('DOMContentLoaded', function () {
     setPageIndicator(1, 1);
   });
 });
-</script>
-<?php
-  // Normalizza numero per wa.me (solo cifre, con prefisso 39)
-  $ks_wa = preg_replace('/\D+/', '', COMPANY_WHATSAPP ?? '');
-  if ($ks_wa !== '' && strpos($ks_wa, '39') !== 0) { $ks_wa = '39' . $ks_wa; }
-?>
-
-<script>
-
-  window.KS_WA_NUMBER = '<?php echo $ks_wa; ?>';
-
-(function() {
-  const wrapper = document.getElementById('recond-swiper-wrapper');
-  const endpoint = '<?php echo asset("ajax/get_products.php?featured=1&limit=5"); ?>';
-
-  // utilità
-  const esc = s => String(s ?? '').replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
-  const buildWaLink = (p) => {
-    const title = p.title || '';
-    const price = p.price || '';
-    const sku   = p.sku   || '';
-    const page  = p.url   || (window.KS_SITE_URL + '/ricondizionati.php?sku=' + encodeURIComponent(sku));
-    const msg =
-      `Ciao Key Soft Italia! 👋%0A` +
-      `Ho appena visto questo prodotto sul sito e vorrei avere informazioni:%0A%0A` +
-      `• Prodotto: ${encodeURIComponent(title)}%0A` +
-      (sku   ? `• SKU: ${encodeURIComponent(sku)}%0A` : '') +
-      (price ? `• Prezzo: € ${encodeURIComponent(price)}%0A` : '') +
-      `Mi potete rispondere qui? Grazie!`;
-    return `https://wa.me/${window.KS_WA_NUMBER}?text=${msg}`;
-  };
-
-  const cardSlide = (p, delay) => {
-    const title = esc(p.title);
-    const price = esc(p.price);
-    const img   = p.img;
-    const url   = p.url;
-    const sku   = esc(p.sku || '');
-    // Proviamo a leggere storage/grade dal titolo (già arrivano nel title).
-    // Se in futuro li vuoi separati, passali dall'endpoint come fields dedicati.
-    const storageMatch = p.storage;
-    const gradeMatch   = p.grade;
-
-// mappa classi colore per GRADO
-function gradeClass(g){
-  if (g === 'Nuovo') return 'grade-new';
-  if (g === 'Expo') return 'grade-expo';
-  if (g === 'A+' || g === 'APlus' || g === 'A_PLUS') return 'grade-a-plus';
-  if (g === 'A') return 'grade-a';
-  if (g === 'B') return 'grade-b';
-  if (g === 'C') return 'grade-c';
-  if (g === 'D') return 'grade-d';
-  return '';
-}
-
-// mappa classi colore per GRADO
-function gradeLabel(g){
-  if (g === 'Nuovo') return 'Nuovo';
-  if (g === 'Expo') return 'Da Vetrina';
-  if (g === 'A+' || g === 'APlus' || g === 'A_PLUS') return 'Grado A+';
-  if (g === 'A') return 'Grado A';
-  if (g === 'B') return 'Grado B';
-  if (g === 'C') return 'Grado C';
-  if (g === 'D') return 'Grado D';
-  return '';
-}
-
-// label per storage
-function storageLabel(s){
-  if (s >= '1024') return (s / 1024) + 'TB';
-  else return s + 'GB';
-}
-
-const chips = `
-  <div class="recond-chips" aria-hidden="true">
-    <div class="recond-chips-left">
-      ${storageMatch ? `<span class="recond-chip storage">${storageLabel(storageMatch)}</span>` : ``}
-    </div>
-    <div class="recond-chips-right">
-      ${gradeMatch ? `<span class="recond-chip grade ${gradeClass(gradeMatch)}">${gradeLabel(gradeMatch)}</span>` : ``}
-    </div>
-  </div>`;
-
-    const waHref = buildWaLink(p);
-
-    return `
-      <div class="swiper-slide">
-        <div class="recond-card" data-aos="fade-up" data-aos-duration="600" data-aos-delay="${delay}">
-          <div class="recond-img-wrap">
-            <img src="${img}" alt="${title}" class="recond-img" loading="lazy">
-            ${chips}
-          </div>
-          <div class="recond-body">
-            <h4 class="recond-title">${title}</h4>
-            <div class="recond-price">€ ${price}</div>
-            <a href="${waHref}" target="_blank" rel="noopener" class="btn-wa w-100 mt-3"
-               aria-label="Richiedi info su ${title} via WhatsApp">
-              <i class="ri-shopping-cart-2-line"></i> Acquista
-            </a>
-          </div>
-        </div>
-      </div>
-    `;
-  };
-
-  fetch(endpoint, { credentials: 'same-origin' })
-    .then(r => r.json())
-    .then(json => {
-      if (!json || !json.ok) throw new Error('Risposta non valida');
-      const items = json.products || [];
-      if (!items.length) {
-        wrapper.innerHTML = `
-          <div class="swiper-slide">
-            <div class="recond-card text-center p-4">
-              <p class="mb-0">Nessun prodotto in evidenza al momento.</p>
-            </div>
-          </div>
-        `;
-      } else {
-        let delay = 200;
-        wrapper.innerHTML = items.map(p => {
-          const html = cardSlide(p, delay);
-          delay += 100;
-          return html;
-        }).join('');
-      }
-
-      new Swiper('.recond-swiper', {
-        slidesPerView: 1.2,
-        spaceBetween: 16,
-        pagination: { el: '.swiper-pagination', clickable: true },
-        breakpoints: {
-          576: { slidesPerView: 2 },
-          992: { slidesPerView: 3 },
-          1200:{ slidesPerView: 4 }
-        }
-      });
-
-      if (window.AOS && typeof AOS.refreshHard === 'function') AOS.refreshHard();
-      else if (window.AOS && typeof AOS.refresh === 'function') AOS.refresh();
-    })
-    .catch(err => {
-      console.error(err);
-      wrapper.innerHTML = `
-        <div class="swiper-slide">
-          <div class="recond-card text-center p-4">
-            <p class="mb-1">Impossibile caricare i prodotti.</p>
-            <small class="text-muted">Riprova più tardi.</small>
-          </div>
-        </div>
-      `;
-      new Swiper('.recond-swiper', {
-        slidesPerView: 1.2,
-        spaceBetween: 16,
-        pagination: { el: '.swiper-pagination', clickable: true },
-      });
-    });
-})();
 </script>
 </body>
 </html>
