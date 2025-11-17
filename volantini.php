@@ -628,11 +628,14 @@ document.addEventListener('DOMContentLoaded', function () {
   pdfjsLib.GlobalWorkerOptions.workerSrc =
     "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
 
-  let pdfDoc       = null;
-  let currentScale = 1.2;
-  const ZOOM_STEP  = 0.2;
-  const ZOOM_MIN   = 0.7;
-  const ZOOM_MAX   = 2.0;
+let pdfDoc       = null;
+// scala iniziale più bassa: il volantino parte più “intero”
+let currentScale = 0.9;
+
+const ZOOM_STEP  = 0.2;
+// zoom minimo più basso: puoi allontanare di più per vedere (quasi) tutto
+const ZOOM_MIN   = 0.5;
+const ZOOM_MAX   = 2.0;
 
   let scrollRafId  = null;
 
@@ -713,23 +716,25 @@ document.addEventListener('DOMContentLoaded', function () {
     });
   }
 
-  function loadPdf(url) {
-    viewerEl.innerHTML = '<div class="pdfjs-loading">Caricamento volantino...</div>';
-    pdfDoc = null;
-    currentScale = 1.2;
+function loadPdf(url) {
+  viewerEl.innerHTML = '<div class="pdfjs-loading">Caricamento volantino...</div>';
+  pdfDoc = null;
 
-    const loadingTask = pdfjsLib.getDocument(url);
-    loadingTask.promise.then(function (pdf) {
-      pdfDoc = pdf;
-      return renderAllPages();
-    }).catch(function (error) {
-      console.error('Errore PDF.js:', error);
-      viewerEl.innerHTML =
-        '<div class="pdfjs-error">Impossibile caricare il volantino. ' +
-        '<a href="' + encodeURI(url) +
-        '" target="_blank" rel="noopener">Apri il PDF in una nuova scheda</a>.</div>';
-    });
-  }
+  // parti dalla scala minima: l’utente vede subito il volantino “intero”
+  currentScale = ZOOM_MIN;
+
+  const loadingTask = pdfjsLib.getDocument(url);
+  loadingTask.promise.then(function (pdf) {
+    pdfDoc = pdf;
+    return renderAllPages();
+  }).catch(function (error) {
+    console.error('Errore PDF.js:', error);
+    viewerEl.innerHTML =
+      '<div class="pdfjs-error">Impossibile caricare il volantino. ' +
+      '<a href="' + encodeURI(url) +
+      '" target="_blank" rel="noopener">Apri il PDF in una nuova scheda</a>.</div>';
+  });
+}
 
   function applyZoom(delta) {
     if (!pdfDoc) return;
@@ -818,22 +823,27 @@ document.addEventListener('DOMContentLoaded', function () {
       }
     }, { passive: true });
 
-    viewerEl.addEventListener('touchmove', function (e) {
-      if (e.touches.length === 2 && pinchStartDist) {
-        const newDist = getTouchDistance(e.touches[0], e.touches[1]);
-        const factor  = newDist / pinchStartDist;
-        let targetScale = pinchStartScale * factor;
-        targetScale = Math.max(ZOOM_MIN, Math.min(ZOOM_MAX, targetScale));
+let lastPinchZoomTime = 0;
 
-        const diff = targetScale - currentScale;
-        // soglia per non rerenderizzare a ogni pixel di movimento
-        if (Math.abs(diff) > 0.08) {
-          applyZoom(diff);
-        }
+viewerEl.addEventListener('touchmove', function (e) {
+  if (e.touches.length === 2 && pinchStartDist) {
+    const newDist = getTouchDistance(e.touches[0], e.touches[1]);
+    const factor  = newDist / pinchStartDist;
+    let targetScale = pinchStartScale * factor;
+    targetScale = Math.max(ZOOM_MIN, Math.min(ZOOM_MAX, targetScale));
 
-        e.preventDefault(); // evito lo scroll della pagina mentre pincho
-      }
-    }, { passive: false });
+    const diff = targetScale - currentScale;
+    const now  = Date.now();
+
+    // soglia più bassa + massimo uno zoom ogni 80 ms
+    if (Math.abs(diff) > 0.04 && (now - lastPinchZoomTime) > 80) {
+      applyZoom(diff);
+      lastPinchZoomTime = now;
+    }
+
+    e.preventDefault(); // evito lo scroll della pagina mentre pincho
+  }
+}, { passive: false });
 
     viewerEl.addEventListener('touchend', function (e) {
       if (e.touches.length < 2) {
