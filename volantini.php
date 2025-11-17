@@ -612,7 +612,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
   if (!viewerModal || !viewerEl) return;
 
-  // Fallback: se PDF.js non è caricato, apri il PDF in nuova scheda
+  // Fallback: se PDF.js non è caricato, apro il PDF in nuova scheda
   if (typeof window['pdfjsLib'] === 'undefined') {
     viewerModal.addEventListener('show.bs.modal', function (event) {
       const button = event.relatedTarget;
@@ -624,20 +624,20 @@ document.addEventListener('DOMContentLoaded', function () {
     return;
   }
 
-  // Worker PDF.js
+  // Worker di PDF.js
   pdfjsLib.GlobalWorkerOptions.workerSrc =
     "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
 
-  let pdfDoc        = null;
-  let pagesWrapper  = null;
+  let pdfDoc       = null;
+  let pagesWrapper = null;
 
-  // scala "vera" a cui rendiamo i canvas
-  let currentScale  = 0.9;        // un po' più piccola -> vedi quasi tutto
-  const ZOOM_STEP   = 0.2;
-  const ZOOM_MIN    = 0.5;
-  const ZOOM_MAX    = 2.0;
+  // Scala "reale" a cui rendiamo i canvas
+  let currentScale = 0.9;        // non enorme, ma non minuscolo
+  const ZOOM_STEP  = 0.2;
+  const ZOOM_MIN   = 0.5;
+  const ZOOM_MAX   = 2.0;
 
-  let scrollRafId   = null;
+  let scrollRafId  = null;
 
   function clampScale(s) {
     return Math.max(ZOOM_MIN, Math.min(ZOOM_MAX, s));
@@ -714,9 +714,8 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     return Promise.all(renderPromises).then(() => {
-      // ripristino eventuale trasformazione (preview) a 1
       if (pagesWrapper) {
-        pagesWrapper.style.transition = 'transform 0.0s';
+        pagesWrapper.style.transition = 'transform 0s';
         pagesWrapper.style.transform  = 'scale(1)';
       }
       updateCurrentPageOnScroll();
@@ -734,7 +733,7 @@ document.addEventListener('DOMContentLoaded', function () {
     pdfDoc       = null;
     pagesWrapper = null;
 
-    // Parti SEMPRE dalla scala minima -> volantino quasi intero
+    // Parto sempre dal minimo → vista quasi intera
     currentScale = ZOOM_MIN;
 
     const loadingTask = pdfjsLib.getDocument(url);
@@ -750,23 +749,47 @@ document.addEventListener('DOMContentLoaded', function () {
     });
   }
 
-  function setScaleAndRerender(newScale) {
+  // 🔍 Helper: zoom mantenendo il punto di fuoco (clientX/clientY)
+  function zoomToScale(targetScale, focusClientX, focusClientY) {
     if (!pdfDoc) return;
-    const container       = viewerEl;
-    const prevScrollRatio = container.scrollTop / (container.scrollHeight || 1);
+    targetScale = clampScale(targetScale);
+    if (targetScale === currentScale) return;
 
-    currentScale = clampScale(newScale);
+    const container = viewerEl;
+    const rect = container.getBoundingClientRect();
+
+    const fx = (typeof focusClientX === 'number')
+      ? focusClientX
+      : rect.left + rect.width / 2;
+    const fy = (typeof focusClientY === 'number')
+      ? focusClientY
+      : rect.top + rect.height / 2;
+
+    const offsetX = fx - rect.left;
+    const offsetY = fy - rect.top;
+
+    // coordinate del contenuto (prima dello zoom) sotto il punto di fuoco
+    const contentX = (container.scrollLeft + offsetX) / currentScale;
+    const contentY = (container.scrollTop  + offsetY) / currentScale;
+
+    currentScale = targetScale;
 
     return renderAllPages().then(() => {
-      container.scrollTop = prevScrollRatio * (container.scrollHeight || 1);
+      const newRect = container.getBoundingClientRect();
+      const newOffsetX = (typeof focusClientX === 'number')
+        ? (focusClientX - newRect.left)
+        : offsetX;
+      const newOffsetY = (typeof focusClientY === 'number')
+        ? (focusClientY - newRect.top)
+        : offsetY;
+
+      container.scrollLeft = contentX * currentScale - newOffsetX;
+      container.scrollTop  = contentY * currentScale - newOffsetY;
     });
   }
 
-  function applyZoom(delta) {
-    if (!pdfDoc) return;
-    const nextScale = currentScale + delta;
-    if (nextScale === currentScale) return;
-    return setScaleAndRerender(nextScale);
+  function applyZoom(delta, focusX, focusY) {
+    return zoomToScale(currentScale + delta, focusX, focusY);
   }
 
   // Bottoni zoom +/-
@@ -821,13 +844,15 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     /* === MOBILE: pinch to zoom (preview CSS) + double tap === */
-    let pinchStartDist         = null;
-    let pinchStartVisualScale  = null;
+    let pinchStartDist          = null;
+    let pinchStartVisualScale   = null;
     let pinchCurrentVisualScale = null;
+    let pinchCenterClientX      = null;
+    let pinchCenterClientY      = null;
 
-    let lastTapTime  = 0;
-    let lastTapX     = 0;
-    let lastTapY     = 0;
+    let lastTapTime = 0;
+    let lastTapX    = 0;
+    let lastTapY    = 0;
 
     function getTouchDistance(t1, t2) {
       const dx = t1.clientX - t2.clientX;
@@ -837,9 +862,14 @@ document.addEventListener('DOMContentLoaded', function () {
 
     viewerEl.addEventListener('touchstart', function (e) {
       if (e.touches.length === 2) {
-        pinchStartDist        = getTouchDistance(e.touches[0], e.touches[1]);
-        pinchStartVisualScale = currentScale;
+        const t1 = e.touches[0];
+        const t2 = e.touches[1];
+
+        pinchStartDist          = getTouchDistance(t1, t2);
+        pinchStartVisualScale   = currentScale;
         pinchCurrentVisualScale = currentScale;
+        pinchCenterClientX      = (t1.clientX + t2.clientX) / 2;
+        pinchCenterClientY      = (t1.clientY + t2.clientY) / 2;
 
         if (pagesWrapper) {
           pagesWrapper.style.transition = 'transform 0s';
@@ -850,61 +880,64 @@ document.addEventListener('DOMContentLoaded', function () {
 
     viewerEl.addEventListener('touchmove', function (e) {
       if (e.touches.length === 2 && pinchStartDist && pagesWrapper) {
-        const newDist = getTouchDistance(e.touches[0], e.touches[1]);
+        const t1 = e.touches[0];
+        const t2 = e.touches[1];
+
+        const newDist = getTouchDistance(t1, t2);
         const factor  = newDist / pinchStartDist;
 
-        // scala "visiva" target durante il pinch
-        let targetScale = clampScale(pinchStartVisualScale * factor);
-        pinchCurrentVisualScale = targetScale;
+        let visualScale = clampScale(pinchStartVisualScale * factor);
+        pinchCurrentVisualScale = visualScale;
+
+        // aggiorno il centro del pinch
+        pinchCenterClientX = (t1.clientX + t2.clientX) / 2;
+        pinchCenterClientY = (t1.clientY + t2.clientY) / 2;
 
         // preview CSS: scala rispetto alla scala base renderizzata
-        const liveFactor = targetScale / currentScale;
+        const liveFactor = visualScale / currentScale;
         pagesWrapper.style.transform = 'scale(' + liveFactor + ')';
 
         e.preventDefault(); // evito lo scroll della pagina mentre pincho
       }
     }, { passive: false });
 
+    function resetPinchState() {
+      pinchStartDist          = null;
+      pinchStartVisualScale   = null;
+      pinchCurrentVisualScale = null;
+      pinchCenterClientX      = null;
+      pinchCenterClientY      = null;
+    }
+
     function finalizePinchZoom() {
       if (!pinchStartDist || !pdfDoc) {
-        // niente pinch da finalizzare
-        pinchStartDist         = null;
-        pinchStartVisualScale  = null;
-        pinchCurrentVisualScale = null;
+        resetPinchState();
         return;
       }
 
       const target = clampScale(pinchCurrentVisualScale || currentScale);
 
-      const container       = viewerEl;
-      const prevScrollRatio = container.scrollTop / (container.scrollHeight || 1);
+      // Se la differenza è minima, non rifaccio il render
+      if (Math.abs(target - currentScale) < 0.02) {
+        if (pagesWrapper) {
+          pagesWrapper.style.transition = 'transform 0.08s ease-out';
+          pagesWrapper.style.transform  = 'scale(1)';
+        }
+        resetPinchState();
+        return;
+      }
 
-      // tolgo la preview CSS
+      // rimuovo la preview CSS (tanto poi rifacciamo il render)
       if (pagesWrapper) {
         pagesWrapper.style.transition = 'transform 0.08s ease-out';
         pagesWrapper.style.transform  = 'scale(1)';
       }
 
-      // se la differenza è piccola, non ha senso rerenderizzare
-      if (Math.abs(target - currentScale) < 0.02) {
-        pinchStartDist         = null;
-        pinchStartVisualScale  = null;
-        pinchCurrentVisualScale = null;
-        return;
-      }
+      const focusX = pinchCenterClientX;
+      const focusY = pinchCenterClientY;
+      resetPinchState();
 
-      currentScale = target;
-
-      renderAllPages().then(() => {
-        container.scrollTop = prevScrollRatio * (container.scrollHeight || 1);
-        pinchStartDist         = null;
-        pinchStartVisualScale  = null;
-        pinchCurrentVisualScale = null;
-      }).catch(() => {
-        pinchStartDist         = null;
-        pinchStartVisualScale  = null;
-        pinchCurrentVisualScale = null;
-      });
+      zoomToScale(target, focusX, focusY);
     }
 
     viewerEl.addEventListener('touchend', function (e) {
@@ -924,7 +957,7 @@ document.addEventListener('DOMContentLoaded', function () {
           const dy = touch.clientY - lastTapY;
           if ((dx * dx + dy * dy) < (TAP_RADIUS * TAP_RADIUS)) {
             e.preventDefault();
-            applyZoom(ZOOM_STEP);
+            applyZoom(ZOOM_STEP, touch.clientX, touch.clientY);
             lastTapTime = 0;
             return;
           }
@@ -940,10 +973,10 @@ document.addEventListener('DOMContentLoaded', function () {
       finalizePinchZoom();
     });
 
-    /* === DESKTOP: double-click zoom === */
+    /* === DESKTOP: double-click zoom centrato dove clicchi === */
     viewerEl.addEventListener('dblclick', function (e) {
       e.preventDefault();
-      applyZoom(ZOOM_STEP);
+      applyZoom(ZOOM_STEP, e.clientX, e.clientY);
     });
   }
 
