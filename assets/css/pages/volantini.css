@@ -738,6 +738,7 @@
 
 /* Wrapper delle pagine per lo zoom di anteprima */
 .pdfjs-pages {
-  transform-origin: top center;
+  /* l'origin vera la settiamo via JS sul centro del pinch */
+  transform-origin: 0 0;
   will-change: transform;
 }

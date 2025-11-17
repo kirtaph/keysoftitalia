@@ -860,46 +860,59 @@ document.addEventListener('DOMContentLoaded', function () {
       return Math.sqrt(dx * dx + dy * dy);
     }
 
-    viewerEl.addEventListener('touchstart', function (e) {
-      if (e.touches.length === 2) {
-        const t1 = e.touches[0];
-        const t2 = e.touches[1];
+viewerEl.addEventListener('touchstart', function (e) {
+  if (e.touches.length === 2) {
+    const t1 = e.touches[0];
+    const t2 = e.touches[1];
 
-        pinchStartDist          = getTouchDistance(t1, t2);
-        pinchStartVisualScale   = currentScale;
-        pinchCurrentVisualScale = currentScale;
-        pinchCenterClientX      = (t1.clientX + t2.clientX) / 2;
-        pinchCenterClientY      = (t1.clientY + t2.clientY) / 2;
+    pinchStartDist          = getTouchDistance(t1, t2);
+    pinchStartVisualScale   = currentScale;
+    pinchCurrentVisualScale = currentScale;
+    pinchCenterClientX      = (t1.clientX + t2.clientX) / 2;
+    pinchCenterClientY      = (t1.clientY + t2.clientY) / 2;
 
-        if (pagesWrapper) {
-          pagesWrapper.style.transition = 'transform 0s';
-          pagesWrapper.style.transform  = 'scale(1)';
-        }
-      }
-    }, { passive: true });
+    if (pagesWrapper) {
+      pagesWrapper.style.transition = 'transform 0s';
 
-    viewerEl.addEventListener('touchmove', function (e) {
-      if (e.touches.length === 2 && pinchStartDist && pagesWrapper) {
-        const t1 = e.touches[0];
-        const t2 = e.touches[1];
+      // 👉 imposta l'origine della trasformazione sul centro del pinch
+      const rect   = pagesWrapper.getBoundingClientRect();
+      const originX = pinchCenterClientX - rect.left;
+      const originY = pinchCenterClientY - rect.top;
+      pagesWrapper.style.transformOrigin = originX + 'px ' + originY + 'px';
 
-        const newDist = getTouchDistance(t1, t2);
-        const factor  = newDist / pinchStartDist;
+      pagesWrapper.style.transform  = 'scale(1)';
+    }
+  }
+}, { passive: true });
 
-        let visualScale = clampScale(pinchStartVisualScale * factor);
-        pinchCurrentVisualScale = visualScale;
+viewerEl.addEventListener('touchmove', function (e) {
+  if (e.touches.length === 2 && pinchStartDist && pagesWrapper) {
+    const t1 = e.touches[0];
+    const t2 = e.touches[1];
 
-        // aggiorno il centro del pinch
-        pinchCenterClientX = (t1.clientX + t2.clientX) / 2;
-        pinchCenterClientY = (t1.clientY + t2.clientY) / 2;
+    const newDist = getTouchDistance(t1, t2);
+    const factor  = newDist / pinchStartDist;
 
-        // preview CSS: scala rispetto alla scala base renderizzata
-        const liveFactor = visualScale / currentScale;
-        pagesWrapper.style.transform = 'scale(' + liveFactor + ')';
+    let visualScale = clampScale(pinchStartVisualScale * factor);
+    pinchCurrentVisualScale = visualScale;
 
-        e.preventDefault(); // evito lo scroll della pagina mentre pincho
-      }
-    }, { passive: false });
+    // 👉 nuovo centro del pinch
+    pinchCenterClientX = (t1.clientX + t2.clientX) / 2;
+    pinchCenterClientY = (t1.clientY + t2.clientY) / 2;
+
+    // 👉 aggiorna anche l'origin in base al centro
+    const rect   = pagesWrapper.getBoundingClientRect();
+    const originX = pinchCenterClientX - rect.left;
+    const originY = pinchCenterClientY - rect.top;
+    pagesWrapper.style.transformOrigin = originX + 'px ' + originY + 'px';
+
+    // preview CSS: scala rispetto alla scala base renderizzata
+    const liveFactor = visualScale / currentScale;
+    pagesWrapper.style.transform = 'scale(' + liveFactor + ')';
+
+    e.preventDefault(); // evito lo scroll della pagina mentre pincho
+  }
+}, { passive: false });
 
     function resetPinchState() {
       pinchStartDist          = null;
