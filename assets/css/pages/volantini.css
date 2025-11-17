@@ -742,3 +742,86 @@
   transform-origin: 0 0;
   will-change: transform;
 }
+/* Contenitore visibile della modale */
+.flyer-modal-body {
+  position: relative;
+  height: min(80vh, 720px);
+  overflow: hidden;          /* niente scroll, ci pensa Panzoom col drag */
+  background: #0f172a;       /* scuro neutro */
+  padding: 0.75rem;
+  border-radius: 1rem;
+}
+
+/* Wrapper che Panzoom gestisce (pan + zoom) */
+.flyer-pdf-panzoom {
+  width: 100%;
+  height: 100%;
+  touch-action: none;        /* richiesto per pinch fluido */
+  cursor: grab;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+}
+
+/* quando stai trascinando */
+.flyer-pdf-panzoom.is-panning {
+  cursor: grabbing;
+}
+
+/* Stack verticale delle pagine renderizzate */
+.flyer-pdf-pages {
+  display: inline-block;
+}
+
+/* Canvas/pdf page */
+.flyer-pdf-pages canvas {
+  display: block;
+  max-width: 100%;
+  height: auto;
+  margin: 0 auto 1.5rem;
+  box-shadow: 0 12px 30px rgba(0,0,0,0.45);
+  border-radius: 0.5rem;
+  background: #fff;
+}
+
+/* Toolbar semplice */
+.flyer-modal-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: .75rem;
+  padding: .5rem .75rem;
+  margin-bottom: .5rem;
+  border-radius: 999px;
+  background: rgba(15, 23, 42, 0.9);
+  color: #e5e7eb;
+  font-size: .9rem;
+}
+
+.flyer-modal-toolbar button {
+  border: none;
+  background: #1f2937;
+  color: #e5e7eb;
+  border-radius: 999px;
+  padding: .25rem .75rem;
+  font-size: .9rem;
+}
+
+.flyer-modal-toolbar button:hover {
+  background: #4b5563;
+}
+
+.flyer-page-indicator {
+  min-width: 120px;
+  text-align: center;
+}
+
+.flyer-modal-body {
+  background: #020617;
+}
+
+.pdfjs-viewer {
+  max-height: 80vh;
+  background: #020617;
+  border-radius: .75rem;
+}

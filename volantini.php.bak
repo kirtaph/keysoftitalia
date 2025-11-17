@@ -256,6 +256,39 @@ include __DIR__.'/includes/recond_swiper.php';
   </div>
 </section>
 
+<!-- MODAL VIEWER PDF -->
+<div class="modal fade" id="flyerViewerModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-xl modal-dialog-centered flyer-modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="flyerViewerTitle">Sfoglia il volantino</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Chiudi"></button>
+      </div>
+
+      <div class="modal-body flyer-modal-body">
+        <!-- TOOLBAR -->
+        <div class="pdfjs-toolbar">
+          <div class="pdfjs-page-indicator">
+            Pagina <span id="pdfPageCurrent">1</span> di <span id="pdfPageTotal">1</span>
+          </div>
+          <div class="pdfjs-zoom-controls">
+            <button type="button" class="btn btn-sm btn-outline-light" data-pdf-zoom-out>
+              &minus;
+            </button>
+            <button type="button" class="btn btn-sm btn-outline-light ms-2" data-pdf-zoom-in>
+              +
+            </button>
+          </div>
+        </div>
+
+        <!-- VIEWER -->
+        <div id="flyerPdfViewer" class="pdfjs-viewer">
+          <div class="pdfjs-loading">Caricamento volantino...</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
 
 <!-- JSON-LD -->
 <?php if (!empty($flyer_items)): ?>
@@ -271,7 +304,15 @@ include __DIR__.'/includes/recond_swiper.php';
 <script src="<?php echo asset('js/main.js'); ?>"></script>
 <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
 <script>AOS.init();</script>
+
+<!-- PDF.js + Panzoom -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@panzoom/panzoom/dist/panzoom.min.js"></script>
+
 <script>
+/**
+ * 1) Gestione lista volantini (tabs, AJAX, ?flyer=slug)
+ */
 (function(){
   const FLYERS_ENDPOINT = "<?php echo asset('ajax/get_flyers.php'); ?>";
 
@@ -282,8 +323,8 @@ include __DIR__.'/includes/recond_swiper.php';
 
   if (!grid || !tabs.length) return;
 
-  const params      = new URLSearchParams(window.location.search);
-  const slugParam   = params.get('flyer'); // slug passato da home
+  const params       = new URLSearchParams(window.location.search);
+  const slugParam    = params.get('flyer'); // slug passato da home
   const STATUS_ORDER = ['current', 'upcoming', 'archived'];
 
   // ---------- UI helpers ----------
@@ -320,7 +361,7 @@ include __DIR__.'/includes/recond_swiper.php';
 
   function formatDate(str){
     if (!str) return '';
-    const parts = str.split('-'); // YYYY-MM-DD
+    const parts = String(str).split('-'); // YYYY-MM-DD
     if (parts.length !== 3) return str;
     return parts[2] + '/' + parts[1] + '/' + parts[0];
   }
@@ -346,145 +387,148 @@ include __DIR__.'/includes/recond_swiper.php';
   }
 
   // ---------- RENDER ----------
- function renderFlyers(flyers, status){
-  clearGrid();
-  counter.textContent = flyers.length;
+  function renderFlyers(flyers, status){
+    clearGrid();
+    counter.textContent = flyers.length;
 
-  if (!flyers.length){
-    msgBox.textContent = statusEmptyMessage(status);
-    return;
+    if (!flyers.length){
+      msgBox.textContent = statusEmptyMessage(status);
+      return;
+    }
+
+    msgBox.textContent = '';
+
+    let delay = 0;
+
+    flyers.forEach(f => {
+      delay += 80;
+
+      // capire se il volantino è scaduto/archiviato
+      const isExpired =
+        status === 'archived' ||
+        (f.status_code && f.status_code === 'archived') ||
+        (typeof f.is_expired !== 'undefined' && !!f.is_expired);
+
+      const col = document.createElement('div');
+      col.className = 'col-md-6 col-lg-4';
+      col.setAttribute('data-aos', 'fade-up');
+      col.setAttribute('data-aos-delay', String(delay));
+
+      const card = document.createElement('article');
+      card.className = 'flyer-card h-100';
+      if (isExpired) {
+        card.classList.add('flyer-card-expired');
+      }
+
+      // HEADER
+      const header = document.createElement('header');
+      header.className = 'flyer-card-header';
+
+      const coverWrap = document.createElement('div');
+      coverWrap.className = 'flyer-cover';
+
+      if (f.cover_image_url){
+        const img = document.createElement('img');
+        img.src = f.cover_image_url;
+        img.alt = 'Copertina volantino ' + f.title;
+        img.loading = 'lazy';
+        coverWrap.appendChild(img);
+      } else {
+        const placeholder = document.createElement('div');
+        placeholder.className = 'flyer-cover-placeholder';
+        placeholder.innerHTML = '<i class="ri-price-tag-3-line"></i>';
+        coverWrap.appendChild(placeholder);
+      }
+
+      const meta = document.createElement('div');
+      meta.className = 'flyer-meta';
+
+      const titleEl = document.createElement('h3');
+      titleEl.className = 'flyer-title';
+      titleEl.textContent = f.title;
+
+      const periodEl = document.createElement('p');
+      periodEl.className = 'flyer-period';
+      periodEl.textContent = formatPeriod(f.start_date, f.end_date);
+
+      const badgesWrap = document.createElement('div');
+      badgesWrap.className = 'flyer-badges';
+
+      const statusBadge = document.createElement('span');
+      statusBadge.className = 'badge flyer-badge flyer-badge-' + (f.status_code || status || 'current');
+      statusBadge.textContent = f.status_label || '';
+      badgesWrap.appendChild(statusBadge);
+
+      if (f.show_home && !isExpired){
+        const homeBadge = document.createElement('span');
+        homeBadge.className = 'badge flyer-badge-highlight';
+        homeBadge.textContent = 'In evidenza';
+        badgesWrap.appendChild(homeBadge);
+      }
+
+      meta.appendChild(titleEl);
+      meta.appendChild(periodEl);
+      meta.appendChild(badgesWrap);
+
+      header.appendChild(coverWrap);
+      header.appendChild(meta);
+
+      // BODY
+      const body = document.createElement('div');
+      body.className = 'flyer-card-body';
+
+      if (f.description){
+        const desc = document.createElement('p');
+        desc.className = 'flyer-description';
+        desc.textContent = f.description;
+        body.appendChild(desc);
+      }
+
+      // ACTIONS
+      const actions = document.createElement('div');
+      actions.className = 'flyer-card-actions';
+
+      if (isExpired) {
+        // ✅ NESSUN ELEMENTO CLICCABILE
+        const note = document.createElement('p');
+        note.className = 'flyer-note small text-muted mb-0';
+        note.textContent = 'Volantino scaduto • offerte non più valide';
+        actions.appendChild(note);
+      } else if (f.pdf_url) {
+        const btnView = document.createElement('button');
+        btnView.type = 'button';
+        btnView.className = 'btn btn-primary btn-sm';
+        btnView.setAttribute('data-bs-toggle', 'modal');
+        btnView.setAttribute('data-bs-target', '#flyerViewerModal');
+        btnView.dataset.pdf   = f.pdf_url;
+        btnView.dataset.title = f.title;
+        btnView.dataset.slug  = f.slug; // usato per l’apertura da ?flyer=slug
+        btnView.innerHTML = '<i class="ri-eye-line me-1" aria-hidden="true"></i> Sfoglia online';
+        actions.appendChild(btnView);
+
+        const linkDownload = document.createElement('a');
+        linkDownload.href   = f.pdf_url;
+        linkDownload.target = '_blank';
+        linkDownload.rel    = 'noopener';
+        linkDownload.className = 'btn btn-outline-secondary btn-sm';
+        linkDownload.innerHTML = '<i class="ri-download-2-line me-1" aria-hidden="true"></i> Scarica PDF';
+        actions.appendChild(linkDownload);
+      } else {
+        const note = document.createElement('p');
+        note.className = 'flyer-note small text-muted mb-0';
+        note.textContent = 'PDF non disponibile per questo volantino.';
+        actions.appendChild(note);
+      }
+
+      body.appendChild(actions);
+
+      card.appendChild(header);
+      card.appendChild(body);
+
+      col.appendChild(card);
+      grid.appendChild(col);
+    });
   }
-
-  msgBox.textContent = '';
-
-  let delay = 0;
-
-  flyers.forEach(f => {
-    delay += 80;
-
-    // capire se il volantino è scaduto/archiviato
-    const isExpired =
-      status === 'archived' ||
-      (f.status_code && f.status_code === 'archived') ||
-      (typeof f.is_expired !== 'undefined' && !!f.is_expired);
-
-    const col = document.createElement('div');
-    col.className = 'col-md-6 col-lg-4';
-    col.setAttribute('data-aos', 'fade-up');
-    col.setAttribute('data-aos-delay', String(delay));
-
-    const card = document.createElement('article');
-    card.className = 'flyer-card h-100';
-    if (isExpired) {
-      card.classList.add('flyer-card-expired');
-    }
-
-    // HEADER
-    const header = document.createElement('header');
-    header.className = 'flyer-card-header';
-
-    const coverWrap = document.createElement('div');
-    coverWrap.className = 'flyer-cover';
-
-    if (f.cover_image_url){
-      const img = document.createElement('img');
-      img.src = f.cover_image_url;
-      img.alt = 'Copertina volantino ' + f.title;
-      img.loading = 'lazy';
-      coverWrap.appendChild(img);
-    } else {
-      const placeholder = document.createElement('div');
-      placeholder.className = 'flyer-cover-placeholder';
-      placeholder.innerHTML = '<i class="ri-price-tag-3-line"></i>';
-      coverWrap.appendChild(placeholder);
-    }
-
-    const meta = document.createElement('div');
-    meta.className = 'flyer-meta';
-
-    const titleEl = document.createElement('h3');
-    titleEl.className = 'flyer-title';
-    titleEl.textContent = f.title;
-
-    const periodEl = document.createElement('p');
-    periodEl.className = 'flyer-period';
-    periodEl.textContent = formatPeriod(f.start_date, f.end_date);
-
-    const badgesWrap = document.createElement('div');
-    badgesWrap.className = 'flyer-badges';
-
-    const statusBadge = document.createElement('span');
-    statusBadge.className = 'badge flyer-badge flyer-badge-' + (f.status_code || status || 'current');
-    statusBadge.textContent = f.status_label || '';
-    badgesWrap.appendChild(statusBadge);
-
-    if (f.show_home && !isExpired){
-      const homeBadge = document.createElement('span');
-      homeBadge.className = 'badge flyer-badge-highlight';
-      homeBadge.textContent = 'In evidenza';
-      badgesWrap.appendChild(homeBadge);
-    }
-
-    meta.appendChild(titleEl);
-    meta.appendChild(periodEl);
-    meta.appendChild(badgesWrap);
-
-    header.appendChild(coverWrap);
-    header.appendChild(meta);
-
-    // BODY
-    const body = document.createElement('div');
-    body.className = 'flyer-card-body';
-
-    if (f.description){
-      const desc = document.createElement('p');
-      desc.className = 'flyer-description';
-      desc.textContent = f.description;
-      body.appendChild(desc);
-    }
-
-    // ACTIONS
-    const actions = document.createElement('div');
-    actions.className = 'flyer-card-actions';
-
-    if (isExpired) {
-      // ✅ NESSUN ELEMENTO CLICCABILE
-      const note = document.createElement('p');
-      note.className = 'flyer-note small text-muted mb-0';
-      note.textContent = 'Volantino scaduto • offerte non più valide';
-      actions.appendChild(note);
-    } else if (f.pdf_url) {
-      const btnView = document.createElement('a');
-      btnView.href = f.pdf_url;
-      btnView.target = '_blank';
-      btnView.rel = 'noopener';
-      btnView.className = 'btn btn-primary btn-sm';
-      btnView.innerHTML = '<i class="ri-eye-line me-1" aria-hidden="true"></i> Sfoglia online';
-      actions.appendChild(btnView);
-
-      const linkDownload = document.createElement('a');
-      linkDownload.href   = f.pdf_url;
-      linkDownload.target = '_blank';
-      linkDownload.rel    = 'noopener';
-      linkDownload.className = 'btn btn-outline-secondary btn-sm';
-      linkDownload.innerHTML = '<i class="ri-download-2-line me-1" aria-hidden="true"></i> Scarica PDF';
-      actions.appendChild(linkDownload);
-    } else {
-      const note = document.createElement('p');
-      note.className = 'flyer-note small text-muted mb-0';
-      note.textContent = 'PDF non disponibile per questo volantino.';
-      actions.appendChild(note);
-    }
-
-    body.appendChild(actions);
-
-    card.appendChild(header);
-    card.appendChild(body);
-
-    col.appendChild(card);
-    grid.appendChild(col);
-  });
-}
 
   // ---------- LOAD + opzionale apertura slug ----------
   function loadFlyers(status, opts){
@@ -510,10 +554,10 @@ include __DIR__.'/includes/recond_swiper.php';
 
         let found = false;
         if (focusSlug){
-          const btn = grid.querySelector('button[data-slug="' + CSS.escape(focusSlug) + '"]');
+          const selector = 'button[data-slug="' + CSS.escape(focusSlug) + '"]';
+          const btn = grid.querySelector(selector);
           if (btn){
-            // apre la modale del volantino target
-            btn.click();
+            btn.click(); // apre la modale del volantino target
             found = true;
           }
         }
@@ -557,6 +601,223 @@ include __DIR__.'/includes/recond_swiper.php';
 
   // ---------- Init ----------
   initPage();
+})();
+</script>
+
+<script>
+/**
+ * 2) Viewer PDF integrato nella modale Bootstrap
+ *    #flyerViewerModal + #flyerPdfViewer + Panzoom
+ */
+(function(){
+  const viewerModal = document.getElementById('flyerViewerModal');
+  const viewerEl    = document.getElementById('flyerPdfViewer');
+  const titleEl     = document.getElementById('flyerViewerTitle');
+
+  const pageCurrentEl = document.getElementById('pdfPageCurrent');
+  const pageTotalEl   = document.getElementById('pdfPageTotal');
+  const zoomInBtn     = document.querySelector('[data-pdf-zoom-in]');
+  const zoomOutBtn    = document.querySelector('[data-pdf-zoom-out]');
+
+  if (!viewerModal || !viewerEl) return;
+
+  // viewer: area di viewport, niente scroll, ci pensa Panzoom col pan
+  viewerEl.style.touchAction = 'none';
+  viewerEl.style.overflow    = 'hidden';
+
+  // Fallback: se mancano PDF.js o Panzoom, apri in nuova scheda
+  if (typeof window.pdfjsLib === 'undefined' || typeof window.Panzoom === 'undefined') {
+    viewerModal.addEventListener('show.bs.modal', function (event) {
+      const button = event.relatedTarget;
+      if (!button) return;
+      const pdfUrl = button.getAttribute('data-pdf');
+      const title  = button.getAttribute('data-title') || 'Volantino';
+      if (titleEl) titleEl.textContent = title;
+
+      if (pdfUrl) {
+        viewerModal.addEventListener('shown.bs.modal', function onShown(){
+          viewerModal.removeEventListener('shown.bs.modal', onShown);
+          window.open(pdfUrl, '_blank', 'noopener');
+          const modalInstance = bootstrap.Modal.getInstance(viewerModal);
+          if (modalInstance) modalInstance.hide();
+        });
+      }
+    });
+    return;
+  }
+
+  // Config worker di PDF.js
+  pdfjsLib.GlobalWorkerOptions.workerSrc =
+    'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+
+  let pdfDoc          = null;
+  let numPages        = 0;
+  let panzoomInstance = null;
+
+  function setPageIndicator(current, total){
+    if (pageCurrentEl) pageCurrentEl.textContent = String(current || 1);
+    if (pageTotalEl)   pageTotalEl.textContent   = String(total || 1);
+  }
+
+  function clearViewer(){
+    if (panzoomInstance) {
+      panzoomInstance.destroy();
+      panzoomInstance = null;
+    }
+    viewerEl.innerHTML = '';
+    pdfDoc   = null;
+    numPages = 0;
+    setPageIndicator(1, 1);
+  }
+
+  function renderPage(pageNumber){
+    return pdfDoc.getPage(pageNumber).then(function(page){
+      // ⬇⬇⬇ QUI IL CAMBIO IMPORTANTE: SCALA PIÙ BASSA
+      const viewport = page.getViewport({ scale: 0.9 }); // prima era 1.3
+      const canvas   = document.createElement('canvas');
+      const context  = canvas.getContext('2d');
+
+      canvas.width  = viewport.width;
+      canvas.height = viewport.height;
+      canvas.className = 'pdfjs-page-canvas';
+
+      viewerEl.appendChild(canvas);
+
+      const renderContext = { canvasContext: context, viewport: viewport };
+      return page.render(renderContext).promise;
+    });
+  }
+
+  function updatePageIndicator(){
+    if (!numPages) {
+      setPageIndicator(1, 1);
+      return;
+    }
+
+    const pages = viewerEl.querySelectorAll('.pdfjs-page-canvas');
+    if (!pages.length) {
+      setPageIndicator(1, numPages);
+      return;
+    }
+
+    const rect    = viewerEl.getBoundingClientRect();
+    const centerY = rect.top + rect.height / 2;
+
+    let bestPage  = 1;
+    let bestDelta = Infinity;
+
+    pages.forEach((pageEl, idx) => {
+      const r          = pageEl.getBoundingClientRect();
+      const pageCenter = r.top + r.height / 2;
+      const delta      = Math.abs(pageCenter - centerY);
+      if (delta < bestDelta) {
+        bestDelta = delta;
+        bestPage  = idx + 1;
+      }
+    });
+
+    setPageIndicator(bestPage, numPages);
+  }
+
+  function initPanzoom(){
+    if (!viewerEl) return;
+
+    panzoomInstance = Panzoom(viewerEl, {
+      maxScale: 3,
+      minScale: 0.7,
+      step: 0.3,
+      touchAction: 'none',
+      panOnlyWhenZoomed: false
+    });
+
+    const parent = viewerEl.parentElement || viewerEl;
+    parent.addEventListener('wheel', function(e){
+      if (!panzoomInstance) return;
+      panzoomInstance.zoomWithWheel(e);
+    });
+
+    viewerEl.addEventListener('panzoomstart', () => {
+      viewerEl.classList.add('is-panning');
+    });
+    viewerEl.addEventListener('panzoomend', () => {
+      viewerEl.classList.remove('is-panning');
+    });
+    viewerEl.addEventListener('panzoomchange', () => {
+      updatePageIndicator();
+    });
+
+    if (zoomInBtn) {
+      zoomInBtn.onclick = function(){
+        if (!panzoomInstance) return;
+        panzoomInstance.zoomIn({ animate: true });
+      };
+    }
+    if (zoomOutBtn) {
+      zoomOutBtn.onclick = function(){
+        if (!panzoomInstance) return;
+        panzoomInstance.zoomOut({ animate: true });
+      };
+    }
+
+    // reset iniziale: con scale 0.9 dovrebbe già stare tutto dentro
+    panzoomInstance.reset({ animate: false });
+    updatePageIndicator();
+  }
+
+  function loadPdfIntoViewer(url){
+    clearViewer();
+    if (!url) {
+      viewerEl.innerHTML = '<div class="pdfjs-error">PDF non disponibile.</div>';
+      return;
+    }
+
+    viewerEl.innerHTML = '<div class="pdfjs-loading">Caricamento volantino...</div>';
+
+    const task = pdfjsLib.getDocument(url);
+    task.promise.then(function(doc){
+      pdfDoc   = doc;
+      numPages = doc.numPages || 1;
+      setPageIndicator(1, numPages);
+      viewerEl.innerHTML = '';
+
+      const promises = [];
+      for (let pageNum = 1; pageNum <= numPages; pageNum++) {
+        promises.push(renderPage(pageNum));
+      }
+      return Promise.all(promises);
+    }).then(function(){
+      initPanzoom();
+    }).catch(function(err){
+      console.error('Errore PDF.js:', err);
+      viewerEl.innerHTML =
+        '<div class="pdfjs-error">Impossibile visualizzare il volantino. ' +
+        '<a href="' + encodeURI(url) + '" target="_blank" rel="noopener">Apri il PDF in una nuova scheda</a>.</div>';
+    });
+  }
+
+  // Hook Bootstrap modal
+  viewerModal.addEventListener('show.bs.modal', function (event) {
+    const button = event.relatedTarget;
+    if (!button) return;
+
+    const pdfUrl = button.getAttribute('data-pdf');
+    const title  = button.getAttribute('data-title') || 'Sfoglia il volantino';
+
+    if (titleEl) {
+      titleEl.textContent = title;
+    }
+
+    if (pdfUrl) {
+      loadPdfIntoViewer(pdfUrl);
+    } else {
+      clearViewer();
+      viewerEl.innerHTML = '<div class="pdfjs-error">PDF non disponibile.</div>';
+    }
+  });
+
+  viewerModal.addEventListener('hidden.bs.modal', function () {
+    clearViewer();
+  });
 })();
 </script>
 
