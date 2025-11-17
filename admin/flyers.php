@@ -15,6 +15,7 @@ include_once 'includes/header.php';
         <tr>
             <th>Titolo</th>
             <th>Periodo Validità</th>
+            <th>Link</th>
             <th>Stato</th>
             <th>In Home</th>
             <th class="text-center">Azioni</th>
@@ -125,10 +126,17 @@ document.addEventListener('DOMContentLoaded', function() {
                 if (data.status === 'success') {
                     flyersTableBody.innerHTML = '';
                     data.flyers.forEach(flyer => {
+                        const shareLink = `../volantini.php?flyer=${flyer.slug}`;
                         const row = `
                             <tr id="flyer-${flyer.id}">
                                 <td>${flyer.title}</td>
                                 <td>${flyer.start_date} - ${flyer.end_date}</td>
+                                <td>
+                                    <div class="input-group">
+                                        <input type="text" class="form-control form-control-sm" value="${shareLink}" readonly>
+                                        <button class="btn btn-sm btn-outline-secondary copy-link-btn" data-link="${shareLink}" title="Copia Link"><i class="fas fa-copy"></i></button>
+                                    </div>
+                                </td>
                                 <td>${flyer.status == 1 ? '<span class="badge bg-success">Pubblicato</span>' : '<span class="badge bg-warning">Bozza</span>'}</td>
                                 <td class="text-center">${flyer.show_home == 1 ? '<i class="fas fa-check-circle text-success"></i>' : ''}</td>
                                 <td class="text-center">
@@ -142,6 +150,21 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
             });
     }
+
+    flyersTableBody.addEventListener('click', function(e) {
+        const copyBtn = e.target.closest('.copy-link-btn');
+        if (copyBtn) {
+            const link = copyBtn.dataset.link;
+            const fullLink = new URL(link, window.location.href).href;
+            navigator.clipboard.writeText(fullLink).then(() => {
+                const originalIcon = copyBtn.innerHTML;
+                copyBtn.innerHTML = '<i class="fas fa-check"></i>';
+                setTimeout(() => {
+                    copyBtn.innerHTML = originalIcon;
+                }, 2000);
+            });
+        }
+    });
 
     function resetForm() {
         flyerForm.reset();

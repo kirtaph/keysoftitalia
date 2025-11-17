@@ -8,7 +8,7 @@ $action = $_REQUEST['action'] ?? null;
 try {
     switch ($action) {
         case 'list':
-            $stmt = $pdo->query("SELECT id, title, start_date, end_date, status, show_home FROM flyers ORDER BY start_date DESC");
+            $stmt = $pdo->query("SELECT id, title, slug, start_date, end_date, status, show_home FROM flyers ORDER BY start_date DESC");
             $flyers = $stmt->fetchAll(PDO::FETCH_ASSOC);
             echo json_encode(['status' => 'success', 'flyers' => $flyers]);
             break;
@@ -35,14 +35,31 @@ try {
             $status = $_POST['status'] ?? 0;
             $show_home = isset($_POST['show_home']) ? 1 : 0;
             $internal_notes = $_POST['internal_notes'] ?? null;
-            
+
+            // --- Gestione upload ---
             $uploadDir = '../../uploads/flyers/';
             if (!is_dir($uploadDir)) {
                 mkdir($uploadDir, 0755, true);
             }
 
-            $cover_image_path = $_POST['existing_cover_image'] ?? null;
+            $cover_image_path = null;
+            $pdf_file_path = null;
+
+            if ($action === 'edit') {
+                // Recupero i dati esistenti per confrontare i file
+                $stmt = $pdo->prepare('SELECT cover_image, pdf_file FROM flyers WHERE id = ?');
+                $stmt->execute([$id]);
+                $current_flyer = $stmt->fetch(PDO::FETCH_ASSOC);
+                $cover_image_path = $current_flyer['cover_image'];
+                $pdf_file_path = $current_flyer['pdf_file'];
+            }
+
+            // Gestione Immagine di Copertina
             if (isset($_FILES['cover_image']) && $_FILES['cover_image']['error'] == UPLOAD_ERR_OK) {
+                // Se c'è un file nuovo, elimino quello vecchio se esiste
+                if ($action === 'edit' && $cover_image_path && file_exists('../../' . $cover_image_path)) {
+                    unlink('../../' . $cover_image_path);
+                }
                 $fileName = uniqid() . '-' . basename($_FILES['cover_image']['name']);
                 $targetPath = $uploadDir . $fileName;
                 if (move_uploaded_file($_FILES['cover_image']['tmp_name'], $targetPath)) {
@@ -50,8 +67,12 @@ try {
                 }
             }
 
-            $pdf_file_path = $_POST['existing_pdf_file'] ?? null;
+            // Gestione File PDF
             if (isset($_FILES['pdf_file']) && $_FILES['pdf_file']['error'] == UPLOAD_ERR_OK) {
+                // Se c'è un file nuovo, elimino quello vecchio se esiste
+                if ($action === 'edit' && $pdf_file_path && file_exists('../../' . $pdf_file_path)) {
+                    unlink('../../' . $pdf_file_path);
+                }
                 $fileName = uniqid() . '-' . basename($_FILES['pdf_file']['name']);
                 $targetPath = $uploadDir . $fileName;
                 if (move_uploaded_file($_FILES['pdf_file']['tmp_name'], $targetPath)) {
@@ -61,11 +82,11 @@ try {
 
             if ($action === 'add') {
                 $stmt = $pdo->prepare(
-                    'INSERT INTO flyers (title, slug, description, start_date, end_date, status, show_home, cover_image, pdf_file, internal_notes) 
+                    'INSERT INTO flyers (title, slug, description, start_date, end_date, status, show_home, cover_image, pdf_file, internal_notes)
                      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)'
                 );
                 $stmt->execute([$title, $slug, $description, $start_date, $end_date, $status, $show_home, $cover_image_path, $pdf_file_path, $internal_notes]);
-            } else {
+            } else { // edit
                 $stmt = $pdo->prepare(
                     'UPDATE flyers SET title=?, slug=?, description=?, start_date=?, end_date=?, status=?, show_home=?, cover_image=?, pdf_file=?, internal_notes=? WHERE id = ?'
                 );
