@@ -612,7 +612,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
   if (!viewerModal || !viewerEl) return;
 
-  // Fallback: se PDF.js non è caricato, apro il PDF in nuova scheda
+  // Fallback: se PDF.js non è caricato, apri il PDF in nuova scheda
   if (typeof window['pdfjsLib'] === 'undefined') {
     viewerModal.addEventListener('show.bs.modal', function (event) {
       const button = event.relatedTarget;
@@ -628,16 +628,20 @@ document.addEventListener('DOMContentLoaded', function () {
   pdfjsLib.GlobalWorkerOptions.workerSrc =
     "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
 
-let pdfDoc       = null;
-// scala iniziale più bassa: il volantino parte più “intero”
-let currentScale = 0.9;
+  let pdfDoc        = null;
+  let pagesWrapper  = null;
 
-const ZOOM_STEP  = 0.2;
-// zoom minimo più basso: puoi allontanare di più per vedere (quasi) tutto
-const ZOOM_MIN   = 0.5;
-const ZOOM_MAX   = 2.0;
+  // scala "vera" a cui rendiamo i canvas
+  let currentScale  = 0.9;        // un po' più piccola -> vedi quasi tutto
+  const ZOOM_STEP   = 0.2;
+  const ZOOM_MIN    = 0.5;
+  const ZOOM_MAX    = 2.0;
 
-  let scrollRafId  = null;
+  let scrollRafId   = null;
+
+  function clampScale(s) {
+    return Math.max(ZOOM_MIN, Math.min(ZOOM_MAX, s));
+  }
 
   function setPageIndicator(current, total) {
     if (pageCurrentEl) pageCurrentEl.textContent = String(current || 1);
@@ -680,6 +684,10 @@ const ZOOM_MAX   = 2.0;
     if (!pdfDoc) return;
 
     viewerEl.innerHTML = '';
+    pagesWrapper = document.createElement('div');
+    pagesWrapper.className = 'pdfjs-pages';
+    viewerEl.appendChild(pagesWrapper);
+
     const numPages = pdfDoc.numPages || 1;
     setPageIndicator(1, numPages);
 
@@ -697,7 +705,7 @@ const ZOOM_MAX   = 2.0;
           canvas.width  = viewport.width;
           canvas.height = viewport.height;
 
-          viewerEl.appendChild(canvas);
+          pagesWrapper.appendChild(canvas);
 
           const renderContext = { canvasContext: context, viewport: viewport };
           return page.render(renderContext).promise;
@@ -706,6 +714,11 @@ const ZOOM_MAX   = 2.0;
     }
 
     return Promise.all(renderPromises).then(() => {
+      // ripristino eventuale trasformazione (preview) a 1
+      if (pagesWrapper) {
+        pagesWrapper.style.transition = 'transform 0.0s';
+        pagesWrapper.style.transform  = 'scale(1)';
+      }
       updateCurrentPageOnScroll();
     }).catch((error) => {
       console.error('Errore rendering PDF:', error);
@@ -716,40 +729,44 @@ const ZOOM_MAX   = 2.0;
     });
   }
 
-function loadPdf(url) {
-  viewerEl.innerHTML = '<div class="pdfjs-loading">Caricamento volantino...</div>';
-  pdfDoc = null;
+  function loadPdf(url) {
+    viewerEl.innerHTML = '<div class="pdfjs-loading">Caricamento volantino...</div>';
+    pdfDoc       = null;
+    pagesWrapper = null;
 
-  // parti dalla scala minima: l’utente vede subito il volantino “intero”
-  currentScale = ZOOM_MIN;
+    // Parti SEMPRE dalla scala minima -> volantino quasi intero
+    currentScale = ZOOM_MIN;
 
-  const loadingTask = pdfjsLib.getDocument(url);
-  loadingTask.promise.then(function (pdf) {
-    pdfDoc = pdf;
-    return renderAllPages();
-  }).catch(function (error) {
-    console.error('Errore PDF.js:', error);
-    viewerEl.innerHTML =
-      '<div class="pdfjs-error">Impossibile caricare il volantino. ' +
-      '<a href="' + encodeURI(url) +
-      '" target="_blank" rel="noopener">Apri il PDF in una nuova scheda</a>.</div>';
-  });
-}
+    const loadingTask = pdfjsLib.getDocument(url);
+    loadingTask.promise.then(function (pdf) {
+      pdfDoc = pdf;
+      return renderAllPages();
+    }).catch(function (error) {
+      console.error('Errore PDF.js:', error);
+      viewerEl.innerHTML =
+        '<div class="pdfjs-error">Impossibile caricare il volantino. ' +
+        '<a href="' + encodeURI(url) +
+        '" target="_blank" rel="noopener">Apri il PDF in una nuova scheda</a>.</div>';
+    });
+  }
+
+  function setScaleAndRerender(newScale) {
+    if (!pdfDoc) return;
+    const container       = viewerEl;
+    const prevScrollRatio = container.scrollTop / (container.scrollHeight || 1);
+
+    currentScale = clampScale(newScale);
+
+    return renderAllPages().then(() => {
+      container.scrollTop = prevScrollRatio * (container.scrollHeight || 1);
+    });
+  }
 
   function applyZoom(delta) {
     if (!pdfDoc) return;
-
-    const container = viewerEl;
-    const prevScrollRatio = container.scrollTop / (container.scrollHeight || 1);
-
-    let nextScale = currentScale + delta;
-    nextScale = Math.max(ZOOM_MIN, Math.min(ZOOM_MAX, nextScale));
+    const nextScale = currentScale + delta;
     if (nextScale === currentScale) return;
-
-    currentScale = nextScale;
-    renderAllPages().then(() => {
-      container.scrollTop = prevScrollRatio * (container.scrollHeight || 1);
-    });
+    return setScaleAndRerender(nextScale);
   }
 
   // Bottoni zoom +/-
@@ -767,7 +784,7 @@ function loadPdf(url) {
   // Indicatore pagina su scroll
   bindScrollIndicator();
 
-  // 🔥 Gesture: pinch, double-tap e pan con mouse
+  // ===== GESTURE: pan, pinch con preview, double tap / double click =====
   bindGestureControls();
 
   function bindGestureControls() {
@@ -779,7 +796,7 @@ function loadPdf(url) {
     let scrollStartTop  = 0;
 
     viewerEl.addEventListener('mousedown', function (e) {
-      if (e.button !== 0) return; // solo tasto sinistro
+      if (e.button !== 0) return;
       isDragging = true;
       viewerEl.classList.add('pdfjs-grabbing');
       dragStartX      = e.clientX;
@@ -803,12 +820,14 @@ function loadPdf(url) {
       viewerEl.classList.remove('pdfjs-grabbing');
     });
 
-    /* === MOBILE: pinch to zoom + double tap === */
-    let pinchStartDist  = null;
-    let pinchStartScale = null;
-    let lastTapTime     = 0;
-    let lastTapX        = 0;
-    let lastTapY        = 0;
+    /* === MOBILE: pinch to zoom (preview CSS) + double tap === */
+    let pinchStartDist         = null;
+    let pinchStartVisualScale  = null;
+    let pinchCurrentVisualScale = null;
+
+    let lastTapTime  = 0;
+    let lastTapX     = 0;
+    let lastTapY     = 0;
 
     function getTouchDistance(t1, t2) {
       const dx = t1.clientX - t2.clientX;
@@ -818,37 +837,79 @@ function loadPdf(url) {
 
     viewerEl.addEventListener('touchstart', function (e) {
       if (e.touches.length === 2) {
-        pinchStartDist  = getTouchDistance(e.touches[0], e.touches[1]);
-        pinchStartScale = currentScale;
+        pinchStartDist        = getTouchDistance(e.touches[0], e.touches[1]);
+        pinchStartVisualScale = currentScale;
+        pinchCurrentVisualScale = currentScale;
+
+        if (pagesWrapper) {
+          pagesWrapper.style.transition = 'transform 0s';
+          pagesWrapper.style.transform  = 'scale(1)';
+        }
       }
     }, { passive: true });
 
-let lastPinchZoomTime = 0;
+    viewerEl.addEventListener('touchmove', function (e) {
+      if (e.touches.length === 2 && pinchStartDist && pagesWrapper) {
+        const newDist = getTouchDistance(e.touches[0], e.touches[1]);
+        const factor  = newDist / pinchStartDist;
 
-viewerEl.addEventListener('touchmove', function (e) {
-  if (e.touches.length === 2 && pinchStartDist) {
-    const newDist = getTouchDistance(e.touches[0], e.touches[1]);
-    const factor  = newDist / pinchStartDist;
-    let targetScale = pinchStartScale * factor;
-    targetScale = Math.max(ZOOM_MIN, Math.min(ZOOM_MAX, targetScale));
+        // scala "visiva" target durante il pinch
+        let targetScale = clampScale(pinchStartVisualScale * factor);
+        pinchCurrentVisualScale = targetScale;
 
-    const diff = targetScale - currentScale;
-    const now  = Date.now();
+        // preview CSS: scala rispetto alla scala base renderizzata
+        const liveFactor = targetScale / currentScale;
+        pagesWrapper.style.transform = 'scale(' + liveFactor + ')';
 
-    // soglia più bassa + massimo uno zoom ogni 80 ms
-    if (Math.abs(diff) > 0.04 && (now - lastPinchZoomTime) > 80) {
-      applyZoom(diff);
-      lastPinchZoomTime = now;
+        e.preventDefault(); // evito lo scroll della pagina mentre pincho
+      }
+    }, { passive: false });
+
+    function finalizePinchZoom() {
+      if (!pinchStartDist || !pdfDoc) {
+        // niente pinch da finalizzare
+        pinchStartDist         = null;
+        pinchStartVisualScale  = null;
+        pinchCurrentVisualScale = null;
+        return;
+      }
+
+      const target = clampScale(pinchCurrentVisualScale || currentScale);
+
+      const container       = viewerEl;
+      const prevScrollRatio = container.scrollTop / (container.scrollHeight || 1);
+
+      // tolgo la preview CSS
+      if (pagesWrapper) {
+        pagesWrapper.style.transition = 'transform 0.08s ease-out';
+        pagesWrapper.style.transform  = 'scale(1)';
+      }
+
+      // se la differenza è piccola, non ha senso rerenderizzare
+      if (Math.abs(target - currentScale) < 0.02) {
+        pinchStartDist         = null;
+        pinchStartVisualScale  = null;
+        pinchCurrentVisualScale = null;
+        return;
+      }
+
+      currentScale = target;
+
+      renderAllPages().then(() => {
+        container.scrollTop = prevScrollRatio * (container.scrollHeight || 1);
+        pinchStartDist         = null;
+        pinchStartVisualScale  = null;
+        pinchCurrentVisualScale = null;
+      }).catch(() => {
+        pinchStartDist         = null;
+        pinchStartVisualScale  = null;
+        pinchCurrentVisualScale = null;
+      });
     }
 
-    e.preventDefault(); // evito lo scroll della pagina mentre pincho
-  }
-}, { passive: false });
-
     viewerEl.addEventListener('touchend', function (e) {
-      if (e.touches.length < 2) {
-        pinchStartDist  = null;
-        pinchStartScale = null;
+      if (e.touches.length < 2 && pinchStartDist) {
+        finalizePinchZoom();
       }
 
       // double-tap zoom (solo se non è stato un pinch)
@@ -862,7 +923,6 @@ viewerEl.addEventListener('touchmove', function (e) {
           const dx = touch.clientX - lastTapX;
           const dy = touch.clientY - lastTapY;
           if ((dx * dx + dy * dy) < (TAP_RADIUS * TAP_RADIUS)) {
-            // double tap riconosciuto
             e.preventDefault();
             applyZoom(ZOOM_STEP);
             lastTapTime = 0;
@@ -877,8 +937,7 @@ viewerEl.addEventListener('touchmove', function (e) {
     });
 
     viewerEl.addEventListener('touchcancel', function () {
-      pinchStartDist  = null;
-      pinchStartScale = null;
+      finalizePinchZoom();
     });
 
     /* === DESKTOP: double-click zoom === */
@@ -902,10 +961,11 @@ viewerEl.addEventListener('touchmove', function (e) {
     }
   });
 
-  // Chiusura modale: pulisco
+  // Chiusura modale: pulizia
   viewerModal.addEventListener('hidden.bs.modal', function () {
     viewerEl.innerHTML = '';
-    pdfDoc = null;
+    pdfDoc       = null;
+    pagesWrapper = null;
     setPageIndicator(1, 1);
   });
 });
