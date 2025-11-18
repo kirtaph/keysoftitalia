@@ -18,9 +18,9 @@ try {
         throw new RuntimeException('Nessuna connessione al database.');
     }
 
-    $status = isset($_GET['status']) ? trim((string)$_GET['status']) : 'current';
+    $status = isset($_GET['status']) ? trim((string)$_GET['status']) : 'all';
     if ($status === '') {
-        $status = 'current';
+        $status = 'all';
     }
 
     $today = date('Y-m-d');
