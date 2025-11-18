@@ -133,45 +133,15 @@ $ld_flyers = [
         Volantini e promozioni
       </h2>
       <p class="section-subtitle" data-aos="fade-up" data-aos-delay="100">
-        Seleziona la categoria per vedere le promo <strong>in corso</strong>, <strong>in arrivo</strong> o l’<strong>archivio</strong>.
+        I volantini vengono aggiornati periodicamente in base alle promozioni disponibili.
       </p>
     </div>
 
-    <!-- Tabs / Filtri -->
-    <div class="flyers-filters" role="tablist" aria-label="Filtra volantini per stato">
-      <button type="button"
-              class="flyer-tab is-active"
-              data-flyer-tab
-              data-status="current"
-              role="tab"
-              aria-selected="true">
-        <i class="ri-flashlight-line me-1" aria-hidden="true"></i> In corso
-      </button>
-      <button type="button"
-              class="flyer-tab"
-              data-flyer-tab
-              data-status="upcoming"
-              role="tab"
-              aria-selected="false">
-        <i class="ri-calendar-event-line me-1" aria-hidden="true"></i> In arrivo
-      </button>
-      <button type="button"
-              class="flyer-tab"
-              data-flyer-tab
-              data-status="archived"
-              role="tab"
-              aria-selected="false">
-        <i class="ri-archive-line me-1" aria-hidden="true"></i> Archivio
-      </button>
-    </div>
 
     <!-- Meta / messaggi -->
     <div class="flyers-meta d-flex justify-content-between align-items-center flex-wrap mt-3">
       <p class="mb-1 small text-muted">
         <span id="flyersCount">0</span> volantini trovati
-      </p>
-      <p class="mb-1 small text-muted">
-        I volantini vengono aggiornati periodicamente in base alle promozioni disponibili.
       </p>
     </div>
 
@@ -256,6 +226,20 @@ include __DIR__.'/includes/recond_swiper.php';
   </div>
 </section>
 
+<!-- MODAL VIEWER PDF -->
+<div class="modal fade" id="flyerViewerModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="flyerViewerTitle">Sfoglia il volantino</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Chiudi"></button>
+            </div>
+            <div class="modal-body p-0">
+                <iframe id="flyerPdfIframe" src="" style="width: 100%; height: 100%; border: none;"></iframe>
+            </div>
+        </div>
+    </div>
+</div>
 
 <!-- JSON-LD -->
 <?php if (!empty($flyer_items)): ?>
@@ -275,33 +259,18 @@ include __DIR__.'/includes/recond_swiper.php';
 (function(){
   const FLYERS_ENDPOINT = "<?php echo asset('ajax/get_flyers.php'); ?>";
 
-  const tabs    = document.querySelectorAll('[data-flyer-tab]');
   const grid    = document.getElementById('flyersGrid');
   const msgBox  = document.getElementById('flyersMessage');
   const counter = document.getElementById('flyersCount');
 
-  if (!grid || !tabs.length) return;
+  if (!grid) return;
 
   const params      = new URLSearchParams(window.location.search);
   const slugParam   = params.get('flyer'); // slug passato da home
-  const STATUS_ORDER = ['current', 'upcoming', 'archived'];
 
   // ---------- UI helpers ----------
-  function setActiveTab(status){
-    tabs.forEach(btn => {
-      const isActive = btn.getAttribute('data-status') === status;
-      btn.classList.toggle('is-active', isActive);
-      btn.setAttribute('aria-selected', isActive ? 'true' : 'false');
-    });
-  }
-
-  function statusEmptyMessage(status){
-    switch(status){
-      case 'upcoming': return 'Al momento non ci sono volantini in arrivo. Torna a trovarci tra qualche giorno 😉';
-      case 'archived': return 'Non ci sono ancora volantini in archivio.';
-      case 'current':
-      default:         return 'Al momento non ci sono volantini attivi. Passa in negozio per scoprire le offerte disponibili.';
-    }
+  function statusEmptyMessage(){
+    return 'Al momento non ci sono volantini disponibili. Passa in negozio per scoprire le offerte!';
   }
 
   function clearGrid(){
@@ -332,9 +301,8 @@ include __DIR__.'/includes/recond_swiper.php';
   }
 
   // ---------- FETCH ----------
-  function fetchFlyers(status){
+  function fetchFlyers(){
     const url = new URL(FLYERS_ENDPOINT, window.location.origin);
-    url.searchParams.set('status', status);
 
     return fetch(url.toString(), {
       headers: { 'X-Requested-With': 'XMLHttpRequest' }
@@ -346,12 +314,12 @@ include __DIR__.'/includes/recond_swiper.php';
   }
 
   // ---------- RENDER ----------
- function renderFlyers(flyers, status){
+ function renderFlyers(flyers){
   clearGrid();
   counter.textContent = flyers.length;
 
   if (!flyers.length){
-    msgBox.textContent = statusEmptyMessage(status);
+    msgBox.textContent = statusEmptyMessage();
     return;
   }
 
@@ -454,13 +422,27 @@ include __DIR__.'/includes/recond_swiper.php';
       note.textContent = 'Volantino scaduto • offerte non più valide';
       actions.appendChild(note);
     } else if (f.pdf_url) {
-      const btnView = document.createElement('a');
-      btnView.href = f.pdf_url;
-      btnView.target = '_blank';
-      btnView.rel = 'noopener';
-      btnView.className = 'btn btn-primary btn-sm';
-      btnView.innerHTML = '<i class="ri-eye-line me-1" aria-hidden="true"></i> Sfoglia online';
-      actions.appendChild(btnView);
+      const isMobile = window.innerWidth < 992;
+      if (isMobile) {
+        const btnView = document.createElement('a');
+        btnView.href = f.pdf_url;
+        btnView.target = '_blank';
+        btnView.rel = 'noopener';
+        btnView.className = 'btn btn-primary btn-sm';
+        btnView.innerHTML = '<i class="ri-eye-line me-1" aria-hidden="true"></i> Sfoglia online';
+        actions.appendChild(btnView);
+      } else {
+        const btnView = document.createElement('button');
+        btnView.type = 'button';
+        btnView.className = 'btn btn-primary btn-sm';
+        btnView.setAttribute('data-bs-toggle', 'modal');
+        btnView.setAttribute('data-bs-target', '#flyerViewerModal');
+        btnView.dataset.pdf   = f.pdf_url;
+        btnView.dataset.title = f.title;
+        btnView.dataset.slug  = f.slug; // usato per l’apertura da ?flyer=slug
+        btnView.innerHTML = '<i class="ri-eye-line me-1" aria-hidden="true"></i> Sfoglia online';
+        actions.appendChild(btnView);
+      }
 
       const linkDownload = document.createElement('a');
       linkDownload.href   = f.pdf_url;
@@ -487,14 +469,10 @@ include __DIR__.'/includes/recond_swiper.php';
 }
 
   // ---------- LOAD + opzionale apertura slug ----------
-  function loadFlyers(status, opts){
-    opts = opts || {};
-    const focusSlug = opts.focusSlug || null;
-
-    setActiveTab(status);
+  function loadFlyers(){
     showLoading();
 
-    return fetchFlyers(status)
+    return fetchFlyers()
       .then(data => {
         hideLoading();
 
@@ -502,63 +480,67 @@ include __DIR__.'/includes/recond_swiper.php';
           msgBox.textContent = 'Si è verificato un errore durante il caricamento dei volantini.';
           counter.textContent = '0';
           clearGrid();
-          return { found: false };
+          return;
         }
 
         const flyers = data.flyers || [];
-        renderFlyers(flyers, status);
+        renderFlyers(flyers);
 
-        let found = false;
-        if (focusSlug){
-          const btn = grid.querySelector('button[data-slug="' + CSS.escape(focusSlug) + '"]');
-          if (btn){
-            // apre la modale del volantino target
-            btn.click();
-            found = true;
+        if (slugParam){
+          const isMobile = window.innerWidth < 992;
+          if (isMobile) {
+            const flyer = flyers.find(f => f.slug === slugParam);
+            if (flyer && flyer.pdf_url) {
+              window.open(flyer.pdf_url, '_blank', 'noopener');
+            }
+          } else {
+            const btn = grid.querySelector('button[data-slug="' + CSS.escape(slugParam) + '"]');
+            if (btn){
+              btn.click();
+            }
           }
         }
-
-        return { found: found };
       })
       .catch(() => {
         hideLoading();
         msgBox.textContent = 'Si è verificato un problema di connessione. Riprova tra qualche istante.';
         counter.textContent = '0';
         clearGrid();
-        return { found: false };
       });
   }
 
-  async function initPage(){
-    // Se abbiamo uno slug in query (?flyer=xxx)
-    if (slugParam){
-      for (const st of STATUS_ORDER){
-        const res = await loadFlyers(st, { focusSlug: slugParam });
-        if (res && res.found){
-          return; // trovato, abbiamo aperto la modale
-        }
-      }
-      // Slug non trovato in nessuno stato: mostro comunque "in corso"
-      await loadFlyers('current');
-      return;
-    }
-
-    // Caso normale: nessun slug, carico "in corso"
-    await loadFlyers('current');
-  }
-
-  // ---------- Bind tabs ----------
-  tabs.forEach(btn => {
-    btn.addEventListener('click', () => {
-      const status = btn.getAttribute('data-status') || 'current';
-      loadFlyers(status);
-    });
-  });
-
   // ---------- Init ----------
-  initPage();
+  loadFlyers();
 })();
 </script>
 
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const viewerModal = document.getElementById('flyerViewerModal');
+    const titleEl = document.getElementById('flyerViewerTitle');
+    const iframeEl = document.getElementById('flyerPdfIframe');
+
+    if (!viewerModal || !iframeEl) return;
+
+    viewerModal.addEventListener('show.bs.modal', function (event) {
+        const button = event.relatedTarget;
+        const pdfUrl = button.getAttribute('data-pdf');
+        const title = button.getAttribute('data-title') || 'Sfoglia il volantino';
+
+        if (titleEl) {
+            titleEl.textContent = title;
+        }
+        if (iframeEl) {
+            iframeEl.setAttribute('src', pdfUrl);
+        }
+    });
+
+    viewerModal.addEventListener('hidden.bs.modal', function () {
+        if (iframeEl) {
+            iframeEl.setAttribute('src', '');
+        }
+    });
+});
+</script>
 </body>
 </html>

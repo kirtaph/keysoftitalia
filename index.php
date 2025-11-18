@@ -62,9 +62,109 @@ $page_keywords = "riparazioni smartphone ginosa, assistenza computer taranto, ri
 <!-- HERO CAROUSEL -->
 <section id="heroCarousel" class="carousel slide hero-carousel" data-bs-ride="carousel" data-bs-interval="6000" data-bs-pause="false" data-bs-touch="true" data-bs-wrap="true" data-bs-keyboard="true" aria-label="Carousel di presentazione servizi" data-aos="fade-in" data-aos-duration="1000">
   <div class="carousel-inner">
+  <?php
+  // piccola helper per le date
+  $fmtHeroDate = static function(?string $d){
+      if (!$d) return '';
+      $p = explode('-', $d);
+      return (count($p) === 3) ? "{$p[2]}/{$p[1]}/{$p[0]}" : $d;
+  };
+  ?>
+
+  <?php if ($featured_flyer): ?>
+  <!-- Slide: Volantino del momento -->
+  <div class="carousel-item active">
+    <div class="hero-slide d-flex align-items-center bg-hero-flyer"
+         style="background-image: url('<?php echo !empty($featured_flyer['cover_image']) ? htmlspecialchars($featured_flyer['cover_image']) : asset('images/hero/hero-flyer-bg.jpg'); ?>');">
+      <div class="container position-relative" style="z-index:2;">
+        <div class="row align-items-center">
+
+          <!-- Testo -->
+          <div class="col-lg-6">
+            <div class="hero-content text-white"
+                 data-aos="fade-right" data-aos-duration="800" data-aos-delay="200">
+
+              <div class="hero-badge hero-badge-flyer">
+                <i class="ri-price-tag-3-line"></i>
+                <span>Volantino del momento</span>
+              </div>
+
+              <h1 class="hero-title">
+                <?php echo htmlspecialchars($featured_flyer['title']); ?>
+              </h1>
+
+              <p class="hero-description">
+                <?php
+                  $start = $featured_flyer['start_date'] ?? null;
+                  $end   = $featured_flyer['end_date']   ?? null;
+
+                  if ($start && $end) {
+                    echo 'Offerte valide dal ' . $fmtHeroDate($start) . ' al ' . $fmtHeroDate($end) . '.';
+                  } elseif ($start) {
+                    echo 'Offerte valide dal ' . $fmtHeroDate($start) . '.';
+                  } elseif ($end) {
+                    echo 'Offerte valide fino al ' . $fmtHeroDate($end) . '.';
+                  } else {
+                    echo 'Scopri le offerte in corso nel nostro volantino.';
+                  }
+                ?>
+              </p>
+
+              <?php if (!empty($featured_flyer['description'])): ?>
+                <p class="hero-subdescription">
+                  <?php echo htmlspecialchars($featured_flyer['description']); ?>
+                </p>
+              <?php endif; ?>
+
+              <div class="hero-actions">
+                <a href="<?php echo url('volantini.php?flyer=' . urlencode($featured_flyer['slug'])); ?>"
+                   class="btn btn-primary btn-lg"
+                   aria-label="Sfoglia il volantino <?php echo htmlspecialchars($featured_flyer['title']); ?>">
+                  <i class="ri-book-open-line"></i> Sfoglia il volantino
+                </a>
+                <a href="<?php echo url('volantini.php'); ?>"
+                   class="btn btn-secondary btn-lg"
+                   aria-label="Vai alla pagina con tutti i volantini">
+                  <i class="ri-pages-line"></i> Tutti i volantini
+                </a>
+              </div>
+            </div>
+          </div>
+
+          <!-- Cover volantino (desktop) -->
+          <div class="col-lg-6 d-none d-lg-block">
+            <div class="hero-flyer-cover-wrapper"
+                 data-aos="zoom-in" data-aos-duration="800" data-aos-delay="300">
+              <div class="hero-flyer-cover">
+                <?php if (!empty($featured_flyer['cover_image'])): ?>
+                  <img src="<?php echo htmlspecialchars($featured_flyer['cover_image']); ?>"
+                       alt="Copertina volantino <?php echo htmlspecialchars($featured_flyer['title']); ?>"
+                       loading="lazy">
+                <?php else: ?>
+                  <div class="hero-flyer-placeholder">
+                    <i class="ri-price-tag-3-line"></i>
+                    <span>Volantino Key Soft</span>
+                  </div>
+                <?php endif; ?>
+
+                <?php if (!empty($featured_flyer['end_date'])): ?>
+                  <div class="hero-flyer-pill">
+                    Fino al <?php echo $fmtHeroDate($featured_flyer['end_date']); ?>
+                  </div>
+                <?php endif; ?>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+      <div class="overlay"></div>
+    </div>
+  </div>
+  <?php endif; ?>
 
     <!-- Slide 1: Riparazioni -->
-    <div class="carousel-item active">
+    <div class="carousel-item <?php echo empty($featured_flyer) ? 'active' : ''; ?>">
       <div class="hero-slide bg-hero-1 d-flex align-items-center">
         <div class="container position-relative" style="z-index:2;">
           <div class="row align-items-center">
@@ -251,14 +351,20 @@ $page_keywords = "riparazioni smartphone ginosa, assistenza computer taranto, ri
         <div class="overlay"></div>
       </div>
     </div>
-
   </div>
 
   <!-- Indicators (pallini) -->
   <div class="carousel-indicators">
+    <?php if ($featured_flyer): ?> 
+    <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide Volantino del momento"></button>
+    <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="1" aria-label="Slide Riparazioni"></button>
+    <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="2" aria-label="Slide Ricondizionati"></button>
+    <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="3" aria-label="Slide Consulenza IT & Reti"></button>
+    <?php else: ?>
     <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
     <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="1" aria-label="Slide 2"></button>
     <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="2" aria-label="Slide 3"></button>
+    <?php endif; ?>
   </div>
 </section>
 

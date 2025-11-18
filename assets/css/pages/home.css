@@ -1288,3 +1288,71 @@ a:focus, button:focus {
     width: 100%;
   }
 }
+
+.bg-hero-flyer{
+  position:relative;
+  background:
+    radial-gradient(circle at 0 0, rgba(249,115,22,.35), transparent 60%),
+    linear-gradient(135deg,#020617 0%,#020617 45%,#111827 100%);
+  padding: 5rem 0 4rem;
+}
+
+.hero-badge-flyer{
+  background: rgba(248,113,113,.15);
+  border-color: #f97316;
+}
+
+.hero-flyer-cover-wrapper{
+  display:flex;
+  justify-content:center;
+}
+
+.hero-flyer-cover{
+  position:relative;
+  max-width: 340px;
+  padding: .75rem;
+  border-radius: 1rem;
+  background:
+    radial-gradient(circle at 0 0, rgba(248,113,113,.25), transparent 55%),
+    #020617;
+  box-shadow: 0 22px 40px rgba(15,23,42,.85);
+}
+
+.hero-flyer-cover img{
+  display:block;
+  width:100%;
+  height:auto;
+  border-radius:.75rem;
+}
+
+.hero-flyer-pill{
+  position:absolute;
+  bottom: 1rem;
+  right: 1rem;
+  background:#f97316;
+  color:#fff;
+  font-size:.8rem;
+  font-weight:600;
+  padding:.25rem .7rem;
+  border-radius:999px;
+  box-shadow:0 8px 20px rgba(249,115,22,.5);
+}
+
+.hero-flyer-placeholder{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  min-height:260px;
+  color:#e5e7eb;
+  border-radius:.75rem;
+  border:1px dashed rgba(148,163,184,.6);
+}
+.hero-flyer-placeholder i{
+  font-size:2.4rem;
+  margin-bottom:.25rem;
+}
+
+@media (max-width: 991.98px){
+  .bg-hero-flyer{ padding: 4rem 0 3rem; }
+}
