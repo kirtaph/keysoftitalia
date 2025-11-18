@@ -126,7 +126,14 @@ document.addEventListener('DOMContentLoaded', function() {
                 if (data.status === 'success') {
                     flyersTableBody.innerHTML = '';
                     data.flyers.forEach(flyer => {
-                        const shareLink = `../volantini.php?flyer=${flyer.slug}`;
+                    // ricavo la root del sito togliendo /admin/… dal path corrente
+                    const rootPath = window.location.pathname.replace(/\/admin\/.*$/, '/');
+                    // costruisco il path giusto verso volantini.php
+                    const shareUrl = new URL(
+                    rootPath + 'volantini.php?flyer=' + encodeURIComponent(flyer.slug),
+                    window.location.origin
+                    );
+                    const shareLink = shareUrl.toString();
                         const row = `
                             <tr id="flyer-${flyer.id}">
                                 <td>${flyer.title}</td>
