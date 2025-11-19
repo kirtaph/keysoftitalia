@@ -491,7 +491,7 @@ include __DIR__.'/includes/recond_swiper.php';
           if (isMobile) {
             const flyer = flyers.find(f => f.slug === slugParam);
             if (flyer && flyer.pdf_url) {
-              window.open(flyer.pdf_url, '_blank', 'noopener');
+              window.location.href = flyer.pdf_url;
             }
           } else {
             const btn = grid.querySelector('button[data-slug="' + CSS.escape(slugParam) + '"]');

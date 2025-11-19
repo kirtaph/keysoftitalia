@@ -298,13 +298,13 @@
 .section-cta-flyers .btn-whatsapp {
   background-color: #25D366;
   border-color: #25D366;
-  color: #0b1723;
+  color: #ffffff;
   box-shadow: 0 8px 18px rgba(16,185,129,0.35);
 }
 .section-cta-flyers .btn-whatsapp:hover {
   background-color: #1ebe5c;
   border-color: #1ebe5c;
-  color: #020617;
+  color: #ffffff;
 }
 
 /* Outline primari: usiamo l'arancio del sito */
