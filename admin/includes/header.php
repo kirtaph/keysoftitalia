@@ -151,19 +151,25 @@ $currentPage = basename($_SERVER['PHP_SELF']);
                 <i class="fas fa-bars"></i>
             </button>
             
-            <div class="ms-auto user-profile">
-                <div class="dropdown">
-                    <a href="#" class="d-flex align-items-center text-decoration-none dropdown-toggle text-dark" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-                        <div class="user-avatar me-2">
-                            <?php echo strtoupper(substr($_SESSION['username'] ?? 'A', 0, 1)); ?>
-                        </div>
-                        <span class="d-none d-md-inline fw-bold"><?php echo htmlspecialchars($_SESSION['username'] ?? 'Admin'); ?></span>
-                    </a>
-                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
-                        <li><a class="dropdown-item" href="users.php"><i class="fas fa-user-cog me-2"></i>Profilo</a></li>
-                        <li><hr class="dropdown-divider"></li>
-                        <li><a class="dropdown-item text-danger" href="logout.php"><i class="fas fa-sign-out-alt me-2"></i>Logout</a></li>
-                    </ul>
+            <div class="ms-auto d-flex align-items-center">
+                <a href="../index.php" target="_blank" rel="noopener noreferrer" class="btn btn-outline-primary btn-sm me-3 d-none d-md-inline-flex align-items-center">
+                    <i class="fas fa-external-link-alt me-2"></i>Vai al Sito
+                </a>
+
+                <div class="user-profile">
+                    <div class="dropdown">
+                        <a href="#" class="d-flex align-items-center text-decoration-none dropdown-toggle text-dark" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                            <div class="user-avatar me-2">
+                                <?php echo strtoupper(substr($_SESSION['username'] ?? 'A', 0, 1)); ?>
+                            </div>
+                            <span class="d-none d-md-inline fw-bold"><?php echo htmlspecialchars($_SESSION['username'] ?? 'Admin'); ?></span>
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                            <li><a class="dropdown-item" href="users.php"><i class="fas fa-user-cog me-2"></i>Profilo</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item text-danger" href="logout.php"><i class="fas fa-sign-out-alt me-2"></i>Logout</a></li>
+                        </ul>
+                    </div>
                 </div>
             </div>
         </header>

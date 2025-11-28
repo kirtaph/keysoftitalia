@@ -8,7 +8,7 @@ $action = $_REQUEST['action'] ?? null;
 try {
     switch ($action) {
         case 'list':
-            $stmt = $pdo->query("SELECT id, title, slug, start_date, end_date, status, show_home FROM flyers ORDER BY start_date DESC");
+            $stmt = $pdo->query("SELECT id, title, slug, start_date, end_date, status, show_home, cover_image FROM flyers ORDER BY start_date DESC");
             $flyers = $stmt->fetchAll(PDO::FETCH_ASSOC);
             echo json_encode(['status' => 'success', 'flyers' => $flyers]);
             break;
