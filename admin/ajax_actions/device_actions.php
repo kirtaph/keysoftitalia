@@ -13,7 +13,7 @@ try {
             $stmt->execute([$id]);
             $device = $stmt->fetch(PDO::FETCH_ASSOC);
             if ($device) {
-                echo json_encode(['status' => 'success', 'device' => $device]);
+                echo json_encode(['status' => 'success', 'data' => $device]);
             } else {
                 throw new Exception('Dispositivo non trovato.');
             }

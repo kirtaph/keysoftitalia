@@ -1,0 +1,359 @@
+/* Key Soft Italia — Valuta il tuo Usato
+ * Riusa lo stile del preventivo + piccoli override
+ */
+
+@import url('preventivo.css');
+
+/* ---------- HERO VALUTA USATO ---------- */
+
+.page-hero {
+  padding: 1.75rem 0 2.25rem;
+  background: #fff;
+  border-bottom: 1px solid var(--ks-gray-100);
+}
+
+.page-hero .hero-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: .45rem;
+  padding: .3rem .8rem;
+  border-radius: 999px;
+  background: #fff4ec;
+  border: 1px solid #ffd5bc;
+  color: var(--ks-orange);
+  font-size: .82rem;
+  font-weight: 700;
+  margin-bottom: .35rem;
+}
+
+.page-hero .hero-badge i {
+  font-size: 1rem;
+}
+
+.page-hero .hero-title {
+  font-size: clamp(1.8rem, 3vw, 2.2rem);
+  font-weight: 800;
+  margin-bottom: .25rem;
+}
+
+.page-hero .hero-subtitle {
+  margin: 0 0 .9rem;
+  color: var(--ks-text-secondary);
+  max-width: 34rem;
+}
+
+.page-hero .hero-points {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: .35rem;
+  color: var(--ks-text-secondary);
+  font-size: .9rem;
+}
+
+.page-hero .hero-points i {
+  margin-right: .25rem;
+  color: var(--ks-orange);
+}
+
+/* Card a destra "Inizia la valutazione" */
+
+.hero-card {
+  background: #fff;
+  border-radius: 20px;
+  padding: 1.3rem 1.2rem 1.1rem;
+  box-shadow: 0 16px 30px rgba(15, 23, 42, .10);
+  border: 1px solid rgba(148, 163, 184, .35);
+}
+
+.hero-card-icon {
+  font-size: 2.2rem;
+  color: var(--ks-orange);
+  margin-bottom: .4rem;
+}
+
+.hero-card h2 {
+  font-size: 1.15rem;
+  font-weight: 800;
+  margin: 0 0 .2rem;
+}
+
+.hero-card p {
+  font-size: .9rem;
+  color: var(--ks-text-secondary);
+  margin: 0 0 .6rem;
+}
+
+.hero-card .btn-wa {
+  font-weight: 700;
+}
+
+.hero-card-note {
+  display: block;
+  font-size: .8rem;
+  color: var(--ks-text-secondary);
+}
+
+/* ---------- WIZARD / COMPONENTI SPECIFICI USATO ---------- */
+
+
+/* Device + problemi: nel JS usi .active, nel CSS originale .selected.
+   Le equipariamo.
+*/
+
+.device-card.active {
+  /* stesso stile di .device-card.selected */
+  border-color: var(--ks-orange);
+  background: #fff8f4;
+  box-shadow: var(--ks-shadow-md);
+}
+
+.problem-card.active {
+  border-color: var(--ks-orange);
+  background: #fff8f4;
+  box-shadow: var(--ks-shadow-md);
+}
+
+/* --- Condition Cards (Stato) --- */
+.condition-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.condition-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 1.25rem 1rem;
+  background: #fff;
+  border: 1px solid var(--ks-gray-200);
+  border-radius: 16px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  height: 100%;
+}
+
+.condition-card i {
+  font-size: 2rem;
+  color: var(--ks-text-secondary);
+  margin-bottom: 0.75rem;
+  transition: color 0.2s ease;
+}
+
+.condition-card .cond-text strong {
+  display: block;
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--ks-text-primary);
+  margin-bottom: 0.2rem;
+}
+
+.condition-card .cond-text span {
+  display: block;
+  font-size: 0.8rem;
+  color: var(--ks-text-secondary);
+  line-height: 1.3;
+}
+
+.condition-card:hover {
+  border-color: var(--ks-orange);
+  background: #fffbf7;
+  transform: translateY(-2px);
+  box-shadow: var(--ks-shadow-sm);
+}
+
+.condition-card.active {
+  border-color: var(--ks-orange);
+  background: #fff8f4;
+  box-shadow: var(--ks-shadow-md);
+}
+
+.condition-card.active i {
+  color: var(--ks-orange);
+}
+
+/* --- Accessory Cards (Accessori) --- */
+.accessory-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.accessory-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem 0.5rem;
+  background: #fff;
+  border: 1px solid var(--ks-gray-200);
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-align: center;
+}
+
+.accessory-card i {
+  font-size: 1.5rem;
+  color: var(--ks-text-secondary);
+  margin-bottom: 0.4rem;
+  transition: color 0.2s ease;
+}
+
+.accessory-card span {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--ks-text-primary);
+}
+
+.accessory-card:hover {
+  border-color: var(--ks-orange);
+  background: #fffbf7;
+}
+
+.accessory-card.active {
+  border-color: var(--ks-orange);
+  background: #fff8f4;
+  box-shadow: 0 4px 12px rgba(255, 107, 0, 0.08);
+}
+
+.accessory-card.active i {
+  color: var(--ks-orange);
+}
+
+
+/* Riepilogo a destra: solo un filo compattato */
+
+.summary-box {
+  margin-top: .3rem;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 1.5rem;
+}
+
+.summary-title {
+  font-size: 1rem;
+  font-weight: 800;
+  margin-bottom: .55rem;
+}
+
+.summary-title i {
+  margin-right: .25rem;
+  color: var(--ks-orange);
+}
+
+.summary-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.summary-list li {
+  margin-bottom: 0.75rem;
+  font-size: 0.95rem;
+  color: var(--ks-text-secondary);
+  display: flex;
+  justify-content: space-between;
+  border-bottom: 1px dashed #e2e8f0;
+  padding-bottom: 0.5rem;
+}
+
+.summary-list li:last-child {
+  border-bottom: none;
+  margin-bottom: 0;
+}
+
+.summary-list li strong {
+  font-weight: 650;
+  color: var(--ks-text-primary);
+}
+
+.summary-note {
+  font-size: 0.9rem;
+  color: #10b981;
+  /* Green success */
+  font-weight: 600;
+  text-align: center;
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid #e2e8f0;
+}
+
+/* Bottoni canale di invio (form / WhatsApp) */
+
+.ks-send-channel {
+  margin-top: 1.4rem;
+  padding: .9rem 1rem;
+  border-radius: 14px;
+  background: #f9fafb;
+  border: 1px dashed var(--ks-gray-200);
+}
+
+.ks-send-channel .channel-label {
+  font-size: .88rem;
+  font-weight: 650;
+  margin-bottom: .5rem;
+}
+
+.ks-send-channel .btn-group .btn {
+  font-size: .87rem;
+  font-weight: 650;
+  border-radius: 999px;
+}
+
+.ks-send-channel .btn.btn-wa {
+  display: inline-flex;
+  align-items: center;
+  gap: .25rem;
+}
+
+.ks-send-channel .channel-expl {
+  margin-top: .45rem;
+  font-size: .8rem;
+  color: var(--ks-text-secondary);
+}
+
+/* Emergency wrapper: allineato al preventivo */
+
+.emergency-wide-wrapper {
+  padding-bottom: 2.2rem;
+}
+
+/* ---------- RESPONSIVE ---------- */
+
+@media (max-width: 991.98px) {
+  .page-hero {
+    padding-top: 1.3rem;
+  }
+
+  .page-hero .hero-subtitle {
+    max-width: none;
+  }
+
+  .hero-card {
+    margin-top: 1rem;
+  }
+}
+
+@media (max-width: 575.98px) {
+  .summary-box {
+    margin-top: 1.5rem;
+  }
+
+  .condition-grid {
+    grid-template-columns: 1fr 1fr;
+    /* 2 columns on mobile */
+  }
+
+  .accessory-grid {
+    grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
+  }
+}

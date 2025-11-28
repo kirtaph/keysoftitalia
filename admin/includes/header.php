@@ -1,103 +1,172 @@
 <?php
-session_start();
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
 if (!isset($_SESSION['user_id'])) {
     header('Location: index.php');
     exit;
 }
 require_once '../config/config.php';
+
+// Get current page for active state
+$currentPage = basename($_SERVER['PHP_SELF']);
 ?>
 <!DOCTYPE html>
 <html lang="it">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Panel</title>
+    <title>Key Soft Italia - Admin Panel</title>
+    
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Font Awesome CSS -->
+    <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="../assets/css/main.css">
-    <link rel="stylesheet" href="../assets/css/components.css">
-    <style>
-        .image-thumbnail {
-            position: relative;
-            cursor: move;
-        }
-        .cover-overlay {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.5);
-            color: white;
-            display: none;
-            justify-content: center;
-            align-items: center;
-            font-weight: bold;
-        }
-        .image-thumbnail.is-cover .cover-overlay {
-            display: flex;
-        }
-        .sortable-images .col-md-3 {
-            padding: 5px;
-        }
-    </style>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <!-- Custom Admin CSS -->
+    <link rel="stylesheet" href="assets/css/admin-theme.css">
+    
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
-    <div class="header">
-        <div class="container">
-            <div class="header-main">
-                <div class="header-main-content">
-                    <a href="dashboard.php" class="logo">
-                        <span class="logo-text">
-                            <span class="logo-title">Key Soft Italia</span>
-                            <span class="logo-subtitle">Admin Panel</span>
-                        </span>
+
+<div class="admin-wrapper">
+    <!-- Sidebar -->
+    <nav class="admin-sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <a href="dashboard.php" class="sidebar-brand">
+                Key Soft Italia
+                <small>Admin Panel</small>
+            </a>
+        </div>
+        
+        <ul class="sidebar-menu">
+            <li class="sidebar-item">
+                <a href="dashboard.php" class="sidebar-link <?php echo $currentPage === 'dashboard.php' ? 'active' : ''; ?>">
+                    <i class="fas fa-tachometer-alt"></i>
+                    <span>Dashboard</span>
+                </a>
+            </li>
+            
+            <li class="sidebar-divider"></li>
+            <div class="sidebar-heading">Gestione Riparazioni</div>
+            
+            <li class="sidebar-item">
+                <a href="bookings.php" class="sidebar-link <?php echo $currentPage === 'bookings.php' ? 'active' : ''; ?>">
+                    <i class="fas fa-calendar-check"></i>
+                    <span>Prenotazioni</span>
+                </a>
+            </li>
+            <li class="sidebar-item">
+                <a href="quotes.php" class="sidebar-link <?php echo $currentPage === 'quotes.php' ? 'active' : ''; ?>">
+                    <i class="fas fa-file-invoice-dollar"></i>
+                    <span>Preventivi</span>
+                </a>
+            </li>
+            <li class="sidebar-item">
+                <a href="price_rules.php" class="sidebar-link <?php echo $currentPage === 'price_rules.php' ? 'active' : ''; ?>">
+                    <i class="fas fa-tags"></i>
+                    <span>Regole Prezzo</span>
+                </a>
+            </li>
+            <li class="sidebar-divider"></li>
+            <div class="sidebar-heading">Valutazione Usato</div>
+            
+            <li class="sidebar-item">
+                <a href="used_quotes.php" class="sidebar-link <?php echo $currentPage === 'used_quotes.php' ? 'active' : ''; ?>">
+                    <i class="fas fa-recycle"></i>
+                    <span>Richieste Valutazione</span>
+                </a>
+            </li>
+            
+            <li class="sidebar-divider"></li>
+            <div class="sidebar-heading">Catalogo & Config</div>
+            
+            <li class="sidebar-item">
+                <a href="devices.php" class="sidebar-link <?php echo $currentPage === 'devices.php' && (!isset($_GET['tab']) || $_GET['tab'] == 'devices') ? 'active' : ''; ?>" id="nav-devices">
+                    <i class="fas fa-mobile-alt"></i>
+                    <span>Dispositivi</span>
+                </a>
+            </li>
+            <li class="sidebar-item">
+                <a href="devices.php#brands" class="sidebar-link" id="nav-brands">
+                    <i class="fas fa-copyright"></i>
+                    <span>Marchi</span>
+                </a>
+            </li>
+            <li class="sidebar-item">
+                <a href="devices.php#models" class="sidebar-link" id="nav-models">
+                    <i class="fas fa-tablet-alt"></i>
+                    <span>Modelli</span>
+                </a>
+            </li>
+            <li class="sidebar-item">
+                <a href="devices.php#issues" class="sidebar-link" id="nav-issues">
+                    <i class="fas fa-tools"></i>
+                    <span>Problemi</span>
+                </a>
+            </li>
+            
+            <li class="sidebar-divider"></li>
+            <div class="sidebar-heading">Offerte</div>
+            
+            <li class="sidebar-item">
+                <a href="products.php" class="sidebar-link <?php echo $currentPage === 'products.php' ? 'active' : ''; ?>">
+                    <i class="fas fa-box-open"></i>
+                    <span>Prodotti</span>
+                </a>
+            </li>
+            <li class="sidebar-item">
+                <a href="flyers.php" class="sidebar-link <?php echo $currentPage === 'flyers.php' ? 'active' : ''; ?>">
+                    <i class="fas fa-newspaper"></i>
+                    <span>Volantini</span>
+                </a>
+            </li>
+            
+            <li class="sidebar-divider"></li>
+            <div class="sidebar-heading">Impostazioni</div>
+            
+            <li class="sidebar-item">
+                <a href="weekly_hours.php" class="sidebar-link <?php echo $currentPage === 'weekly_hours.php' ? 'active' : ''; ?>">
+                    <i class="fas fa-clock"></i>
+                    <span>Orari</span>
+                </a>
+            </li>
+            <li class="sidebar-item">
+                <a href="users.php" class="sidebar-link <?php echo $currentPage === 'users.php' ? 'active' : ''; ?>">
+                    <i class="fas fa-users"></i>
+                    <span>Utenti</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+
+    <!-- Main Content Wrapper -->
+    <div class="admin-main">
+        <!-- Topbar -->
+        <header class="admin-topbar">
+            <button class="topbar-toggle" id="sidebarToggle">
+                <i class="fas fa-bars"></i>
+            </button>
+            
+            <div class="ms-auto user-profile">
+                <div class="dropdown">
+                    <a href="#" class="d-flex align-items-center text-decoration-none dropdown-toggle text-dark" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                        <div class="user-avatar me-2">
+                            <?php echo strtoupper(substr($_SESSION['username'] ?? 'A', 0, 1)); ?>
+                        </div>
+                        <span class="d-none d-md-inline fw-bold"><?php echo htmlspecialchars($_SESSION['username'] ?? 'Admin'); ?></span>
                     </a>
-                    <nav class="nav-main">
-                        <ul class="nav-menu">
-                            <li class="nav-item"><a href="dashboard.php" class="nav-link">Dashboard</a></li>
-                            <li class="nav-item dropdown">
-                                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                    Preventivi
-                                </a>
-                                <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                            <li class="dropdown-item"><a href="devices.php" class="nav-link">Dispositivi</a></li>
-                            <li class="dropdown-item"><a href="brands.php" class="nav-link">Marchi</a></li>
-                            <li class="dropdown-item"><a href="models.php" class="nav-link">Modelli</a></li>
-                            <li class="dropdown-item"><a href="issues.php" class="nav-link">Problemi</a></li>
-                            <li class="dropdown-item"><a href="price_rules.php" class="nav-link">Regole di Prezzo</a></li>
-                            <li class="dropdown-item"><a href="quotes.php" class="nav-link">Preventivi</a></li>
-                            </ul>
-                            </li>
-                             <li class="nav-item dropdown">
-                                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownRicondizionati" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                    Offerte
-                                </a>
-                                <ul class="dropdown-menu" aria-labelledby="navbarDropdownRicondizionati">
-                                    <li><a class="dropdown-item" href="products.php">Prodotti</a></li>
-                                    <li><a class="dropdown-item" href="flyers.php">Volantini</a></li>
-                                </ul>
-                            </li>
-                            
-                            <li class="nav-item dropdown">
-                                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                    Orari di Apertura
-                                </a>
-                                <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                                    <li><a class="dropdown-item" href="weekly_hours.php">Orario Settimanale</a></li>
-                                    <li><a class="dropdown-item" href="holidays.php">Festività</a></li>
-                                    <li><a class="dropdown-item" href="exceptions.php">Eccezioni</a></li>
-                                </ul>
-                            </li>
-                            <li class="nav-item"><a href="users.php" class="nav-link">Utenti</a></li>
-                            <li class="nav-item"><a href="logout.php" class="nav-link">Logout</a></li>
-                        </ul>
-                    </nav>
+                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                        <li><a class="dropdown-item" href="users.php"><i class="fas fa-user-cog me-2"></i>Profilo</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item text-danger" href="logout.php"><i class="fas fa-sign-out-alt me-2"></i>Logout</a></li>
+                    </ul>
                 </div>
             </div>
-        </div>
-    </div>
-    <main class="section">
-        <div class="container">
+        </header>
+
+        <!-- Page Content -->
+        <main class="admin-content">

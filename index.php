@@ -645,7 +645,7 @@ include __DIR__.'/includes/recond_swiper.php';
           </div>
           <h3 class="cta-title">Vendi il tuo usato</h3>
           <p class="cta-text">Anche se rotto! Valutiamo e acquistiamo il tuo dispositivo usato al miglior prezzo.</p>
-          <a href="<?php echo url('servizi/vendita.php#permuta'); ?>" class="btn btn-cta" aria-label="Vendi il tuo dispositivo usato">
+          <a href="<?php echo url('valuta-usato.php'); ?>" class="btn btn-cta" aria-label="Vendi il tuo dispositivo usato">
             <i class="ri-recycle-line"></i> Vendi ora
           </a>
         </div>
@@ -730,7 +730,7 @@ include __DIR__.'/includes/recond_swiper.php';
           </div>
           <h3 class="cta-title">Vendi il tuo usato</h3>
           <p class="cta-text">Anche se rotto! Valutiamo e acquistiamo il tuo dispositivo usato al miglior prezzo.</p>
-          <a href="<?php echo url('servizi/vendita.php#permuta'); ?>" class="btn btn-cta" aria-label="Vendi il tuo dispositivo usato">
+          <a href="<?php echo url('valuta-usato.php'); ?>" class="btn btn-cta" aria-label="Vendi il tuo dispositivo usato">
             <i class="ri-recycle-line"></i> Vendi ora
           </a>
         </div>

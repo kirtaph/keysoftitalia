@@ -1,0 +1,61 @@
+/* Key Soft Italia — Prenota Riparazione (Wizard 3 step)
+   Riusa lo stile del wizard preventivo per coerenza grafica.
+*/
+
+@import url('preventivo.css');
+
+/* ---------- WIZARD / COMPONENTI SPECIFICI ---------- */
+
+/* Device cards: allineamento stile */
+.device-card.selected,
+.device-card.active {
+  border-color: var(--ks-orange);
+  background: #fff8f4;
+  box-shadow: var(--ks-shadow-md);
+}
+
+/* Riepilogo */
+.summary-box {
+  margin-top: .3rem;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 1.5rem;
+}
+
+.summary-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.summary-list li {
+  margin-bottom: 0.75rem;
+  font-size: 0.95rem;
+  color: var(--ks-text-secondary);
+  display: flex;
+  justify-content: space-between;
+  border-bottom: 1px dashed #e2e8f0;
+  padding-bottom: 0.5rem;
+}
+
+.summary-list li:last-child {
+  border-bottom: none;
+  margin-bottom: 0;
+}
+
+.summary-list li strong {
+  font-weight: 650;
+  color: var(--ks-text-primary);
+}
+
+.summary-note {
+  font-size: 0.9rem;
+  color: #10b981;
+  /* Green success */
+  font-weight: 600;
+  text-align: center;
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid #e2e8f0;
+}

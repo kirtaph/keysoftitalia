@@ -1,77 +1,79 @@
 <?php
-include_once '../../config/config.php';
+require_once '../../config/config.php';
 
 header('Content-Type: application/json');
 
-$action = $_REQUEST['action'] ?? null;
-$id = $_REQUEST['id'] ?? null;
+if (!isset($_SESSION['user_id'])) {
+    echo json_encode(['status' => 'error', 'message' => 'Non autorizzato']);
+    exit;
+}
+
+$action = $_REQUEST['action'] ?? '';
 
 try {
-    switch ($action) {
-        case 'get':
-            $stmt = $pdo->prepare('SELECT * FROM issues WHERE id = ?');
-            $stmt->execute([$id]);
-            $issue = $stmt->fetch(PDO::FETCH_ASSOC);
-            if ($issue) {
-                echo json_encode(['status' => 'success', 'issue' => $issue]);
-            } else {
-                throw new Exception('Problema non trovato.');
-            }
-            break;
+    if ($action === 'get') {
+        $id = $_GET['id'] ?? null;
+        if (!$id) throw new Exception('ID mancante');
 
-        case 'get_by_device':
-            $device_id = $_GET['device_id'] ?? null;
-            if (!$device_id) {
-                throw new Exception('ID dispositivo non fornito.');
-            }
-            $stmt = $pdo->prepare('SELECT * FROM issues WHERE device_id = ? AND is_active = 1 ORDER BY sort_order');
-            $stmt->execute([$device_id]);
-            $issues = $stmt->fetchAll(PDO::FETCH_ASSOC);
-            echo json_encode(['status' => 'success', 'issues' => $issues]);
-            break;
+        $stmt = $pdo->prepare("SELECT * FROM issues WHERE id = ?");
+        $stmt->execute([$id]);
+        $data = $stmt->fetch(PDO::FETCH_ASSOC);
 
-        case 'add':
-            $device_id = $_POST['device_id'] ?? null;
-            $label = $_POST['label'] ?? '';
-            $severity = $_POST['severity'] ?? 'low';
-            $sort_order = $_POST['sort_order'] ?? 0;
-            $is_active = isset($_POST['is_active']) && $_POST['is_active'] == '1' ? 1 : 0;
-            if (empty($label) || empty($device_id)) {
-                throw new Exception('Label e dispositivo sono obbligatori.');
-            }
-            $stmt = $pdo->prepare('INSERT INTO issues (device_id, label, severity, sort_order, is_active) VALUES (?, ?, ?, ?, ?)');
-            $stmt->execute([$device_id, $label, $severity, $sort_order, $is_active]);
-            echo json_encode(['status' => 'success', 'message' => 'Problema aggiunto con successo.']);
-            break;
+        if ($data) {
+            echo json_encode(['status' => 'success', 'data' => $data]);
+        } else {
+            echo json_encode(['status' => 'error', 'message' => 'Problema non trovato']);
+        }
+    } elseif ($action === 'list') {
+        $device_id = $_GET['device_id'] ?? null;
+        $sql = "SELECT * FROM issues";
+        $params = [];
+        if ($device_id) {
+            $sql .= " WHERE device_id = ?";
+            $params[] = $device_id;
+        }
+        $sql .= " ORDER BY sort_order ASC, label ASC";
+        
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute($params);
+        $issues = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        
+        echo json_encode(['status' => 'success', 'issues' => $issues]);
 
-        case 'edit':
-            $device_id = $_POST['device_id'] ?? null;
-            $label = $_POST['label'] ?? '';
-            $severity = $_POST['severity'] ?? 'low';
-            $sort_order = $_POST['sort_order'] ?? 0;
-            $is_active = isset($_POST['is_active']) && $_POST['is_active'] == '1' ? 1 : 0;
-            if (empty($label) || empty($device_id) || empty($id)) {
-                throw new Exception('ID, label e dispositivo sono obbligatori.');
-            }
-            $stmt = $pdo->prepare('UPDATE issues SET device_id = ?, label = ?, severity = ?, sort_order = ?, is_active = ? WHERE id = ?');
-            $stmt->execute([$device_id, $label, $severity, $sort_order, $is_active, $id]);
-            echo json_encode(['status' => 'success', 'message' => 'Problema aggiornato con successo.']);
-            break;
+    } elseif ($action === 'add') {
+        $device_id = $_POST['device_id'] ?? null;
+        $label = $_POST['label'] ?? '';
+        $severity = $_POST['severity'] ?? 'mid';
+        
+        if (!$device_id || !$label) throw new Exception('Dati mancanti');
 
-        case 'delete':
-            if (empty($id)) {
-                throw new Exception('ID del problema non fornito.');
-            }
-            $stmt = $pdo->prepare('DELETE FROM issues WHERE id = ?');
-            $stmt->execute([$id]);
-            echo json_encode(['status' => 'success', 'message' => 'Problema eliminato con successo.']);
-            break;
+        $stmt = $pdo->prepare("INSERT INTO issues (device_id, label, severity, is_active) VALUES (?, ?, ?, 1)");
+        $stmt->execute([$device_id, $label, $severity]);
 
-        default:
-            throw new Exception('Azione non valida.');
-            break;
+        echo json_encode(['status' => 'success', 'message' => 'Problema aggiunto']);
+    } elseif ($action === 'edit') {
+        $id = $_POST['id'] ?? null;
+        $device_id = $_POST['device_id'] ?? null;
+        $label = $_POST['label'] ?? '';
+        $severity = $_POST['severity'] ?? 'mid';
+        
+        if (!$id || !$device_id || !$label) throw new Exception('Dati mancanti');
+
+        $stmt = $pdo->prepare("UPDATE issues SET device_id = ?, label = ?, severity = ? WHERE id = ?");
+        $stmt->execute([$device_id, $label, $severity, $id]);
+
+        echo json_encode(['status' => 'success', 'message' => 'Problema aggiornato']);
+    } elseif ($action === 'delete') {
+        $id = $_POST['id'] ?? null;
+        if (!$id) throw new Exception('ID mancante');
+
+        $stmt = $pdo->prepare("DELETE FROM issues WHERE id = ?");
+        $stmt->execute([$id]);
+
+        echo json_encode(['status' => 'success', 'message' => 'Problema eliminato']);
+    } else {
+        throw new Exception('Azione non valida');
     }
 } catch (Exception $e) {
-    http_response_code(400);
     echo json_encode(['status' => 'error', 'message' => $e->getMessage()]);
 }

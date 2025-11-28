@@ -59,6 +59,63 @@ try {
             echo json_encode(['status' => 'success', 'message' => 'Regola eliminata con successo.']);
             break;
 
+        case 'update_price':
+            $min = $_POST['min_price'] ?? null;
+            $max = $_POST['max_price'] ?? null;
+            
+            if (!$id) throw new Exception('ID mancante');
+            
+            // Allow updating just one or both
+            $sql = "UPDATE price_rules SET ";
+            $params = [];
+            $updates = [];
+            
+            if ($min !== null) {
+                $updates[] = "min_price = ?";
+                $params[] = $min;
+            }
+            if ($max !== null) {
+                $updates[] = "max_price = ?";
+                $params[] = $max === '' ? null : $max;
+            }
+            
+            if (empty($updates)) throw new Exception('Nessun dato da aggiornare');
+            
+            $sql .= implode(', ', $updates) . " WHERE id = ?";
+            $params[] = $id;
+            
+            $stmt = $pdo->prepare($sql);
+            $stmt->execute($params);
+            
+            echo json_encode(['status' => 'success', 'message' => 'Prezzo aggiornato']);
+            break;
+
+        case 'clone':
+            if (!$id) throw new Exception('ID mancante');
+            
+            // Get original
+            $stmt = $pdo->prepare("SELECT * FROM price_rules WHERE id = ?");
+            $stmt->execute([$id]);
+            $orig = $stmt->fetch(PDO::FETCH_ASSOC);
+            
+            if (!$orig) throw new Exception('Regola originale non trovata');
+            
+            // Insert copy
+            $stmt = $pdo->prepare('INSERT INTO price_rules (device_id, issue_id, brand_id, model_id, min_price, max_price, notes, is_active) VALUES (?, ?, ?, ?, ?, ?, ?, ?)');
+            $stmt->execute([
+                $orig['device_id'],
+                $orig['issue_id'],
+                $orig['brand_id'],
+                $orig['model_id'],
+                $orig['min_price'],
+                $orig['max_price'],
+                $orig['notes'] . ' (Copia)',
+                $orig['is_active']
+            ]);
+            
+            echo json_encode(['status' => 'success', 'message' => 'Regola clonata']);
+            break;
+
         default:
             throw new Exception('Azione non valida.');
             break;

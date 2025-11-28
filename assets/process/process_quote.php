@@ -328,7 +328,7 @@ if (
     'name'                => trim($first . ' ' . $last),
     'phone'               => $phone,
     'email'               => $email,
-    'device_type'         => strtoupper($device) . ' • ' . ($brand ?: 'n/d') . ( $model ? (' • ' . $model) : '' ),
+    'device_type'         => strtoupper($device) . ' • ' . ($brandText ?: 'n/d') . ( $modelText ? (' • ' . $modelText) : '' ),
     'address'             => '',
     'problem_description' => $mail_description,
     'urgency'             => 'normale',

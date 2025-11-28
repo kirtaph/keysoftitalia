@@ -8,13 +8,48 @@ $action = $_REQUEST['action'] ?? null;
 try {
     switch ($action) {
         case 'list':
-            $stmt = $pdo->query("
-                SELECT rp.*, m.name as model_name, b.name as brand_name
-                FROM products rp
-                JOIN models m ON rp.model_id = m.id
-                JOIN brands b ON m.brand_id = b.id
-                ORDER BY rp.created_at DESC
-            ");
+            $search = $_GET['search'] ?? '';
+            $brand_id = $_GET['brand_id'] ?? '';
+            $grade = $_GET['grade'] ?? '';
+            $status = $_GET['status'] ?? '';
+
+            $sql = "SELECT rp.*, m.name as model_name, b.name as brand_name,
+                    (SELECT path FROM product_images WHERE product_id = rp.id ORDER BY is_cover DESC, sort_order ASC LIMIT 1) as cover_image
+                    FROM products rp
+                    JOIN models m ON rp.model_id = m.id
+                    JOIN brands b ON m.brand_id = b.id
+                    WHERE 1=1";
+            
+            $params = [];
+
+            if ($search) {
+                $sql .= " AND (m.name LIKE ? OR rp.sku LIKE ?)";
+                $params[] = "%$search%";
+                $params[] = "%$search%";
+            }
+
+            if ($brand_id) {
+                $sql .= " AND m.brand_id = ?";
+                $params[] = $brand_id;
+            }
+
+            if ($grade) {
+                $sql .= " AND rp.grade = ?";
+                $params[] = $grade;
+            }
+
+            if ($status === 'available') {
+                $sql .= " AND rp.is_available = 1";
+            } elseif ($status === 'featured') {
+                $sql .= " AND rp.is_featured = 1";
+            } elseif ($status === 'unavailable') {
+                $sql .= " AND rp.is_available = 0";
+            }
+
+            $sql .= " ORDER BY rp.created_at DESC";
+
+            $stmt = $pdo->prepare($sql);
+            $stmt->execute($params);
             $products = $stmt->fetchAll(PDO::FETCH_ASSOC);
             echo json_encode(['status' => 'success', 'products' => $products]);
             break;

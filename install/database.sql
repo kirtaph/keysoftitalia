@@ -236,3 +236,88 @@ INSERT INTO `products` (`name`, `slug`, `category`, `brand`, `model`, `condition
 ('iPhone 13 Pro 128GB', 'iphone-13-pro-128gb', 'smartphone', 'Apple', 'iPhone 13 Pro', 'ricondizionato_a', 749.00, 999.00, 25, 'iPhone 13 Pro ricondizionato grado A, come nuovo. Batteria sostituita, garanzia 12 mesi.', 12, 3, 1),
 ('MacBook Air M1 256GB', 'macbook-air-m1-256gb', 'notebook', 'Apple', 'MacBook Air M1', 'ricondizionato_a', 899.00, 1299.00, 30, 'MacBook Air con chip M1, ricondizionato professionale. Perfette condizioni estetiche e funzionali.', 12, 2, 1),
 ('Samsung Galaxy S22', 'samsung-galaxy-s22', 'smartphone', 'Samsung', 'Galaxy S22', 'ricondizionato_b', 499.00, 799.00, 38, 'Samsung Galaxy S22 ricondizionato grado B. Piccoli segni di usura, perfettamente funzionante.', 12, 5, 0);
+
+
+CREATE TABLE `used_device_quotes` (
+  `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+  `device_type` VARCHAR(50) NOT NULL,
+  `device_id` INT UNSIGNED NULL,
+
+  `brand_id` INT UNSIGNED NULL,
+  `brand_name` VARCHAR(100) NULL,
+  `model_id` INT UNSIGNED NULL,
+  `model_name` VARCHAR(150) NULL,
+
+  `device_condition` ENUM('ottimo','buono','usurato','danneggiato') NOT NULL,
+  `defects` JSON NULL,
+  `accessories` JSON NULL,
+
+  `expected_price` DECIMAL(10,2) NULL,
+  `notes` TEXT NULL,
+
+  `customer_first_name` VARCHAR(80) NOT NULL,
+  `customer_last_name` VARCHAR(80) NOT NULL,
+  `customer_email` VARCHAR(150) NOT NULL,
+  `customer_phone` VARCHAR(40) NOT NULL,
+  `contact_channel` VARCHAR(40) NOT NULL DEFAULT 'form',
+  `privacy_accepted` TINYINT(1) NOT NULL DEFAULT 0,
+
+  `status` ENUM('pending','reviewed','contacted') NOT NULL DEFAULT 'pending',
+
+  `ip_address` VARBINARY(16) NULL,
+  `user_agent` VARCHAR(255) NULL,
+
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE TABLE `repair_bookings` (
+  `id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+
+  `created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` DATETIME NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
+
+  -- da dove arriva la prenotazione
+  `channel` ENUM('web','whatsapp','phone','internal') NOT NULL DEFAULT 'web',
+  `source`  VARCHAR(100) NULL DEFAULT NULL,
+  `external_ref` VARCHAR(100) NULL DEFAULT NULL, -- es. ORD-2025-0001, PR-2025-0003
+
+  -- device / brand / model
+  `device_type` VARCHAR(50) NOT NULL,     -- smartphone/tablet/computer/console/tv/altro
+  `device_id`   INT UNSIGNED NULL DEFAULT NULL,
+
+  `brand_id`    INT UNSIGNED NULL DEFAULT NULL,
+  `brand_name`  VARCHAR(120) NOT NULL,
+
+  `model_id`    INT UNSIGNED NULL DEFAULT NULL,
+  `model_name`  VARCHAR(160) NOT NULL,
+
+  -- problema e note
+  `problem_summary` VARCHAR(255) NULL DEFAULT NULL,
+  `notes`           TEXT NULL,
+
+  -- slot prenotazione
+  `preferred_date` DATE NOT NULL,
+  `preferred_time_slot` VARCHAR(50) NOT NULL,
+  `dropoff_type` ENUM('in_store','pickup','on_site') NOT NULL DEFAULT 'in_store',
+
+  `backup_done` TINYINT(1) NOT NULL DEFAULT 0,
+  `tests_ok`    TINYINT(1) NOT NULL DEFAULT 0,
+
+  -- cliente
+  `customer_first_name` VARCHAR(80)  NOT NULL,
+  `customer_last_name`  VARCHAR(80)  NOT NULL,
+  `customer_email`      VARCHAR(190) NOT NULL,
+  `customer_phone`      VARCHAR(40)  NOT NULL,
+  `customer_company`    VARCHAR(160) NULL DEFAULT NULL,
+  `contact_channel`     VARCHAR(20)  NULL DEFAULT NULL, -- whatsapp/telefono/email
+
+  `privacy_accepted` TINYINT(1) NOT NULL DEFAULT 0,
+
+  `status` ENUM('pending','confirmed','cancelled','completed') NOT NULL DEFAULT 'pending',
+
+  PRIMARY KEY (`id`),
+  KEY `idx_preferred_date` (`preferred_date`),
+  KEY `idx_status_date` (`status`, `preferred_date`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
