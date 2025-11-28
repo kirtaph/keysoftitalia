@@ -60,13 +60,20 @@ $bookings = $stmt->fetchAll();
                     <td>
                         <div class="d-flex align-items-center">
                             <div class="me-2">
-                                <?php if($b['device_type'] == 'Smartphone'): ?>
-                                    <i class="fas fa-mobile-alt fa-lg text-secondary"></i>
-                                <?php elseif($b['device_type'] == 'Tablet'): ?>
-                                    <i class="fas fa-tablet-alt fa-lg text-secondary"></i>
-                                <?php else: ?>
-                                    <i class="fas fa-laptop fa-lg text-secondary"></i>
-                                <?php endif; ?>
+                                <?php 
+                                $iconClass = 'fa-laptop'; // Default
+                                $type = strtolower($b['device_type']);
+                                if (strpos($type, 'smartphone') !== false || strpos($type, 'iphone') !== false) {
+                                    $iconClass = 'fa-mobile-alt';
+                                } elseif (strpos($type, 'tablet') !== false || strpos($type, 'ipad') !== false) {
+                                    $iconClass = 'fa-tablet-alt';
+                                } elseif (strpos($type, 'console') !== false || strpos($type, 'playstation') !== false || strpos($type, 'xbox') !== false) {
+                                    $iconClass = 'fa-gamepad';
+                                } elseif (strpos($type, 'watch') !== false) {
+                                    $iconClass = 'fa-clock';
+                                }
+                                ?>
+                                <i class="fas <?php echo $iconClass; ?> fa-lg text-secondary"></i>
                             </div>
                             <div>
                                 <div class="fw-bold"><?php echo htmlspecialchars($b['brand_name']); ?></div>
@@ -139,81 +146,83 @@ $bookings = $stmt->fetchAll();
 </div>
 
 <!-- Modal Gestione Prenotazione -->
-<div class="modal fade" id="bookingModal" tabindex="-1" aria-labelledby="bookingModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="bookingModalLabel">Gestione Prenotazione</h5>
-                <div class="ms-auto">
-                    <a href="#" id="printBtn" target="_blank" class="btn btn-outline-secondary btn-sm me-2">
-                        <i class="fas fa-print me-1"></i> Stampa Scheda
-                    </a>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
+<div class="modal fade" id="bookingModal" tabindex="-1" aria-labelledby="bookingModalLabel" aria-hidden="true" data-bs-backdrop="static">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content border-0 shadow-lg">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title" id="bookingModalLabel"><i class="fas fa-calendar-check me-2"></i>Gestione Prenotazione</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <div class="modal-body">
+            <div class="modal-body p-4">
                 <form id="bookingForm">
                     <input type="hidden" id="bookingId" name="id">
                     
-                    <!-- Quick Actions Toolbar -->
-                    <div class="d-flex gap-2 mb-4 p-3 bg-light rounded align-items-center">
-                        <span class="fw-bold small text-uppercase text-muted me-2">Azioni Rapide:</span>
-                        <a href="#" id="waBtn" target="_blank" class="btn btn-success btn-sm text-white">
-                            <i class="fab fa-whatsapp me-1"></i> Invia WhatsApp
-                        </a>
-                        <div class="vr mx-2"></div>
-                        <button type="button" class="btn btn-outline-success btn-sm quick-status" data-status="confirmed">
-                            <i class="fas fa-check me-1"></i> Conferma
-                        </button>
-                        <button type="button" class="btn btn-outline-secondary btn-sm quick-status" data-status="completed">
-                            <i class="fas fa-check-double me-1"></i> Completa
-                        </button>
-                        <button type="button" class="btn btn-outline-danger btn-sm quick-status" data-status="cancelled">
-                            <i class="fas fa-times me-1"></i> Cancella
-                        </button>
-                    </div>
-
+                    <!-- Dettagli Principali -->
                     <div class="row mb-4">
                         <div class="col-md-6">
-                            <div class="card h-100 border-0 shadow-sm">
+                            <div class="card h-100 border-0 bg-light">
                                 <div class="card-body">
-                                    <h6 class="card-title text-primary"><i class="fas fa-mobile-alt me-2"></i>Dispositivo</h6>
-                                    <p id="deviceDetails" class="card-text mb-0"></p>
-                                    <hr class="my-2">
-                                    <p id="problemDetails" class="card-text small text-muted"></p>
+                                    <h6 class="card-title text-primary fw-bold mb-3"><i class="fas fa-info-circle me-2"></i>Dettagli Intervento</h6>
+                                    <p id="deviceDetails" class="card-text mb-2"></p>
+                                    <p id="problemDetails" class="card-text small text-muted mb-0"></p>
                                 </div>
                             </div>
                         </div>
                         <div class="col-md-6">
-                            <div class="card h-100 border-0 shadow-sm">
+                            <div class="card h-100 border-0 bg-light">
                                 <div class="card-body">
-                                    <h6 class="card-title text-primary"><i class="fas fa-user me-2"></i>Cliente</h6>
-                                    <p id="customerDetails" class="card-text mb-0"></p>
-                                    <hr class="my-2">
-                                    <p id="appointmentDetails" class="card-text small text-muted"></p>
+                                    <h6 class="card-title text-primary fw-bold mb-3"><i class="fas fa-user me-2"></i>Cliente & Appuntamento</h6>
+                                    <p id="customerDetails" class="card-text mb-2"></p>
+                                    <p id="appointmentDetails" class="card-text small text-muted mb-0"></p>
                                 </div>
                             </div>
                         </div>
                     </div>
 
-                    <div class="mb-3">
-                        <label for="status" class="form-label fw-bold">Stato Attuale</label>
-                        <select class="form-select" id="status" name="status" required>
-                            <option value="pending">In attesa</option>
-                            <option value="confirmed">Confermata</option>
-                            <option value="cancelled">Cancellata</option>
-                            <option value="completed">Completata</option>
-                        </select>
-                    </div>
+                    <!-- Sezione Stato e Comunicazione -->
+                    <div class="row g-4">
+                        <div class="col-md-5">
+                            <label for="status" class="form-label fw-bold">Stato Prenotazione</label>
+                            <select class="form-select mb-3" id="status" name="status" required>
+                                <option value="pending">In attesa</option>
+                                <option value="confirmed">Confermata</option>
+                                <option value="cancelled">Cancellata</option>
+                                <option value="completed">Completata</option>
+                            </select>
 
-                    <div class="mb-3">
-                        <label for="notes" class="form-label fw-bold">Note Interne</label>
-                        <textarea class="form-control" id="notes" name="notes" rows="3" placeholder="Aggiungi note visibili solo allo staff..."></textarea>
+                            <label for="notes" class="form-label fw-bold">Note Interne</label>
+                            <textarea class="form-control" id="notes" name="notes" rows="4" placeholder="Note visibili solo allo staff..."></textarea>
+                        </div>
+
+                        <div class="col-md-7">
+                            <div class="card border-primary h-100">
+                                <div class="card-header bg-primary text-white py-2">
+                                    <h6 class="mb-0 small fw-bold"><i class="fas fa-comment-alt me-2"></i>Comunicazione Cliente</h6>
+                                </div>
+                                <div class="card-body">
+                                    <div class="mb-3">
+                                        <label for="messagePreview" class="form-label small text-muted">Messaggio da inviare:</label>
+                                        <textarea class="form-control form-control-sm bg-light" id="messagePreview" rows="4"></textarea>
+                                    </div>
+                                    <div class="d-flex gap-2">
+                                        <a href="#" id="sendWaBtn" target="_blank" class="btn btn-success btn-sm flex-grow-1">
+                                            <i class="fab fa-whatsapp me-1"></i> Invia WhatsApp
+                                        </a>
+                                        <a href="#" id="sendEmailBtn" class="btn btn-outline-secondary btn-sm flex-grow-1">
+                                            <i class="far fa-envelope me-1"></i> Invia Email
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </form>
             </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Chiudi</button>
+            <div class="modal-footer bg-light">
+                <a href="#" id="printBtn" target="_blank" class="btn btn-outline-dark me-auto">
+                    <i class="fas fa-print me-1"></i> Stampa Scheda
+                </a>
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Chiudi</button>
                 <button type="button" class="btn btn-primary" id="saveBookingBtn">Salva Modifiche</button>
             </div>
         </div>
@@ -235,15 +244,83 @@ document.addEventListener('DOMContentLoaded', function() {
     const problemDetails = document.getElementById('problemDetails');
     const statusSelect = document.getElementById('status');
     const notesInput = document.getElementById('notes');
+    const messagePreview = document.getElementById('messagePreview');
     
     // Action Buttons
     const printBtn = document.getElementById('printBtn');
-    const waBtn = document.getElementById('waBtn');
+    const sendWaBtn = document.getElementById('sendWaBtn');
+    const sendEmailBtn = document.getElementById('sendEmailBtn');
+
+    // Current Booking Data (for templates)
+    let currentBooking = {};
 
     // Tooltips
     const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
     tooltipTriggerList.map(function (tooltipTriggerEl) {
         return new bootstrap.Tooltip(tooltipTriggerEl);
+    });
+
+    // Template Generator
+    function updateMessageTemplate() {
+        const status = statusSelect.value;
+        const name = currentBooking.customer_first_name;
+        const device = `${currentBooking.brand_name} ${currentBooking.model_name}`;
+        const date = currentBooking.preferred_date; // Should format this nicely
+        const time = currentBooking.preferred_time_slot;
+        
+        // Simple date formatter
+        const dateObj = new Date(currentBooking.preferred_date);
+        const dateStr = dateObj.toLocaleDateString('it-IT');
+
+        let message = "";
+
+        switch(status) {
+            case 'confirmed':
+                message = `Ciao ${name}, il tuo appuntamento per la riparazione del ${device} è confermato per il ${dateStr} alle ore ${time}. Ti aspettiamo!`;
+                break;
+            case 'completed':
+                message = `Ciao ${name}, buone notizie! Il tuo ${device} è pronto per il ritiro. Puoi passare in negozio quando vuoi durante gli orari di apertura.`;
+                break;
+            case 'cancelled':
+                message = `Ciao ${name}, come concordato il tuo appuntamento per il ${device} è stato cancellato. Contattaci se desideri fissarne un altro.`;
+                break;
+            case 'pending':
+            default:
+                message = `Ciao ${name}, abbiamo ricevuto la tua richiesta per ${device}. Ti contatteremo a breve per confermare l'appuntamento.`;
+                break;
+        }
+
+        messagePreview.value = message;
+        updateActionLinks(message);
+    }
+
+    function updateActionLinks(message) {
+        const phone = currentBooking.customer_phone ? currentBooking.customer_phone.replace(/[^0-9]/g, '') : '';
+        const email = currentBooking.customer_email;
+        
+        // WhatsApp
+        if (phone) {
+            sendWaBtn.href = `https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
+            sendWaBtn.classList.remove('disabled');
+        } else {
+            sendWaBtn.href = '#';
+            sendWaBtn.classList.add('disabled');
+        }
+
+        // Email
+        if (email) {
+            sendEmailBtn.href = `mailto:${email}?subject=Aggiornamento Riparazione KeySoft&body=${encodeURIComponent(message)}`;
+            sendEmailBtn.classList.remove('disabled');
+        } else {
+            sendEmailBtn.href = '#';
+            sendEmailBtn.classList.add('disabled');
+        }
+    }
+
+    // Status Change Listener
+    statusSelect.addEventListener('change', updateMessageTemplate);
+    messagePreview.addEventListener('input', function() {
+        updateActionLinks(this.value);
     });
 
     // Edit Button Click
@@ -255,13 +332,18 @@ document.addEventListener('DOMContentLoaded', function() {
                 .then(response => response.json())
                 .then(data => {
                     if (data.status === 'success') {
-                        const b = data.booking;
+                        currentBooking = data.booking;
+                        const b = currentBooking;
                         bookingIdInput.value = b.id;
                         
                         // Update UI
-                        deviceDetails.innerHTML = `<span class="fw-bold">${b.device_type}</span><br>${b.brand_name} ${b.model_name}`;
+                        deviceDetails.innerHTML = `<span class="fw-bold fs-5">${b.device_type}</span><br>${b.brand_name} ${b.model_name}`;
                         customerDetails.innerHTML = `<span class="fw-bold">${b.customer_first_name} ${b.customer_last_name}</span><br>${b.customer_phone}<br>${b.customer_email}`;
-                        appointmentDetails.innerHTML = `<strong>Data:</strong> ${b.preferred_date}<br><strong>Ora:</strong> ${b.preferred_time_slot}<br><strong>Tipo:</strong> ${b.dropoff_type}`;
+                        
+                        const dateObj = new Date(b.preferred_date);
+                        const dateStr = dateObj.toLocaleDateString('it-IT');
+                        appointmentDetails.innerHTML = `<strong>Data:</strong> ${dateStr}<br><strong>Ora:</strong> ${b.preferred_time_slot}<br><strong>Tipo:</strong> ${b.dropoff_type}`;
+                        
                         problemDetails.innerHTML = `<strong>Problema:</strong> ${b.problem_summary}`;
 
                         statusSelect.value = b.status;
@@ -270,9 +352,8 @@ document.addEventListener('DOMContentLoaded', function() {
                         // Update Action Links
                         printBtn.href = `print_booking.php?id=${b.id}`;
                         
-                        const phone = b.customer_phone.replace(/[^0-9]/g, '');
-                        const waText = encodeURIComponent(`Ciao ${b.customer_first_name}, aggiornamento sulla tua riparazione #${b.id}: `);
-                        waBtn.href = `https://wa.me/${phone}?text=${waText}`;
+                        // Generate initial template
+                        updateMessageTemplate();
 
                         bookingModal.show();
                     } else {
@@ -280,15 +361,6 @@ document.addEventListener('DOMContentLoaded', function() {
                     }
                 });
         }
-    });
-
-    // Quick Status Actions
-    document.querySelectorAll('.quick-status').forEach(btn => {
-        btn.addEventListener('click', function() {
-            statusSelect.value = this.dataset.status;
-            // Optional: Auto-save on quick action
-            // document.getElementById('saveBookingBtn').click();
-        });
     });
 
     // Save Button Click
@@ -355,18 +427,10 @@ document.addEventListener('DOMContentLoaded', function() {
             if (clientCell && contactCell && statusCell) {
                 const clientText = clientCell.textContent.toLowerCase();
                 const contactText = contactCell.textContent.toLowerCase();
-                const statusText = statusCell.textContent.toLowerCase(); // Contains hidden text or badge text
+                const statusText = statusCell.textContent.toLowerCase();
 
                 const searchMatch = clientText.includes(searchTerm) || contactText.includes(searchTerm);
                 
-                // For status, we check if the badge text (or value) matches
-                // The badge contains the translated status, so we might need to map it or check class
-                // Simpler: check if the row's data-status matches (if we added it) or just text content
-                // Let's rely on the text content of the badge which is "In Attesa", "Confermata" etc.
-                // But the filter value is "pending", "confirmed".
-                // Better approach: Add a data attribute to the row or cell.
-                
-                // Quick fix: Check if the status cell contains the mapped Italian string corresponding to the filter value
                 let statusMatch = false;
                 if (statusTerm === '') {
                     statusMatch = true;

@@ -13,7 +13,7 @@ $stmt = $pdo->query("SELECT COUNT(*) FROM used_device_quotes WHERE status = 'pen
 $pendingQuotes = $stmt->fetchColumn();
 
 // 3. Volantino Attivo
-$stmt = $pdo->query("SELECT title FROM flyers WHERE status = 'published' AND start_date <= CURDATE() AND end_date >= CURDATE() LIMIT 1");
+$stmt = $pdo->query("SELECT title FROM flyers WHERE status = 1 AND start_date <= CURDATE() AND end_date >= CURDATE() LIMIT 1");
 $activeFlyer = $stmt->fetchColumn();
 $flyerStatus = $activeFlyer ? 'Attivo' : 'Nessuno';
 $flyerColor = $activeFlyer ? 'text-success' : 'text-muted';
@@ -254,15 +254,79 @@ $storeIcon = $isOpen ? 'fa-door-open' : 'fa-door-closed';
                         <span><i class="fas fa-database me-2 opacity-75"></i>Database</span>
                         <span class="fw-bold">Connected</span>
                     </li>
+                    <li class="mb-2 d-flex justify-content-between">
+                        <span><i class="fas fa-code-branch me-2 opacity-75"></i>DB Version</span>
+                        <span class="fw-bold" id="dbVersion">...</span>
+                    </li>
                     <li class="d-flex justify-content-between">
                         <span><i class="fas fa-user-shield me-2 opacity-75"></i>Admin</span>
                         <span class="fw-bold"><?php echo htmlspecialchars($_SESSION['username'] ?? 'User'); ?></span>
                     </li>
                 </ul>
+                
+                <!-- Migration Alert Container -->
+                <div id="migrationAlert" class="mt-3 d-none">
+                    <div class="alert alert-warning text-dark mb-0 p-2 small">
+                        <div class="fw-bold mb-1"><i class="fas fa-exclamation-triangle me-1"></i> Aggiornamento DB</div>
+                        <div class="mb-2">Ci sono modifiche pendenti.</div>
+                        <button id="updateDbBtn" class="btn btn-sm btn-light w-100 fw-bold text-warning">Aggiorna Ora</button>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 </div>
 
 <?php include_once 'includes/footer.php'; ?>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const dbVersionSpan = document.getElementById('dbVersion');
+    const migrationAlert = document.getElementById('migrationAlert');
+    const updateDbBtn = document.getElementById('updateDbBtn');
+
+    // Check for migrations
+    fetch('ajax_actions/migrate_action.php?action=check')
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 'success') {
+                // Display version (truncate if too long)
+                let version = data.last_version;
+                if (version.length > 15) version = version.substring(0, 12) + '...';
+                dbVersionSpan.textContent = version;
+
+                if (data.pending_count > 0) {
+                    migrationAlert.classList.remove('d-none');
+                }
+            }
+        });
+
+    // Handle Update Click
+    updateDbBtn.addEventListener('click', function() {
+        if (!confirm('Sei sicuro di voler aggiornare il database? Assicurati di avere un backup.')) return;
+
+        const originalText = this.textContent;
+        this.textContent = 'Aggiornamento...';
+        this.disabled = true;
+
+        fetch('ajax_actions/migrate_action.php?action=execute')
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    alert(data.message);
+                    location.reload();
+                } else {
+                    alert('Errore: ' + data.message);
+                    this.textContent = originalText;
+                    this.disabled = false;
+                }
+            })
+            .catch(err => {
+                alert('Errore di comunicazione col server.');
+                this.textContent = originalText;
+                this.disabled = false;
+            });
+    });
+});
+</script>
 
