@@ -361,35 +361,7 @@ $brands = $pdo->query('SELECT b.*, d.name as device_name FROM brands b JOIN devi
     </div>
 </div>
 
-<!-- Import Product Modal -->
-<div class="modal fade" id="importProductModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Importa Prodotti da CSV</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-            </div>
-            <div class="modal-body">
-                <form id="importProductForm">
-                    <div class="mb-3">
-                        <label class="form-label">Seleziona File CSV</label>
-                        <input type="file" class="form-control" name="csv_file" accept=".csv" required>
-                        <div class="form-text">Il file deve usare il separatore punto e virgola (;).</div>
-                    </div>
-                    <div class="alert alert-info small">
-                        <i class="fas fa-info-circle me-1"></i>
-                        I prodotti verranno importati come "Bozza". Marche e Modelli mancanti verranno creati automaticamente.
-                    </div>
-                    <div class="d-grid">
-                        <button type="submit" class="btn btn-success" id="importBtn">
-                            <i class="fas fa-upload me-2"></i> Carica e Importa
-                        </button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-</div>
+
 
 <style>
 /* Wizard Styles */
@@ -523,7 +495,7 @@ $brands = $pdo->query('SELECT b.*, d.name as device_name FROM brands b JOIN devi
                 </div>
 
                 <!-- Step 2: Preview -->
-                <div id="importStep2" class="d-none">
+                <div id="importStep2" style="display: none;">
                     <div class="table-responsive" style="max-height: 500px; overflow-y: auto;">
                         <table class="table table-sm table-hover">
                             <thead class="table-light sticky-top">
@@ -1019,11 +991,23 @@ Il dispositivo è stato sottoposto a rigidi test di qualità dai nostri tecnici 
             })
             .then(r => r.json())
             .then(data => {
+                console.log('Preview Data:', data);
                 if(data.status === 'success') {
                     previewData = data.data;
                     renderPreview(previewData);
-                    step1.classList.add('d-none');
-                    step2.classList.remove('d-none');
+                    
+                    const s1 = document.getElementById('importStep1');
+                    const s2 = document.getElementById('importStep2');
+                    
+                    if(s1 && s2) {
+                        s1.style.display = 'none';
+                        s2.style.display = 'block';
+                        
+                        console.log('Steps switched. S1 hidden, S2 shown.');
+                    } else {
+                        alert('Errore DOM: Elementi step non trovati!');
+                        console.error('Steps not found!', s1, s2);
+                    }
                     updateCount();
                 } else {
                     alert(data.message);
@@ -1077,11 +1061,7 @@ Il dispositivo è stato sottoposto a rigidi test di qualità dai nostri tecnici 
             .then(data => {
                 if(data.status === 'success') {
                     alert(data.message);
-                    bootstrap.Modal.getInstance(document.getElementById('importProductModal')).hide();
-                    step2.classList.add('d-none');
-                    step1.classList.remove('d-none');
-                    importForm.reset();
-                    fetchProducts();
+                    location.reload(); // Reload to update Brands/Models dropdowns
                 } else {
                     alert(data.message);
                 }
@@ -1095,17 +1075,48 @@ Il dispositivo è stato sottoposto a rigidi test di qualità dai nostri tecnici 
     }
 
     function renderPreview(data) {
-        previewBody.innerHTML = data.map((p, index) => `
+        console.log('Rendering preview for', data.length, 'items');
+        const html = data.map((p, index) => `
             <tr>
                 <td><input type="checkbox" class="form-check-input preview-check" value="${index}" checked onchange="updateCount()"></td>
-                <td><small>${p.sku}</small></td>
-                <td>${p.brand}</td>
-                <td>${p.model}</td>
-                <td>${p.storage > 0 ? p.storage + 'GB' : '-'}</td>
-                <td>€ ${p.price}</td>
-                <td><span class="badge bg-secondary">${p.grade}</span></td>
+                <td><input type="text" class="form-control form-control-sm" value="${p.sku}" onchange="updatePreviewData(${index}, 'sku', this.value)"></td>
+                <td><input type="text" class="form-control form-control-sm" value="${p.brand}" onchange="updatePreviewData(${index}, 'brand', this.value)"></td>
+                <td><input type="text" class="form-control form-control-sm" value="${p.model}" onchange="updatePreviewData(${index}, 'model', this.value)"></td>
+                <td>
+                    <div class="input-group input-group-sm" style="width: 100px;">
+                        <input type="number" class="form-control" value="${p.storage}" onchange="updatePreviewData(${index}, 'storage', this.value)">
+                        <span class="input-group-text">GB</span>
+                    </div>
+                </td>
+                <td>
+                    <div class="input-group input-group-sm" style="width: 100px;">
+                        <span class="input-group-text">€</span>
+                        <input type="number" class="form-control" value="${p.price}" step="0.01" onchange="updatePreviewData(${index}, 'price', this.value)">
+                    </div>
+                </td>
+                <td>
+                    <select class="form-select form-select-sm" onchange="updatePreviewData(${index}, 'grade', this.value)">
+                        <option value="Nuovo" ${p.grade === 'Nuovo' ? 'selected' : ''}>Nuovo</option>
+                        <option value="A+" ${p.grade === 'A+' ? 'selected' : ''}>A+</option>
+                        <option value="A" ${p.grade === 'A' ? 'selected' : ''}>A</option>
+                        <option value="B" ${p.grade === 'B' ? 'selected' : ''}>B</option>
+                        <option value="C" ${p.grade === 'C' ? 'selected' : ''}>C</option>
+                    </select>
+                </td>
             </tr>
         `).join('');
+        
+        if(previewBody) {
+            previewBody.innerHTML = html;
+        } else {
+            alert('Errore: Tabella non trovata nel DOM');
+        }
+    }
+
+    window.updatePreviewData = function(index, field, value) {
+        if(previewData[index]) {
+            previewData[index][field] = value;
+        }
     }
 
     window.updateCount = function() {

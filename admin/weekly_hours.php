@@ -16,10 +16,7 @@ include_once 'includes/header.php';
                 <button class="nav-link active" id="weekly-tab" data-bs-toggle="tab" data-bs-target="#weekly" type="button" role="tab"><i class="fas fa-calendar-week me-2"></i>Orario Settimanale</button>
             </li>
             <li class="nav-item" role="presentation">
-                <button class="nav-link" id="exceptions-tab" data-bs-toggle="tab" data-bs-target="#exceptions" type="button" role="tab"><i class="fas fa-calendar-alt me-2"></i>Eccezioni & Chiusure</button>
-            </li>
-            <li class="nav-item" role="presentation">
-                <button class="nav-link" id="holidays-tab" data-bs-toggle="tab" data-bs-target="#holidays" type="button" role="tab"><i class="fas fa-gift me-2"></i>Festività Ricorrenti</button>
+                <button class="nav-link" id="calendar-tab" data-bs-toggle="tab" data-bs-target="#calendar-view" type="button" role="tab"><i class="fas fa-calendar-alt me-2"></i>Calendario & Festività</button>
             </li>
         </ul>
     </div>
@@ -52,8 +49,8 @@ include_once 'includes/header.php';
                 </form>
             </div>
 
-            <!-- TAB 2: EXCEPTIONS (CALENDAR) -->
-            <div class="tab-pane fade" id="exceptions" role="tabpanel">
+            <!-- TAB 2: CALENDAR (EXCEPTIONS & HOLIDAYS) -->
+            <div class="tab-pane fade" id="calendar-view" role="tabpanel">
                 <div class="row">
                     <div class="col-md-3">
                         <div class="card bg-light border-0 mb-3">
@@ -63,13 +60,22 @@ include_once 'includes/header.php';
                                     <div style="width: 15px; height: 15px; background-color: #198754; border-radius: 3px;" class="me-2"></div>
                                     <small>Apertura Straordinaria</small>
                                 </div>
-                                <div class="d-flex align-items-center">
+                                <div class="d-flex align-items-center mb-2">
                                     <div style="width: 15px; height: 15px; background-color: #dc3545; border-radius: 3px;" class="me-2"></div>
                                     <small>Chiusura / Ferie</small>
                                 </div>
+                                <div class="d-flex align-items-center">
+                                    <div style="width: 15px; height: 15px; background-color: #6f42c1; border-radius: 3px;" class="me-2"></div>
+                                    <small>Festività Ricorrente</small>
+                                </div>
                             </div>
                         </div>
-                        <p class="small text-muted">Clicca su un giorno nel calendario per aggiungere o modificare una regola.</p>
+                        <p class="small text-muted">Clicca su un giorno nel calendario per aggiungere una regola.</p>
+                        <div class="d-grid gap-2">
+                            <button class="btn btn-outline-primary btn-sm" data-bs-toggle="modal" data-bs-target="#holidayModal" id="manageHolidaysBtn">
+                                <i class="fas fa-list me-1"></i> Gestisci Lista Festività
+                            </button>
+                        </div>
                     </div>
                     <div class="col-md-9">
                         <div id="calendar"></div>
@@ -77,30 +83,30 @@ include_once 'includes/header.php';
                 </div>
             </div>
 
-            <!-- TAB 3: HOLIDAYS -->
-            <div class="tab-pane fade" id="holidays" role="tabpanel">
-                <div class="d-flex justify-content-between align-items-center mb-3">
-                    <h5 class="mb-0">Festività Fisse & Mobili</h5>
-                    <button class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#holidayModal" id="addHolidayBtn"><i class="fas fa-plus me-1"></i>Aggiungi Festività</button>
-                </div>
-                <div class="table-responsive">
-                    <table class="table table-hover align-middle">
-                        <thead class="table-light">
-                            <tr>
-                                <th>Nome</th>
-                                <th>Tipo</th>
-                                <th>Data / Regola</th>
-                                <th class="text-center">Stato</th>
-                                <th class="text-center">Azioni</th>
-                            </tr>
-                        </thead>
-                        <tbody id="holidaysTableBody">
-                            <!-- Generated via JS -->
-                        </tbody>
-                    </table>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Type Selection -->
+<div class="modal fade" id="typeSelectionModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-sm modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h6 class="modal-title">Nuovo Evento</h6>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="d-grid gap-2">
+                    <button class="btn btn-outline-primary" id="btnNewException">
+                        <i class="fas fa-calendar-day me-2"></i>Eccezione Singola
+                        <div class="small text-muted" style="font-size: 0.75rem;">Per un giorno specifico (es. Inventario)</div>
+                    </button>
+                    <button class="btn btn-outline-purple" id="btnNewHoliday" style="color: #6f42c1; border-color: #6f42c1;">
+                        <i class="fas fa-gift me-2"></i>Festività Ricorrente
+                        <div class="small text-muted" style="font-size: 0.75rem;">Si ripete ogni anno (es. Patrono)</div>
+                    </button>
                 </div>
             </div>
-
         </div>
     </div>
 </div>
@@ -345,10 +351,25 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // --- CALENDAR LOGIC ---
     const calendarEl = document.getElementById('calendar');
+    
+    // Modals
     const exceptionModal = new bootstrap.Modal(document.getElementById('exceptionModal'));
+    const holidayModal = new bootstrap.Modal(document.getElementById('holidayModal'));
+    const typeSelectionModal = new bootstrap.Modal(document.getElementById('typeSelectionModal'));
+    
+    // Exception Elements
     const exIsClosed = document.getElementById('ex_is_closed');
     const exTimesContainer = document.getElementById('ex_times_container');
     const deleteExceptionBtn = document.getElementById('deleteExceptionBtn');
+
+    // Holiday Elements
+    const holRuleType = document.getElementById('hol_rule_type');
+    const holFixedContainer = document.getElementById('hol_fixed_container');
+    const holEasterContainer = document.getElementById('hol_easter_container');
+    const deleteHolidayBtn = document.getElementById('deleteHolidayBtn');
+    
+    // Temporary storage for selected date
+    let selectedDate = null;
 
     const calendar = new FullCalendar.Calendar(calendarEl, {
         initialView: 'dayGridMonth',
@@ -358,41 +379,86 @@ document.addEventListener('DOMContentLoaded', function() {
             center: 'title',
             right: 'dayGridMonth,listMonth'
         },
-        events: 'ajax_actions/hours_actions.php?action=get_exceptions',
+        events: 'ajax_actions/hours_actions.php?action=get_exceptions', // Now returns both
         dateClick: function(info) {
-            // Add new exception
-            document.getElementById('exceptionForm').reset();
-            document.getElementById('ex_id').value = '';
-            document.getElementById('ex_date').value = info.dateStr;
-            exIsClosed.value = '1';
-            exTimesContainer.classList.add('d-none');
-            deleteExceptionBtn.classList.add('d-none');
-            exceptionModal.show();
+            selectedDate = info.dateStr;
+            typeSelectionModal.show();
         },
         eventClick: function(info) {
-            // Edit existing
             const props = info.event.extendedProps;
-            document.getElementById('ex_id').value = info.event.id;
-            document.getElementById('ex_date').value = info.event.startStr;
-            exIsClosed.value = props.is_closed;
-            document.getElementById('ex_open_time').value = props.open_time;
-            document.getElementById('ex_close_time').value = props.close_time;
-            document.getElementById('ex_notice').value = props.notice;
             
-            if(props.is_closed == 0) exTimesContainer.classList.remove('d-none');
-            else exTimesContainer.classList.add('d-none');
+            if (props.type === 'exception') {
+                // Edit Exception
+                document.getElementById('ex_id').value = info.event.id;
+                document.getElementById('ex_date').value = info.event.startStr;
+                exIsClosed.value = props.is_closed;
+                document.getElementById('ex_open_time').value = props.open_time;
+                document.getElementById('ex_close_time').value = props.close_time;
+                document.getElementById('ex_notice').value = props.notice;
+                
+                if(props.is_closed == 0) exTimesContainer.classList.remove('d-none');
+                else exTimesContainer.classList.add('d-none');
 
-            deleteExceptionBtn.classList.remove('d-none');
-            deleteExceptionBtn.dataset.id = info.event.id;
-            exceptionModal.show();
+                deleteExceptionBtn.classList.remove('d-none');
+                deleteExceptionBtn.dataset.id = info.event.id;
+                exceptionModal.show();
+            } else if (props.type === 'holiday') {
+                // Edit Holiday
+                // We need to populate the form. 
+                // Note: The event has 'real_id' because 'id' is composite
+                const h = props;
+                document.getElementById('hol_id').value = h.real_id;
+                document.getElementById('hol_name').value = h.name;
+                document.getElementById('hol_rule_type').value = h.rule_type;
+                document.getElementById('hol_day').value = h.day;
+                document.getElementById('hol_month').value = h.month;
+                document.getElementById('hol_offset_days').value = h.offset_days;
+                document.getElementById('hol_is_closed').checked = h.is_closed == 1;
+                
+                holRuleType.dispatchEvent(new Event('change'));
+                deleteHolidayBtn.classList.remove('d-none');
+                deleteHolidayBtn.dataset.id = h.real_id;
+                holidayModal.show();
+            }
         }
     });
 
-    // Render calendar when tab is shown (fix rendering issues)
-    document.getElementById('exceptions-tab').addEventListener('shown.bs.tab', function () {
+    // Render calendar when tab is shown
+    document.getElementById('calendar-tab').addEventListener('shown.bs.tab', function () {
         calendar.render();
     });
 
+    // --- TYPE SELECTION HANDLERS ---
+    document.getElementById('btnNewException').addEventListener('click', function() {
+        typeSelectionModal.hide();
+        // Open Exception Modal
+        document.getElementById('exceptionForm').reset();
+        document.getElementById('ex_id').value = '';
+        document.getElementById('ex_date').value = selectedDate;
+        exIsClosed.value = '1';
+        exTimesContainer.classList.add('d-none');
+        deleteExceptionBtn.classList.add('d-none');
+        exceptionModal.show();
+    });
+
+    document.getElementById('btnNewHoliday').addEventListener('click', function() {
+        typeSelectionModal.hide();
+        // Open Holiday Modal
+        document.getElementById('holidayForm').reset();
+        document.getElementById('hol_id').value = '';
+        
+        // Pre-fill date if possible (only for Fixed)
+        const d = new Date(selectedDate);
+        document.getElementById('hol_day').value = d.getDate();
+        document.getElementById('hol_month').value = d.getMonth() + 1;
+        document.getElementById('hol_rule_type').value = 'fixed';
+        
+        deleteHolidayBtn.classList.add('d-none');
+        holRuleType.dispatchEvent(new Event('change'));
+        holidayModal.show();
+    });
+
+    // --- EXCEPTION LOGIC ---
     exIsClosed.addEventListener('change', function() {
         if(this.value == '0') exTimesContainer.classList.remove('d-none');
         else exTimesContainer.classList.add('d-none');
@@ -427,50 +493,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
-    // --- HOLIDAYS LOGIC ---
-    const holidayModal = new bootstrap.Modal(document.getElementById('holidayModal'));
-    const holRuleType = document.getElementById('hol_rule_type');
-    const holFixedContainer = document.getElementById('hol_fixed_container');
-    const holEasterContainer = document.getElementById('hol_easter_container');
-    const holidaysTableBody = document.getElementById('holidaysTableBody');
-    const deleteHolidayBtn = document.getElementById('deleteHolidayBtn');
-
-    function loadHolidays() {
-        fetch('ajax_actions/hours_actions.php?action=get_holidays')
-            .then(r => r.json())
-            .then(data => {
-                if(data.status === 'success') {
-                    renderHolidays(data.data);
-                }
-            });
-    }
-
-    function renderHolidays(holidays) {
-        holidaysTableBody.innerHTML = '';
-        holidays.forEach(h => {
-            let ruleDesc = '';
-            if(h.rule_type === 'fixed') {
-                const months = ['Gen', 'Feb', 'Mar', 'Apr', 'Mag', 'Giu', 'Lug', 'Ago', 'Set', 'Ott', 'Nov', 'Dic'];
-                ruleDesc = `${h.day} ${months[h.month-1]}`;
-            } else {
-                ruleDesc = `Pasqua ${h.offset_days >= 0 ? '+' : ''}${h.offset_days} gg`;
-            }
-
-            const row = `
-                <tr>
-                    <td>${h.name}</td>
-                    <td>${h.rule_type === 'fixed' ? 'Data Fissa' : 'Mobile (Pasqua)'}</td>
-                    <td>${ruleDesc}</td>
-                    <td class="text-center">${h.is_closed == 1 ? '<span class="badge bg-danger">Chiuso</span>' : '<span class="badge bg-success">Aperto</span>'}</td>
-                    <td class="text-center">
-                        <button class="btn btn-sm btn-outline-primary edit-holiday-btn" data-json='${JSON.stringify(h)}'><i class="fas fa-edit"></i></button>
-                    </td>
-                </tr>
-            `;
-            holidaysTableBody.insertAdjacentHTML('beforeend', row);
-        });
-    }
-
+    // --- HOLIDAY LOGIC ---
     holRuleType.addEventListener('change', function() {
         if(this.value === 'fixed') {
             holFixedContainer.classList.remove('d-none');
@@ -481,30 +504,19 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
-    document.getElementById('addHolidayBtn').addEventListener('click', function() {
+    // "Manage List" button (opens modal empty)
+    document.getElementById('manageHolidaysBtn').addEventListener('click', function() {
+        // Just open the modal for adding a new one, or maybe we should show a list?
+        // The user asked to manage them from the calendar. 
+        // But a list view is still useful.
+        // For now, let's make this button open the "Add New" modal as a shortcut, 
+        // or maybe we don't need it if we have the calendar.
+        // Let's make it "Aggiungi Festività" generic.
         document.getElementById('holidayForm').reset();
         document.getElementById('hol_id').value = '';
         deleteHolidayBtn.classList.add('d-none');
         holRuleType.dispatchEvent(new Event('change'));
-    });
-
-    holidaysTableBody.addEventListener('click', function(e) {
-        const btn = e.target.closest('.edit-holiday-btn');
-        if(btn) {
-            const h = JSON.parse(btn.dataset.json);
-            document.getElementById('hol_id').value = h.id;
-            document.getElementById('hol_name').value = h.name;
-            document.getElementById('hol_rule_type').value = h.rule_type;
-            document.getElementById('hol_day').value = h.day;
-            document.getElementById('hol_month').value = h.month;
-            document.getElementById('hol_offset_days').value = h.offset_days;
-            document.getElementById('hol_is_closed').checked = h.is_closed == 1;
-            
-            holRuleType.dispatchEvent(new Event('change'));
-            deleteHolidayBtn.classList.remove('d-none');
-            deleteHolidayBtn.dataset.id = h.id;
-            holidayModal.show();
-        }
+        // We don't have a selected date here, so fields are empty
     });
 
     document.getElementById('saveHolidayBtn').addEventListener('click', function() {
@@ -515,13 +527,13 @@ document.addEventListener('DOMContentLoaded', function() {
             .then(data => {
                 if(data.status === 'success') {
                     holidayModal.hide();
-                    loadHolidays();
+                    calendar.refetchEvents();
                 }
             });
     });
 
     deleteHolidayBtn.addEventListener('click', function() {
-        if(confirm('Eliminare questa festività?')) {
+        if(confirm('Eliminare questa festività ricorrente?')) {
             const formData = new FormData();
             formData.append('action', 'delete_holiday');
             formData.append('id', this.dataset.id);
@@ -530,12 +542,10 @@ document.addEventListener('DOMContentLoaded', function() {
                 .then(data => {
                     if(data.status === 'success') {
                         holidayModal.hide();
-                        loadHolidays();
+                        calendar.refetchEvents();
                     }
                 });
         }
     });
-
-    loadHolidays();
 });
 </script>

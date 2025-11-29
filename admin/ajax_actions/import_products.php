@@ -16,8 +16,10 @@ $action = $_POST['action'] ?? 'preview';
 
 // Helpers
 function parseCurrency($str) {
-    $str = str_replace(['€', ' ', '.'], '', $str); 
-    $str = str_replace(['€', ' '], '', $str);
+    // Keep only digits, comma, dot, minus
+    $str = preg_replace('/[^\d,.-]/', '', $str); 
+    // Assume Italian format: 1.200,00 -> remove dots, replace comma with dot
+    $str = str_replace('.', '', $str);
     $str = str_replace(',', '.', $str);
     return floatval($str);
 }
@@ -25,7 +27,7 @@ function parseCurrency($str) {
 function getOrCreateInfo($pdo, $table, $column, $value, $parentIdCol = null, $parentIdVal = null) {
     if (empty($value)) return null;
     
-    $sql = "SELECT id FROM $table WHERE $column = :val";
+    $sql = "SELECT id FROM $table WHERE $column LIKE :val";
     $params = [':val' => $value];
     
     if ($parentIdCol && $parentIdVal) {
@@ -58,13 +60,22 @@ try {
         }
 
         $file = $_FILES['csv_file']['tmp_name'];
+        
+        // Detect Separator
         $handle = fopen($file, "r");
         if ($handle === FALSE) throw new Exception('Impossibile aprire il file');
+        
+        $firstLine = fgets($handle);
+        $separator = (substr_count($firstLine, ';') > substr_count($firstLine, ',')) ? ';' : ',';
+        rewind($handle);
+
+        // Debug Log
+        file_put_contents('../../debug_import.log', "Separator detected: [$separator]\n", FILE_APPEND);
 
         $previewData = [];
         $row = 0;
 
-        while (($data = fgetcsv($handle, 0, ";")) !== FALSE) {
+        while (($data = fgetcsv($handle, 0, $separator)) !== FALSE) {
             $row++;
             if ($row === 1) continue; // Skip Header
 
@@ -82,9 +93,16 @@ try {
 
             // 2. Basic Data
             $rawDesc = trim($data[3] ?? '');
-            $price = parseCurrency($data[14] ?? '0'); 
+            $rawPriceA = $data[14] ?? '0';
+            $rawPriceB = $data[22] ?? '0';
+            
+            $price = parseCurrency($rawPriceA); 
             if ($price <= 0) {
-                $price = parseCurrency($data[22] ?? '0'); 
+                $price = parseCurrency($rawPriceB); 
+            }
+
+            if ($row <= 5) {
+                file_put_contents('../../debug_import.log', "Row $row: SKU=[$sku] PriceA=[$rawPriceA] PriceB=[$rawPriceB] Parsed=[$price]\n", FILE_APPEND);
             }
             
             $qty = intval($data[6] ?? 0); 

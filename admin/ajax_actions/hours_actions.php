@@ -42,14 +42,16 @@ try {
             $start = $_GET['start'] ?? date('Y-m-01');
             $end = $_GET['end'] ?? date('Y-m-t');
             
+            // 1. Fetch Exceptions
             $stmt = $pdo->prepare("SELECT * FROM ks_store_hours_exceptions WHERE date BETWEEN ? AND ?");
             $stmt->execute([$start, $end]);
             $exceptions = $stmt->fetchAll(PDO::FETCH_ASSOC);
             
-            // Format for FullCalendar
             $events = [];
+            
+            // Process Exceptions
             foreach ($exceptions as $ex) {
-                $color = $ex['is_closed'] ? '#dc3545' : '#198754'; // Red if closed, Green if open
+                $color = $ex['is_closed'] ? '#dc3545' : '#198754'; // Red/Green
                 $title = $ex['is_closed'] ? 'CHIUSO' : 'APERTO';
                 if ($ex['notice']) $title .= ' - ' . $ex['notice'];
                 
@@ -60,11 +62,48 @@ try {
                     'allDay' => true,
                     'backgroundColor' => $color,
                     'borderColor' => $color,
-                    'extendedProps' => $ex
+                    'extendedProps' => array_merge($ex, ['type' => 'exception'])
                 ];
             }
+
+            // 2. Fetch Holidays
+            $stmt = $pdo->query("SELECT * FROM ks_store_holidays WHERE active = 1");
+            $holidays = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+            // Calculate Holidays for the requested range (years)
+            $startYear = date('Y', strtotime($start));
+            $endYear = date('Y', strtotime($end));
+
+            for ($year = $startYear; $year <= $endYear; $year++) {
+                foreach ($holidays as $h) {
+                    $date = null;
+                    if ($h['rule_type'] === 'fixed') {
+                        $date = sprintf('%04d-%02d-%02d', $year, $h['month'], $h['day']);
+                    } elseif ($h['rule_type'] === 'easter') {
+                        $easterDate = date('Y-m-d', easter_date($year));
+                        $date = date('Y-m-d', strtotime("$easterDate " . ($h['offset_days'] >= 0 ? '+' : '') . $h['offset_days'] . " days"));
+                    }
+
+                    // Check if date is within range
+                    if ($date && $date >= $start && $date <= $end) {
+                        $color = '#6f42c1'; // Purple for holidays
+                        $title = $h['name'];
+                        if ($h['is_closed']) $title .= ' (Chiuso)';
+                        
+                        $events[] = [
+                            'id' => 'hol_' . $h['id'] . '_' . $year, // Unique ID for calendar
+                            'title' => $title,
+                            'start' => $date,
+                            'allDay' => true,
+                            'backgroundColor' => $color,
+                            'borderColor' => $color,
+                            'extendedProps' => array_merge($h, ['type' => 'holiday', 'real_id' => $h['id']])
+                        ];
+                    }
+                }
+            }
             
-            echo json_encode($events); // FullCalendar expects direct array
+            echo json_encode($events);
             break;
 
         case 'save_exception':

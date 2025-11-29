@@ -138,64 +138,97 @@ $quotes = $stmt->fetchAll();
 </div>
 
 <!-- Modal Dettagli Preventivo -->
-<div class="modal fade" id="quoteModal" tabindex="-1" aria-labelledby="quoteModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="quoteModalLabel">Dettagli Preventivo</h5>
-                <div class="ms-auto">
-                    <a href="#" id="printBtn" target="_blank" class="btn btn-outline-secondary btn-sm me-2">
-                        <i class="fas fa-print me-1"></i> Stampa
-                    </a>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
+<div class="modal fade" id="quoteModal" tabindex="-1" aria-labelledby="quoteModalLabel" aria-hidden="true" data-bs-backdrop="static">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content border-0 shadow-lg">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title" id="quoteModalLabel"><i class="fas fa-file-invoice-dollar me-2"></i>Gestione Preventivo</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <div class="modal-body">
-                <!-- Quick Actions Toolbar -->
-                <div class="d-flex gap-2 mb-4 p-3 bg-light rounded align-items-center justify-content-center">
-                    <a href="#" id="waBtn" target="_blank" class="btn btn-success text-white">
-                        <i class="fab fa-whatsapp me-2"></i> Invia Preventivo su WhatsApp
-                    </a>
-                </div>
-
-                <div class="row mb-4">
-                    <div class="col-md-6">
-                        <div class="card h-100 border-0 shadow-sm">
-                            <div class="card-body">
-                                <h6 class="card-title text-primary"><i class="fas fa-mobile-alt me-2"></i>Dispositivo</h6>
-                                <p id="deviceDetails" class="card-text mb-0"></p>
-                                <hr class="my-2">
-                                <p id="problemDetails" class="card-text small text-muted"></p>
+            <div class="modal-body p-4">
+                <form id="quoteForm">
+                    <input type="hidden" id="quoteId" name="id">
+                    
+                    <!-- Dettagli Principali -->
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <div class="card h-100 border-0 bg-light">
+                                <div class="card-body">
+                                    <h6 class="card-title text-primary fw-bold mb-3"><i class="fas fa-mobile-alt me-2"></i>Dispositivo & Problema</h6>
+                                    <p id="deviceDetails" class="card-text mb-2"></p>
+                                    <p id="problemDetails" class="card-text small text-muted mb-0"></p>
+                                    <div id="descriptionDetails" class="mt-2 small text-muted fst-italic border-top pt-2"></div>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="card h-100 border-0 shadow-sm">
-                            <div class="card-body">
-                                <h6 class="card-title text-primary"><i class="fas fa-user me-2"></i>Cliente</h6>
-                                <p id="customerDetails" class="card-text mb-0"></p>
-                                <hr class="my-2">
-                                <div class="alert alert-success mb-0 py-2">
-                                    <small class="fw-bold text-uppercase">Stima Costi (Modificabile)</small><br>
-                                    <div class="input-group input-group-sm mt-1">
-                                        <span class="input-group-text">€</span>
-                                        <input type="number" id="customMin" class="form-control fw-bold" placeholder="Min">
-                                        <span class="input-group-text">-</span>
-                                        <input type="number" id="customMax" class="form-control fw-bold" placeholder="Max">
+                        <div class="col-md-6">
+                            <div class="card h-100 border-0 bg-light">
+                                <div class="card-body">
+                                    <h6 class="card-title text-primary fw-bold mb-3"><i class="fas fa-user me-2"></i>Cliente & Stima</h6>
+                                    <p id="customerDetails" class="card-text mb-2"></p>
+                                    
+                                    <div class="alert alert-success mb-0 py-2 mt-3">
+                                        <small class="fw-bold text-uppercase">Stima Costi (Modificabile)</small><br>
+                                        <div class="input-group input-group-sm mt-1">
+                                            <span class="input-group-text">€</span>
+                                            <input type="number" id="customMin" class="form-control fw-bold" placeholder="Min">
+                                            <span class="input-group-text">-</span>
+                                            <input type="number" id="customMax" class="form-control fw-bold" placeholder="Max">
+                                        </div>
+                                        <button type="button" class="btn btn-sm btn-outline-success w-100 mt-2" id="createRuleBtn">
+                                            <i class="fas fa-plus-circle me-1"></i> Crea Regola Prezzo
+                                        </button>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </div>
 
-                <div class="mb-3">
-                    <label class="form-label fw-bold">Descrizione Aggiuntiva</label>
-                    <div id="descriptionDetails" class="p-3 bg-light rounded border"></div>
-                </div>
+                    <!-- Sezione Stato e Comunicazione -->
+                    <div class="row g-4">
+                        <div class="col-md-5">
+                            <label for="status" class="form-label fw-bold">Stato Preventivo</label>
+                            <select class="form-select mb-3" id="status" name="status" required>
+                                <option value="pending">In attesa</option>
+                                <option value="replied">Risposto</option>
+                                <option value="accepted">Accettato</option>
+                                <option value="rejected">Rifiutato</option>
+                            </select>
+
+                            <label for="notes" class="form-label fw-bold">Note Interne</label>
+                            <textarea class="form-control" id="notes" name="notes" rows="4" placeholder="Note visibili solo allo staff..."></textarea>
+                        </div>
+
+                        <div class="col-md-7">
+                            <div class="card border-primary h-100">
+                                <div class="card-header bg-primary text-white py-2">
+                                    <h6 class="mb-0 small fw-bold"><i class="fas fa-comment-alt me-2"></i>Comunicazione Cliente</h6>
+                                </div>
+                                <div class="card-body">
+                                    <div class="mb-3">
+                                        <label for="messagePreview" class="form-label small text-muted">Messaggio da inviare:</label>
+                                        <textarea class="form-control form-control-sm bg-light" id="messagePreview" rows="4"></textarea>
+                                    </div>
+                                    <div class="d-flex gap-2">
+                                        <a href="#" id="waBtn" target="_blank" class="btn btn-success btn-sm flex-grow-1">
+                                            <i class="fab fa-whatsapp me-1"></i> Invia WhatsApp
+                                        </a>
+                                        <a href="#" id="emailBtn" class="btn btn-outline-secondary btn-sm flex-grow-1">
+                                            <i class="far fa-envelope me-1"></i> Invia Email
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
             </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Chiudi</button>
+            <div class="modal-footer bg-light">
+                <a href="#" id="printBtn" target="_blank" class="btn btn-outline-dark me-auto">
+                    <i class="fas fa-print me-1"></i> Stampa Preventivo
+                </a>
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Chiudi</button>
+                <button type="button" class="btn btn-primary" id="saveQuoteBtn">Salva Modifiche</button>
             </div>
         </div>
     </div>
@@ -206,24 +239,97 @@ $quotes = $stmt->fetchAll();
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     const quoteModal = new bootstrap.Modal(document.getElementById('quoteModal'));
+    const quoteForm = document.getElementById('quoteForm');
+    const quoteIdInput = document.getElementById('quoteId');
     
     // UI Elements
     const deviceDetails = document.getElementById('deviceDetails');
     const customerDetails = document.getElementById('customerDetails');
     const problemDetails = document.getElementById('problemDetails');
-    // const priceDetails = document.getElementById('priceDetails'); // Removed
+    const descriptionDetails = document.getElementById('descriptionDetails');
     const customMin = document.getElementById('customMin');
     const customMax = document.getElementById('customMax');
-    const descriptionDetails = document.getElementById('descriptionDetails');
+    const statusSelect = document.getElementById('status');
+    const notesInput = document.getElementById('notes');
+    const messagePreview = document.getElementById('messagePreview');
     
     // Action Buttons
     const printBtn = document.getElementById('printBtn');
     const waBtn = document.getElementById('waBtn');
+    const emailBtn = document.getElementById('emailBtn');
+    const createRuleBtn = document.getElementById('createRuleBtn');
+    const saveQuoteBtn = document.getElementById('saveQuoteBtn');
+
+    // Current Quote Data
+    let currentQuote = {};
 
     // Tooltips
     const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
     tooltipTriggerList.map(function (tooltipTriggerEl) {
         return new bootstrap.Tooltip(tooltipTriggerEl);
+    });
+
+    // Template Generator
+    function updateMessageTemplate() {
+        const min = customMin.value;
+        const max = customMax.value;
+        let priceText = 'N/D';
+        
+        if (min && max) {
+            priceText = `€ ${parseFloat(min).toLocaleString()} - ${parseFloat(max).toLocaleString()}`;
+        } else if (min) {
+            priceText = `€ ${parseFloat(min).toLocaleString()}`;
+        }
+
+        const name = currentQuote.first_name;
+        const device = `${currentQuote.brand_text} ${currentQuote.model_text}`;
+        
+        let message = `Ciao ${name}, ecco il preventivo richiesto per il tuo ${device}. La stima è di ${priceText}.`;
+        
+        if (statusSelect.value === 'accepted') {
+            message = `Ciao ${name}, grazie per aver accettato il preventivo per il tuo ${device}. Ti contatteremo presto per procedere.`;
+        } else if (statusSelect.value === 'rejected') {
+            message = `Ciao ${name}, ci dispiace che il preventivo per il tuo ${device} non sia stato di tuo gradimento. Rimaniamo a disposizione.`;
+        }
+
+        messagePreview.value = message;
+        updateActionLinks(message);
+    }
+
+    function updateActionLinks(message) {
+        const phone = currentQuote.phone ? currentQuote.phone.replace(/[^0-9]/g, '') : '';
+        const email = currentQuote.email;
+        const min = customMin.value;
+        const max = customMax.value;
+        
+        // Print Link
+        printBtn.href = `print_quote.php?id=${currentQuote.id}&min=${min}&max=${max}`;
+
+        // WhatsApp
+        if (phone) {
+            waBtn.href = `https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
+            waBtn.classList.remove('disabled');
+        } else {
+            waBtn.href = '#';
+            waBtn.classList.add('disabled');
+        }
+
+        // Email
+        if (email) {
+            emailBtn.href = `mailto:${email}?subject=Preventivo KeySoft Italia&body=${encodeURIComponent(message)}`;
+            emailBtn.classList.remove('disabled');
+        } else {
+            emailBtn.href = '#';
+            emailBtn.classList.add('disabled');
+        }
+    }
+
+    // Listeners for Template Updates
+    customMin.addEventListener('input', updateMessageTemplate);
+    customMax.addEventListener('input', updateMessageTemplate);
+    statusSelect.addEventListener('change', updateMessageTemplate);
+    messagePreview.addEventListener('input', function() {
+        updateActionLinks(this.value);
     });
 
     // View Button Click
@@ -235,54 +341,78 @@ document.addEventListener('DOMContentLoaded', function() {
                 .then(response => response.json())
                 .then(data => {
                     if (data.status === 'success') {
-                        const q = data.quote;
+                        currentQuote = data.quote;
+                        const q = currentQuote;
+                        quoteIdInput.value = q.id;
                         
                         // Update UI
-                        deviceDetails.innerHTML = `<span class="fw-bold">${q.device_name}</span><br>${q.brand_text} ${q.model_text}`;
+                        deviceDetails.innerHTML = `<span class="fw-bold fs-5">${q.device_name}</span><br>${q.brand_text} ${q.model_text}`;
                         customerDetails.innerHTML = `<span class="fw-bold">${q.first_name} ${q.last_name}</span><br>${q.phone}<br>${q.email}`;
                         
                         const problems = JSON.parse(q.problems_json || '[]');
                         problemDetails.innerHTML = problems.map(p => `<span class="badge bg-secondary me-1">${p}</span>`).join('');
+                        
+                        descriptionDetails.textContent = q.description || 'Nessuna descrizione aggiuntiva.';
 
                         // Populate inputs
                         customMin.value = q.est_min ? parseFloat(q.est_min) : '';
                         customMax.value = q.est_max ? parseFloat(q.est_max) : '';
+                        statusSelect.value = q.status || 'pending';
+                        notesInput.value = q.notes || '';
 
-                        descriptionDetails.textContent = q.description || 'Nessuna descrizione aggiuntiva.';
-
-                        // Function to update links
-                        const updateLinks = () => {
-                            const min = customMin.value;
-                            const max = customMax.value;
-                            let priceText = 'N/D';
-                            
-                            if (min && max) {
-                                priceText = `€ ${parseFloat(min).toLocaleString()} - ${parseFloat(max).toLocaleString()}`;
-                            } else if (min) {
-                                priceText = `€ ${parseFloat(min).toLocaleString()}`;
-                            }
-
-                            // Update Print Link
-                            printBtn.href = `print_quote.php?id=${q.id}&min=${min}&max=${max}`;
-                            
-                            // Update WhatsApp Link
-                            const phone = q.phone.replace(/[^0-9]/g, '');
-                            const waText = encodeURIComponent(`Ciao ${q.first_name}, ecco il preventivo richiesto per il tuo ${q.brand_text} ${q.model_text}. La stima è di ${priceText}.`);
-                            waBtn.href = `https://wa.me/${phone}?text=${waText}`;
-                        };
-
-                        // Initial update
-                        updateLinks();
-
-                        // Listen for changes
-                        customMin.oninput = updateLinks;
-                        customMax.oninput = updateLinks;
-
+                        updateMessageTemplate();
                         quoteModal.show();
                     } else {
                         alert('Errore nel recupero dei dati.');
                     }
                 });
+        }
+    });
+
+    // Save Button Click
+    saveQuoteBtn.addEventListener('click', function() {
+        const formData = new FormData(quoteForm);
+        formData.append('action', 'edit');
+        formData.append('est_min', customMin.value);
+        formData.append('est_max', customMax.value);
+
+        fetch('ajax_actions/quote_actions.php', {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 'success') {
+                quoteModal.hide();
+                location.reload();
+            } else {
+                alert(data.message || 'Errore durante il salvataggio.');
+            }
+        });
+    });
+
+    // Create Price Rule Button
+    createRuleBtn.addEventListener('click', function() {
+        const price = customMin.value;
+        if (!price) {
+            alert('Inserisci almeno il prezzo minimo per creare una regola.');
+            return;
+        }
+        
+        if (confirm(`Vuoi creare una regola di prezzo per questo dispositivo a € ${price}?`)) {
+            const fd = new FormData();
+            fd.append('action', 'create_price_rule');
+            fd.append('quote_id', currentQuote.id);
+            fd.append('price', price);
+
+            fetch('ajax_actions/quote_actions.php', {
+                method: 'POST',
+                body: fd
+            })
+            .then(r => r.json())
+            .then(data => {
+                alert(data.message);
+            });
         }
     });
 
@@ -312,7 +442,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
-    // Search & Filter
+    // Search & Filter (Existing logic kept simple)
     const searchInput = document.getElementById('searchInput');
     const deviceFilter = document.getElementById('deviceFilter');
     const tableBody = document.querySelector('.table tbody');
