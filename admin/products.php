@@ -11,9 +11,14 @@ $brands = $pdo->query('SELECT b.*, d.name as device_name FROM brands b JOIN devi
 
 <div class="d-flex justify-content-between align-items-center mb-4">
     <h2 class="section-title">Gestione Prodotti</h2>
-    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#productModal" id="addProductBtn">
-        <i class="fas fa-plus"></i> Aggiungi Prodotto
-    </button>
+    <div>
+        <button type="button" class="btn btn-success me-2" data-bs-toggle="modal" data-bs-target="#importProductModal">
+            <i class="fas fa-file-csv"></i> Importa CSV
+        </button>
+        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#productModal" id="addProductBtn">
+            <i class="fas fa-plus"></i> Aggiungi Prodotto
+        </button>
+    </div>
 </div>
 
 <!-- Filters Bar -->
@@ -356,6 +361,36 @@ $brands = $pdo->query('SELECT b.*, d.name as device_name FROM brands b JOIN devi
     </div>
 </div>
 
+<!-- Import Product Modal -->
+<div class="modal fade" id="importProductModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Importa Prodotti da CSV</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="importProductForm">
+                    <div class="mb-3">
+                        <label class="form-label">Seleziona File CSV</label>
+                        <input type="file" class="form-control" name="csv_file" accept=".csv" required>
+                        <div class="form-text">Il file deve usare il separatore punto e virgola (;).</div>
+                    </div>
+                    <div class="alert alert-info small">
+                        <i class="fas fa-info-circle me-1"></i>
+                        I prodotti verranno importati come "Bozza". Marche e Modelli mancanti verranno creati automaticamente.
+                    </div>
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-success" id="importBtn">
+                            <i class="fas fa-upload me-2"></i> Carica e Importa
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
 <style>
 /* Wizard Styles */
 .wizard-steps {
@@ -456,6 +491,119 @@ $brands = $pdo->query('SELECT b.*, d.name as device_name FROM brands b JOIN devi
 </style>
 
 <?php include_once 'includes/footer.php'; ?>
+
+<!-- Import Product Modal -->
+<div class="modal fade" id="importProductModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Importa Prodotti da CSV</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <!-- Step 1: Upload -->
+                <div id="importStep1">
+                    <form id="importProductForm">
+                        <input type="hidden" name="action" value="preview">
+                        <div class="mb-3">
+                            <label class="form-label">Seleziona File CSV</label>
+                            <input type="file" class="form-control" name="csv_file" accept=".csv" required>
+                            <div class="form-text">Il file deve usare il separatore punto e virgola (;).</div>
+                        </div>
+                        <div class="alert alert-info small">
+                            <i class="fas fa-info-circle me-1"></i>
+                            Carica il file per vedere un'anteprima dei prodotti che verranno importati.
+                        </div>
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-primary" id="previewBtn">
+                                <i class="fas fa-eye me-2"></i> Vedi Anteprima
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Step 2: Preview -->
+                <div id="importStep2" class="d-none">
+                    <div class="table-responsive" style="max-height: 500px; overflow-y: auto;">
+                        <table class="table table-sm table-hover">
+                            <thead class="table-light sticky-top">
+                                <tr>
+                                    <th width="30"><input type="checkbox" id="selectAllPreview" checked></th>
+                                    <th>SKU</th>
+                                    <th>Brand</th>
+                                    <th>Modello</th>
+                                    <th>Storage</th>
+                                    <th>Prezzo</th>
+                                    <th>Grado</th>
+                                </tr>
+                            </thead>
+                            <tbody id="previewTableBody"></tbody>
+                        </table>
+                    </div>
+                    <div class="d-flex justify-content-between mt-3">
+                        <button type="button" class="btn btn-secondary" id="backToUploadBtn">
+                            <i class="fas fa-arrow-left me-2"></i> Indietro
+                        </button>
+                        <button type="button" class="btn btn-success" id="confirmImportBtn">
+                            <i class="fas fa-file-import me-2"></i> Importa Selezionati (<span id="selectedCount">0</span>)
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+/* Wizard Styles */
+.wizard-steps {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: relative;
+    padding: 0 20px;
+}
+.wizard-steps .step {
+    text-align: center;
+    z-index: 2;
+    background: #fff;
+    padding: 0 10px;
+    opacity: 0.5;
+    transition: all 0.3s;
+}
+.wizard-steps .step.active {
+    opacity: 1;
+    font-weight: bold;
+    color: var(--bs-primary);
+}
+.wizard-steps .step-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: #f8f9fa;
+    border: 2px solid #dee2e6;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 5px;
+    transition: all 0.3s;
+}
+.wizard-steps .step.active .step-icon {
+    background: var(--bs-primary);
+    color: #fff;
+    border-color: var(--bs-primary);
+}
+.wizard-steps .step-line {
+    flex-grow: 1;
+    height: 2px;
+    background: #dee2e6;
+    position: absolute;
+    top: 20px;
+    left: 40px;
+    right: 40px;
+    z-index: 1;
+}
+</style>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.0/Sortable.min.js"></script>
 <script>
@@ -748,6 +896,7 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
 
+
     // --- AI & TOOLS ---
     document.getElementById('generateDescBtn').addEventListener('click', () => {
         const modelSelect = document.getElementById('model_id');
@@ -843,7 +992,129 @@ Il dispositivo è stato sottoposto a rigidi test di qualità dai nostri tecnici 
     handleSave('Brand', 'brandForm', 'brand_actions.php', () => location.reload());
     handleSave('Model', 'modelForm', 'model_actions.php', () => location.reload());
 
-    // Init
+    // Import CSV Logic
+    let previewData = [];
+    const importForm = document.getElementById('importProductForm');
+    const step1 = document.getElementById('importStep1');
+    const step2 = document.getElementById('importStep2');
+    const previewBody = document.getElementById('previewTableBody');
+    const selectAll = document.getElementById('selectAllPreview');
+    const countSpan = document.getElementById('selectedCount');
+
+    if(importForm) {
+        // Preview Action
+        importForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const btn = document.getElementById('previewBtn');
+            const originalText = btn.innerHTML;
+            
+            btn.disabled = true;
+            btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Caricamento...';
+            
+            const fd = new FormData(this);
+            
+            fetch('ajax_actions/import_products.php', {
+                method: 'POST',
+                body: fd
+            })
+            .then(r => r.json())
+            .then(data => {
+                if(data.status === 'success') {
+                    previewData = data.data;
+                    renderPreview(previewData);
+                    step1.classList.add('d-none');
+                    step2.classList.remove('d-none');
+                    updateCount();
+                } else {
+                    alert(data.message);
+                }
+            })
+            .catch(err => alert('Errore di connessione'))
+            .finally(() => {
+                btn.disabled = false;
+                btn.innerHTML = originalText;
+            });
+        });
+
+        // Back Button
+        document.getElementById('backToUploadBtn').addEventListener('click', () => {
+            step2.classList.add('d-none');
+            step1.classList.remove('d-none');
+            importForm.reset();
+        });
+
+        // Select All
+        selectAll.addEventListener('change', (e) => {
+            document.querySelectorAll('.preview-check').forEach(cb => cb.checked = e.target.checked);
+            updateCount();
+        });
+
+        // Confirm Import
+        document.getElementById('confirmImportBtn').addEventListener('click', function() {
+            const selectedIndexes = Array.from(document.querySelectorAll('.preview-check:checked')).map(cb => cb.value);
+            
+            if(selectedIndexes.length === 0) {
+                alert('Seleziona almeno un prodotto.');
+                return;
+            }
+
+            const selectedProducts = selectedIndexes.map(i => previewData[i]);
+            const btn = this;
+            const originalText = btn.innerHTML;
+            
+            btn.disabled = true;
+            btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Importazione...';
+
+            const fd = new FormData();
+            fd.append('action', 'import');
+            fd.append('products', JSON.stringify(selectedProducts));
+
+            fetch('ajax_actions/import_products.php', {
+                method: 'POST',
+                body: fd
+            })
+            .then(r => r.json())
+            .then(data => {
+                if(data.status === 'success') {
+                    alert(data.message);
+                    bootstrap.Modal.getInstance(document.getElementById('importProductModal')).hide();
+                    step2.classList.add('d-none');
+                    step1.classList.remove('d-none');
+                    importForm.reset();
+                    fetchProducts();
+                } else {
+                    alert(data.message);
+                }
+            })
+            .catch(err => alert('Errore durante l\'importazione'))
+            .finally(() => {
+                btn.disabled = false;
+                btn.innerHTML = originalText;
+            });
+        });
+    }
+
+    function renderPreview(data) {
+        previewBody.innerHTML = data.map((p, index) => `
+            <tr>
+                <td><input type="checkbox" class="form-check-input preview-check" value="${index}" checked onchange="updateCount()"></td>
+                <td><small>${p.sku}</small></td>
+                <td>${p.brand}</td>
+                <td>${p.model}</td>
+                <td>${p.storage > 0 ? p.storage + 'GB' : '-'}</td>
+                <td>€ ${p.price}</td>
+                <td><span class="badge bg-secondary">${p.grade}</span></td>
+            </tr>
+        `).join('');
+    }
+
+    window.updateCount = function() {
+        const count = document.querySelectorAll('.preview-check:checked').length;
+        document.getElementById('selectedCount').innerText = count;
+    }
+    
     fetchProducts();
 });
 </script>
+
+
