@@ -357,21 +357,25 @@ if (function_exists('ks_hours_notice_for_date')) {
 
             <div class="opening-hours-list oh-list mt-3">
   <?php 
-  for ($d=1; $d<=7; $d++):
-        $date = ks_date_for_iso_dow($now, $d);
-
-        // Orari dal DB (via ks_intervals_for_date) con fallback automatico
-        $intervals = ks_intervals_for_date($date);
-        $is_today = ($d === (int)$now->format('N'));
+  $weekTable = ks_build_week_table_detailed($now);
+  foreach ($weekTable as $dayNum => $data):
+        $is_today = ($dayNum === (int)$now->format('N'));
         $row_cls  = $is_today ? 'oh-row is-today' : 'oh-row';
+        
+        $badge = '';
+        if ($data['type'] === 'exception') {
+            $badge = ' <span class="badge bg-soft-warning text-warning" style="font-size: 0.7em; vertical-align: middle;">[Variazione]</span>';
+        } elseif ($data['type'] === 'holiday') {
+            $badge = ' <span class="badge bg-soft-info text-info" style="font-size: 0.7em; vertical-align: middle;">[Festivo]</span>';
+        }
   ?>
     <div class="<?= $row_cls; ?>">
-      <span class="oh-day"><?= ks_day_label($d); ?></span>
+      <span class="oh-day"><?= ks_day_label($dayNum); ?><?= $badge; ?></span>
       <span class="oh-time">
-        <strong><?= ks_format_intervals($intervals); ?></strong>
+        <strong><?= ks_format_intervals($data['intervals']); ?></strong>
       </span>
     </div>
-  <?php endfor; ?>
+  <?php endforeach; ?>
 </div>
             
             </div>

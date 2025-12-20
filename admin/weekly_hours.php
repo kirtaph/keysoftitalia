@@ -1,6 +1,4 @@
-<?php
-include_once 'includes/header.php';
-?>
+<?php include 'includes/header.php'; ?>
 
 <!-- FullCalendar CSS -->
 <link href='https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.css' rel='stylesheet' />
@@ -75,6 +73,9 @@ include_once 'includes/header.php';
                             <button class="btn btn-outline-primary btn-sm" data-bs-toggle="modal" data-bs-target="#holidayModal" id="manageHolidaysBtn">
                                 <i class="fas fa-list me-1"></i> Gestisci Lista Festività
                             </button>
+                            <button class="btn btn-outline-secondary btn-sm" id="printCalendarBtn">
+                                <i class="fas fa-print me-1"></i> Stampa Agenda
+                            </button>
                         </div>
                     </div>
                     <div class="col-md-9">
@@ -113,7 +114,7 @@ include_once 'includes/header.php';
 
 <!-- Modal Exception -->
 <div class="modal fade" id="exceptionModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog">
+    <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title">Gestione Eccezione</h5>
@@ -121,41 +122,72 @@ include_once 'includes/header.php';
             </div>
             <div class="modal-body">
                 <form id="exceptionForm">
-                    <input type="hidden" id="ex_id" name="id">
-                    <div class="mb-3">
-                        <label class="form-label">Data</label>
-                        <input type="date" class="form-control" id="ex_date" name="date" required readonly>
+                    <div class="mb-4">
+                        <label class="form-label fw-bold">Data delle variazioni</label>
+                        <input type="date" class="form-control form-control-lg bg-light" id="ex_date" name="date" required readonly>
                     </div>
-                    <div class="mb-3">
-                        <label class="form-label">Tipo Eccezione</label>
-                        <select class="form-select" id="ex_is_closed" name="is_closed">
-                            <option value="1">CHIUSO (Ferie/Chiusura)</option>
-                            <option value="0">APERTO (Apertura Straordinaria)</option>
-                        </select>
+
+                    <div class="table-responsive">
+                        <table class="table table-bordered align-middle mb-0">
+                            <thead class="table-light">
+                                <tr>
+                                    <th style="width: 150px;">Segmento</th>
+                                    <th style="width: 120px;" class="text-center">Stato</th>
+                                    <th>Orario Apertura</th>
+                                    <th>Orario Chiusura</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Segmento Mattina (SEG 1) -->
+                                <tr>
+                                    <td class="fw-bold">Mattina</td>
+                                    <td class="text-center">
+                                        <div class="form-check form-switch d-inline-block">
+                                            <input class="form-check-input seg-active-toggle" type="checkbox" id="ex_active_1" name="segments[1][active]" value="1" checked>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <input type="time" class="form-control seg-time-input" name="segments[1][open_time]" id="ex_open_1">
+                                    </td>
+                                    <td>
+                                        <input type="time" class="form-control seg-time-input" name="segments[1][close_time]" id="ex_close_1">
+                                    </td>
+                                </tr>
+                                <!-- Segmento Pomeriggio (SEG 2) -->
+                                <tr>
+                                    <td class="fw-bold">Pomeriggio</td>
+                                    <td class="text-center">
+                                        <div class="form-check form-switch d-inline-block">
+                                            <input class="form-check-input seg-active-toggle" type="checkbox" id="ex_active_2" name="segments[2][active]" value="1" checked>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <input type="time" class="form-control seg-time-input" name="segments[2][open_time]" id="ex_open_2">
+                                    </td>
+                                    <td>
+                                        <input type="time" class="form-control seg-time-input" name="segments[2][close_time]" id="ex_close_2">
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
                     </div>
-                    <div id="ex_times_container" class="d-none">
-                        <div class="row">
-                            <div class="col-6">
-                                <label class="form-label">Apertura</label>
-                                <input type="time" class="form-control" id="ex_open_time" name="open_time">
-                            </div>
-                            <div class="col-6">
-                                <label class="form-label">Chiusura</label>
-                                <input type="time" class="form-control" id="ex_close_time" name="close_time">
-                            </div>
-                        </div>
-                    </div>
-                    <div class="mb-3 mt-3">
-                        <label class="form-label">Nota (Opzionale)</label>
-                        <input type="text" class="form-control" id="ex_notice" name="notice" placeholder="es. Ponte, Inventario...">
+
+                    <div class="mb-3 mt-4">
+                        <label class="form-label fw-bold">Nota per i clienti (Opzionale)</label>
+                        <input type="text" class="form-control" id="ex_notice" name="notice" placeholder="es. Ponte, Chiusura per ferie, Solo Pomeriggio...">
+                        <div class="form-text">Questa nota apparirà nel calendario e sul sito.</div>
                     </div>
                 </form>
             </div>
             <div class="modal-footer justify-content-between">
-                <button type="button" class="btn btn-danger d-none" id="deleteExceptionBtn">Elimina</button>
+                <button type="button" class="btn btn-outline-danger d-none" id="deleteExceptionBtn">
+                    <i class="fas fa-trash-alt me-1"></i> Elimina Eccezione
+                </button>
                 <div>
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annulla</button>
-                    <button type="button" class="btn btn-primary" id="saveExceptionBtn">Salva</button>
+                    <button type="button" class="btn btn-light" data-bs-dismiss="modal">Annulla</button>
+                    <button type="button" class="btn btn-primary px-4" id="saveExceptionBtn">
+                        <i class="fas fa-check me-1"></i> Salva Variazioni
+                    </button>
                 </div>
             </div>
         </div>
@@ -347,6 +379,13 @@ document.addEventListener('DOMContentLoaded', function() {
             });
     });
 
+    document.getElementById('printCalendarBtn').addEventListener('click', function() {
+        const viewDate = calendar.getDate();
+        const month = viewDate.getMonth() + 1;
+        const year = viewDate.getFullYear();
+        window.open(`print_hours.php?month=${month}&year=${year}`, '_blank');
+    });
+
     loadWeeklyHours();
 
     // --- CALENDAR LOGIC ---
@@ -358,8 +397,6 @@ document.addEventListener('DOMContentLoaded', function() {
     const typeSelectionModal = new bootstrap.Modal(document.getElementById('typeSelectionModal'));
     
     // Exception Elements
-    const exIsClosed = document.getElementById('ex_is_closed');
-    const exTimesContainer = document.getElementById('ex_times_container');
     const deleteExceptionBtn = document.getElementById('deleteExceptionBtn');
 
     // Holiday Elements
@@ -379,7 +416,7 @@ document.addEventListener('DOMContentLoaded', function() {
             center: 'title',
             right: 'dayGridMonth,listMonth'
         },
-        events: 'ajax_actions/hours_actions.php?action=get_exceptions', // Now returns both
+        events: 'ajax_actions/hours_actions.php?action=get_exceptions', // Now returns both grouped exceptions & holidays
         dateClick: function(info) {
             selectedDate = info.dateStr;
             typeSelectionModal.show();
@@ -389,23 +426,36 @@ document.addEventListener('DOMContentLoaded', function() {
             
             if (props.type === 'exception') {
                 // Edit Exception
-                document.getElementById('ex_id').value = info.event.id;
-                document.getElementById('ex_date').value = info.event.startStr;
-                exIsClosed.value = props.is_closed;
-                document.getElementById('ex_open_time').value = props.open_time;
-                document.getElementById('ex_close_time').value = props.close_time;
-                document.getElementById('ex_notice').value = props.notice;
-                
-                if(props.is_closed == 0) exTimesContainer.classList.remove('d-none');
-                else exTimesContainer.classList.add('d-none');
+                const date = props.date;
+                const segments = props.segments || [];
+                const notice = props.notice || '';
+
+                document.getElementById('ex_date').value = date;
+                document.getElementById('ex_notice').value = notice;
+
+                // Reset segments
+                [1, 2].forEach(seg => {
+                    const s = segments.find(x => x.seg == seg);
+                    const activeToggle = document.getElementById(`ex_active_${seg}`);
+                    const openInput = document.getElementById(`ex_open_${seg}`);
+                    const closeInput = document.getElementById(`ex_close_${seg}`);
+
+                    if (s) {
+                        activeToggle.checked = (s.is_closed == 0);
+                        openInput.value = s.open_time;
+                        closeInput.value = s.close_time;
+                    } else {
+                        activeToggle.checked = false;
+                        openInput.value = '';
+                        closeInput.value = '';
+                    }
+                });
 
                 deleteExceptionBtn.classList.remove('d-none');
-                deleteExceptionBtn.dataset.id = info.event.id;
+                deleteExceptionBtn.dataset.date = date;
                 exceptionModal.show();
             } else if (props.type === 'holiday') {
                 // Edit Holiday
-                // We need to populate the form. 
-                // Note: The event has 'real_id' because 'id' is composite
                 const h = props;
                 document.getElementById('hol_id').value = h.real_id;
                 document.getElementById('hol_name').value = h.name;
@@ -433,10 +483,15 @@ document.addEventListener('DOMContentLoaded', function() {
         typeSelectionModal.hide();
         // Open Exception Modal
         document.getElementById('exceptionForm').reset();
-        document.getElementById('ex_id').value = '';
         document.getElementById('ex_date').value = selectedDate;
-        exIsClosed.value = '1';
-        exTimesContainer.classList.add('d-none');
+        
+        // Default to active with empty times for a new exception
+        [1, 2].forEach(seg => {
+            document.getElementById(`ex_active_${seg}`).checked = true;
+            document.getElementById(`ex_open_${seg}`).value = '';
+            document.getElementById(`ex_close_${seg}`).value = '';
+        });
+
         deleteExceptionBtn.classList.add('d-none');
         exceptionModal.show();
     });
@@ -459,29 +514,31 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     // --- EXCEPTION LOGIC ---
-    exIsClosed.addEventListener('change', function() {
-        if(this.value == '0') exTimesContainer.classList.remove('d-none');
-        else exTimesContainer.classList.add('d-none');
-    });
-
     document.getElementById('saveExceptionBtn').addEventListener('click', function() {
         const formData = new FormData(document.getElementById('exceptionForm'));
         formData.append('action', 'save_exception');
+        
+        // Ensure unchecked switches are sent if needed, but FormData usually handles it 
+        // if they have names. Since we use name="segments[1][active]", 
+        // only checked ones are sent. The backend handles missing ones as closed.
+
         fetch('ajax_actions/hours_actions.php', { method: 'POST', body: formData })
             .then(r => r.json())
             .then(data => {
                 if(data.status === 'success') {
                     exceptionModal.hide();
                     calendar.refetchEvents();
+                } else {
+                    alert('Errore: ' + data.message);
                 }
             });
     });
 
     deleteExceptionBtn.addEventListener('click', function() {
-        if(confirm('Eliminare questa eccezione?')) {
+        if(confirm('Eliminare tutte le variazioni per questa data?')) {
             const formData = new FormData();
             formData.append('action', 'delete_exception');
-            formData.append('id', this.dataset.id);
+            formData.append('date', this.dataset.date);
             fetch('ajax_actions/hours_actions.php', { method: 'POST', body: formData })
                 .then(r => r.json())
                 .then(data => {

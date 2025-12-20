@@ -447,7 +447,7 @@ if (!function_exists('ks_db_date_exception')) {
   function ks_db_date_exception(string $ymd): array {
     $db = ks_db(); 
     if (!$db || !ks_table_exists('ks_store_hours_exceptions')) {
-      return ['found'=>false];
+      return ['found' => false];
     }
     try {
       $q = $db->prepare("
@@ -458,40 +458,33 @@ if (!function_exists('ks_db_date_exception')) {
       ");
       $q->execute([':d' => $ymd]);
       $rows = $q->fetchAll(PDO::FETCH_ASSOC);
-      if (!$rows) return ['found'=>false];
+      if (!$rows) return ['found' => false];
 
       $intervals = [];
-      $hasIntervals = false;
-      $allClosed = false;
+      $allClosed = true;
       $notice = null;
 
       foreach ($rows as $r) {
-        // prendi la prima notice non vuota
         if ($notice === null && isset($r['notice'])) {
           $n = trim((string)$r['notice']);
           if ($n !== '') $notice = $n;
         }
 
-        // chiusura totale
-        if ((int)$r['is_closed'] === 1 && $r['open_time'] === null && $r['close_time'] === null) {
-          $allClosed = true;
-          continue;
-        }
-
-        // intervalli validi
-        if ($r['open_time'] !== null && $r['close_time'] !== null) {
-          $hasIntervals = true;
-          $intervals[] = [ substr($r['open_time'],0,5), substr($r['close_time'],0,5) ];
+        if ((int)$r['is_closed'] === 0 && $r['open_time'] && $r['close_time']) {
+          $allClosed = false;
+          $intervals[] = [substr($r['open_time'], 0, 5), substr($r['close_time'], 0, 5)];
         }
       }
 
-      if ($hasIntervals) return ['found'=>true, 'intervals'=>$intervals, 'notice'=>$notice, 'source'=>'exception'];
-      if ($allClosed)    return ['found'=>true, 'intervals'=>[],        'notice'=>$notice, 'source'=>'exception'];
-      // solo notice
-      return ['found'=>true, 'intervals'=>null,   'notice'=>$notice, 'source'=>'exception'];
+      return [
+        'found' => true,
+        'intervals' => $allClosed ? [] : $intervals,
+        'notice' => $notice,
+        'source' => 'exception'
+      ];
 
     } catch (Throwable $e) {
-      return ['found'=>false];
+      return ['found' => false];
     }
   }
 }
@@ -604,27 +597,35 @@ function ks_human_diff(DateTime $from, DateTime $to): string {
   return $parts ? implode(' ', $parts) : 'meno di 1m';
 }
 
-/** Orari per una data specifica (DB-first con fallback agli array di config) */
+/** Orari per una data specifica (DB-first con precedence: Exception > Holiday > Weekly > Config) */
 function ks_intervals_for_date(DateTime $date): array {
-  // --- Eccezione puntuale da DB
+  $ymd = $date->format('Y-m-d');
+  
+  // 1) Eccezione puntuale da DB
   if (function_exists('ks_db_date_exception')) {
-    $excDb = ks_db_date_exception($date->format('Y-m-d'));
+    $excDb = ks_db_date_exception($ymd);
     if ($excDb['found']) {
-      if (is_array($excDb['intervals'])) return $excDb['intervals']; // override completo
-      if ($excDb['intervals'] === [])    return [];                   // chiuso tutto il giorno
-      // solo notice -> continua
+      // Se abbiamo una riga nel DB per questa data, decide lei (anche se è array vuoto = chiuso)
+      return $excDb['intervals'];
     }
   }
 
-  // 2) Weekly da DB (se presente)
+  // 2) Festività ricorrenti da DB
+  if (function_exists('ks_holiday_rule_for_date')) {
+    $hol = ks_holiday_rule_for_date($date);
+    if ($hol) {
+      // Se è una festività contrassegnata come chiusa, ritorna vuoto
+      if ($hol['closed']) return [];
+      // Se non è chiusa, prosegue con l'orario settimanale
+    }
+  }
+
+  // 3) Weekly da DB
   $weekly = ks_db_weekly_intervals((int)$date->format('N'));
   if (!empty($weekly)) return $weekly;
 
-  // 3) Fallback: i TUOI array di config (come avevi già)
+  // 4) Fallback: Config
   $base = ks_store_hours_base();
-  $excA = ks_store_hours_exceptions(); // eccezioni hardcoded (opzionali)
-  $key  = $date->format('Y-m-d');
-  if (array_key_exists($key, $excA)) return $excA[$key];
   $dow = (int)$date->format('N');
   return $base[$dow] ?? [];
 }
@@ -687,42 +688,52 @@ if ($__state['open']) {
              . $nxt->format('H:i') . ' (tra ' . ks_human_diff($__now,$nxt) . ')' : '';
 }
 
-/* Per la tabella: base settimanale, ma sostituisci “oggi” con l’eventuale eccezione */
-$__base = ks_store_hours_base();
-$__table = [];
-for ($d=1; $d<=7; $d++) {
-  $dateForRow = ks_date_for_iso_dow($__now, $d);        // data reale per quel day-of-week
-  $__table[$d] = ks_intervals_for_date($dateForRow);    // <-- legge DB + fallback
-}
-
-function ks_hours_notice_for_date(DateTime $date): ?string {
-  $exc = ks_db_date_exception($date->format('Y-m-d'));
-  if (!empty($exc['found'])) {
-    $n = isset($exc['notice']) ? trim((string)$exc['notice']) : '';
-    if ($n !== '') return $n;
-  }
-
-  $hol = ks_holiday_rule_for_date($date);
-  if ($hol) {
-    $n = isset($hol['notice']) ? trim((string)$hol['notice']) : '';
-    if ($n !== '') return $n;
-  }
-
-  // Fallback agli array
-  $map = ks_store_hours_notices();
-  $k = $date->format('Y-m-d');
-  $n = isset($map[$k]) ? trim((string)$map[$k]) : '';
-  return $n !== '' ? $n : null;
-}
-
-// Costruisce la tabella settimanale (DB-first grazie a ks_intervals_for_date)
-if (!function_exists('ks_build_week_table')) {
-  function ks_build_week_table(DateTime $ref): array {
+// Costruisce la tabella settimanale (con info su tipo di orario)
+if (!function_exists('ks_build_week_table_detailed')) {
+  function ks_build_week_table_detailed(DateTime $ref): array {
     $out = [];
     for ($d=1; $d<=7; $d++) {
       $date = ks_date_for_iso_dow($ref, $d);
-      $out[$d] = ks_intervals_for_date($date);
+      $ymd  = $date->format('Y-m-d');
+      
+      $type = 'standard';
+      $exc  = ks_db_date_exception($ymd);
+      if ($exc['found']) {
+        $type = 'exception';
+      } else {
+        $hol = ks_holiday_rule_for_date($date);
+        if ($hol) $type = 'holiday';
+      }
+      
+      $out[$d] = [
+        'date'      => $date,
+        'intervals' => ks_intervals_for_date($date),
+        'type'      => $type,
+        'notice'    => ks_hours_notice_for_date($date)
+      ];
     }
     return $out;
+  }
+}
+
+if (!function_exists('ks_hours_notice_for_date')) {
+  function ks_hours_notice_for_date(DateTime $date): ?string {
+    $exc = ks_db_date_exception($date->format('Y-m-d'));
+    if (!empty($exc['found'])) {
+      $n = isset($exc['notice']) ? trim((string)$exc['notice']) : '';
+      if ($n !== '') return $n;
+    }
+
+    $hol = ks_holiday_rule_for_date($date);
+    if ($hol) {
+      $n = isset($hol['notice']) ? trim((string)$hol['notice']) : '';
+      if ($n !== '') return $n;
+    }
+
+    // Fallback agli array
+    $map = ks_store_hours_notices();
+    $k = $date->format('Y-m-d');
+    $n = isset($map[$k]) ? trim((string)$map[$k]) : '';
+    return $n !== '' ? $n : null;
   }
 }

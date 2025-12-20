@@ -42,27 +42,50 @@ try {
             $start = $_GET['start'] ?? date('Y-m-01');
             $end = $_GET['end'] ?? date('Y-m-t');
             
-            // 1. Fetch Exceptions
-            $stmt = $pdo->prepare("SELECT * FROM ks_store_hours_exceptions WHERE date BETWEEN ? AND ?");
+            // 1. Fetch Exceptions (grouped by date)
+            $stmt = $pdo->prepare("SELECT * FROM ks_store_hours_exceptions WHERE date BETWEEN ? AND ? ORDER BY date ASC, seg ASC");
             $stmt->execute([$start, $end]);
-            $exceptions = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
             
+            $grouped = [];
+            foreach ($rows as $row) {
+                $grouped[$row['date']][] = $row;
+            }
+
             $events = [];
             
             // Process Exceptions
-            foreach ($exceptions as $ex) {
-                $color = $ex['is_closed'] ? '#dc3545' : '#198754'; // Red/Green
-                $title = $ex['is_closed'] ? 'CHIUSO' : 'APERTO';
-                if ($ex['notice']) $title .= ' - ' . $ex['notice'];
+            foreach ($grouped as $date => $segments) {
+                // Build a summary title
+                $titles = [];
+                $isAllClosed = true;
+                foreach ($segments as $s) {
+                    if (!$s['is_closed']) {
+                        $isAllClosed = false;
+                        $titles[] = ($s['seg'] == 1 ? 'Mattina' : 'Pomeriggio') . ': ' . date('H:i', strtotime($s['open_time'])) . '-' . date('H:i', strtotime($s['close_time']));
+                    }
+                }
+                
+                $title = $isAllClosed ? 'CHIUSO' : implode(' / ', $titles);
+                if (!empty($segments[0]['notice'])) {
+                    $title = $segments[0]['notice'] . ($isAllClosed ? '' : ' (' . $title . ')');
+                }
+                
+                $color = $isAllClosed ? '#dc3545' : '#198754';
                 
                 $events[] = [
-                    'id' => $ex['id'],
+                    'id' => 'ex_' . $date, // Grouped ID
                     'title' => $title,
-                    'start' => $ex['date'],
+                    'start' => $date,
                     'allDay' => true,
                     'backgroundColor' => $color,
                     'borderColor' => $color,
-                    'extendedProps' => array_merge($ex, ['type' => 'exception'])
+                    'extendedProps' => [
+                        'type' => 'exception',
+                        'date' => $date,
+                        'segments' => $segments,
+                        'notice' => $segments[0]['notice']
+                    ]
                 ];
             }
 
@@ -107,30 +130,43 @@ try {
             break;
 
         case 'save_exception':
-            $id = $_POST['id'] ?? null;
             $date = $_POST['date'];
-            $is_closed = $_POST['is_closed'] ?? 0;
-            $open_time = $_POST['open_time'] ?? null;
-            $close_time = $_POST['close_time'] ?? null;
             $notice = $_POST['notice'] ?? null;
+            $segments = $_POST['segments'] ?? []; // Array of [seg => [active, open_time, close_time]]
 
-            if ($id) {
-                $stmt = $pdo->prepare("UPDATE ks_store_hours_exceptions SET date=?, is_closed=?, open_time=?, close_time=?, notice=? WHERE id=?");
-                $stmt->execute([$date, $is_closed, $open_time, $close_time, $notice, $id]);
-            } else {
-                $stmt = $pdo->prepare("INSERT INTO ks_store_hours_exceptions (date, is_closed, open_time, close_time, notice) VALUES (?, ?, ?, ?, ?)");
-                $stmt->execute([$date, $is_closed, $open_time, $close_time, $notice]);
+            $pdo->beginTransaction();
+            try {
+                // Delete existing for this date
+                $stmt = $pdo->prepare("DELETE FROM ks_store_hours_exceptions WHERE date = ?");
+                $stmt->execute([$date]);
+
+                // Insert segments
+                $stmt = $pdo->prepare("INSERT INTO ks_store_hours_exceptions (date, seg, is_closed, open_time, close_time, notice) VALUES (?, ?, ?, ?, ?, ?)");
+                
+                foreach ([1, 2] as $segNum) {
+                    $s = $segments[$segNum] ?? null;
+                    $is_closed = (isset($s['active']) && $s['active'] == 1) ? 0 : 1;
+                    $open_time = $s['open_time'] ?? null;
+                    $close_time = $s['close_time'] ?? null;
+                    
+                    $stmt->execute([$date, $segNum, $is_closed, $open_time, $close_time, $notice]);
+                }
+
+                $pdo->commit();
+                echo json_encode(['status' => 'success', 'message' => 'Eccezioni salvate correttamente.']);
+            } catch (Exception $e) {
+                $pdo->rollBack();
+                throw $e;
             }
-            echo json_encode(['status' => 'success', 'message' => 'Eccezione salvata.']);
             break;
 
         case 'delete_exception':
-            $id = $_POST['id'] ?? null;
-            if (!$id) throw new Exception('ID mancante.');
+            $date = $_POST['date'] ?? null;
+            if (!$date) throw new Exception('Data mancante.');
             
-            $stmt = $pdo->prepare("DELETE FROM ks_store_hours_exceptions WHERE id=?");
-            $stmt->execute([$id]);
-            echo json_encode(['status' => 'success', 'message' => 'Eccezione rimossa.']);
+            $stmt = $pdo->prepare("DELETE FROM ks_store_hours_exceptions WHERE date = ?");
+            $stmt->execute([$date]);
+            echo json_encode(['status' => 'success', 'message' => 'Eccezioni rimosse.']);
             break;
 
         // --- HOLIDAYS ---
