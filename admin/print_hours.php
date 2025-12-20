@@ -28,11 +28,12 @@ foreach ($rows as $row) {
 $stmt = $pdo->query("SELECT * FROM ks_store_holidays WHERE active = 1");
 $holidays = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-$events = [];
+// 3. Merge Exceptions and Holidays into a single keyed array to prevent duplicates
+$merged = [];
 
-// Combine Exceptions and calculated Holidays
+// First pass: Add exceptions (they take precedence for times)
 foreach ($grouped as $date => $segments) {
-    $events[] = [
+    $merged[$date] = [
         'date' => $date,
         'type' => 'Eccezione',
         'segments' => $segments,
@@ -40,8 +41,9 @@ foreach ($grouped as $date => $segments) {
     ];
 }
 
-for ($y = $year; $y <= $year; $y++) {
-    foreach ($holidays as $h) {
+// Second pass: Add/Update with Holidays
+foreach ($holidays as $h) {
+    for ($y = $year; $y <= $year; $y++) {
         $date = null;
         if ($h['rule_type'] === 'fixed') {
             $date = sprintf('%04d-%02d-%02d', $y, $h['month'], $h['day']);
@@ -51,31 +53,26 @@ for ($y = $year; $y <= $year; $y++) {
         }
 
         if ($date && $date >= $start && $date <= $end) {
-            // Check if there's already an exception for this date. If so, exception usually takes precedence in display 
-            // but for printing we might want to show the Holiday name if the exception notice is empty.
-            $exists = false;
-            foreach($events as &$ev) {
-                if($ev['date'] === $date && $ev['type'] === 'Eccezione') {
-                    if(empty($ev['name'])) $ev['name'] = $h['name'];
-                    $exists = true;
-                    break;
-                }
-            }
-            
-            if (!$exists) {
-                $events[] = [
+            if (!isset($merged[$date])) {
+                $merged[$date] = [
                     'date' => $date,
                     'type' => 'Festività',
                     'name' => $h['name'],
                     'is_closed' => $h['is_closed'],
-                    'segments' => [] // Holidays are full day by default
+                    'segments' => [] 
                 ];
+            } else {
+                // If it's already an exception, try to use the holiday name if the notice is generic
+                if ($merged[$date]['type'] === 'Eccezione' && (empty($merged[$date]['name']) || $merged[$date]['name'] === 'Variazione Orario')) {
+                    $merged[$date]['name'] = $h['name'];
+                }
             }
         }
     }
 }
 
-// Sort by date
+// Convert to indexed list and sort
+$events = array_values($merged);
 usort($events, function($a, $b) {
     return strcmp($a['date'], $b['date']);
 });
