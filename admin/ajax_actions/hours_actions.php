@@ -145,9 +145,12 @@ try {
                 
                 foreach ([1, 2] as $segNum) {
                     $s = $segments[$segNum] ?? null;
-                    $is_closed = (isset($s['active']) && $s['active'] == 1) ? 0 : 1;
-                    $open_time = $s['open_time'] ?? null;
-                    $close_time = $s['close_time'] ?? null;
+                    $active = (isset($s['active']) && $s['active'] == 1);
+                    $is_closed = $active ? 0 : 1;
+                    
+                    // Se attivo, prendi i tempi; se vuoti o se chiuso, forza NULL
+                    $open_time = ($active && !empty($s['open_time'])) ? $s['open_time'] : null;
+                    $close_time = ($active && !empty($s['close_time'])) ? $s['close_time'] : null;
                     
                     $stmt->execute([$date, $segNum, $is_closed, $open_time, $close_time, $notice]);
                 }
