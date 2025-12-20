@@ -100,59 +100,46 @@ if (!defined('BASE_PATH')) {
         : 'Chiuso';
     }
 
-    // Avviso speciale (da config)
-    $todayKey = $now->format('Y-m-d');
-    $todayNotice = null;
+    // Avviso speciale (centralizzato)
+    $todayNotice = ks_hours_notice_for_date($now);
 
-if (function_exists('ks_hours_notice_for_date')) {
-  $todayNotice = ks_hours_notice_for_date($now);
-} else {
-  // fallback slim se non hai la funzione aggregata
-  if (function_exists('ks_db_date_exception')) {
-    $exc = ks_db_date_exception($now->format('Y-m-d'));
-    if (!empty($exc['found']) && !empty($exc['notice'])) {
-      $todayNotice = trim((string)$exc['notice']);
+    // Raggruppa giorni con identici intervalli (settimana corrente, incluse eccezioni)
+    if (!function_exists('fo_group_by_intervals')) {
+        function fo_group_by_intervals(array $calculatedWeek): array {
+          $groups = [];
+          for ($d=1; $d<=7; $d++) {
+            $ints = $calculatedWeek[$d] ?? [];
+            $key  = json_encode($ints);
+            if (!isset($groups[$key])) $groups[$key] = ['days'=>[], 'intervals'=>$ints];
+            $groups[$key]['days'][] = $d;
+          }
+          return array_values($groups);
+        }
     }
-  }
-  if (!$todayNotice && function_exists('ks_holiday_rule_for_date')) {
-    $hol = ks_holiday_rule_for_date($now);
-    if ($hol && !empty($hol['notice'])) {
-      $todayNotice = trim((string)$hol['notice']);
-    }
-  }
-  if (!$todayNotice) {
-    $map = ks_store_hours_notices();
-    $todayNotice = $map[$now->format('Y-m-d')] ?? null;
-  }
-}
-
-    // Raggruppa giorni con identici intervalli (base settimanale)
-    function fo_group_by_intervals(array $base): array {
-      $groups = [];
-      for ($d=1; $d<=7; $d++) {
-        $ints = $base[$d] ?? [];
-        $key  = json_encode($ints);
-        if (!isset($groups[$key])) $groups[$key] = ['days'=>[], 'intervals'=>$ints];
-        $groups[$key]['days'][] = $d;
-      }
-      return array_values($groups);
-    }
-    function fo_days_compact(array $days): string {
-      $abbr = [1=>'Lun',2=>'Mar',3=>'Mer',4=>'Gio',5=>'Ven',6=>'Sab',7=>'Dom'];
-      sort($days);
-      $ranges = [];
-      $s = $p = null;
-      foreach ($days as $d) {
-        if ($s===null){ $s=$p=$d; continue; }
-        if ($d===$p+1){ $p=$d; continue; }
-        $ranges[] = [$s,$p]; $s=$p=$d;
-      }
-      $ranges[] = [$s,$p];
-      return implode(', ', array_map(fn($r) => $r[0]===$r[1] ? $abbr[$r[0]] : $abbr[$r[0]].'–'.$abbr[$r[1]], $ranges));
+    if (!function_exists('fo_days_compact')) {
+        function fo_days_compact(array $days): string {
+          $abbr = [1=>'Lun',2=>'Mar',3=>'Mer',4=>'Gio',5=>'Ven',6=>'Sab',7=>'Dom'];
+          sort($days);
+          $ranges = [];
+          $s = $p = null;
+          foreach ($days as $d) {
+            if ($s===null){ $s=$p=$d; continue; }
+            if ($d===$p+1){ $p=$d; continue; }
+            $ranges[] = [$s,$p]; $s=$p=$d;
+          }
+          $ranges[] = [$s,$p];
+          return implode(', ', array_map(fn($r) => $r[0]===$r[1] ? $abbr[$r[0]] : $abbr[$r[0]].'–'.$abbr[$r[1]], $ranges));
+        }
     }
 
-    $base   = ks_store_hours_base();            // schema standard
-    $groups = fo_group_by_intervals($base);     // righe compatte
+    // Calcola intervalli reali per la settimana corrente
+    $currentWeek = [];
+    for ($d=1; $d<=7; $d++) {
+        $date = ks_date_for_iso_dow($now, $d);
+        $currentWeek[$d] = ks_intervals_for_date($date);
+    }
+
+    $groups = fo_group_by_intervals($currentWeek);
     $todayN = (int)$now->format('N');           // per evidenziare oggi
   ?>
 
