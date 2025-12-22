@@ -3,8 +3,6 @@
  * Stili globali e componenti base
  */
 
-@import url('variables.css');
-
 /* ===== RESET & BASE ===== */
 *, *::before, *::after {
   margin: 0;
