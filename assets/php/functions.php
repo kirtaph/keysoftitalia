@@ -521,9 +521,11 @@ if (!function_exists('ks_holiday_rule_for_date')) {
       ");
       $q1->execute([':m'=>$m, ':d'=>$day]);
       if ($row = $q1->fetch(PDO::FETCH_ASSOC)) {
-        $notice = trim((string)($row['notice'] ?? ''));
-        if ($notice === '') $notice = (string)$row['name'];
-        return ['closed'=>(bool)$row['is_closed'], 'notice'=>$notice];
+        return [
+          'name'      => (string)$row['name'],
+          'closed'    => (bool)$row['is_closed'],
+          'notice'    => trim((string)($row['notice'] ?? ''))
+        ];
       }
 
       // PASQUA (offset_days da Pasqua)
@@ -538,9 +540,11 @@ if (!function_exists('ks_holiday_rule_for_date')) {
       ");
       foreach ($q2->fetchAll(PDO::FETCH_ASSOC) as $r) {
         if ((int)$r['offset_days'] === $diffDays) {
-          $notice = trim((string)($r['notice'] ?? ''));
-          if ($notice === '') $notice = (string)$r['name'];
-          return ['closed'=>(bool)$r['is_closed'], 'notice'=>$notice];
+          return [
+            'name'      => (string)$r['name'],
+            'closed'    => (bool)$r['is_closed'],
+            'notice'    => trim((string)($r['notice'] ?? ''))
+          ];
         }
       }
       return null;
@@ -560,18 +564,35 @@ if (!function_exists('ks_date_for_iso_dow')) {
 }
 
 if (!function_exists('ks_hours_notice_for_date')) {
-  function ks_hours_notice_for_date(DateTime $date): ?string {
-    // 1) Eccezione puntualizzata (DB)
-    if (function_exists('ks_db_date_exception')) {
-      $exc = ks_db_date_exception($date->format('Y-m-d'));
-      if (!empty($exc['found']) && !empty($exc['notice'])) return $exc['notice'];
-    }
-    // 2) Festività ricorrenti (DB)
+function ks_hours_notice_for_date(DateTime $date): ?string {
+    $finalParts = [];
+
+    // 1) Festività ricorrenti: vogliamo SEMPRE il nome (es. Natale)
     if (function_exists('ks_holiday_rule_for_date')) {
       $hol = ks_holiday_rule_for_date($date);
-      if ($hol && !empty($hol['notice'])) return $hol['notice'];
+      if ($hol) {
+          $finalParts[] = $hol['name'];
+          // Se il notice del festivo NON è generico, aggiungiamolo (altrimenti preferiamo il nome)
+          if (!empty($hol['notice']) && strpos(strtolower($hol['notice']), 'festività') === false && strtolower($hol['notice']) !== strtolower($hol['name'])) {
+              $finalParts[] = $hol['notice'];
+          }
+      }
     }
-    // 3) Fallback alla tua mappa array
+
+    // 2) Eccezione puntualizzata (DB)
+    if (function_exists('ks_db_date_exception')) {
+      $exc = ks_db_date_exception($date->format('Y-m-d'));
+      if (!empty($exc['found']) && !empty($exc['notice'])) {
+          $finalParts[] = $exc['notice'];
+      }
+    }
+
+    // Se abbiamo trovato qualcosa finora, restituiamo unito
+    if (!empty($finalParts)) {
+        return implode(' - ', array_unique($finalParts));
+    }
+
+    // 3) Fallback alla tua mappa array in config.php
     $map = ks_store_hours_notices();
     $k = $date->format('Y-m-d');
     return $map[$k] ?? null;

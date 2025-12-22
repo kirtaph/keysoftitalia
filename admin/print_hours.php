@@ -85,52 +85,191 @@ $months_it = [1=>'Gennaio', 2=>'Febbraio', 3=>'Marzo', 4=>'Aprile', 5=>'Maggio',
     <meta charset="UTF-8">
     <title>Stampa Agenda - <?php echo $months_it[$month] . " " . $year; ?></title>
     <style>
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; color: #333; margin: 40px; }
-        .header { text-align: center; margin-bottom: 30px; border-bottom: 2px solid #333; padding-bottom: 10px; }
-        .header h1 { margin: 0; text-transform: uppercase; letter-spacing: 2px; }
-        .header p { margin: 5px 0 0; color: #666; }
-        
-        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
-        th, td { border: 1px solid #ddd; padding: 12px; text-align: left; }
-        th { background-color: #f8f9fa; font-weight: bold; text-transform: uppercase; font-size: 0.85em; }
-        
-        .date-col { width: 120px; font-weight: bold; }
-        .type-col { width: 100px; }
-        .status-badge { display: inline-block; padding: 3px 8px; border-radius: 4px; font-size: 0.8em; font-weight: bold; }
+        :root {
+            --primary-color: #0d6efd;
+            --secondary-color: #6c757d;
+            --dark-color: #212529;
+            --border-color: #dee2e6;
+            --bg-light: #f8f9fa;
+        }
+
+        body { 
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; 
+            color: var(--dark-color); 
+            line-height: 1.5;
+            margin: 0;
+            padding: 40px;
+        }
+
+        .print-container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        /* Professional Header */
+        .print-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            border-bottom: 2px solid var(--primary-color);
+            padding-bottom: 20px;
+            margin-bottom: 30px;
+        }
+
+        .brand-info h1 {
+            margin: 0;
+            font-size: 24px;
+            color: var(--primary-color);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .brand-info p {
+            margin: 5px 0 0;
+            font-size: 13px;
+            color: var(--secondary-color);
+        }
+
+        .document-title {
+            text-align: right;
+        }
+
+        .document-title h2 {
+            margin: 0;
+            font-size: 18px;
+            text-transform: uppercase;
+            color: var(--dark-color);
+        }
+
+        .document-title p {
+            margin: 5px 0 0;
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+
+        /* Controls */
+        .print-actions {
+            text-align: right;
+            margin-bottom: 20px;
+        }
+
+        .btn-print {
+            padding: 10px 25px;
+            cursor: pointer;
+            background: var(--primary-color);
+            color: #fff;
+            border: none;
+            border-radius: 6px;
+            font-weight: 600;
+            transition: opacity 0.2s;
+        }
+
+        .btn-print:hover { opacity: 0.9; }
+
+        /* Table Styling */
+        table { 
+            width: 100%; 
+            border-collapse: collapse; 
+            margin-top: 20px;
+            background: white;
+        }
+
+        th { 
+            background-color: var(--bg-light); 
+            font-weight: 700; 
+            text-transform: uppercase; 
+            font-size: 11px; 
+            color: var(--secondary-color);
+            border-bottom: 2px solid var(--border-color);
+            padding: 15px 12px;
+            text-align: left;
+        }
+
+        td { 
+            border-bottom: 1px solid var(--border-color); 
+            padding: 15px 12px; 
+            vertical-align: top;
+        }
+
+        .date-col { width: 140px; }
+        .date-main { font-weight: 700; font-size: 15px; display: block; }
+        .date-sub { font-size: 12px; color: var(--secondary-color); text-transform: capitalize; }
+
+        .type-col { width: 160px; }
+        .type-tag { 
+            font-size: 10px; 
+            text-transform: uppercase; 
+            font-weight: 800; 
+            color: var(--primary-color);
+            display: block;
+            margin-bottom: 4px;
+        }
+        .event-name { font-weight: 600; font-size: 14px; }
+
+        .status-badge { 
+            display: inline-block; 
+            padding: 4px 10px; 
+            border-radius: 4px; 
+            font-size: 11px; 
+            font-weight: 700; 
+            text-transform: uppercase;
+        }
         .status-closed { background-color: #000; color: #fff; }
-        .status-open { border: 1px solid #333; }
-        
-        .seg-info { font-size: 0.9em; margin: 2px 0; }
-        .notice { font-style: italic; color: #555; margin-top: 5px; font-size: 0.9em; }
-        
+        .status-open { background-color: #e7f1ff; color: var(--primary-color); border: 1px solid #b6d4fe; }
+
+        .seg-row { display: flex; font-size: 13px; margin: 4px 0; }
+        .seg-label { width: 85px; font-weight: 600; color: var(--secondary-color); }
+        .seg-time { font-weight: 700; }
+
+        .notice-text { 
+            font-style: italic; 
+            color: #555; 
+            font-size: 13px; 
+            max-width: 300px;
+        }
+
+        /* Print optimization */
         @media print {
-            .no-print { display: none; }
-            body { margin: 20px; }
-            button { display: none; }
+            .no-print { display: none !important; }
+            body { padding: 0; margin: 1cm; }
+            .print-container { max-width: 100%; }
+            table { page-break-inside: auto; }
+            tr { page-break-inside: avoid; page-break-after: auto; }
+            .status-closed { background-color: #000 !important; color: #fff !important; -webkit-print-color-adjust: exact; }
+            .status-open { background-color: #e7f1ff !important; color: var(--primary-color) !important; border: 1px solid #b6d4fe !important; -webkit-print-color-adjust: exact; }
+            .print-header { border-bottom-color: var(--primary-color) !important; -webkit-print-color-adjust: exact; }
         }
     </style>
 </head>
 <body>
 
-<div class="header">
-    <h1>Agenda Variazioni Orari</h1>
-    <p><?php echo $months_it[$month] . " " . $year; ?></p>
-</div>
+<div class="print-container">
+    <div class="print-header">
+        <div class="brand-info">
+            <h1><?php echo SITE_NAME; ?></h1>
+            <p><?php echo COMPANY_FULL_ADDRESS; ?></p>
+            <p>Tel: <?php echo COMPANY_PHONE; ?> | Email: <?php echo COMPANY_EMAIL; ?></p>
+        </div>
+        <div class="document-title">
+            <h2>Agenda Variazioni Orari</h2>
+            <p><?php echo $months_it[$month] . " " . $year; ?></p>
+        </div>
+    </div>
 
-<div class="no-print" style="text-align: right; margin-bottom: 20px;">
-    <button onclick="window.print()" style="padding: 10px 20px; cursor: pointer; background: #333; color: #fff; border: none; border-radius: 4px;">Stampa ora</button>
-</div>
+    <div class="print-actions no-print">
+        <button onclick="window.print()" class="btn-print">STAMPA RAPPORTO</button>
+    </div>
 
-<table>
-    <thead>
-        <tr>
-            <th>Giorno</th>
-            <th>Tipo / Nome</th>
-            <th>Stato / Orari</th>
-            <th>Note</th>
-        </tr>
-    </thead>
-    <tbody>
+    <table>
+        <thead>
+            <tr>
+                <th>Giorno</th>
+                <th>Tipo / Nome</th>
+                <th>Stato / Orari</th>
+                <th>Note</th>
+            </tr>
+        </thead>
+        <tbody>
         <?php if (empty($events)): ?>
             <tr>
                 <td colspan="4" style="text-align: center; padding: 30px;">Nessuna variazione registrata per questo mese.</td>
@@ -143,12 +282,12 @@ $months_it = [1=>'Gennaio', 2=>'Febbraio', 3=>'Marzo', 4=>'Aprile', 5=>'Maggio',
             ?>
                 <tr>
                     <td class="date-col">
-                        <?php echo $d->format('d/m/Y'); ?><br>
-                        <small style="font-weight: normal;"><?php echo $dayName; ?></small>
+                        <span class="date-main"><?php echo $d->format('d/m/Y'); ?></span>
+                        <span class="date-sub"><?php echo $dayName; ?></span>
                     </td>
                     <td class="type-col">
-                        <strong><?php echo $ev['type']; ?></strong><br>
-                        <?php echo $ev['name']; ?>
+                        <span class="type-tag"><?php echo $ev['type']; ?></span>
+                        <span class="event-name"><?php echo $ev['name']; ?></span>
                     </td>
                     <td>
                         <?php if ($ev['type'] === 'Festività'): ?>
@@ -169,28 +308,38 @@ $months_it = [1=>'Gennaio', 2=>'Febbraio', 3=>'Marzo', 4=>'Aprile', 5=>'Maggio',
                                 <span class="status-badge status-closed">CHIUSO</span>
                             <?php else: ?>
                                 <?php foreach ($ev['segments'] as $s): ?>
-                                    <div class="seg-info">
-                                        <strong><?php echo $s['seg'] == 1 ? 'Mattina:' : 'Pomeriggio:'; ?></strong>
-                                        <?php if ($s['is_closed']): ?>
-                                            CHIUSO
-                                        <?php else: ?>
-                                            <?php echo date('H:i', strtotime($s['open_time'])); ?> - <?php echo date('H:i', strtotime($s['close_time'])); ?>
-                                        <?php endif; ?>
+                                    <div class="seg-row">
+                                        <div class="seg-label"><?php echo $s['seg'] == 1 ? 'Mattina:' : 'Pomeriggio:'; ?></div>
+                                        <div class="seg-time">
+                                            <?php if ($s['is_closed']): ?>
+                                                CHIUSO
+                                            <?php else: ?>
+                                                <?php echo date('H:i', strtotime($s['open_time'])); ?> - <?php echo date('H:i', strtotime($s['close_time'])); ?>
+                                            <?php endif; ?>
+                                        </div>
                                     </div>
                                 <?php endforeach; ?>
                             <?php endif; ?>
                         <?php endif; ?>
                     </td>
-                    <td class="notice">
-                        <?php if ($ev['type'] === 'Eccezione'): ?>
-                            <?php echo $ev['segments'][0]['notice'] ?? ''; ?>
-                        <?php endif; ?>
+                    <td>
+                        <div class="notice-text">
+                            <?php if ($ev['type'] === 'Eccezione'): ?>
+                                <?php echo $ev['segments'][0]['notice'] ?? ''; ?>
+                            <?php endif; ?>
+                        </div>
                     </td>
                 </tr>
             <?php endforeach; ?>
         <?php endif; ?>
     </tbody>
 </table>
+
+    <div class="print-footer" style="margin-top: 50px; text-align: center; font-size: 11px; color: #999; border-top: 1px solid #eee; padding-top: 20px;">
+        <p>Key Soft Italia - Via Diaz, 46 - 74013 Ginosa (TA) - Tel: 099 829 3794</p>
+        <p>&copy; <?php echo date('Y'); ?> Key Soft Italia. Tutti i diritti riservati. Grazie per la collaborazione!</p>
+    </div>
+</div>
 
 <script>
     window.onload = function() {

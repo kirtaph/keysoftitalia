@@ -362,15 +362,24 @@ if (function_exists('ks_hours_notice_for_date')) {
         $is_today = ($dayNum === (int)$now->format('N'));
         $row_cls  = $is_today ? 'oh-row is-today' : 'oh-row';
         
-        $badge = '';
-        if ($data['type'] === 'exception') {
-            $badge = ' <span class="badge bg-soft-warning text-warning" style="font-size: 0.7em; vertical-align: middle;">[Variazione]</span>';
-        } elseif ($data['type'] === 'holiday') {
-            $badge = ' <span class="badge bg-soft-info text-info" style="font-size: 0.7em; vertical-align: middle;">[Festivo]</span>';
-        }
   ?>
     <div class="<?= $row_cls; ?>">
-      <span class="oh-day"><?= ks_day_label($dayNum); ?><?= $badge; ?></span>
+      <?php 
+        $dayStyle = '';
+        if ($data['type'] === 'holiday') {
+            $dayStyle = 'color: var(--ks-blue); font-weight: 700;';
+        } elseif ($data['type'] === 'exception') {
+            $dayStyle = 'color: var(--ks-orange); font-weight: 700;';
+        }
+      ?>
+      <div class="oh-day-info d-flex flex-column flex-sm-row align-items-sm-center">
+          <span class="oh-day" style="<?= $dayStyle; ?>"><?= ks_day_label($dayNum); ?></span>
+          <?php if (!empty($data['notice'])): ?>
+              <span class="oh-event-name small opacity-75 ms-sm-2" style="font-size: 0.8em; font-style: italic;">
+                  <?= htmlspecialchars($data['notice']); ?>
+              </span>
+          <?php endif; ?>
+      </div>
       <span class="oh-time">
         <strong><?= ks_format_intervals($data['intervals']); ?></strong>
       </span>
