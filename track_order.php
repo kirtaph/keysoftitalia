@@ -84,7 +84,7 @@ $page_description = "Segui lo stato di avanzamento del tuo ordine su Key Soft It
     <?php include 'includes/head.php'; ?>
     <title><?php echo $page_title; ?></title>
     <meta name="description" content="<?php echo $page_description; ?>">
-    <link rel="stylesheet" href="<?php echo asset('css/pages/track-order.css'); ?>">
+    <link rel="stylesheet" href="<?php echo asset_version('css/pages/track-order.css'); ?>">
 </head>
 <body data-aos-easing="ease-in-out" data-aos-duration="800" data-aos-once="true">
 
