@@ -178,6 +178,28 @@
   /* ===== CONTAINER ===== */
   --ks-container-padding: var(--ks-spacing-4);
   --ks-container-max-width: 1320px;
+
+  /* ===== NEUMORPHISM (2026 Restyle Project) ===== */
+  --ks-nm-bg: #f0f2f5;
+  --ks-nm-light: #ffffff;
+  --ks-nm-dark: rgba(165, 177, 198, 0.45);
+
+  --ks-nm-shadow-out: 8px 8px 16px var(--ks-nm-dark), -8px -8px 16px var(--ks-nm-light);
+  --ks-nm-shadow-in: inset 6px 6px 12px var(--ks-nm-dark), inset -6px -6px 12px var(--ks-nm-light);
+
+  --ks-nm-shadow-sm-out: 4px 4px 8px var(--ks-nm-dark), -4px -4px 8px var(--ks-nm-light);
+  --ks-nm-shadow-sm-in: inset 3px 3px 6px var(--ks-nm-dark), inset -3px -3px 6px var(--ks-nm-light);
+
+  --ks-nm-radius: 20px;
+  --ks-nm-radius-sm: 12px;
+
+  /* ===== DARK NEUMORPHISM ===== */
+  --ks-nm-dark-bg: #1e2330;
+  --ks-nm-dark-light: rgba(255, 255, 255, 0.05);
+  --ks-nm-dark-shadow: rgba(0, 0, 0, 0.4);
+
+  --ks-nm-dark-shadow-out: 4px 4px 8px var(--ks-nm-dark-shadow), -2px -2px 6px var(--ks-nm-dark-light);
+  --ks-nm-dark-shadow-in: inset 2px 2px 5px var(--ks-nm-dark-shadow), inset -2px -2px 5px var(--ks-nm-dark-light);
 }
 
 /* Dark Mode Variables (future implementation) */

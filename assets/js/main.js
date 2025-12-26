@@ -8,7 +8,7 @@ const KS = {
     baseUrl: window.KS_CONFIG?.baseUrl || '/',
     whatsappNumber: window.KS_CONFIG?.whatsappNumber || '393483109840',
     companyName: 'Key Soft Italia',
-    
+
     // Configurazione prezzi riparazioni
     repairPricing: {
         categories: {
@@ -51,12 +51,12 @@ const Utils = {
             minimumFractionDigits: 0
         }).format(price);
     },
-    
+
     // Genera URL con base path
     url: (path = '') => {
         return KS.baseUrl + path.replace(/^\//, '');
     },
-    
+
     // Genera link WhatsApp
     whatsappLink: (message, utmParams = {}) => {
         const defaultUtm = {
@@ -69,18 +69,18 @@ const Utils = {
         const encodedMessage = encodeURIComponent(message);
         return `https://wa.me/${KS.whatsappNumber}?text=${encodedMessage}&${utmString}`;
     },
-    
+
     // Validazione email
     isValidEmail: (email) => {
         return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
     },
-    
+
     // Validazione telefono italiano
     isValidPhone: (phone) => {
         const cleaned = phone.replace(/\D/g, '');
         return cleaned.length >= 9 && cleaned.length <= 13;
     },
-    
+
     // Smooth scroll
     smoothScroll: (target, offset = 100) => {
         const element = document.querySelector(target);
@@ -92,7 +92,7 @@ const Utils = {
             });
         }
     },
-    
+
     // Debounce function
     debounce: (func, wait) => {
         let timeout;
@@ -105,7 +105,7 @@ const Utils = {
             timeout = setTimeout(later, wait);
         };
     },
-    
+
     // Show notification
     showNotification: (message, type = 'success') => {
         const notification = document.createElement('div');
@@ -115,11 +115,11 @@ const Utils = {
             <span>${message}</span>
         `;
         document.body.appendChild(notification);
-        
+
         setTimeout(() => {
             notification.classList.add('show');
         }, 100);
-        
+
         setTimeout(() => {
             notification.classList.remove('show');
             setTimeout(() => notification.remove(), 300);
@@ -136,40 +136,40 @@ class Navigation {
         this.offcanvasBackdrop = document.querySelector('.offcanvas-backdrop');
         this.offcanvasClose = document.querySelector('.offcanvas-close');
         this.lastScroll = 0;
-        
+
         this.init();
     }
-    
+
     init() {
         // Sticky header behavior
         this.initStickyHeader();
-        
+
         // Mobile menu
         this.initMobileMenu();
-        
+
         // Active link
         this.setActiveLink();
-        
+
         // Smooth scroll for anchor links
         this.initSmoothScroll();
     }
-    
+
     initStickyHeader() {
         let ticking = false;
-        
+
         const updateHeader = () => {
             const currentScroll = window.scrollY;
-            
+
             if (currentScroll > 100) {
                 this.header?.classList.add('scrolled');
             } else {
                 this.header?.classList.remove('scrolled');
             }
-            
+
             this.lastScroll = currentScroll;
             ticking = false;
         };
-        
+
         window.addEventListener('scroll', () => {
             if (!ticking) {
                 window.requestAnimationFrame(updateHeader);
@@ -177,22 +177,22 @@ class Navigation {
             }
         });
     }
-    
+
     initMobileMenu() {
         if (!this.menuToggle) return;
-        
+
         this.menuToggle.addEventListener('click', () => {
             this.toggleMobileMenu();
         });
-        
+
         this.offcanvasClose?.addEventListener('click', () => {
             this.closeMobileMenu();
         });
-        
+
         this.offcanvasBackdrop?.addEventListener('click', () => {
             this.closeMobileMenu();
         });
-        
+
         // Close on ESC
         document.addEventListener('keydown', (e) => {
             if (e.key === 'Escape') {
@@ -200,25 +200,25 @@ class Navigation {
             }
         });
     }
-    
+
     toggleMobileMenu() {
         this.menuToggle?.classList.toggle('active');
         this.offcanvas?.classList.toggle('active');
         this.offcanvasBackdrop?.classList.toggle('active');
         document.body.classList.toggle('menu-open');
     }
-    
+
     closeMobileMenu() {
         this.menuToggle?.classList.remove('active');
         this.offcanvas?.classList.remove('active');
         this.offcanvasBackdrop?.classList.remove('active');
         document.body.classList.remove('menu-open');
     }
-    
+
     setActiveLink() {
         const currentPage = window.location.pathname.split('/').pop() || 'index.html';
         const links = document.querySelectorAll('.nav-link, .offcanvas-nav-item');
-        
+
         links.forEach(link => {
             const href = link.getAttribute('href');
             if (href && (href === currentPage || href === './' + currentPage)) {
@@ -226,7 +226,7 @@ class Navigation {
             }
         });
     }
-    
+
     initSmoothScroll() {
         document.querySelectorAll('a[href^="#"]').forEach(anchor => {
             anchor.addEventListener('click', (e) => {
@@ -248,18 +248,18 @@ class FormHandler {
             this.init();
         }
     }
-    
+
     init() {
         this.form.addEventListener('submit', (e) => {
             e.preventDefault();
             this.handleSubmit();
         });
-        
+
         // Real-time validation
         this.form.querySelectorAll('.form-control').forEach(input => {
             input.addEventListener('blur', () => this.validateField(input));
         });
-        
+
         // Phone number formatting
         const phoneInputs = this.form.querySelectorAll('input[type="tel"]');
         phoneInputs.forEach(input => {
@@ -268,14 +268,14 @@ class FormHandler {
             });
         });
     }
-    
+
     validateField(field) {
         const value = field.value.trim();
         const fieldName = field.name;
         const isRequired = field.hasAttribute('required');
         let isValid = true;
         let errorMessage = '';
-        
+
         if (isRequired && !value) {
             isValid = false;
             errorMessage = 'Questo campo è obbligatorio';
@@ -286,15 +286,15 @@ class FormHandler {
             isValid = false;
             errorMessage = 'Inserisci un numero di telefono valido';
         }
-        
+
         this.toggleFieldError(field, !isValid, errorMessage);
         return isValid;
     }
-    
+
     toggleFieldError(field, hasError, message = '') {
         const formGroup = field.closest('.form-group');
         const errorElement = formGroup?.querySelector('.error-message');
-        
+
         if (hasError) {
             field.classList.add('is-invalid');
             if (errorElement) {
@@ -313,7 +313,7 @@ class FormHandler {
             }
         }
     }
-    
+
     formatPhoneNumber(input) {
         let value = input.value.replace(/\D/g, '');
         if (value.length > 0) {
@@ -327,43 +327,43 @@ class FormHandler {
         }
         input.value = value;
     }
-    
+
     async handleSubmit() {
         const submitBtn = this.form.querySelector('button[type="submit"]');
         const originalText = submitBtn.textContent;
-        
+
         // Validate all fields
         const fields = this.form.querySelectorAll('.form-control[required]');
         let isValid = true;
-        
+
         fields.forEach(field => {
             if (!this.validateField(field)) {
                 isValid = false;
             }
         });
-        
+
         if (!isValid) {
             Utils.showNotification('Per favore, correggi gli errori nel modulo', 'error');
             return;
         }
-        
+
         // Show loading state
         submitBtn.disabled = true;
         submitBtn.innerHTML = '<i class="ri-loader-4-line spin"></i> Invio in corso...';
-        
+
         try {
             const formData = new FormData(this.form);
             const response = await fetch(this.form.action || 'api/send-email.php', {
                 method: 'POST',
                 body: formData
             });
-            
+
             const result = await response.json();
-            
+
             if (result.success) {
                 Utils.showNotification(result.message || 'Messaggio inviato con successo!', 'success');
                 this.form.reset();
-                
+
                 // Track event
                 if (typeof gtag !== 'undefined') {
                     gtag('event', 'form_submit', {
@@ -390,14 +390,14 @@ class LazyLoader {
             threshold: 0.1,
             rootMargin: '50px'
         };
-        
+
         if ('IntersectionObserver' in window) {
             this.init();
         } else {
             this.loadAllImages();
         }
     }
-    
+
     init() {
         const imageObserver = new IntersectionObserver((entries, observer) => {
             entries.forEach(entry => {
@@ -407,19 +407,19 @@ class LazyLoader {
                 }
             });
         }, this.imageOptions);
-        
+
         this.images.forEach(img => imageObserver.observe(img));
     }
-    
+
     loadImage(img) {
         const src = img.dataset.src;
         if (!src) return;
-        
+
         img.src = src;
         img.removeAttribute('data-src');
         img.classList.add('loaded');
     }
-    
+
     loadAllImages() {
         this.images.forEach(img => this.loadImage(img));
     }
@@ -429,15 +429,15 @@ class LazyLoader {
 document.addEventListener('DOMContentLoaded', () => {
     // Initialize navigation
     new Navigation();
-    
+
     // Initialize forms
     document.querySelectorAll('form[data-ajax="true"]').forEach(form => {
         new FormHandler(`#${form.id}`);
     });
-    
+
     // Initialize lazy loading
     new LazyLoader();
-    
+
     // Initialize AOS animations (if available)
     if (typeof AOS !== 'undefined') {
         AOS.init({
@@ -446,7 +446,15 @@ document.addEventListener('DOMContentLoaded', () => {
             offset: 100
         });
     }
-    
+
+    // Initialize Bootstrap Tooltips
+    if (typeof bootstrap !== 'undefined' && bootstrap.Tooltip) {
+        const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+        tooltipTriggerList.map(function (tooltipTriggerEl) {
+            return new bootstrap.Tooltip(tooltipTriggerEl);
+        });
+    }
+
     // WhatsApp CTA tracking
     document.querySelectorAll('[data-whatsapp]').forEach(btn => {
         btn.addEventListener('click', () => {
@@ -458,13 +466,13 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     });
-    
+
     // Mobile Menu Toggle
     const menuToggle = document.querySelector('.menu-toggle');
     const offcanvas = document.querySelector('.offcanvas');
     const offcanvasBackdrop = document.querySelector('.offcanvas-backdrop');
     const offcanvasClose = document.querySelector('.offcanvas-close');
-    
+
     // Open menu
     if (menuToggle) {
         menuToggle.addEventListener('click', () => {
@@ -474,7 +482,7 @@ document.addEventListener('DOMContentLoaded', () => {
             document.body.style.overflow = 'hidden';
         });
     }
-    
+
     // Close menu function
     function closeMobileMenu() {
         if (menuToggle) menuToggle.classList.remove('active');
@@ -482,24 +490,24 @@ document.addEventListener('DOMContentLoaded', () => {
         if (offcanvasBackdrop) offcanvasBackdrop.classList.remove('show');
         document.body.style.overflow = '';
     }
-    
+
     // Close menu - button
     if (offcanvasClose) {
         offcanvasClose.addEventListener('click', closeMobileMenu);
     }
-    
+
     // Close menu - backdrop click
     if (offcanvasBackdrop) {
         offcanvasBackdrop.addEventListener('click', closeMobileMenu);
     }
-    
+
     // Close menu - ESC key
     document.addEventListener('keydown', (e) => {
         if (e.key === 'Escape' && offcanvas && offcanvas.classList.contains('show')) {
             closeMobileMenu();
         }
     });
-    
+
     // Close menu when clicking on a link (for mobile)
     document.querySelectorAll('.mobile-nav-link, .mobile-nav-dropdown-item, .mobile-nav-cta').forEach(link => {
         link.addEventListener('click', () => {
@@ -513,90 +521,90 @@ window.KS = KS;
 window.Utils = Utils;
 
 document.addEventListener('DOMContentLoaded', function () {
-  var el = document.getElementById('heroCarousel');
-  if (el && typeof bootstrap !== 'undefined' && bootstrap.Carousel) {
-    // inizializza/forza autoplay anche se i data-attr non venissero letti
-    new bootstrap.Carousel(el, {
-      interval: 10000,
-      ride: 'carousel',
-      pause: false,
-      wrap: true,
-      touch: true,
-      keyboard: true
-    });
-  }
-});
-
-document.addEventListener("DOMContentLoaded", function() {
-  new Swiper(".recond-swiper", {
-    loop: true,
-    autoplay: {
-      delay: 4000,
-      disableOnInteraction: false,
-    },
-    slidesPerView: 1,
-    spaceBetween: 20,
-    pagination: {
-      el: ".swiper-pagination",
-      clickable: true,
-    },
-    breakpoints: {
-      768: { slidesPerView: 2 },
-      992: { slidesPerView: 3 },
-      1200: { slidesPerView: 4 }
+    var el = document.getElementById('heroCarousel');
+    if (el && typeof bootstrap !== 'undefined' && bootstrap.Carousel) {
+        // inizializza/forza autoplay anche se i data-attr non venissero letti
+        new bootstrap.Carousel(el, {
+            interval: 10000,
+            ride: 'carousel',
+            pause: false,
+            wrap: true,
+            touch: true,
+            keyboard: true
+        });
     }
-  });
 });
 
 document.addEventListener("DOMContentLoaded", function () {
-  new Swiper(".brand-swiper", {
-    slidesPerView: 5,
-    spaceBetween: 30,
-    loop: true,
-    autoplay: {
-      delay: 2500,
-      disableOnInteraction: false,
-    },
-    breakpoints: {
-      1200: { slidesPerView: 5 },
-      992: { slidesPerView: 4 },
-      768: { slidesPerView: 3 },
-      576: { slidesPerView: 2 },
-      0: { slidesPerView: 1 }
-    }
-  });
+    new Swiper(".recond-swiper", {
+        loop: true,
+        autoplay: {
+            delay: 4000,
+            disableOnInteraction: false,
+        },
+        slidesPerView: 1,
+        spaceBetween: 20,
+        pagination: {
+            el: ".swiper-pagination",
+            clickable: true,
+        },
+        breakpoints: {
+            768: { slidesPerView: 2 },
+            992: { slidesPerView: 3 },
+            1200: { slidesPerView: 4 }
+        }
+    });
 });
 
-document.addEventListener("DOMContentLoaded", function() {
-  new Swiper(".testimonial-swiper", {
-    loop: true,
-    autoplay: {
-      delay: 5000,
-      disableOnInteraction: false,
-    },
-    slidesPerView: 1,
-    spaceBetween: 30,
-    pagination: {
-      el: ".testimonial-swiper .swiper-pagination",
-      clickable: true,
-    },
-    breakpoints: {
-      768: { slidesPerView: 2 },
-      1200: { slidesPerView: 3 }
-    }
-  });
+document.addEventListener("DOMContentLoaded", function () {
+    new Swiper(".brand-swiper", {
+        slidesPerView: 5,
+        spaceBetween: 30,
+        loop: true,
+        autoplay: {
+            delay: 2500,
+            disableOnInteraction: false,
+        },
+        breakpoints: {
+            1200: { slidesPerView: 5 },
+            992: { slidesPerView: 4 },
+            768: { slidesPerView: 3 },
+            576: { slidesPerView: 2 },
+            0: { slidesPerView: 1 }
+        }
+    });
+});
+
+document.addEventListener("DOMContentLoaded", function () {
+    new Swiper(".testimonial-swiper", {
+        loop: true,
+        autoplay: {
+            delay: 5000,
+            disableOnInteraction: false,
+        },
+        slidesPerView: 1,
+        spaceBetween: 30,
+        pagination: {
+            el: ".testimonial-swiper .swiper-pagination",
+            clickable: true,
+        },
+        breakpoints: {
+            768: { slidesPerView: 2 },
+            1200: { slidesPerView: 3 }
+        }
+    });
 });
 
 // Smooth scroll per anchor links con classe .smooth-scroll
 document.querySelectorAll('a.smooth-scroll').forEach(link => {
-  link.addEventListener('click', function (e) {
-    e.preventDefault();
-    const target = document.querySelector(this.getAttribute('href'));
-    if (target) {
-      window.scrollTo({
-        top: target.offsetTop - 80,
-        behavior: 'smooth'
-      });
-    }
-  });
+    link.addEventListener('click', function (e) {
+        e.preventDefault();
+        const target = document.querySelector(this.getAttribute('href'));
+        if (target) {
+            window.scrollTo({
+                top: target.offsetTop - 80,
+                behavior: 'smooth'
+            });
+        }
+    });
 });

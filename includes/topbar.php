@@ -60,12 +60,18 @@ $todayNotice = ks_hours_notice_for_date($now);
       <i class="<?= $chipIco; ?>" aria-hidden="true"></i> <?= $chipTxt; ?>
     </span>
 
-    <small class="top-hours-note" title="<?= htmlspecialchars(strip_tags($todayShort), ENT_QUOTES, 'UTF-8'); ?>">
+    <small class="top-hours-note" 
+           data-bs-toggle="tooltip" 
+           data-bs-placement="bottom"
+           title="<?= htmlspecialchars(strip_tags($todayShort), ENT_QUOTES, 'UTF-8'); ?>">
       <?= $note; ?>
     </small>
 
     <?php if (!empty($todayNotice)): ?>
-      <span class="top-hours-special" title="<?= htmlspecialchars($todayNotice, ENT_QUOTES, 'UTF-8'); ?>">
+      <span class="top-hours-special" 
+            data-bs-toggle="tooltip" 
+            data-bs-placement="bottom"
+            title="<?= htmlspecialchars($todayNotice, ENT_QUOTES, 'UTF-8'); ?>">
         <i class="ri-megaphone-line" aria-hidden="true"></i>
       </span>
     <?php endif; ?>

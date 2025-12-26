@@ -6,7 +6,6 @@
 /* ========== ORDER CONTENT ========== */
 .section-track-content {
     padding: 4rem 0;
-    margin-top: -4rem;
     position: relative;
     z-index: 10;
 }

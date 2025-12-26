@@ -10,12 +10,12 @@ if (!defined('BASE_PATH')) {
 }
 ?>
 
-<footer class="footer">
+<footer class="footer ks-nm-footer">
   <div class="container">
-    <div class="footer-content">
-      
-      <!-- Brand Column -->
-      <div class="footer-brand">
+    <div class="row ks-nm-footer-row g-4 mb-5">
+    <!-- Brand Column -->
+    <div class="col-lg-4">
+      <div class="footer-card footer-brand-card">
         <a href="<?php echo url(); ?>" class="footer-logo" aria-label="Homepage Key Soft Italia">
           <img src="<?php echo asset('img/logo.png'); ?>" alt="Key Soft Italia" class="footer-logo-img" width="40" height="40" decoding="async">
           <div class="footer-logo-text">
@@ -32,28 +32,29 @@ if (!defined('BASE_PATH')) {
 
         <div class="footer-contacts">
           <a href="<?php echo GOOGLE_MAPS_LINK; ?>" target="_blank" rel="noopener" class="footer-contact-item">
-            <i class="ri-map-pin-line icon-orange"></i>
+            <i class="ri-map-pin-line"></i>
             <span><?php echo COMPANY_FULL_ADDRESS; ?></span>
           </a>
           <a href="tel:<?php echo preg_replace('/\s+/', '', COMPANY_PHONE); ?>" class="footer-contact-item">
-            <i class="ri-phone-line icon-orange"></i>
+            <i class="ri-phone-line"></i>
             <span><?php echo COMPANY_PHONE; ?></span>
           </a>
           <a href="mailto:<?php echo COMPANY_EMAIL; ?>" class="footer-contact-item">
-            <i class="ri-mail-line icon-orange"></i>
+            <i class="ri-mail-line"></i>
             <span><?php echo COMPANY_EMAIL; ?></span>
           </a>
           <a href="<?php echo whatsapp_link('Ciao Key Soft Italia!'); ?>" target="_blank" rel="noopener" class="footer-contact-item" data-whatsapp="footer">
-            <i class="ri-whatsapp-line icon-whatsapp"></i>
+            <i class="ri-whatsapp-line"></i>
             <span>WhatsApp: <?php echo COMPANY_WHATSAPP; ?></span>
           </a>
         </div>
       </div>
-
-      <!-- Useful Links -->
-      <div class="footer-column footer-links">
-        <h4 class="footer-title footer-links">Link Utili</h4>
-        <div class="footer-links">
+    </div>
+    <!-- Useful Links -->
+    <div class="col-lg-4 col-md-6">
+      <div class="footer-card">
+        <h4 class="footer-title">Link Utili</h4>
+        <div class="footer-links-grid">
           <a href="<?php echo url('servizi.php'); ?>" class="footer-link"><i class="ri-arrow-right-s-line"></i> Tutti i Servizi</a>
           <a href="<?php echo url('servizi/riparazioni.php'); ?>" class="footer-link"><i class="ri-arrow-right-s-line"></i> Riparazioni & Assistenza</a>
           <a href="<?php echo url('ricondizionati.php'); ?>" class="footer-link"><i class="ri-arrow-right-s-line"></i> Dispositivi Ricondizionati</a>
@@ -64,17 +65,18 @@ if (!defined('BASE_PATH')) {
           <a href="<?php echo url('faq.php'); ?>" class="footer-link"><i class="ri-arrow-right-s-line"></i> Domande Frequenti</a>
         </div>
       </div>
-
-      <!-- Right Column: Social + Orari + Mappa -->
-      <div class="footer-column">
+    </div>
+    <!-- Right Column: Social + Orari -->
+    <div class="col-lg-4 col-md-6">
+      <div class="footer-card footer-info-card">
         <h4 class="footer-title">Seguici</h4>
-        <div class="social-links">
-          <a href="<?php echo FACEBOOK_URL; ?>" target="_blank" rel="noopener" class="social-link social-facebook" aria-label="Facebook"><i class="ri-facebook-fill"></i></a>
-          <a href="<?php echo INSTAGRAM_URL; ?>" target="_blank" rel="noopener" class="social-link social-instagram" aria-label="Instagram"><i class="ri-instagram-line"></i></a>
-          <a href="<?php echo YOUTUBE_URL; ?>" target="_blank" rel="noopener" class="social-link social-youtube" aria-label="YouTube"><i class="ri-youtube-fill"></i></a>
-          <a href="<?php echo TIKTOK_URL; ?>" target="_blank" rel="noopener" class="social-link social-tiktok" aria-label="TikTok"><i class="ri-tiktok-fill"></i></a>
+        <div class="social-links ks-nm-social">
+          <a href="<?php echo FACEBOOK_URL; ?>" target="_blank" rel="noopener" class="social-link nm-social-link" data-bs-toggle="tooltip" title="Seguici su Facebook" aria-label="Facebook"><i class="ri-facebook-fill"></i></a>
+          <a href="<?php echo INSTAGRAM_URL; ?>" target="_blank" rel="noopener" class="social-link nm-social-link" data-bs-toggle="tooltip" title="Seguici su Instagram" aria-label="Instagram"><i class="ri-instagram-line"></i></a>
+          <a href="<?php echo YOUTUBE_URL; ?>" target="_blank" rel="noopener" class="social-link nm-social-link" data-bs-toggle="tooltip" title="Iscriviti al canale YouTube" aria-label="YouTube"><i class="ri-youtube-fill"></i></a>
+          <a href="<?php echo TIKTOK_URL; ?>" target="_blank" rel="noopener" class="social-link nm-social-link" data-bs-toggle="tooltip" title="Seguici su TikTok" aria-label="TikTok"><i class="ri-tiktok-fill"></i></a>
         </div>
-<br>
+        <div class="opening-hours-section">
         <div class="footer-hours fo-box">
   <h4 class="footer-title d-flex align-items-center gap-2 mb-2">
     <i class="ri-time-line" aria-hidden="true"></i> Orari di Apertura
@@ -141,17 +143,23 @@ if (!defined('BASE_PATH')) {
 
     $groups = fo_group_by_intervals($currentWeek);
     $todayN = (int)$now->format('N');           // per evidenziare oggi
+
+    // Info compatta tooltip
+    $todayIntervals = $currentWeek[$todayN] ?? [];
+    $todayShort = empty($todayIntervals) ? 'Oggi: chiuso' : 'Oggi: '.ks_format_intervals($todayIntervals);
   ?>
 
-  <div class="fo-status mb-2">
-    <span class="<?= $chipCls; ?>"><i class="<?= $chipIco; ?>" aria-hidden="true"></i> <?= $chipTxt; ?></span>
-    <small class="fo-note"><?= $note; ?></small>
-    <?php if (!empty($todayNotice)): ?>
-      <small class="fo-special" title="<?= htmlspecialchars($todayNotice, ENT_QUOTES, 'UTF-8'); ?>">
-        <i class="ri-megaphone-line" aria-hidden="true"></i>
-      </small>
-    <?php endif; ?>
-  </div>
+    <div class="fo-status mb-2">
+      <span class="<?= $chipCls; ?>" data-bs-toggle="tooltip" title="<?= htmlspecialchars(strip_tags($todayShort), ENT_QUOTES, 'UTF-8'); ?>">
+        <i class="<?= $chipIco; ?>" aria-hidden="true"></i> <?= $chipTxt; ?>
+      </span>
+      <small class="fo-note"><?= $note; ?></small>
+      <?php if (!empty($todayNotice)): ?>
+        <small class="fo-special" data-bs-toggle="tooltip" title="<?= htmlspecialchars($todayNotice, ENT_QUOTES, 'UTF-8'); ?>">
+          <i class="ri-megaphone-line" aria-hidden="true"></i>
+        </small>
+      <?php endif; ?>
+    </div>
 
   <div class="fo-list">
     <?php foreach ($groups as $g):
@@ -168,27 +176,11 @@ if (!defined('BASE_PATH')) {
   </div>
 </div>
 
-        <!-- <div class="footer-map-box">
-          <i class="ri-map-pin-line" aria-hidden="true"></i>
-          <div class="footer-map-title">Mappa del negozio</div>
-
-          <iframe 
-            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d7189.563886109397!2d16.752903976408206!3d40.57454714601821!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x134770f123f4ba59%3A0x8e9307ff05e9cee0!2sKey%20Soft%20Italia!5e1!3m2!1sit!2sit!4v1759516864357!5m2!1sit!2sit"
-            width="100%" 
-            height="200" 
-            style="border:0;" 
-            allowfullscreen="" 
-            loading="lazy" 
-            referrerpolicy="no-referrer-when-downgrade"
-            title="Mappa di Key Soft Italia a Ginosa (TA)"
-            aria-label="Mappa interattiva di Key Soft Italia a Ginosa (TA)">
-          </iframe>
-          <a href="<?php echo GOOGLE_MAPS_LINK; ?>" target="_blank" rel="noopener" class="footer-map-link">Visualizza su Google Maps</a>
-        </div> -->
       </div>
     </div>
-
-    <!-- Bottom -->
+  </div>
+    </div> <!-- Close Row -->
+    
     <div class="footer-bottom">
       <div class="footer-copyright">
         © <?php echo date('Y'); ?> Key Soft Italia. Tutti i diritti riservati.
@@ -200,7 +192,7 @@ if (!defined('BASE_PATH')) {
         <a href="<?php echo url('admin'); ?>" class="footer-bottom-link">Amministrazione</a>
       </div>
     </div>
-  </div>
+  </div> <!-- Close Container -->
 </footer>
 <!-- Sticky WhatsApp Button -->
 <a href="<?php echo whatsapp_link('Ciao Key Soft Italia, ho bisogno di assistenza!'); ?>"
