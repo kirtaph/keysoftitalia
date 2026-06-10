@@ -26,7 +26,7 @@ if (empty($_POST['csrf_token']) || $_POST['csrf_token'] !== ($_SESSION['csrf_tok
     echo json_encode(['ok'=>false, 'error'=>'csrf']);
     exit;
   }
-  header('Location: ' . url('errore.php?code=csrf')); exit;
+  header('Location: ' . ($_SERVER['HTTP_REFERER'] ?? url())); exit;
 }
 
 /* Honeypot: aggiungi nel form <input type="text" name="website" class="d-none" autocomplete="off"> */

@@ -122,8 +122,8 @@ $current_page = get_current_page();
       </li>
 
       <li class="mobile-nav-item">
-        <a href="<?php echo url('ricondizionati.php'); ?>" class="mobile-nav-link">
-          <i class="ri-smartphone-line"></i> Ricondizionati
+        <a href="<?php echo url('prodotti.php'); ?>" class="mobile-nav-link">
+          <i class="ri-smartphone-line"></i> Prodotti
         </a>
       </li>
 

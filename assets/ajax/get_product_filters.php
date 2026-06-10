@@ -10,7 +10,8 @@ header('Content-Type: application/json; charset=utf-8');
 
 try {
   if (!isset($pdo) || !($pdo instanceof PDO)) {
-    $pdo = new PDO($db_dsn, $db_user, $db_pass, [
+    $dsn = 'mysql:host=' . DB_HOST . ';port=' . DB_PORT . ';dbname=' . DB_NAME . ';charset=' . DB_CHARSET;
+    $pdo = new PDO($dsn, DB_USER, DB_PASS, [
       PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
       PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
     ]);

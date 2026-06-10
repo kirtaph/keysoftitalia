@@ -124,6 +124,30 @@ $currentPage = basename($_SERVER['PHP_SELF']);
                     <span>Volantini</span>
                 </a>
             </li>
+            <li class="sidebar-item">
+                <a href="videos.php" class="sidebar-link <?php echo $currentPage === 'videos.php' ? 'active' : ''; ?>">
+                    <i class="fas fa-video"></i>
+                    <span>Video Prodotti</span>
+                </a>
+            </li>
+            <li class="sidebar-item">
+                <a href="telefonia.php" class="sidebar-link <?php echo $currentPage === 'telefonia.php' ? 'active' : ''; ?>">
+                    <i class="fas fa-phone-alt"></i>
+                    <span>Telefonia</span>
+                </a>
+            </li>
+            <li class="sidebar-item">
+                <a href="sviluppo-web.php" class="sidebar-link <?php echo $currentPage === 'sviluppo-web.php' ? 'active' : ''; ?>">
+                    <i class="fas fa-code"></i>
+                    <span>Sviluppo Web</span>
+                </a>
+            </li>
+            <li class="sidebar-item">
+                <a href="consulenza-it.php" class="sidebar-link <?php echo $currentPage === 'consulenza-it.php' ? 'active' : ''; ?>">
+                    <i class="fas fa-network-wired"></i>
+                    <span>Consulenza IT</span>
+                </a>
+            </li>
             
             <li class="sidebar-divider"></li>
             <div class="sidebar-heading">Impostazioni</div>

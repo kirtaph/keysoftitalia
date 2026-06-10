@@ -4,7 +4,7 @@
  */
 
 // ===== CONFIGURAZIONE GLOBALE =====
-const KS = {
+var KS = window.KS || {
     baseUrl: window.KS_CONFIG?.baseUrl || '/',
     whatsappNumber: window.KS_CONFIG?.whatsappNumber || '393483109840',
     companyName: 'Key Soft Italia',
@@ -42,7 +42,7 @@ const KS = {
 };
 
 // ===== UTILITY FUNCTIONS =====
-const Utils = {
+var Utils = {
     // Formatta prezzo in EUR
     formatPrice: (price) => {
         return new Intl.NumberFormat('it-IT', {

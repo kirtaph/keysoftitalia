@@ -163,7 +163,7 @@ $breadcrumbs = [
                                 <p>
                                     Il sito utilizza cookie tecnici e, previo consenso dell'utente, cookie di profilazione 
                                     e di terze parti. Per maggiori informazioni consulta la nostra 
-                                    <a href="<?php echo url('cookie-policy.php'); ?>">Cookie Policy</a>.
+                                    <a href="<?php echo url('privacy.php'); ?>">Cookie Policy</a>.
                                 </p>
                             </div>
                             
@@ -392,12 +392,12 @@ $breadcrumbs = [
                             </h4>
                             <ul class="list-unstyled">
                                 <li class="mb-2">
-                                    <a href="<?php echo url('cookie-policy.php'); ?>">
+                                    <a href="<?php echo url('privacy.php'); ?>">
                                         <i class="ri-arrow-right-s-line"></i> Cookie Policy
                                     </a>
                                 </li>
                                 <li class="mb-2">
-                                    <a href="<?php echo url('termini-servizio.php'); ?>">
+                                    <a href="<?php echo url('privacy.php'); ?>">
                                         <i class="ri-arrow-right-s-line"></i> Termini di Servizio
                                     </a>
                                 </li>

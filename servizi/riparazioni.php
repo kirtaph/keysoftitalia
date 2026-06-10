@@ -1,7 +1,7 @@
 <?php
 /**
  * Key Soft Italia - Servizi Riparazione
- * Pagina dettaglio servizi di riparazione
+ * Pagina dettaglio servizi di riparazione (Allineata a chi-siamo.php)
  */
 
 // Define BASE_PATH if not defined
@@ -13,8 +13,7 @@ require_once BASE_PATH . 'config/config.php';
 
 // SEO Meta
 $page_title = "Servizi Riparazione Computer e Smartphone - Key Soft Italia";
-$page_description = "Riparazione professionale di computer, notebook, smartphone e tablet a Ginosa. Interventi rapidi e garantiti con componenti originali.";
-$page_keywords = "riparazione computer ginosa, riparazione smartphone, assistenza notebook, riparazione tablet";
+$page_description = "Riparazione professionale di computer, notebook, smartphone, tablet e console a Ginosa. Interventi rapidi e garantiti con componenti originali.";
 
 // Breadcrumbs
 $breadcrumbs = [
@@ -22,285 +21,113 @@ $breadcrumbs = [
     ['label' => 'Riparazioni', 'url' => 'riparazioni.php']
 ];
 ?>
-
 <!DOCTYPE html>
 <html lang="it">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?php echo $page_title; ?></title>
-    
-    <?php echo generate_meta_tags([
-        'title' => $page_title,
-        'description' => $page_description,
-        'keywords' => $page_keywords,
-        'url' => url('servizi/riparazioni.php')
-    ]); ?>
-    
-    <!-- Preconnect -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    
-    <!-- Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    
-    <!-- Icons -->
-    <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
-    
-    <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    
-    <!-- Custom CSS -->
-    <link rel="stylesheet" href="<?php echo asset('css/variables.css'); ?>">
-    <link rel="stylesheet" href="<?php echo asset('css/main.css'); ?>">
-    <link rel="stylesheet" href="<?php echo asset('css/components.css'); ?>">
-    
-    <!-- Favicon -->
-    <link rel="icon" type="image/x-icon" href="<?php echo asset('images/favicon.ico'); ?>">
-    <style>
-        .service-hero {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            padding: 100px 0;
-            color: white;
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .service-hero::before {
-            content: '';
-            position: absolute;
-            top: -50%;
-            right: -50%;
-            width: 200%;
-            height: 200%;
-            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
-            animation: pulse 15s ease-in-out infinite;
-        }
-        
-        @keyframes pulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.1); }
-        }
-        
-        .service-category {
-            padding: 60px 0;
-        }
-        
-        .service-category:nth-child(even) {
-            background: #f8f9fa;
-        }
-        
-        .service-card {
-            background: white;
-            border-radius: 15px;
-            padding: 30px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-            transition: all 0.3s ease;
-            height: 100%;
-        }
-        
-        .service-card:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
-        }
-        
-        .service-icon {
-            width: 80px;
-            height: 80px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-bottom: 20px;
-        }
-        
-        .service-icon i {
-            font-size: 2rem;
-            color: white;
-        }
-        
-        .price-badge {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 5px 15px;
-            border-radius: 25px;
-            display: inline-block;
-            font-weight: 600;
-        }
-        
-        .warranty-banner {
-            background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
-            color: white;
-            padding: 40px;
-            border-radius: 15px;
-            margin: 40px 0;
-            text-align: center;
-        }
-        
-        .process-timeline {
-            position: relative;
-            padding: 40px 0;
-        }
-        
-        .process-step {
-            display: flex;
-            align-items: center;
-            margin-bottom: 40px;
-            position: relative;
-        }
-        
-        .process-step::after {
-            content: '';
-            position: absolute;
-            left: 40px;
-            top: 80px;
-            width: 2px;
-            height: calc(100% + 20px);
-            background: #e2e8f0;
-        }
-        
-        .process-step:last-child::after {
-            display: none;
-        }
-        
-        .process-number {
-            width: 80px;
-            height: 80px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 2rem;
-            font-weight: bold;
-            flex-shrink: 0;
-            z-index: 1;
-        }
-        
-        .process-content {
-            margin-left: 30px;
-            flex: 1;
-        }
-        
-        .cta-section {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 60px 0;
-            text-align: center;
-        }
-    </style>
+    <?php include '../includes/head.php'; ?>
+    <!-- CSS di pagina -->
+    <link rel="stylesheet" href="<?php echo asset_version('css/pages/riparazioni.css'); ?>">
 </head>
 <body>
     
     <!-- Header -->
-    <?php 
-    // Temporarily change dir for include
-    $original_dir = getcwd();
-    chdir('..');
-    include 'includes/header.php'; 
-    chdir($original_dir);
-    ?>
+    <?php include '../includes/header.php'; ?>
 
-    <!-- Hero Section -->
-    <section class="service-hero">
-        <div class="container position-relative">
-            <div class="row align-items-center">
-                <div class="col-lg-8">
-                    <nav aria-label="breadcrumb">
-                        <ol class="breadcrumb">
-                            <li class="breadcrumb-item"><a href="<?php echo url(''); ?>" style="color: white;">Home</a></li>
-                            <li class="breadcrumb-item"><a href="<?php echo url('servizi.php'); ?>" style="color: white;">Servizi</a></li>
-                            <li class="breadcrumb-item active" aria-current="page" style="color: white;">Riparazioni</li>
-                        </ol>
-                    </nav>
-                    <h1 class="display-4 fw-bold mb-4">Servizi di Riparazione</h1>
-                    <p class="lead mb-4">Riparazioni professionali per tutti i dispositivi elettronici con garanzia e componenti originali</p>
-                    <div class="d-flex gap-4 flex-wrap">
-                        <div>
-                            <i class="ri-shield-check-line"></i> Garanzia 12 Mesi
-                        </div>
-                        <div>
-                            <i class="ri-time-line"></i> Riparazione Express
-                        </div>
-                        <div>
-                            <i class="ri-tools-line"></i> Tecnici Certificati
-                        </div>
-                    </div>
-                </div>
-            </div>
+    <!-- HERO -->
+    <section class="hero hero-secondary text-center">
+      <div class="hero-pattern"></div>
+      <div class="container position-relative z-2" data-aos="fade-up">
+        <div class="hero-icon mb-3" data-aos="zoom-in">
+          <i class="ri-tools-line"></i>
         </div>
+        <h1 class="hero-title text-white" data-aos="fade-up" data-aos-delay="100">
+          Servizi di <span class="text-gradient">Riparazione</span>
+        </h1>
+        <p class="hero-subtitle" data-aos="fade-up" data-aos-delay="200">
+          Riparazioni professionali con componenti di alta qualità e garanzia di 12 mesi
+        </p>
+        <div class="hero-cta" data-aos="fade-up" data-aos-delay="300">
+          <a href="#computer-notebook" class="btn btn-primary btn-lg smooth-scroll" aria-label="Scopri i nostri servizi di riparazione">
+            <i class="ri-arrow-down-line me-1"></i> Scopri i Servizi
+          </a>
+        </div>
+        <div class="hero-breadcrumb mt-4" data-aos="fade-up" data-aos-delay="400">
+          <?php echo generate_breadcrumbs($breadcrumbs); ?>
+        </div>
+      </div>
     </section>
 
-    <!-- Computer & Notebook -->
-    <section class="service-category">
+    <!-- Computer & Notebook (White Background) -->
+    <section id="computer-notebook" class="service-category">
         <div class="container">
-            <h2 class="text-center mb-5">Riparazione Computer e Notebook</h2>
+            <div class="section-header text-center mb-5" data-aos="fade-up">
+                <h2 class="section-title">Riparazione <span class="text-gradient">Computer e Notebook</span></h2>
+                <p class="section-subtitle">Interventi rapidi, sicuri e professionali su PC fisso e portatili di ogni marca</p>
+            </div>
             
-            <div class="row g-4">
-                <div class="col-md-6 col-lg-4">
+            <div class="row g-4 mt-2">
+                <div class="col-md-6 col-lg-4" data-aos="fade-up" data-aos-delay="100">
                     <div class="service-card">
                         <div class="service-icon">
                             <i class="ri-computer-line"></i>
                         </div>
                         <h4>Sostituzione Hardware</h4>
-                        <p>RAM, hard disk, SSD, schede video, alimentatori, schede madri</p>
+                        <p>RAM, SSD ad alte prestazioni, schede video, alimentatori e schede madri.</p>
                         <div class="price-badge">Da €30</div>
                     </div>
                 </div>
                 
-                <div class="col-md-6 col-lg-4">
+                <div class="col-md-6 col-lg-4" data-aos="fade-up" data-aos-delay="200">
                     <div class="service-card">
                         <div class="service-icon">
                             <i class="ri-bug-line"></i>
                         </div>
                         <h4>Rimozione Virus</h4>
-                        <p>Pulizia completa da virus, malware, spyware e ottimizzazione sistema</p>
+                        <p>Pulizia totale da virus, malware, adware e ottimizzazione completa delle prestazioni.</p>
                         <div class="price-badge">€40</div>
                     </div>
                 </div>
                 
-                <div class="col-md-6 col-lg-4">
+                <div class="col-md-6 col-lg-4" data-aos="fade-up" data-aos-delay="300">
                     <div class="service-card">
                         <div class="service-icon">
                             <i class="ri-install-line"></i>
                         </div>
                         <h4>Formattazione e Ripristino</h4>
-                        <p>Installazione sistema operativo, driver, programmi essenziali</p>
+                        <p>Installazione pulita del sistema operativo Windows o macOS, driver e programmi essenziali.</p>
                         <div class="price-badge">€50</div>
                     </div>
                 </div>
                 
-                <div class="col-md-6 col-lg-4">
+                <div class="col-md-6 col-lg-4" data-aos="fade-up" data-aos-delay="100">
                     <div class="service-card">
                         <div class="service-icon">
                             <i class="ri-macbook-line"></i>
                         </div>
                         <h4>Riparazione Notebook</h4>
-                        <p>Sostituzione schermo, tastiera, batteria, cerniere, ventole</p>
+                        <p>Sostituzione display rotto, tastiera usurata, batterie interne, cerniere e connettori.</p>
                         <div class="price-badge">Da €60</div>
                     </div>
                 </div>
                 
-                <div class="col-md-6 col-lg-4">
+                <div class="col-md-6 col-lg-4" data-aos="fade-up" data-aos-delay="200">
                     <div class="service-card">
                         <div class="service-icon">
                             <i class="ri-database-2-line"></i>
                         </div>
                         <h4>Recupero Dati</h4>
-                        <p>Recupero file da hard disk danneggiati o formattati accidentalmente</p>
+                        <p>Recupero di file e cartelle importanti da memorie guaste o cancellate accidentalmente.</p>
                         <div class="price-badge">Da €100</div>
                     </div>
                 </div>
                 
-                <div class="col-md-6 col-lg-4">
+                <div class="col-md-6 col-lg-4" data-aos="fade-up" data-aos-delay="300">
                     <div class="service-card">
                         <div class="service-icon">
                             <i class="ri-speed-line"></i>
                         </div>
-                        <h4>Upgrade e Ottimizzazione</h4>
-                        <p>Potenziamento hardware e ottimizzazione prestazioni</p>
+                        <h4>Upgrade & Velocizzazione</h4>
+                        <p>Installazione SSD ultra-veloci e aumento RAM per ridare vita al tuo vecchio computer.</p>
                         <div class="price-badge">Da €35</div>
                     </div>
                 </div>
@@ -308,74 +135,77 @@ $breadcrumbs = [
         </div>
     </section>
 
-    <!-- Smartphone & Tablet -->
-    <section class="service-category">
-        <div class="container">
-            <h2 class="text-center mb-5">Riparazione Smartphone e Tablet</h2>
+    <!-- Smartphone & Tablet (Light Background with Pattern) -->
+    <section id="smartphone-tablet" class="section section-values bg-light">
+        <div class="container position-relative z-2">
+            <div class="section-header text-center mb-5" data-aos="fade-up">
+                <h2 class="section-title">Riparazione <span class="text-gradient">Smartphone e Tablet</span></h2>
+                <p class="section-subtitle">Riparazioni express su schermi, batterie e problemi di accensione o ricarica</p>
+            </div>
             
-            <div class="row g-4">
-                <div class="col-md-6 col-lg-4">
+            <div class="row g-4 mt-2">
+                <div class="col-md-6 col-lg-4" data-aos="fade-up" data-aos-delay="100">
                     <div class="service-card">
                         <div class="service-icon">
                             <i class="ri-smartphone-line"></i>
                         </div>
                         <h4>Sostituzione Display</h4>
-                        <p>Schermo rotto, touch non funzionante, problemi di visualizzazione</p>
+                        <p>Schermo rotto, touch screen non responsivo o problemi di retroilluminazione LCD.</p>
                         <div class="price-badge">Da €80</div>
                     </div>
                 </div>
                 
-                <div class="col-md-6 col-lg-4">
+                <div class="col-md-6 col-lg-4" data-aos="fade-up" data-aos-delay="200">
                     <div class="service-card">
                         <div class="service-icon">
                             <i class="ri-battery-charge-line"></i>
                         </div>
                         <h4>Sostituzione Batteria</h4>
-                        <p>Batteria che non tiene la carica, surriscaldamento, spegnimenti</p>
+                        <p>Sostituzione immediata di batterie degradate, gonfie o che non tengono la carica.</p>
                         <div class="price-badge">Da €40</div>
                     </div>
                 </div>
                 
-                <div class="col-md-6 col-lg-4">
+                <div class="col-md-6 col-lg-4" data-aos="fade-up" data-aos-delay="300">
                     <div class="service-card">
                         <div class="service-icon">
                             <i class="ri-camera-lens-line"></i>
                         </div>
                         <h4>Riparazione Fotocamera</h4>
-                        <p>Fotocamera anteriore/posteriore, vetro camera rotto</p>
+                        <p>Risoluzione di problemi di autofocus, fotocamera nera o vetrino posteriore scheggiato.</p>
                         <div class="price-badge">Da €50</div>
                     </div>
                 </div>
                 
-                <div class="col-md-6 col-lg-4">
+                <div class="col-md-6 col-lg-4" data-aos="fade-up" data-aos-delay="100">
                     <div class="service-card">
                         <div class="service-icon">
                             <i class="ri-volume-up-line"></i>
                         </div>
                         <h4>Speaker e Microfono</h4>
-                        <p>Audio assente, microfono non funzionante, vivavoce</p>
+                        <p>Riparazione altoparlanti gracchianti, audio debole o microfono non funzionante.</p>
                         <div class="price-badge">Da €35</div>
                     </div>
                 </div>
                 
-                <div class="col-md-6 col-lg-4">
+                <div class="col-md-6 col-lg-4" data-aos="fade-up" data-aos-delay="200">
                     <div class="service-card">
                         <div class="service-icon">
                             <i class="ri-usb-line"></i>
                         </div>
-                        <h4>Porta di Ricarica</h4>
-                        <p>Problemi di ricarica, connettore danneggiato</p>
+                        <h4>Connettore di Ricarica</h4>
+                        <p>Sostituzione porta di ricarica USB-C o Lightning danneggiata che rende difficile la ricarica.</p>
                         <div class="price-badge">Da €45</div>
                     </div>
                 </div>
                 
-                <div class="col-md-6 col-lg-4">
+                <div class="col-md-6 col-lg-4" data-aos="fade-up" data-aos-delay="300">
                     <div class="service-card">
                         <div class="service-icon">
                             <i class="ri-drop-line"></i>
                         </div>
                         <h4>Danni da Liquidi</h4>
-                        <p>Pulizia e riparazione dispositivi bagnati</p>
+                        <p>Trattamento ad ultrasuoni, rimozione ossido e ripristino di dispositivi bagnati.</p>
                         <div class="price-badge">Da €70</div>
                     </div>
                 </div>
@@ -383,105 +213,161 @@ $breadcrumbs = [
         </div>
     </section>
 
-    <!-- Warranty Banner -->
-    <div class="container">
-        <div class="warranty-banner">
-            <h2 class="mb-3">
-                <i class="ri-shield-check-line"></i> Garanzia su Tutte le Riparazioni
-            </h2>
-            <p class="lead mb-4">Ogni riparazione è coperta da garanzia di 12 mesi su ricambi e manodopera</p>
-            <div class="row justify-content-center">
-                <div class="col-md-3">
-                    <h3>100%</h3>
-                    <p>Componenti Originali</p>
+    <!-- Console, TV e Micro-saldature (White Background) -->
+    <section id="altre-riparazioni" class="service-category">
+        <div class="container">
+            <div class="section-header text-center mb-5" data-aos="fade-up">
+                <h2 class="section-title">Console, TV e <span class="text-gradient">Micro-saldature</span></h2>
+                <p class="section-subtitle">Interventi board-level su micro-componenti, Smart TV e console di gioco</p>
+            </div>
+            
+            <div class="row g-4 mt-2 justify-content-center">
+                <div class="col-md-6 col-lg-4" data-aos="fade-up" data-aos-delay="100">
+                    <div class="service-card">
+                        <div class="service-icon">
+                            <i class="ri-cpu-line"></i>
+                        </div>
+                        <h4>Micro-saldature Board-Level</h4>
+                        <p>Riparazioni elettroniche avanzate su schede madri, cortocircuiti e connettori saldati.</p>
+                        <div class="price-badge">Su Preventivo</div>
+                    </div>
                 </div>
-                <div class="col-md-3">
-                    <h3>12 Mesi</h3>
-                    <p>Garanzia Standard</p>
+                
+                <div class="col-md-6 col-lg-4" data-aos="fade-up" data-aos-delay="200">
+                    <div class="service-card">
+                        <div class="service-icon">
+                            <i class="ri-gamepad-line"></i>
+                        </div>
+                        <h4>Console Gaming</h4>
+                        <p>Riparazioni e pulizia avanzata di PlayStation, Xbox e Nintendo Switch (HDMI, lettori, pasta termica).</p>
+                        <div class="price-badge">Da €40</div>
+                    </div>
                 </div>
-                <div class="col-md-3">
-                    <h3>24/48h</h3>
-                    <p>Tempi di Riparazione</p>
+                
+                <div class="col-md-6 col-lg-4" data-aos="fade-up" data-aos-delay="300">
+                    <div class="service-card">
+                        <div class="service-icon">
+                            <i class="ri-tv-line"></i>
+                        </div>
+                        <h4>Smart TV & Monitor</h4>
+                        <p>Risoluzione problemi di alimentazione, retroilluminazione LED e schede video TV.</p>
+                        <div class="price-badge">Su Preventivo</div>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
+    </section>
+
+    <!-- WARRANTY & QUALITY (Styled like section-mission of chi-siamo.php) -->
+    <section id="garanzia" class="section section-mission text-white" style="--mission-bg: url('<?= asset('img/mission-lab.png'); ?>');">
+      <div class="mission-overlay"></div>
+      <div class="container position-relative">
+        <div class="row align-items-center">
+          <div class="col-lg-7" data-aos="fade-right">
+            <h2 class="mission-title">
+              <i class="ri-shield-check-line me-2"></i> Garanzia <span class="text-highlight">Totale</span>
+            </h2>
+            <p class="mission-text">
+              Ogni riparazione effettuata nel nostro laboratorio di Ginosa è coperta da una <strong>garanzia scritta di 12 mesi</strong>.
+              Utilizziamo esclusivamente ricambi di qualità certificata e sottoponiamo ogni dispositivo a severi test di collaudo prima della consegna.
+              La tua tranquillità è la nostra priorità assoluta.
+            </p>
+            <a href="#section-cta" class="btn btn-light mt-3 smooth-scroll" aria-label="Prenota riparazione o richiedi preventivo">
+              Richiedi Assistenza <i class="ri-arrow-right-line"></i>
+            </a>
+          </div>
+          <div class="col-lg-5 mt-5 mt-lg-0" data-aos="fade-left">
+            <div class="mission-stats-grid">
+              <div class="mission-stat">
+                <i class="ri-shield-user-line"></i>
+                <div class="stat-value">12 Mesi</div>
+                <div class="stat-label">Garanzia Scritta</div>
+              </div>
+              <div class="mission-stat">
+                <i class="ri-verified-badge-line"></i>
+                <div class="stat-value">100%</div>
+                <div class="stat-label">Ricambi Certificati</div>
+              </div>
+              <div class="mission-stat">
+                <i class="ri-time-line"></i>
+                <div class="stat-value">24/48h</div>
+                <div class="stat-label">Riparazioni Express</div>
+              </div>
+              <div class="mission-stat">
+                <i class="ri-thumb-up-line"></i>
+                <div class="stat-value">100%</div>
+                <div class="stat-label">Garanzia Servizi</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
 
     <!-- Process Timeline -->
-    <section class="service-category">
-        <div class="container">
-            <h2 class="text-center mb-5">Come Funziona il Servizio</h2>
+    <section id="come-funziona" class="section section-values bg-light">
+        <div class="container position-relative z-2">
+            <div class="section-header text-center mb-5" data-aos="fade-up">
+                <h2 class="section-title">Come Funziona il <span class="text-gradient">Servizio</span></h2>
+                <p class="section-subtitle">Il percorso semplice e trasparente dal guasto alla consegna del tuo dispositivo</p>
+            </div>
             
-            <div class="process-timeline">
-                <div class="process-step">
+            <div class="process-timeline mt-5">
+                <div class="process-step" data-aos="fade-right">
                     <div class="process-number">1</div>
                     <div class="process-content">
                         <h4>Diagnosi Gratuita</h4>
-                        <p>Analizziamo il problema e forniamo un preventivo dettagliato senza impegno</p>
+                        <p>Analizziamo accuratamente il problema del tuo dispositivo e formuliamo un preventivo chiaro e trasparente.</p>
                     </div>
                 </div>
                 
-                <div class="process-step">
+                <div class="process-step" data-aos="fade-left">
                     <div class="process-number">2</div>
                     <div class="process-content">
                         <h4>Accettazione Preventivo</h4>
-                        <p>Dopo la tua approvazione, ordiniamo i ricambi necessari</p>
+                        <p>Procediamo con la riparazione solo dopo la tua espressa approvazione. Nessuna sorpresa finale.</p>
                     </div>
                 </div>
                 
-                <div class="process-step">
+                <div class="process-step" data-aos="fade-right">
                     <div class="process-number">3</div>
                     <div class="process-content">
-                        <h4>Riparazione</h4>
-                        <p>I nostri tecnici certificati eseguono la riparazione con cura</p>
+                        <h4>Riparazione Professionale</h4>
+                        <p>I nostri tecnici qualificati sostituiscono i componenti guasti in laboratorio elettrostatico attrezzato.</p>
                     </div>
                 </div>
                 
-                <div class="process-step">
+                <div class="process-step" data-aos="fade-left">
                     <div class="process-number">4</div>
                     <div class="process-content">
-                        <h4>Test e Consegna</h4>
-                        <p>Testiamo il dispositivo e lo consegniamo perfettamente funzionante</p>
+                        <h4>Collaudo e Consegna</h4>
+                        <p>Sottoponiamo il dispositivo a un collaudo finale approfondito per garantire il perfetto funzionamento.</p>
                     </div>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- CTA Section -->
-    <section class="cta-section">
+    <!-- CTA Clean Section -->
+    <section class="section section-cta-clean text-center" data-aos="fade-up" id="section-cta">
         <div class="container">
-            <h2 class="mb-4">Hai Bisogno di una Riparazione?</h2>
-            <p class="lead mb-5">Contattaci subito per un preventivo gratuito e senza impegno</p>
-            <div class="d-flex gap-3 justify-content-center flex-wrap">
-                <a href="<?php echo url('preventivo.php'); ?>" class="btn btn-light btn-lg">
-                    <i class="ri-file-list-3-line"></i> Richiedi Preventivo
+            <h2 class="cta-title">Hai Bisogno di una Riparazione?</h2>
+            <p class="cta-subtitle">Contattaci subito per una stima gratuita o prenota l'assistenza online</p>
+            <div class="cta-buttons">
+                <a href="<?php echo url('preventivo.php'); ?>" class="btn btn-primary btn-lg" aria-label="Richiedi un preventivo gratuito">
+                    <i class="ri-file-list-3-line me-2"></i> Richiedi Preventivo
                 </a>
-                <a href="<?php echo url('assistenza.php'); ?>" class="btn btn-outline-light btn-lg">
-                    <i class="ri-customer-service-2-line"></i> Assistenza Online
+                <a href="<?php echo url('assistenza.php'); ?>" class="btn btn-outline-primary btn-lg" aria-label="Contattaci ora">
+                    <i class="ri-customer-service-2-line me-2"></i> Assistenza Clienti
                 </a>
                 <a href="<?php echo whatsapp_link('Salve, avrei bisogno di una riparazione'); ?>" 
-                   class="btn btn-success btn-lg" target="_blank">
-                    <i class="ri-whatsapp-line"></i> WhatsApp
+                   class="btn btn-success btn-lg" target="_blank" rel="noopener noreferrer" aria-label="Contattaci su WhatsApp">
+                    <i class="ri-whatsapp-line me-2"></i> WhatsApp
                 </a>
             </div>
         </div>
     </section>
 
-    <!-- Footer -->
-    <?php 
-    // Temporarily change dir for include
-    $original_dir = getcwd();
-    chdir('..');
-    include 'includes/footer.php';
-    chdir($original_dir);
-    ?>
-
-    <!-- Bootstrap JS -->
-    <!-- Scripts -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="<?php echo asset('js/main.js'); ?>"></script>
-    
     <!-- Set BASE_URL for JavaScript -->
     <script>
         window.KS_CONFIG = {
@@ -489,5 +375,8 @@ $breadcrumbs = [
             whatsappNumber: '<?php echo WHATSAPP_NUMBER; ?>'
         };
     </script>
+
+    <!-- Footer -->
+    <?php include '../includes/footer.php'; ?>
 </body>
 </html>

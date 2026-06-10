@@ -1,0 +1,6 @@
+name=Key Soft Italia
+type=php
+runtime=docker
+compose=E:\DockerProjects\keysoftitalia\docker-compose.yml
+url=http://keysoftitalia.localhost:8082
+containers=ksit_web,ksit_db,ksit_pma

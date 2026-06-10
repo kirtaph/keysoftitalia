@@ -134,7 +134,7 @@ if (!defined('GOOGLE_MAPS_LINK'))  define('GOOGLE_MAPS_LINK', 'https://maps.goog
 if (!defined('SITE_DESCRIPTION')) {
     define(
         'SITE_DESCRIPTION',
-        'Key Soft Italia a Ginosa - Riparazioni in 24h, vendita dispositivi ricondizionati, assistenza informatica, sviluppo web. Il tuo partner tecnologico di fiducia dal 2008.'
+        'Key Soft Italia a Ginosa - Riparazioni in 24h, vendita dispositivi ricondizionati, assistenza informatica, sviluppo web. Il tuo partner tecnologico di fiducia dal 2004.'
     );
 }
 if (!defined('SEO_TITLE_SUFFIX'))          define('SEO_TITLE_SUFFIX', " | Key Soft Italia - L'universo della Tecnologia");
@@ -187,12 +187,20 @@ if (session_status() === PHP_SESSION_NONE) {
 /* ==========================================================================
    DATABASE CONFIG
    ========================================================================== */
-if (!defined('DB_HOST'))     define('DB_HOST', 'localhost');
-if (!defined('DB_PORT'))     define('DB_PORT', 3306);
-if (!defined('DB_NAME'))     define('DB_NAME', 'ks_site_db');
-if (!defined('DB_USER'))     define('DB_USER', 'keysoftfi_db');
-if (!defined('DB_PASS'))     define('DB_PASS', 'az2zP389*'); // <-- metti la tua pwd reale
-if (!defined('DB_CHARSET'))  define('DB_CHARSET', 'utf8mb4');
+// if (!defined('DB_HOST'))     define('DB_HOST', 'localhost');
+// if (!defined('DB_PORT'))     define('DB_PORT', 3306);
+// if (!defined('DB_NAME'))     define('DB_NAME', 'ks_site_db');
+// if (!defined('DB_USER'))     define('DB_USER', 'keysoftfi_db');
+// if (!defined('DB_PASS'))     define('DB_PASS', 'az2zP389*'); // <-- metti la tua pwd reale
+// if (!defined('DB_CHARSET'))  define('DB_CHARSET', 'utf8mb4');
+
+// --- DB settings (Docker env -> fallback production defaults) ---
+if (!defined('DB_HOST')) define('DB_HOST', getenv('DB_HOST') ?: 'localhost');
+if (!defined('DB_PORT')) define('DB_PORT', (int)(getenv('DB_PORT') ?: 3306));
+if (!defined('DB_NAME')) define('DB_NAME', getenv('DB_NAME') ?: 'ks_site_db');
+if (!defined('DB_USER')) define('DB_USER', getenv('DB_USER') ?: 'keysoftfi_db');
+if (!defined('DB_PASS')) define('DB_PASS', getenv('DB_PASS') ?: 'az2zP389*');
+if (!defined('DB_CHARSET')) define('DB_CHARSET', getenv('DB_CHARSET') ?: 'utf8mb4');
 
 // Istanza PDO globale
 $pdo = null;

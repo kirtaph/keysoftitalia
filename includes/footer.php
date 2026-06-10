@@ -57,12 +57,12 @@ if (!defined('BASE_PATH')) {
         <div class="footer-links-grid">
           <a href="<?php echo url('servizi.php'); ?>" class="footer-link"><i class="ri-arrow-right-s-line"></i> Tutti i Servizi</a>
           <a href="<?php echo url('servizi/riparazioni.php'); ?>" class="footer-link"><i class="ri-arrow-right-s-line"></i> Riparazioni & Assistenza</a>
-          <a href="<?php echo url('ricondizionati.php'); ?>" class="footer-link"><i class="ri-arrow-right-s-line"></i> Dispositivi Ricondizionati</a>
+          <a href="<?php echo url('prodotti.php'); ?>" class="footer-link"><i class="ri-arrow-right-s-line"></i> Dispositivi Ricondizionati</a>
           <a href="<?php echo url('volantini.php'); ?>" class="footer-link"><i class="ri-arrow-right-s-line"></i> I Nostri Volantini</a>
           <a href="<?php echo url('preventivo.php'); ?>" class="footer-link"><i class="ri-arrow-right-s-line"></i> Richiedi Preventivo</a>
-          <a href="<?php echo url('usato.php'); ?>" class="footer-link"><i class="ri-arrow-right-s-line"></i> Vendi il tuo Usato</a>
+          <a href="<?php echo url('valuta-usato.php'); ?>" class="footer-link"><i class="ri-arrow-right-s-line"></i> Vendi il tuo Usato</a>
           <a href="<?php echo url('assistenza.php'); ?>" class="footer-link"><i class="ri-arrow-right-s-line"></i> Richiedi Assistenza</a>
-          <a href="<?php echo url('faq.php'); ?>" class="footer-link"><i class="ri-arrow-right-s-line"></i> Domande Frequenti</a>
+          <a href="<?php echo url('contatti.php#faq'); ?>" class="footer-link"><i class="ri-arrow-right-s-line"></i> Domande Frequenti</a>
         </div>
       </div>
     </div>
@@ -187,8 +187,8 @@ if (!defined('BASE_PATH')) {
       </div>
       <div class="footer-bottom-links">
         <a href="<?php echo url('privacy.php'); ?>" class="footer-bottom-link">Privacy Policy</a>
-        <a href="<?php echo url('termini.php'); ?>" class="footer-bottom-link">Termini di Servizio</a>
-        <a href="<?php echo url('cookie.php'); ?>" class="footer-bottom-link">Cookie Policy</a>
+        <a href="<?php echo url('privacy.php'); ?>" class="footer-bottom-link">Termini di Servizio</a>
+        <a href="<?php echo url('privacy.php'); ?>" class="footer-bottom-link">Cookie Policy</a>
         <a href="<?php echo url('admin'); ?>" class="footer-bottom-link">Amministrazione</a>
       </div>
     </div>

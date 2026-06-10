@@ -37,7 +37,7 @@ try {
 
 // SEO Meta
 $page_title = "Key Soft Italia - L'universo della Tecnologia | Riparazioni, Vendita e Assistenza a Ginosa";
-$page_description = "Key Soft Italia a Ginosa - Riparazioni in 24h, vendita dispositivi ricondizionati, assistenza informatica, sviluppo web. Il tuo partner tecnologico di fiducia dal 2008.";
+$page_description = "Key Soft Italia a Ginosa - Riparazioni in 24h, vendita dispositivi ricondizionati, assistenza informatica, sviluppo web. Il tuo partner tecnologico di fiducia dal 2004.";
 $page_keywords = "riparazioni smartphone ginosa, assistenza computer taranto, ricondizionati, sviluppo web, key soft italia";
 ?>
 
@@ -240,7 +240,7 @@ $page_keywords = "riparazioni smartphone ginosa, assistenza computer taranto, ri
                 <h1 class="hero-title">Scopri i nostri dispositivi <span class="hero-title-excited">ricondizionati</span> garantiti</h1>
                 <p class="hero-description">Smartphone, notebook e tablet testati e certificati. Prezzo conveniente, qualità come nuova.</p>
                 <div class="hero-actions">
-                  <a href="<?php echo url('ricondizionati.php'); ?>" class="btn btn-primary btn-lg" aria-label="Vedi dispositivi ricondizionati">
+                  <a href="<?php echo url('prodotti.php'); ?>" class="btn btn-primary btn-lg" aria-label="Vedi dispositivi ricondizionati">
                     <i class="ri-shopping-bag-line"></i> Vedi i ricondizionati
                   </a>
                   <a href="<?php echo url('preventivo.php'); ?>" class="btn btn-secondary btn-lg" aria-label="Richiedi una valutazione per usato">

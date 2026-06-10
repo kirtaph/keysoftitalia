@@ -11,7 +11,8 @@ header('Content-Type: application/json; charset=utf-8');
 /** =================== DB =================== */
 try {
   if (!isset($pdo) || !($pdo instanceof PDO)) {
-    $pdo = new PDO($db_dsn, $db_user, $db_pass, [
+    $dsn = 'mysql:host=' . DB_HOST . ';port=' . DB_PORT . ';dbname=' . DB_NAME . ';charset=' . DB_CHARSET;
+    $pdo = new PDO($dsn, DB_USER, DB_PASS, [
       PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
       PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
     ]);
@@ -188,7 +189,7 @@ $items = array_map(function(array $r) use ($baseCover) {
   $img       = !empty($r['image_path']) ? $r['image_path'] : $baseCover;
 
   // URL dettaglio (puoi cambiarlo in ricondizionati.php se preferisci)
-  $detailUrl = url('prodotti.php', ['sku' => $r['sku']]);
+  $detailUrl = url('prodotti.php?sku=' . urlencode($r['sku']));
 
   return [
     'title'        => $title ?: trim(($r['brand'] ?? '') . ' ' . ($r['model'] ?? '')),

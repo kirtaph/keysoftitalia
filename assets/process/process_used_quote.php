@@ -43,11 +43,12 @@ if (!function_exists('norm')) {
  */
 if (!function_exists('get_pdo')) {
   function get_pdo(): PDO {
-      global $pdo, $db_dsn, $db_user, $db_pass;
+      global $pdo;
       if ($pdo instanceof PDO) {
           return $pdo;
       }
-      $pdo = new PDO($db_dsn, $db_user, $db_pass, [
+      $dsn = 'mysql:host=' . DB_HOST . ';port=' . DB_PORT . ';dbname=' . DB_NAME . ';charset=' . DB_CHARSET;
+      $pdo = new PDO($dsn, DB_USER, DB_PASS, [
           PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
           PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
       ]);
@@ -95,7 +96,7 @@ if (empty($_POST['csrf_token']) || empty($_SESSION['csrf_token']) ||
         exit;
     }
 
-    header('Location: ' . url('errore.php?code=csrf'));
+    header('Location: ' . ($_SERVER['HTTP_REFERER'] ?? url()));
     exit;
 }
 

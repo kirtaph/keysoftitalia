@@ -17,7 +17,7 @@ $breadcrumbs = [
 ];
 
 // Endpoint AJAX (adegua al tuo path reale)
-$contact_endpoint = url('ajax/contact_submit.php');
+$contact_endpoint = url('assets/process/process_contact.php');
 ?>
 <!DOCTYPE html>
 <html lang="it">
@@ -182,7 +182,7 @@ $contact_endpoint = url('ajax/contact_submit.php');
       <i class="ri-arrow-right-up-line cs-go" aria-hidden="true"></i>
     </a>
 
-    <a class="cs-card" href="<?= url('vendita-usato.php'); ?>" aria-label="Vai alla pagina Vendita Usato">
+    <a class="cs-card" href="<?= url('valuta-usato.php'); ?>" aria-label="Vai alla pagina Valuta Usato">
       <div class="cs-ico"><i class="ri-recycle-line" aria-hidden="true"></i></div>
       <div class="cs-text">
         <h3 class="cs-title">Vendita</h3>

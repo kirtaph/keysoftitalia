@@ -1,7 +1,7 @@
 <?php
 /**
- * Key Soft Italia - Video Tutorial e Guide
- * Pagina con video tutorial, guide e recensioni
+ * Key Soft Italia - Video Prodotti e Recensioni
+ * Pagina con video presentazioni prodotti, recensioni e novità (Grafica coordinata con chi-siamo.php)
  */
 
 // Define BASE_PATH if not defined
@@ -11,129 +11,141 @@ if (!defined('BASE_PATH')) {
 
 require_once BASE_PATH . 'config/config.php';
 
+// Fetch all active videos from database
+$videos = [];
+try {
+    $stmt = $pdo->query("SELECT * FROM videos WHERE status = 1 ORDER BY created_at DESC");
+    $videos = $stmt->fetchAll(PDO::FETCH_ASSOC);
+} catch (PDOException $e) {
+    $videos = [];
+}
+
+// Extract featured video
+$featured_video = null;
+if (!empty($videos)) {
+    foreach ($videos as $v) {
+        if ($v['is_featured'] == 1) {
+            $featured_video = $v;
+            break;
+        }
+    }
+    if (!$featured_video) {
+        $featured_video = $videos[0];
+    }
+}
+
 // SEO Meta
-$page_title = "Video Tutorial e Guide - Key Soft Italia | Impara con i Nostri Video";
-$page_description = "Guarda i nostri video tutorial su riparazioni, manutenzione dispositivi e guide pratiche. Video recensioni prodotti e consigli degli esperti Key Soft Italia.";
-$page_keywords = "video tutorial riparazioni, guide smartphone, video assistenza computer, tutorial tecnologia ginosa";
+$page_title = "Video Prodotti e Recensioni - Key Soft Italia";
+$page_description = "Guarda le nostre video presentazioni dei dispositivi tech e prodotti ricondizionati in negozio. Recensioni e novità da Key Soft Italia.";
 
 // Breadcrumbs
 $breadcrumbs = [
     ['label' => 'Video', 'url' => 'video.php']
 ];
 ?>
-
 <!DOCTYPE html>
 <html lang="it">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?php echo $page_title; ?></title>
-    
-    <?php echo generate_meta_tags([
-        'title' => $page_title,
-        'description' => $page_description,
-        'keywords' => $page_keywords,
-        'url' => url('video.php')
-    ]); ?>
-    
-    <!-- Preconnect -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    
-    <!-- Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    
-    <!-- Icons -->
-    <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
-    
-    <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    
-    <!-- Custom CSS -->
-    <link rel="stylesheet" href="<?php echo asset('css/variables.css'); ?>">
-    <link rel="stylesheet" href="<?php echo asset('css/main.css'); ?>">
-    <link rel="stylesheet" href="<?php echo asset('css/components.css'); ?>">
-    <link rel="stylesheet" href="<?php echo asset('css/pages/video.css'); ?>">
-    
-    <!-- Favicon -->
-    <link rel="icon" type="image/x-icon" href="<?php echo asset('images/favicon.ico'); ?>">
+  <?php include 'includes/head.php'; ?>
+  <!-- CSS di pagina -->
+  <link rel="stylesheet" href="<?php echo asset_version('css/pages/video.css'); ?>">
 </head>
 <body>
     
     <!-- Header -->
     <?php include 'includes/header.php'; ?>
     
-    <!-- Hero Section -->
-    <section class="hero hero-secondary">
-        <div class="container">
-            <div class="hero-content text-center">
-                <h1 class="hero-title animate-fadeIn">Video e Tutorial</h1>
-                <p class="hero-subtitle animate-fadeIn">
-                    Guide pratiche, recensioni e consigli dai nostri esperti
-                </p>
-                <?php echo generate_breadcrumbs($breadcrumbs); ?>
-            </div>
+    <!-- HERO -->
+    <section class="hero hero-secondary text-center">
+      <div class="hero-pattern"></div>
+      <div class="container position-relative z-2" data-aos="fade-up">
+        <div class="hero-icon mb-3" data-aos="zoom-in">
+          <i class="ri-video-line"></i>
         </div>
+        <h1 class="hero-title text-white" data-aos="fade-up" data-aos-delay="100">
+          I Nostri <span class="text-gradient">Video</span>
+        </h1>
+        <p class="hero-subtitle" data-aos="fade-up" data-aos-delay="200">
+          Presentazioni prodotti, recensioni e novità tecnologiche dal nostro store
+        </p>
+        <div class="hero-breadcrumb mt-4" data-aos="fade-up" data-aos-delay="400">
+          <?php echo generate_breadcrumbs($breadcrumbs); ?>
+        </div>
+      </div>
     </section>
     
     <!-- Video Categories -->
-    <section class="section section-categories">
+    <section class="section section-categories" data-aos="fade-up">
         <div class="container">
             <div class="categories-filter">
                 <button class="filter-btn active" data-filter="all">
                     <i class="ri-apps-line"></i> Tutti
                 </button>
-                <button class="filter-btn" data-filter="tutorial">
-                    <i class="ri-book-open-line"></i> Tutorial
-                </button>
-                <button class="filter-btn" data-filter="riparazioni">
-                    <i class="ri-tools-line"></i> Riparazioni
+                <button class="filter-btn" data-filter="prodotti">
+                    <i class="ri-box-3-line"></i> Prodotti
                 </button>
                 <button class="filter-btn" data-filter="recensioni">
                     <i class="ri-star-line"></i> Recensioni
                 </button>
+                <button class="filter-btn" data-filter="novita">
+                    <i class="ri-sparkles-line"></i> Novità
+                </button>
                 <button class="filter-btn" data-filter="consigli">
                     <i class="ri-lightbulb-line"></i> Consigli
                 </button>
-                <button class="filter-btn" data-filter="novita">
-                    <i class="ri-sparkles-line"></i> Novità
+                <button class="filter-btn" data-filter="tutorial">
+                    <i class="ri-book-open-line"></i> Tutorial
                 </button>
             </div>
         </div>
     </section>
     
+    <?php if ($featured_video): ?>
     <!-- Featured Video -->
     <section class="section section-featured">
         <div class="container">
-            <div class="section-header">
-                <h2 class="section-title">Video in Evidenza</h2>
+            <div class="section-header text-center" data-aos="fade-up">
+                <h2 class="section-title">In <span class="text-gradient">Evidenza</span></h2>
             </div>
             
-            <div class="row justify-content-center">
-                <div class="col-lg-10">
+            <div class="row justify-content-center mt-5">
+                <div class="col-lg-10" data-aos="fade-up" data-aos-delay="100">
                     <div class="featured-video-card">
                         <div class="video-wrapper">
-                            <div class="video-placeholder">
+                            <?php if ($featured_video['cover_image']): ?>
+                                <img src="<?php echo asset($featured_video['cover_image']); ?>" class="img-fluid w-100 h-100" style="position: absolute; top: 0; left: 0; object-fit: cover;" alt="<?php echo htmlspecialchars($featured_video['title']); ?>">
+                            <?php endif; ?>
+                            <div class="video-placeholder play-trigger" data-fb-url="<?php echo htmlspecialchars($featured_video['fb_video_url']); ?>" style="<?php echo $featured_video['cover_image'] ? 'background: rgba(0,0,0,0.35);' : ''; ?> cursor: pointer;">
                                 <i class="ri-play-circle-line"></i>
-                                <h3>Come Sostituire lo Schermo dell'iPhone</h3>
-                                <p>Guida completa passo dopo passo</p>
+                                <h3><?php echo htmlspecialchars($featured_video['title']); ?></h3>
+                                <p>Clicca per guardare il video</p>
                             </div>
                             <div class="video-badge">
                                 <span class="badge bg-danger">NUOVO</span>
                             </div>
                         </div>
                         <div class="video-info">
-                            <h3 class="video-title">Come Sostituire lo Schermo dell'iPhone - Tutorial Completo</h3>
-                            <p class="video-description">
-                                In questo video tutorial ti mostriamo come sostituire lo schermo di un iPhone 
-                                in modo professionale. Scopri tutti i passaggi, gli strumenti necessari e i 
-                                consigli per evitare errori comuni.
-                            </p>
+                            <h3 class="video-title"><?php echo htmlspecialchars($featured_video['title']); ?></h3>
+                            <?php if ($featured_video['description']): ?>
+                                <p class="video-description">
+                                    <?php echo nl2br(htmlspecialchars($featured_video['description'])); ?>
+                                </p>
+                            <?php endif; ?>
                             <div class="video-meta">
-                                <span><i class="ri-calendar-line"></i> 2 giorni fa</span>
-                                <span><i class="ri-eye-line"></i> 1.2K visualizzazioni</span>
-                                <span><i class="ri-time-line"></i> 15:30</span>
-                                <span class="text-warning"><i class="ri-star-fill"></i> Tutorial</span>
+                                <span><i class="ri-calendar-line"></i> <?php echo date('d/m/Y', strtotime($featured_video['created_at'])); ?></span>
+                                <?php if ($featured_video['duration']): ?>
+                                    <span><i class="ri-time-line"></i> <?php echo htmlspecialchars($featured_video['duration']); ?></span>
+                                <?php endif; ?>
+                                <span class="text-warning"><i class="ri-star-fill"></i> <?php 
+                                    switch($featured_video['category']) {
+                                        case 'prodotti': echo 'Presentazione Prodotti'; break;
+                                        case 'recensioni': echo 'Recensione'; break;
+                                        case 'novita': echo 'Novità'; break;
+                                        case 'consigli': echo 'Consiglio'; break;
+                                        case 'tutorial': echo 'Tutorial'; break;
+                                        default: echo htmlspecialchars($featured_video['category']);
+                                    }
+                                ?></span>
                             </div>
                         </div>
                     </div>
@@ -141,249 +153,97 @@ $breadcrumbs = [
             </div>
         </div>
     </section>
+    <?php endif; ?>
     
     <!-- Video Grid -->
     <section class="section section-videos">
         <div class="container">
-            <div class="row g-4" id="videoGrid">
-                <!-- Tutorial Videos -->
-                <div class="col-lg-4 col-md-6 video-item" data-category="tutorial">
-                    <div class="video-card">
-                        <div class="video-thumbnail">
-                            <div class="video-placeholder-small">
-                                <i class="ri-play-circle-line"></i>
-                            </div>
-                            <div class="video-duration">12:45</div>
-                            <div class="video-category">Tutorial</div>
-                        </div>
-                        <div class="video-content">
-                            <h4 class="video-title">Configurare Backup Automatico su Cloud</h4>
-                            <p class="video-excerpt">
-                                Proteggi i tuoi dati con il backup automatico. Guida completa per tutti i dispositivi.
-                            </p>
-                            <div class="video-footer">
-                                <span><i class="ri-calendar-line"></i> 1 settimana fa</span>
-                                <span><i class="ri-eye-line"></i> 850</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Riparazioni Videos -->
-                <div class="col-lg-4 col-md-6 video-item" data-category="riparazioni">
-                    <div class="video-card">
-                        <div class="video-thumbnail">
-                            <div class="video-placeholder-small">
-                                <i class="ri-play-circle-line"></i>
-                            </div>
-                            <div class="video-duration">18:20</div>
-                            <div class="video-category">Riparazioni</div>
-                        </div>
-                        <div class="video-content">
-                            <h4 class="video-title">Riparazione Batteria Samsung Galaxy</h4>
-                            <p class="video-excerpt">
-                                Come sostituire la batteria di un Samsung Galaxy in sicurezza.
-                            </p>
-                            <div class="video-footer">
-                                <span><i class="ri-calendar-line"></i> 2 settimane fa</span>
-                                <span><i class="ri-eye-line"></i> 1.5K</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Recensioni Videos -->
-                <div class="col-lg-4 col-md-6 video-item" data-category="recensioni">
-                    <div class="video-card">
-                        <div class="video-thumbnail">
-                            <div class="video-placeholder-small">
-                                <i class="ri-play-circle-line"></i>
-                            </div>
-                            <div class="video-duration">8:15</div>
-                            <div class="video-category">Recensioni</div>
-                        </div>
-                        <div class="video-content">
-                            <h4 class="video-title">iPhone 15 Ricondizionato - Vale la Pena?</h4>
-                            <p class="video-excerpt">
-                                Recensione completa iPhone 15 ricondizionato vs nuovo. Pro e contro.
-                            </p>
-                            <div class="video-footer">
-                                <span><i class="ri-calendar-line"></i> 3 giorni fa</span>
-                                <span><i class="ri-eye-line"></i> 2.1K</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Consigli Videos -->
-                <div class="col-lg-4 col-md-6 video-item" data-category="consigli">
-                    <div class="video-card">
-                        <div class="video-thumbnail">
-                            <div class="video-placeholder-small">
-                                <i class="ri-play-circle-line"></i>
-                            </div>
-                            <div class="video-duration">10:30</div>
-                            <div class="video-category">Consigli</div>
-                        </div>
-                        <div class="video-content">
-                            <h4 class="video-title">10 Trucchi per Velocizzare il PC</h4>
-                            <p class="video-excerpt">
-                                Ottimizza le prestazioni del tuo computer con questi semplici trucchi.
-                            </p>
-                            <div class="video-footer">
-                                <span><i class="ri-calendar-line"></i> 5 giorni fa</span>
-                                <span><i class="ri-eye-line"></i> 980</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- More Tutorial -->
-                <div class="col-lg-4 col-md-6 video-item" data-category="tutorial">
-                    <div class="video-card">
-                        <div class="video-thumbnail">
-                            <div class="video-placeholder-small">
-                                <i class="ri-play-circle-line"></i>
-                            </div>
-                            <div class="video-duration">15:00</div>
-                            <div class="video-category">Tutorial</div>
-                        </div>
-                        <div class="video-content">
-                            <h4 class="video-title">Installare Windows 11 da Zero</h4>
-                            <p class="video-excerpt">
-                                Guida completa all'installazione pulita di Windows 11 con tutti i driver.
-                            </p>
-                            <div class="video-footer">
-                                <span><i class="ri-calendar-line"></i> 1 mese fa</span>
-                                <span><i class="ri-eye-line"></i> 3.2K</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Novità Videos -->
-                <div class="col-lg-4 col-md-6 video-item" data-category="novita">
-                    <div class="video-card">
-                        <div class="video-thumbnail">
-                            <div class="video-placeholder-small">
-                                <i class="ri-play-circle-line"></i>
-                            </div>
-                            <div class="video-duration">6:45</div>
-                            <div class="video-category">Novità</div>
-                        </div>
-                        <div class="video-content">
-                            <h4 class="video-title">Le Migliori App del 2024</h4>
-                            <p class="video-excerpt">
-                                Scopri le app più innovative e utili uscite quest'anno.
-                            </p>
-                            <div class="video-footer">
-                                <span><i class="ri-calendar-line"></i> Ieri</span>
-                                <span><i class="ri-eye-line"></i> 450</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- More Riparazioni -->
-                <div class="col-lg-4 col-md-6 video-item" data-category="riparazioni">
-                    <div class="video-card">
-                        <div class="video-thumbnail">
-                            <div class="video-placeholder-small">
-                                <i class="ri-play-circle-line"></i>
-                            </div>
-                            <div class="video-duration">22:15</div>
-                            <div class="video-category">Riparazioni</div>
-                        </div>
-                        <div class="video-content">
-                            <h4 class="video-title">Riparazione MacBook Pro - Problemi Comuni</h4>
-                            <p class="video-excerpt">
-                                Come risolvere i problemi più frequenti dei MacBook Pro.
-                            </p>
-                            <div class="video-footer">
-                                <span><i class="ri-calendar-line"></i> 2 settimane fa</span>
-                                <span><i class="ri-eye-line"></i> 1.8K</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- More Consigli -->
-                <div class="col-lg-4 col-md-6 video-item" data-category="consigli">
-                    <div class="video-card">
-                        <div class="video-thumbnail">
-                            <div class="video-placeholder-small">
-                                <i class="ri-play-circle-line"></i>
-                            </div>
-                            <div class="video-duration">9:00</div>
-                            <div class="video-category">Consigli</div>
-                        </div>
-                        <div class="video-content">
-                            <h4 class="video-title">Proteggere lo Smartphone dai Virus</h4>
-                            <p class="video-excerpt">
-                                Consigli pratici per mantenere sicuro il tuo dispositivo mobile.
-                            </p>
-                            <div class="video-footer">
-                                <span><i class="ri-calendar-line"></i> 4 giorni fa</span>
-                                <span><i class="ri-eye-line"></i> 670</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- More Recensioni -->
-                <div class="col-lg-4 col-md-6 video-item" data-category="recensioni">
-                    <div class="video-card">
-                        <div class="video-thumbnail">
-                            <div class="video-placeholder-small">
-                                <i class="ri-play-circle-line"></i>
-                            </div>
-                            <div class="video-duration">11:30</div>
-                            <div class="video-category">Recensioni</div>
-                        </div>
-                        <div class="video-content">
-                            <h4 class="video-title">Migliori Accessori Tech sotto i 50€</h4>
-                            <p class="video-excerpt">
-                                I gadget tech più utili e convenienti del momento.
-                            </p>
-                            <div class="video-footer">
-                                <span><i class="ri-calendar-line"></i> 1 settimana fa</span>
-                                <span><i class="ri-eye-line"></i> 890</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+            <div class="section-header text-center" data-aos="fade-up">
+                <h2 class="section-title">Tutti i <span class="text-gradient">Video</span></h2>
+                <p class="section-subtitle">Esplora le presentazioni e le recensioni dei nostri dispositivi</p>
             </div>
             
-            <!-- Load More -->
-            <div class="text-center mt-5">
-                <button class="btn btn-outline-primary btn-lg">
-                    <i class="ri-refresh-line"></i> Carica Altri Video
-                </button>
+            <div class="row g-4 mt-2" id="videoGrid">
+                <?php if (empty($videos)): ?>
+                    <div class="col-12 text-center py-5" data-aos="fade-up">
+                        <div class="text-muted py-5">
+                            <i class="ri-video-line display-1 d-block mb-3 text-secondary"></i>
+                            <h4 class="fw-bold">Nessun video disponibile</h4>
+                            <p>I video caricati dall'amministrazione compariranno qui.</p>
+                        </div>
+                    </div>
+                <?php else: ?>
+                    <?php 
+                    $delay = 0;
+                    foreach ($videos as $video): 
+                        $delay = ($delay >= 300) ? 100 : $delay + 100;
+                    ?>
+                        <div class="col-lg-4 col-md-6 video-item" data-category="<?php echo htmlspecialchars($video['category']); ?>" data-aos="fade-up" data-aos-delay="<?php echo $delay; ?>">
+                            <div class="video-card">
+                                <div class="video-thumbnail">
+                                    <?php if ($video['cover_image']): ?>
+                                        <img src="<?php echo asset($video['cover_image']); ?>" class="img-fluid w-100 h-100" style="position: absolute; top: 0; left: 0; object-fit: cover;" alt="<?php echo htmlspecialchars($video['title']); ?>">
+                                    <?php endif; ?>
+                                    <div class="video-placeholder-small play-trigger" data-fb-url="<?php echo htmlspecialchars($video['fb_video_url']); ?>" style="<?php echo $video['cover_image'] ? 'background: rgba(0,0,0,0.3);' : ''; ?> cursor: pointer;">
+                                        <i class="ri-play-circle-line"></i>
+                                    </div>
+                                    <?php if ($video['duration']): ?>
+                                        <div class="video-duration"><?php echo htmlspecialchars($video['duration']); ?></div>
+                                    <?php endif; ?>
+                                    <div class="video-category"><?php 
+                                        switch($video['category']) {
+                                            case 'prodotti': echo 'Prodotti'; break;
+                                            case 'recensioni': echo 'Recensione'; break;
+                                            case 'novita': echo 'Novità'; break;
+                                            case 'consigli': echo 'Consiglio'; break;
+                                            case 'tutorial': echo 'Tutorial'; break;
+                                            default: echo htmlspecialchars($video['category']);
+                                        }
+                                    ?></div>
+                                </div>
+                                <div class="video-content">
+                                    <h4 class="video-title"><?php echo htmlspecialchars($video['title']); ?></h4>
+                                    <?php if ($video['description']): ?>
+                                        <p class="video-excerpt">
+                                            <?php 
+                                                $desc = strip_tags($video['description']);
+                                                echo htmlspecialchars(mb_strimwidth($desc, 0, 110, '...'));
+                                            ?>
+                                        </p>
+                                    <?php endif; ?>
+                                    <div class="video-footer">
+                                        <span><i class="ri-calendar-line"></i> <?php echo date('d/m/Y', strtotime($video['created_at'])); ?></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    <?php endforeach; ?>
+                <?php endif; ?>
             </div>
         </div>
     </section>
     
-    <!-- YouTube Channel CTA -->
-    <section class="section section-youtube-cta bg-gradient-red text-white">
+    <!-- Facebook Page CTA -->
+    <section class="section section-facebook-cta bg-gradient-facebook text-white">
         <div class="container">
             <div class="row align-items-center">
-                <div class="col-lg-8">
-                    <div class="youtube-content">
-                        <div class="youtube-icon">
-                            <i class="ri-youtube-fill"></i>
+                <div class="col-lg-8" data-aos="fade-right">
+                    <div class="facebook-content">
+                        <div class="facebook-icon">
+                            <i class="ri-facebook-circle-fill"></i>
                         </div>
                         <div>
-                            <h2 class="youtube-title">Seguici su YouTube</h2>
-                            <p class="youtube-text">
-                                Iscriviti al nostro canale per non perdere i nuovi video tutorial, 
-                                recensioni e consigli dai nostri esperti.
+                            <h2 class="facebook-title">Seguici su Facebook</h2>
+                            <p class="facebook-text">
+                                Resta sintonizzato sulla nostra pagina ufficiale per guardare i nuovi video, 
+                                le presentazioni dei prodotti in tempo reale e tutte le nostre ultime offerte.
                             </p>
                         </div>
                     </div>
                 </div>
-                <div class="col-lg-4 text-lg-end">
-                    <a href="#" class="btn btn-white btn-lg">
-                        <i class="ri-youtube-line"></i> Iscriviti al Canale
+                <div class="col-lg-4 text-lg-end mt-4 mt-lg-0" data-aos="fade-left">
+                    <a href="<?php echo SOCIAL_FACEBOOK; ?>" target="_blank" rel="noopener noreferrer" class="btn btn-white btn-lg">
+                        <i class="ri-facebook-line"></i> Vai alla Pagina Facebook
                     </a>
                 </div>
             </div>
@@ -392,19 +252,19 @@ $breadcrumbs = [
     
     <!-- Request Video Section -->
     <section class="section section-request">
-        <div class="container">
+        <div class="container" data-aos="fade-up">
             <div class="request-card">
                 <div class="row align-items-center">
                     <div class="col-lg-8">
                         <h3 class="request-title">
-                            <i class="ri-questionnaire-line"></i> Non trovi quello che cerchi?
+                            <i class="ri-questionnaire-line"></i> Vuoi vedere un prodotto in dettaglio?
                         </h3>
                         <p class="request-text">
-                            Suggerisci un argomento per il nostro prossimo video tutorial. 
-                            Siamo sempre alla ricerca di nuovi contenuti utili per la nostra community!
+                            Suggerisci un dispositivo o un argomento di cui vorresti vedere un video di presentazione.
+                            Siamo pronti a mostrarti tutto ciò che desideri sapere!
                         </p>
                     </div>
-                    <div class="col-lg-4 text-lg-end">
+                    <div class="col-lg-4 text-lg-end mt-3 mt-lg-0">
                         <button class="btn btn-primary btn-lg" data-bs-toggle="modal" data-bs-target="#requestModal">
                             <i class="ri-add-circle-line"></i> Richiedi un Video
                         </button>
@@ -420,26 +280,26 @@ $breadcrumbs = [
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="requestModalLabel">
-                        <i class="ri-video-add-line"></i> Richiedi un Video Tutorial
+                        <i class="ri-video-add-line"></i> Richiedi un Video Prodotto
                     </h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
                     <form id="videoRequestForm">
                         <div class="mb-3">
-                            <label for="requestTopic" class="form-label">Argomento del Video *</label>
+                            <label for="requestTopic" class="form-label">Modello o Argomento del Video *</label>
                             <input type="text" class="form-control" id="requestTopic" required
-                                   placeholder="Es: Come pulire la ventola del notebook">
+                                   placeholder="Es: iPhone 15 Pro Max colore Titanio Naturale">
                         </div>
                         <div class="mb-3">
-                            <label for="requestDescription" class="form-label">Descrizione (opzionale)</label>
+                            <label for="requestDescription" class="form-label">Dettagli della richiesta (opzionale)</label>
                             <textarea class="form-control" id="requestDescription" rows="3"
-                                      placeholder="Fornisci più dettagli su cosa vorresti vedere nel video..."></textarea>
+                                      placeholder="Cosa ti piacerebbe vedere in particolare? Prestazioni, estetica, fotocamera..."></textarea>
                         </div>
                         <div class="mb-3">
                             <label for="requestEmail" class="form-label">La tua Email *</label>
                             <input type="email" class="form-control" id="requestEmail" required
-                                   placeholder="ti@tuaemail.com">
+                                   placeholder="tu@email.com">
                         </div>
                     </form>
                 </div>
@@ -452,15 +312,35 @@ $breadcrumbs = [
             </div>
         </div>
     </div>
+
+    <!-- Video Player Modal -->
+    <div class="modal fade" id="videoPlayerModal" tabindex="-1" aria-hidden="true" data-bs-backdrop="static">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content border-0 bg-dark text-white shadow-lg">
+                <div class="modal-header border-0 bg-dark text-white p-3 d-flex align-items-center justify-content-between">
+                    <h5 class="modal-title text-truncate fw-bold" id="videoPlayerTitle">Riproduttore Video</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body p-0">
+                    <div class="ratio ratio-16x9 bg-black">
+                        <iframe id="videoPlayerIframe" src="" allowfullscreen allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share" style="border:none; overflow:hidden;"></iframe>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Set BASE_URL for JavaScript -->
+    <script>
+        window.KS_CONFIG = {
+            baseUrl: '<?php echo BASE_URL; ?>',
+            whatsappNumber: '<?php echo WHATSAPP_NUMBER; ?>'
+        };
+    </script>
     
     <!-- Footer -->
     <?php include 'includes/footer.php'; ?>
     
-    <!-- Scripts -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="<?php echo asset('js/main.js'); ?>"></script>
-    
-    <!-- Video Filter Script -->
+    <!-- Video Logic & Filter Script -->
     <script>
     document.addEventListener('DOMContentLoaded', function() {
         // Video filtering
@@ -486,28 +366,58 @@ $breadcrumbs = [
             });
         });
         
-        // Video request form
+        // Video request form submit
         const requestForm = document.getElementById('videoRequestForm');
         if (requestForm) {
             requestForm.addEventListener('submit', (e) => {
                 e.preventDefault();
-                // Here you would normally send the form data
-                alert('Grazie per il tuo suggerimento! Lo prenderemo in considerazione.');
-                // Close modal
+                alert('Grazie per il tuo suggerimento! Lo prenderemo in considerazione per i prossimi video.');
                 const modal = bootstrap.Modal.getInstance(document.getElementById('requestModal'));
                 modal.hide();
                 requestForm.reset();
             });
         }
+
+        // Modal Video Player Handling
+        const videoPlayerModalEl = document.getElementById('videoPlayerModal');
+        const videoPlayerModal = new bootstrap.Modal(videoPlayerModalEl);
+        const videoIframe = document.getElementById('videoPlayerIframe');
+        const videoTitle = document.getElementById('videoPlayerTitle');
+        
+        document.addEventListener('click', function(e) {
+            const trigger = e.target.closest('.play-trigger');
+            if (trigger) {
+                const fbUrl = trigger.getAttribute('data-fb-url');
+                let cardTitle = 'Riproduttore Video';
+                
+                // Find card title to display in modal header
+                const featuredCard = trigger.closest('.featured-video-card');
+                const regularCard = trigger.closest('.video-card');
+                
+                if (featuredCard) {
+                    const titleEl = featuredCard.querySelector('.video-title');
+                    if (titleEl) cardTitle = titleEl.textContent;
+                } else if (regularCard) {
+                    const titleEl = regularCard.querySelector('.video-title');
+                    if (titleEl) cardTitle = titleEl.textContent;
+                }
+                
+                videoTitle.textContent = cardTitle;
+                
+                // Construct the Facebook embed URL
+                const embedUrl = "https://www.facebook.com/plugins/video.php?href=" + encodeURIComponent(fbUrl) + "&show_text=0&width=560&autoplay=1";
+                
+                videoIframe.src = embedUrl;
+                videoPlayerModal.show();
+            }
+        });
+        
+        // Stop video playback when modal is closed
+        videoPlayerModalEl.addEventListener('hidden.bs.modal', function () {
+            videoIframe.src = '';
+            videoTitle.textContent = 'Riproduttore Video';
+        });
     });
-    </script>
-    
-    <!-- Set BASE_URL for JavaScript -->
-    <script>
-        window.KS_CONFIG = {
-            baseUrl: '<?php echo BASE_URL; ?>',
-            whatsappNumber: '<?php echo WHATSAPP_NUMBER; ?>'
-        };
     </script>
 </body>
 </html>

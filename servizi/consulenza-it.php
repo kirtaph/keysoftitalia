@@ -1,284 +1,167 @@
 <?php
-require_once '../config/config.php';
-require_once '../assets/php/functions.php';
+/**
+ * Key Soft Italia - Servizio Consulenza IT
+ * Pagina dettaglio servizi di consulenza informatica e sistemistica (Allineata a chi-siamo.php)
+ * Carica i piani di assistenza dinamicamente dal database
+ */
 
-$page_title = "Consulenza IT e Sistemistica - " . SITE_NAME;
-$page_description = "Consulenza informatica professionale per aziende. Gestione reti, sicurezza informatica, backup e disaster recovery.";
-$current_page = 'servizi';
+if (!defined('BASE_PATH')) {
+    define('BASE_PATH', dirname(__DIR__) . '/');
+}
+
+require_once BASE_PATH . 'config/config.php';
+
+// Carichiamo i pacchetti listino attivi
+$packages = [];
+try {
+    $stmt = $pdo->query("SELECT * FROM it_packages WHERE status = 1 ORDER BY sort_order ASC, id ASC");
+    $packages = $stmt->fetchAll(PDO::FETCH_ASSOC);
+} catch (PDOException $e) {
+    $packages = [];
+}
+
+// SEO Meta
+$page_title = "Consulenza IT e Assistenza Sistemistica - Key Soft Italia";
+$page_description = "Consulenza informatica professionale per aziende e professionisti a Ginosa. Configurazione server, reti aziendali, backup, sicurezza informatica e GDPR.";
+$page_keywords = "consulenza it ginosa, assistenza sistemistica, sicurezza informatica, gestione server, reti lan wifi, gdpr compliance";
+
+// Breadcrumbs
+$breadcrumbs = [
+    ['label' => 'Servizi', 'url' => '../servizi.php'],
+    ['label' => 'Consulenza IT', 'url' => 'consulenza-it.php']
+];
 ?>
 <!DOCTYPE html>
 <html lang="it">
 <head>
     <?php include '../includes/head.php'; ?>
-    <style>
-        .service-hero {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            padding: 100px 0 50px;
-            color: white;
-            position: relative;
-        }
-        
-        .breadcrumb {
-            background: transparent;
-            padding: 0;
-            margin-bottom: 20px;
-        }
-        
-        .breadcrumb a {
-            color: rgba(255,255,255,0.8);
-            text-decoration: none;
-        }
-        
-        .breadcrumb a:hover {
-            color: white;
-        }
-        
-        .breadcrumb-item.active {
-            color: white;
-        }
-        
-        .service-card {
-            background: white;
-            border-radius: 10px;
-            padding: 30px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-            transition: all 0.3s ease;
-            height: 100%;
-        }
-        
-        .service-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
-        }
-        
-        .service-icon {
-            width: 80px;
-            height: 80px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-bottom: 20px;
-        }
-        
-        .service-icon i {
-            font-size: 2rem;
-            color: white;
-        }
-        
-        .consultation-types {
-            background: #f8f9fa;
-            padding: 60px 0;
-        }
-        
-        .type-card {
-            background: white;
-            padding: 40px;
-            border-radius: 10px;
-            text-align: center;
-            height: 100%;
-            transition: all 0.3s ease;
-        }
-        
-        .type-card:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 15px 30px rgba(0,0,0,0.15);
-        }
-        
-        .type-icon {
-            font-size: 3rem;
-            color: #667eea;
-            margin-bottom: 20px;
-        }
-        
-        .process-section {
-            padding: 60px 0;
-        }
-        
-        .process-step {
-            text-align: center;
-            padding: 30px;
-        }
-        
-        .process-number {
-            width: 60px;
-            height: 60px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.5rem;
-            font-weight: bold;
-            margin: 0 auto 20px;
-        }
-        
-        .pricing-section {
-            background: #f8f9fa;
-            padding: 60px 0;
-        }
-        
-        .pricing-card {
-            background: white;
-            border-radius: 10px;
-            padding: 40px;
-            text-align: center;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-            height: 100%;
-            transition: all 0.3s ease;
-        }
-        
-        .pricing-card:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 15px 30px rgba(0,0,0,0.15);
-        }
-        
-        .pricing-card.featured {
-            border: 2px solid #667eea;
-            transform: scale(1.05);
-        }
-        
-        .price {
-            font-size: 2.5rem;
-            font-weight: bold;
-            color: #667eea;
-            margin: 20px 0;
-        }
-        
-        .price small {
-            font-size: 1rem;
-            color: #666;
-        }
-        
-        .features-list {
-            list-style: none;
-            padding: 0;
-            margin: 30px 0;
-        }
-        
-        .features-list li {
-            padding: 10px 0;
-            border-bottom: 1px solid #f0f0f0;
-        }
-        
-        .features-list li i {
-            color: #4caf50;
-            margin-right: 10px;
-        }
-    </style>
+    <!-- CSS di pagina -->
+    <link rel="stylesheet" href="<?php echo asset_version('css/pages/consulenza-it.css'); ?>">
 </head>
 <body>
+    
+    <!-- Header -->
     <?php include '../includes/header.php'; ?>
-
+    
     <!-- Hero Section -->
-    <section class="service-hero">
-        <div class="container">
-            <nav aria-label="breadcrumb">
-                <ol class="breadcrumb">
-                    <li class="breadcrumb-item"><a href="<?php echo url(''); ?>">Home</a></li>
-                    <li class="breadcrumb-item"><a href="<?php echo url('servizi.php'); ?>">Servizi</a></li>
-                    <li class="breadcrumb-item active">Consulenza IT</li>
-                </ol>
-            </nav>
-            <h1 class="display-4 fw-bold mb-4">Consulenza IT Professionale</h1>
-            <p class="lead">Ottimizza l'infrastruttura IT della tua azienda con i nostri esperti</p>
+    <section class="hero hero-secondary text-center">
+        <div class="hero-pattern"></div>
+        <div class="container position-relative z-2" data-aos="fade-up">
+            <div class="hero-icon mb-3" data-aos="zoom-in">
+                <i class="ri-customer-service-2-line"></i>
+            </div>
+            <h1 class="hero-title text-white" data-aos="fade-up" data-aos-delay="100">
+                Consulenza IT <span class="text-gradient">e Sistemistica</span>
+            </h1>
+            <p class="hero-subtitle" data-aos="fade-up" data-aos-delay="200">
+                Ottimizziamo l'infrastruttura tecnologica della tua attività per garantire sicurezza, stabilità e velocità
+            </p>
+            <div class="hero-cta" data-aos="fade-up" data-aos-delay="300">
+                <a href="#servizi" class="btn btn-primary btn-lg smooth-scroll" aria-label="Scopri i nostri servizi di consulenza IT">
+                    <i class="ri-arrow-down-line me-1"></i> Scopri i Servizi
+                </a>
+            </div>
+            <div class="hero-breadcrumb mt-4" data-aos="fade-up" data-aos-delay="400">
+                <?php echo generate_breadcrumbs($breadcrumbs); ?>
+            </div>
         </div>
     </section>
-
+    
     <!-- Services Grid -->
-    <section class="py-5">
+    <section id="servizi" class="section-services">
         <div class="container">
-            <h2 class="text-center mb-5">I Nostri Servizi di Consulenza</h2>
+            <div class="section-header text-center mb-5" data-aos="fade-up">
+                <h2 class="section-title">Aree di <span class="text-gradient">Intervento IT</span></h2>
+                <p class="section-subtitle">Supporto tecnico sistemistico qualificato e soluzioni cloud su misura</p>
+            </div>
             
             <div class="row g-4">
-                <div class="col-md-6 col-lg-4">
+                <div class="col-md-6 col-lg-4" data-aos="fade-up" data-aos-delay="100">
                     <div class="service-card">
                         <div class="service-icon">
                             <i class="ri-server-line"></i>
                         </div>
-                        <h4>Gestione Server</h4>
-                        <p>Configurazione, manutenzione e ottimizzazione server fisici e virtuali</p>
+                        <h4>Gestione Server & Cloud</h4>
+                        <p>Installazione, configurazione e monitoraggio continuo di server fisici e virtualizzati.</p>
                         <ul class="list-unstyled mt-3">
-                            <li><i class="ri-check-line text-success"></i> Windows Server</li>
-                            <li><i class="ri-check-line text-success"></i> Linux Server</li>
-                            <li><i class="ri-check-line text-success"></i> Virtualizzazione</li>
+                            <li><i class="ri-checkbox-circle-line"></i> Windows / Linux Server</li>
+                            <li><i class="ri-checkbox-circle-line"></i> Virtualizzazione Hyper-V / VMware</li>
+                            <li><i class="ri-checkbox-circle-line"></i> Manutenzione proattiva</li>
                         </ul>
                     </div>
                 </div>
                 
-                <div class="col-md-6 col-lg-4">
+                <div class="col-md-6 col-lg-4" data-aos="fade-up" data-aos-delay="200">
                     <div class="service-card">
                         <div class="service-icon">
                             <i class="ri-shield-check-line"></i>
                         </div>
                         <h4>Sicurezza Informatica</h4>
-                        <p>Protezione completa della tua infrastruttura IT da minacce e attacchi</p>
+                        <p>Proteggiamo la rete ed i dati della tua azienda da attacchi informatici esterni e malware.</p>
                         <ul class="list-unstyled mt-3">
-                            <li><i class="ri-check-line text-success"></i> Firewall</li>
-                            <li><i class="ri-check-line text-success"></i> Antivirus Enterprise</li>
-                            <li><i class="ri-check-line text-success"></i> Penetration Test</li>
+                            <li><i class="ri-checkbox-circle-line"></i> Firewall di rete Enterprise</li>
+                            <li><i class="ri-checkbox-circle-line"></i> Antivirus centralizzati & Endpoint</li>
+                            <li><i class="ri-checkbox-circle-line"></i> Vulnerability Assessment</li>
                         </ul>
                     </div>
                 </div>
                 
-                <div class="col-md-6 col-lg-4">
+                <div class="col-md-6 col-lg-4" data-aos="fade-up" data-aos-delay="300">
                     <div class="service-card">
                         <div class="service-icon">
                             <i class="ri-wifi-line"></i>
                         </div>
-                        <h4>Reti Aziendali</h4>
-                        <p>Progettazione e gestione reti LAN/WAN performanti e sicure</p>
+                        <h4>Reti Aziendali LAN / WiFi</h4>
+                        <p>Progettazione, cablaggio strutturato e installazione di infrastrutture di rete stabili.</p>
                         <ul class="list-unstyled mt-3">
-                            <li><i class="ri-check-line text-success"></i> Cablaggio strutturato</li>
-                            <li><i class="ri-check-line text-success"></i> WiFi aziendale</li>
-                            <li><i class="ri-check-line text-success"></i> VPN</li>
+                            <li><i class="ri-checkbox-circle-line"></i> Reti locali cablate e armadi rack</li>
+                            <li><i class="ri-checkbox-circle-line"></i> WiFi aziendale con captive portal</li>
+                            <li><i class="ri-checkbox-circle-line"></i> Tunnel VPN per smart working</li>
                         </ul>
                     </div>
                 </div>
                 
-                <div class="col-md-6 col-lg-4">
+                <div class="col-md-6 col-lg-4" data-aos="fade-up" data-aos-delay="400">
                     <div class="service-card">
                         <div class="service-icon">
                             <i class="ri-database-2-line"></i>
                         </div>
-                        <h4>Backup & Recovery</h4>
-                        <p>Strategie di backup e disaster recovery per proteggere i tuoi dati</p>
+                        <h4>Backup & Disaster Recovery</h4>
+                        <p>Soluzioni e politiche di salvataggio dati per garantire la continuità aziendale in ogni scenario.</p>
                         <ul class="list-unstyled mt-3">
-                            <li><i class="ri-check-line text-success"></i> Backup automatizzati</li>
-                            <li><i class="ri-check-line text-success"></i> Cloud backup</li>
-                            <li><i class="ri-check-line text-success"></i> Piano di continuità</li>
+                            <li><i class="ri-checkbox-circle-line"></i> Backup automatici locali</li>
+                            <li><i class="ri-checkbox-circle-line"></i> Cloud backup crittografato</li>
+                            <li><i class="ri-checkbox-circle-line"></i> Piani di Disaster Recovery veloci</li>
                         </ul>
                     </div>
                 </div>
                 
-                <div class="col-md-6 col-lg-4">
+                <div class="col-md-6 col-lg-4" data-aos="fade-up" data-aos-delay="500">
                     <div class="service-card">
                         <div class="service-icon">
                             <i class="ri-cloud-line"></i>
                         </div>
-                        <h4>Migrazione Cloud</h4>
-                        <p>Accompagniamo la tua azienda nel passaggio al cloud</p>
+                        <h4>Migrazione in Cloud</h4>
+                        <p>Supportiamo la transizione della tua produttività d'ufficio verso il Cloud in sicurezza.</p>
                         <ul class="list-unstyled mt-3">
-                            <li><i class="ri-check-line text-success"></i> Microsoft 365</li>
-                            <li><i class="ri-check-line text-success"></i> Google Workspace</li>
-                            <li><i class="ri-check-line text-success"></i> AWS/Azure</li>
+                            <li><i class="ri-checkbox-circle-line"></i> Microsoft 365 e Teams</li>
+                            <li><i class="ri-checkbox-circle-line"></i> Google Workspace</li>
+                            <li><i class="ri-checkbox-circle-line"></i> Risorse AWS / Microsoft Azure</li>
                         </ul>
                     </div>
                 </div>
                 
-                <div class="col-md-6 col-lg-4">
+                <div class="col-md-6 col-lg-4" data-aos="fade-up" data-aos-delay="600">
                     <div class="service-card">
                         <div class="service-icon">
                             <i class="ri-file-shield-2-line"></i>
                         </div>
-                        <h4>GDPR Compliance</h4>
-                        <p>Adeguamento normativo e protezione dati personali</p>
+                        <h4>GDPR & Compliance Dati</h4>
+                        <p>Analisi dei sistemi per garantire la conformità al Regolamento Privacy Europeo.</p>
                         <ul class="list-unstyled mt-3">
-                            <li><i class="ri-check-line text-success"></i> Audit GDPR</li>
-                            <li><i class="ri-check-line text-success"></i> Policy privacy</li>
-                            <li><i class="ri-check-line text-success"></i> Formazione staff</li>
+                            <li><i class="ri-checkbox-circle-line"></i> Security Audit informatico</li>
+                            <li><i class="ri-checkbox-circle-line"></i> Redazione policy di sicurezza</li>
+                            <li><i class="ri-checkbox-circle-line"></i> Formazione del personale interno</li>
                         </ul>
                     </div>
                 </div>
@@ -286,161 +169,165 @@ $current_page = 'servizi';
         </div>
     </section>
 
-    <!-- Consultation Types -->
-    <section class="consultation-types">
-        <div class="container">
-            <h2 class="text-center mb-5">Modalità di Consulenza</h2>
+    <!-- Consultation Types Section -->
+    <section class="section-modalities">
+        <div class="container position-relative z-1">
+            <div class="section-header text-center mb-5" data-aos="fade-up">
+                <h2 class="section-title">Modalità di <span class="text-gradient">Assistenza</span></h2>
+                <p class="section-subtitle">Scegli la formula di intervento adatta ai flussi di lavoro della tua azienda</p>
+            </div>
             
             <div class="row g-4">
-                <div class="col-md-4">
+                <div class="col-md-4" data-aos="fade-up" data-aos-delay="100">
                     <div class="type-card">
                         <i class="ri-building-line type-icon"></i>
-                        <h4>On-Site</h4>
-                        <p>Intervento diretto presso la tua sede per analisi e implementazioni</p>
+                        <h4>On-Site (In Sede)</h4>
+                        <p>Intervento dei nostri tecnici direttamente presso i tuoi uffici o negozi a Ginosa e dintorni.</p>
                     </div>
                 </div>
                 
-                <div class="col-md-4">
+                <div class="col-md-4" data-aos="fade-up" data-aos-delay="200">
                     <div class="type-card">
                         <i class="ri-global-line type-icon"></i>
-                        <h4>Remoto</h4>
-                        <p>Assistenza e consulenza da remoto per risolvere problemi rapidamente</p>
+                        <h4>Help Desk Remoto</h4>
+                        <p>Assistenza telefonica ed in telecontrollo rapida per risolvere anomalie software in tempo reale.</p>
                     </div>
                 </div>
                 
-                <div class="col-md-4">
+                <div class="col-md-4" data-aos="fade-up" data-aos-delay="300">
                     <div class="type-card">
                         <i class="ri-calendar-check-line type-icon"></i>
-                        <h4>Contratto</h4>
-                        <p>Assistenza continuativa con SLA garantito e supporto dedicato</p>
+                        <h4>Contratti di Assistenza SLA</h4>
+                        <p>Pacchetti orari o canoni mensili con tempi di risposta e ripristino dei servizi informatici garantiti.</p>
                     </div>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Process -->
-    <section class="process-section">
+    <!-- Work Process Section -->
+    <section class="section-process">
         <div class="container">
-            <h2 class="text-center mb-5">Come Lavoriamo</h2>
+            <div class="section-header text-center mb-5" data-aos="fade-up">
+                <h2 class="section-title">Il Nostro <span class="text-gradient">Metodo</span></h2>
+                <p class="section-subtitle">Processo metodologico per consolidare l'IT della tua azienda ed azzerare i fermi macchina</p>
+            </div>
             
-            <div class="row">
-                <div class="col-md-3">
+            <div class="row g-4">
+                <div class="col-md-6 col-lg-3" data-aos="fade-up" data-aos-delay="100">
                     <div class="process-step">
                         <div class="process-number">1</div>
-                        <h5>Analisi</h5>
-                        <p>Valutiamo l'infrastruttura IT esistente e identifichiamo criticità</p>
+                        <h5>Analisi (Audit)</h5>
+                        <p>Mappiamo l'infrastruttura IT esistente identificando falle di sicurezza e colli di bottiglia.</p>
                     </div>
                 </div>
                 
-                <div class="col-md-3">
+                <div class="col-md-6 col-lg-3" data-aos="fade-up" data-aos-delay="200">
                     <div class="process-step">
                         <div class="process-number">2</div>
                         <h5>Progettazione</h5>
-                        <p>Elaboriamo soluzioni personalizzate per le tue esigenze</p>
+                        <p>Disegniamo la soluzione ideale ottimizzando i costi ed evitando acquisti hardware superflui.</p>
                     </div>
                 </div>
                 
-                <div class="col-md-3">
+                <div class="col-md-6 col-lg-3" data-aos="fade-up" data-aos-delay="300">
                     <div class="process-step">
                         <div class="process-number">3</div>
                         <h5>Implementazione</h5>
-                        <p>Mettiamo in pratica le soluzioni concordate</p>
+                        <p>Installiamo e configuriamo i sistemi riducendo al minimo l'interruzione della tua attività.</p>
                     </div>
                 </div>
                 
-                <div class="col-md-3">
+                <div class="col-md-6 col-lg-3" data-aos="fade-up" data-aos-delay="400">
                     <div class="process-step">
                         <div class="process-number">4</div>
-                        <h5>Supporto</h5>
-                        <p>Forniamo assistenza continuativa e manutenzione</p>
+                        <h5>Manutenzione</h5>
+                        <p>Garantiamo monitoraggio, aggiornamento dei sistemi e supporto sistemistico continuo.</p>
                     </div>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Pricing -->
-    <section class="pricing-section">
+    <!-- Pricing Section -->
+    <section class="section-pricing">
         <div class="container">
-            <h2 class="text-center mb-5">Piani di Assistenza</h2>
+            <div class="section-header text-center mb-5" data-aos="fade-up">
+                <h2 class="section-title">Piani di <span class="text-gradient">Assistenza Gestita</span></h2>
+                <p class="section-subtitle">Canoni chiari per mantenere la tua infrastruttura IT monitorata e protetta</p>
+            </div>
             
-            <div class="row g-4">
-                <div class="col-lg-4">
-                    <div class="pricing-card">
-                        <h3>Base</h3>
-                        <div class="price">
-                            €99<small>/mese</small>
+            <div class="row g-4 justify-content-center">
+                <?php if (empty($packages)): ?>
+                    <div class="col-12 text-center py-5">
+                        <div class="alert alert-info border-0 shadow-sm d-inline-block p-4 rounded-4" style="max-width: 500px;">
+                            <i class="ri-information-line text-primary display-6 mb-3 d-block"></i>
+                            <h5 class="fw-bold">Nessun piano di assistenza inserito</h5>
+                            <p class="text-muted mb-0">Contattaci direttamente in negozio per richiedere un preventivo o un'offerta personalizzata su misura.</p>
                         </div>
-                        <p class="text-muted">Per piccole aziende</p>
-                        <ul class="features-list">
-                            <li><i class="ri-check-line"></i> Fino a 5 postazioni</li>
-                            <li><i class="ri-check-line"></i> Assistenza remota</li>
-                            <li><i class="ri-check-line"></i> Tempo risposta 24h</li>
-                            <li><i class="ri-check-line"></i> Report mensile</li>
-                        </ul>
-                        <button class="btn btn-outline-primary w-100">Scegli Base</button>
                     </div>
-                </div>
-                
-                <div class="col-lg-4">
-                    <div class="pricing-card featured">
-                        <h3>Professional</h3>
-                        <div class="price">
-                            €299<small>/mese</small>
+                <?php else: ?>
+                    <?php 
+                    $delay = 0;
+                    foreach ($packages as $pack): 
+                        $delay += 100;
+                        $is_featured = (int)$pack['is_featured'] === 1;
+                        $features_arr = !empty($pack['features']) ? explode("\n", $pack['features']) : [];
+                    ?>
+                        <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="<?= $delay; ?>">
+                            <div class="pricing-card <?= $is_featured ? 'featured' : ''; ?>">
+                                <h3><?= htmlspecialchars($pack['title']); ?></h3>
+                                <div class="price">
+                                    <?php if ($pack['price'] !== null): ?>
+                                        €<?= number_format($pack['price'], 0, ',', '.'); ?><small><?= htmlspecialchars($pack['price_detail']); ?></small>
+                                    <?php else: ?>
+                                        <?= htmlspecialchars($pack['price_detail'] ?: 'Su misura'); ?>
+                                    <?php endif; ?>
+                                </div>
+                                <p class="text-muted"><?= htmlspecialchars($pack['subtitle']); ?></p>
+                                <ul class="features-list">
+                                    <?php foreach ($features_arr as $feat): 
+                                        $feat = trim($feat);
+                                        if (empty($feat)) continue;
+                                    ?>
+                                        <li>
+                                            <i class="ri-checkbox-circle-line"></i>
+                                            <span><?= htmlspecialchars($feat); ?></span>
+                                        </li>
+                                    <?php endforeach; ?>
+                                </ul>
+                                <a href="<?php echo url('preventivo.php'); ?>?servizio=it" class="btn <?= $is_featured ? 'btn-primary' : 'btn-outline-primary'; ?> pricing-btn w-100">
+                                    Scegli <?= htmlspecialchars($pack['title']); ?>
+                                </a>
+                            </div>
                         </div>
-                        <p class="text-muted">Soluzione completa</p>
-                        <ul class="features-list">
-                            <li><i class="ri-check-line"></i> Fino a 20 postazioni</li>
-                            <li><i class="ri-check-line"></i> Assistenza on-site</li>
-                            <li><i class="ri-check-line"></i> Tempo risposta 8h</li>
-                            <li><i class="ri-check-line"></i> Monitoraggio proattivo</li>
-                            <li><i class="ri-check-line"></i> Backup automatico</li>
-                        </ul>
-                        <button class="btn btn-primary w-100">Più venduto</button>
-                    </div>
-                </div>
-                
-                <div class="col-lg-4">
-                    <div class="pricing-card">
-                        <h3>Enterprise</h3>
-                        <div class="price">
-                            Su misura
-                        </div>
-                        <p class="text-muted">Grandi aziende</p>
-                        <ul class="features-list">
-                            <li><i class="ri-check-line"></i> Postazioni illimitate</li>
-                            <li><i class="ri-check-line"></i> Team dedicato</li>
-                            <li><i class="ri-check-line"></i> SLA personalizzato</li>
-                            <li><i class="ri-check-line"></i> Supporto 24/7</li>
-                            <li><i class="ri-check-line"></i> Disaster recovery</li>
-                        </ul>
-                        <button class="btn btn-outline-primary w-100">Contattaci</button>
-                    </div>
-                </div>
+                    <?php endforeach; ?>
+                <?php endif; ?>
             </div>
         </div>
     </section>
 
-    <!-- CTA -->
-    <section class="py-5 text-center bg-light">
-        <div class="container">
-            <h2 class="mb-4">Ottimizza la Tua Infrastruttura IT</h2>
-            <p class="lead mb-4">Richiedi una consulenza gratuita per valutare le tue esigenze</p>
-            <div class="d-flex gap-3 justify-content-center flex-wrap">
-                <a href="<?php echo url('preventivo.php'); ?>" class="btn btn-primary btn-lg">
-                    <i class="ri-file-list-3-line"></i> Richiedi Consulenza
+    <!-- CTA Section -->
+    <section class="section-cta-clean text-center">
+        <div class="container" data-aos="fade-up">
+            <h2 class="cta-title">Garantisci la Sicurezza della Tua Rete Aziendale</h2>
+            <p class="cta-subtitle">Contattaci per richiedere un primo audit gratuito sui sistemi informatici ed evitare spiacevoli blocchi lavorativi</p>
+            <div class="cta-buttons">
+                <a href="<?php echo url('preventivo.php'); ?>?servizio=it" class="btn btn-primary btn-lg">
+                    <i class="ri-file-list-3-line me-1"></i> Richiedi Consulenza
                 </a>
-                <a href="<?php echo whatsapp_link('Salve, vorrei informazioni sui servizi di consulenza IT'); ?>" 
-                   class="btn btn-success btn-lg" target="_blank">
-                    <i class="ri-whatsapp-line"></i> WhatsApp
+                <a href="tel:<?php echo PHONE_PRIMARY; ?>" class="btn btn-outline-dark btn-lg">
+                    <i class="ri-phone-line me-1"></i> Chiama Ora
+                </a>
+                <a href="<?php echo whatsapp_link('Salve, vorrei informazioni sui servizi di assistenza sistemistica e consulenza IT'); ?>" 
+                   class="btn btn-success btn-lg" target="_blank" rel="noopener">
+                    <i class="ri-whatsapp-line me-1"></i> Chiedi su WhatsApp
                 </a>
             </div>
         </div>
     </section>
 
+    <!-- Footer -->
     <?php include '../includes/footer.php'; ?>
-
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

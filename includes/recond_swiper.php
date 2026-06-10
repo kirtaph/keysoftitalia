@@ -113,7 +113,7 @@ $KS_BASE = rtrim(BASE_URL, '/').'/';
     const title   = esc(p.title || '');
     const sku     = esc(p.sku   || '');
     const img     = toAbs(p.img || p.image || '');
-    const url     = p.url || (KS_BASE + 'ricondizionati.php?sku='+encodeURIComponent(p.sku||''));
+    const url     = p.url || (KS_BASE + 'prodotti.php?sku='+encodeURIComponent(p.sku||''));
     const grade   = p.grade || '';
     const storage = p.storage || null;
 
@@ -140,7 +140,7 @@ $KS_BASE = rtrim(BASE_URL, '/').'/';
         <div class="recond-card" data-aos="fade-up" data-aos-duration="600" data-aos-delay="${delay}">
           <div class="recond-img-wrap">
             ${badge}
-            <img src="${img}" alt="${title}" class="recond-img" loading="lazy">
+            <img src="${img}" alt="${title}" class="recond-img" loading="lazy" onerror="this.onerror=null; this.src='${toAbs('assets/img/recond/placeholder.jpg')}';">
             ${chips}
           </div>
           <div class="recond-body">
@@ -149,9 +149,11 @@ $KS_BASE = rtrim(BASE_URL, '/').'/';
               ${oldHtml}<span class="price-current">${price}</span>
             </div>
             <a href="${waHref}" target="_blank" rel="noopener" class="btn-wa w-100 mt-3"
+               style="position:relative; z-index:2;"
                aria-label="Richiedi info su ${title} via WhatsApp">
               <i class="ri-shopping-cart-2-line"></i> Acquista
             </a>
+            <a class="stretched-link" href="${esc(url)}" aria-label="Dettagli ${title}"></a>
           </div>
         </div>
       </div>`;
@@ -217,7 +219,7 @@ $KS_BASE = rtrim(BASE_URL, '/').'/';
 #<?= $recond_id; ?> .recond-img-wrap{position:relative;border-radius:16px;overflow:hidden;background:var(--ks-gray-100);}
 #<?= $recond_id; ?> .recond-img{display:block;width:100%;height:220px;object-fit:contain;padding:16px;}
 #<?= $recond_id; ?> .offer-badge{position:absolute;top:50px;right:10px;width:56px;height:56px;border-radius:50%;
-  display:grid;place-items:center;background:var(--ks-orange);color:#fff;font-weight:800;box-shadow:0 8px 18px rgba(255,122,0,.25);}
+  display:grid;place-items:center;background:var(--ks-orange);color:#fff;font-weight:800;box-shadow:0 8px 18px rgba(255,122,0,.25);z-index:3;}
 #<?= $recond_id; ?> .recond-chips{position:absolute;inset:0;pointer-events:none}
 #<?= $recond_id; ?> .recond-chips-left{position:absolute;top:10px;left:10px}
 #<?= $recond_id; ?> .recond-chips-right{position:absolute;top:10px;right:10px}
@@ -230,14 +232,15 @@ $KS_BASE = rtrim(BASE_URL, '/').'/';
 #<?= $recond_id; ?> .recond-chip.grade.grade-a{background:#22c55e}
 #<?= $recond_id; ?> .recond-chip.grade.grade-b{background:#6366f1}
 #<?= $recond_id; ?> .recond-chip.grade.grade-c{background:#0ea5e9}
-#<?= $recond_id; ?> .recond-card{background:#fff;border:1px solid var(--ks-gray-200);border-radius:18px;overflow:hidden;box-shadow:var(--ks-shadow-sm);}
+#<?= $recond_id; ?> .recond-card{position:relative;background:#fff;border:1px solid var(--ks-gray-200);border-radius:18px;overflow:hidden;box-shadow:var(--ks-shadow-sm);transition:transform 0.25s ease, box-shadow 0.25s ease;}
+#<?= $recond_id; ?> .recond-card:hover{transform:translateY(-5px);box-shadow:var(--ks-shadow-md);}
 #<?= $recond_id; ?> .recond-body{padding:12px 14px 16px}
 #<?= $recond_id; ?> .recond-title{font-size:1rem;font-weight:800;margin:4px 0 6px}
 #<?= $recond_id; ?> .recond-price{display:flex;align-items:baseline;gap:8px}
 #<?= $recond_id; ?> .recond-price .price-old{text-decoration:line-through;color:var(--ks-gray-500)}
 #<?= $recond_id; ?> .recond-price .price-current{font-weight:900;color:var(--ks-orange)}
-#<?= $recond_id; ?> .btn-wa{display:inline-flex;align-items:center;justify-content:center;gap:8px;height:44px;border-radius:12px;background:var(--ks-orange);color:#fff;font-weight:800;border:2px solid transparent}
-#<?= $recond_id; ?> .btn-wa:hover{filter:brightness(.98);box-shadow:0 8px 22px rgba(0,0,0,.1)}
+#<?= $recond_id; ?> .btn-wa{position:relative;z-index:2;display:inline-flex;align-items:center;justify-content:center;gap:8px;height:44px;border-radius:12px;background:var(--ks-orange);color:#fff;font-weight:800;border:2px solid transparent}
+#<?= $recond_id; ?> .btn-wa:hover{filter:brightness(.98);box-shadow:0 8px 22px rgba(0,0,0,.1);color:#fff;}
 /* skeleton */
 #<?= $recond_id; ?> .is-skeleton .sk-block{height:220px;background:linear-gradient(90deg,#eee,#f5f5f5,#eee);animation:sk 1.2s infinite}
 #<?= $recond_id; ?> .is-skeleton .sk-line{height:14px;margin:10px 0;background:linear-gradient(90deg,#eee,#f5f5f5,#eee);animation:sk 1.2s infinite;border-radius:8px}

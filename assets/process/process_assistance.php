@@ -11,7 +11,7 @@ if (!empty($_POST['website'])) {
     echo json_encode(['ok'=>false, 'error'=>'bad_request']);
     exit;
   }
-  header('Location: ' . url('errore.php?code=bad_request')); exit;
+  header('Location: ' . ($_SERVER['HTTP_REFERER'] ?? url())); exit;
 }
 
 // --- CSRF
@@ -22,7 +22,7 @@ if (empty($_POST['csrf_token']) || $_POST['csrf_token'] !== ($_SESSION['csrf_tok
     echo json_encode(['ok'=>false, 'error'=>'csrf']);
     exit;
   }
-  header('Location: ' . url('errore.php?code=csrf')); exit;
+  header('Location: ' . ($_SERVER['HTTP_REFERER'] ?? url())); exit;
 }
 
 // --- Collect
@@ -67,8 +67,8 @@ if (is_ajax_request()) {
 
 // --- Fallback senza JS
 if ($res['ok']) {
-  header('Location: ' . url('grazie.php?type=assistenza')); exit;
+  header('Location: ' . ($_SERVER['HTTP_REFERER'] ?? url())); exit;
 } else {
   error_log('Assist Email Error: ' . $res['error']);
-  header('Location: ' . url('errore.php?code=assist_email')); exit;
+  header('Location: ' . ($_SERVER['HTTP_REFERER'] ?? url())); exit;
 }

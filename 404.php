@@ -34,7 +34,7 @@ $contatti  = $u('contatti.php');
 $servizi   = $u('servizi.php');
 $blog      = $u('blog.php');          // se non esiste, puoi togliere la card
 $preventivo= $u('preventivo.php');    // “Pricing” -> Preventivo
-$documenti = $u('faq.php');           // “Documentation” -> FAQ/Documentazione
+$documenti = $u('contatti.php#faq');           // “Documentation” -> FAQ/Documentazione
 ?>
 <!DOCTYPE html>
 <html lang="it">

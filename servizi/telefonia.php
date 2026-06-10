@@ -1,290 +1,194 @@
 <?php
-require_once '../config/config.php';
-require_once '../assets/php/functions.php';
+/**
+ * Key Soft Italia - Servizio Telefonia Privati
+ * Pagina dettaglio telefonia con offerte dinamiche caricate da DB ed invio lead
+ */
 
-$page_title = "Servizi Telefonia Business - " . SITE_NAME;
-$page_description = "Soluzioni di telefonia aziendale, centralini VoIP, linee business e assistenza operatori. Risparmia fino al 50% sui costi telefonici.";
-$current_page = 'servizi';
+if (!defined('BASE_PATH')) {
+    define('BASE_PATH', dirname(__DIR__) . '/');
+}
+
+require_once BASE_PATH . 'config/config.php';
+
+// Inizializza sessione se non attiva (per CSRF)
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
+// Carichiamo le promozioni attive
+$promotions = [];
+try {
+    $stmt = $pdo->query("SELECT * FROM telephony_promotions WHERE status = 1 ORDER BY is_featured DESC, operator_name ASC, price ASC");
+    $promotions = $stmt->fetchAll(PDO::FETCH_ASSOC);
+} catch (PDOException $e) {
+    $promotions = [];
+}
+
+// Trova il prezzo minimo delle offerte attive per il calcolo del risparmio per famiglie/privati
+$min_price = 5.99; // default di sicurezza
+if (!empty($promotions)) {
+    $prices = array_column($promotions, 'price');
+    $min_price = min($prices);
+}
+
+// SEO Meta
+$page_title = "Telefonia Mobile e Fibra Casa - Key Soft Italia";
+$page_description = "Scopri le migliori offerte telefoniche per privati a Ginosa. Attivazione SIM Kena, Lyca, Fastweb Mobile e Fibra Fastweb per la casa.";
+$page_keywords = "telefonia privati ginosa, kena mobile, lycamobile, fastweb mobile, fibra fastweb casa, portabilità sim, offerte cellulari";
+
+// Breadcrumbs
+$breadcrumbs = [
+    ['label' => 'Servizi', 'url' => '../servizi.php'],
+    ['label' => 'Telefonia Privati', 'url' => 'telefonia.php']
+];
 ?>
 <!DOCTYPE html>
 <html lang="it">
 <head>
     <?php include '../includes/head.php'; ?>
-    <style>
-        .service-hero {
-            background: linear-gradient(135deg, #00c6ff 0%, #0072ff 100%);
-            padding: 100px 0;
-            color: white;
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .service-hero::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320"><path fill="%23ffffff10" d="M0,96L48,112C96,128,192,160,288,165.3C384,171,480,149,576,138.7C672,128,768,128,864,149.3C960,171,1056,213,1152,213.3C1248,213,1344,171,1392,149.3L1440,128L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path></svg>') no-repeat bottom;
-            background-size: cover;
-        }
-        
-        .plan-card {
-            background: white;
-            border-radius: 15px;
-            padding: 40px 30px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-            transition: all 0.3s ease;
-            height: 100%;
-            position: relative;
-        }
-        
-        .plan-card.featured {
-            transform: scale(1.05);
-            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
-        }
-        
-        .plan-card.featured::before {
-            content: 'PIÙ VENDUTO';
-            position: absolute;
-            top: -15px;
-            right: 20px;
-            background: linear-gradient(135deg, #ff6b6b 0%, #ff8e8e 100%);
-            color: white;
-            padding: 5px 20px;
-            border-radius: 20px;
-            font-size: 0.85rem;
-            font-weight: 600;
-        }
-        
-        .plan-card:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
-        }
-        
-        .plan-card.featured:hover {
-            transform: scale(1.05) translateY(-10px);
-        }
-        
-        .plan-price {
-            font-size: 3rem;
-            font-weight: bold;
-            color: #0072ff;
-            margin: 20px 0;
-        }
-        
-        .plan-price small {
-            font-size: 1rem;
-            color: #666;
-        }
-        
-        .plan-features {
-            list-style: none;
-            padding: 0;
-            margin: 30px 0;
-        }
-        
-        .plan-features li {
-            padding: 10px 0;
-            border-bottom: 1px solid #f0f0f0;
-            display: flex;
-            align-items: center;
-        }
-        
-        .plan-features li i {
-            color: #4caf50;
-            margin-right: 10px;
-        }
-        
-        .operator-card {
-            background: white;
-            border-radius: 10px;
-            padding: 30px;
-            text-align: center;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
-            transition: all 0.3s ease;
-        }
-        
-        .operator-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
-        }
-        
-        .operator-logo {
-            height: 60px;
-            margin-bottom: 20px;
-        }
-        
-        .savings-calculator {
-            background: linear-gradient(135deg, #f0f4ff 0%, #e8ecff 100%);
-            padding: 40px;
-            border-radius: 15px;
-            margin: 40px 0;
-        }
-        
-        .service-feature {
-            background: white;
-            padding: 30px;
-            border-radius: 10px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-            height: 100%;
-        }
-        
-        .service-feature i {
-            font-size: 3rem;
-            color: #0072ff;
-            margin-bottom: 20px;
-        }
-        
-        .cta-section {
-            background: linear-gradient(135deg, #00c6ff 0%, #0072ff 100%);
-            color: white;
-            padding: 60px 0;
-            text-align: center;
-        }
-    </style>
+    <!-- CSS di pagina -->
+    <link rel="stylesheet" href="<?php echo asset_version('css/pages/telefonia.css'); ?>">
 </head>
 <body>
+    
+    <!-- Header -->
     <?php include '../includes/header.php'; ?>
-
+    
     <!-- Hero Section -->
-    <section class="service-hero">
-        <div class="container position-relative">
-            <div class="row align-items-center">
-                <div class="col-lg-8">
-                    <nav aria-label="breadcrumb">
-                        <ol class="breadcrumb">
-                            <li class="breadcrumb-item"><a href="<?php echo url(''); ?>" style="color: white;">Home</a></li>
-                            <li class="breadcrumb-item"><a href="<?php echo url('servizi.php'); ?>" style="color: white;">Servizi</a></li>
-                            <li class="breadcrumb-item active" aria-current="page" style="color: white;">Telefonia Business</li>
-                        </ol>
-                    </nav>
-                    <h1 class="display-4 fw-bold mb-4">Telefonia Business</h1>
-                    <p class="lead mb-4">Soluzioni complete di telefonia aziendale per ridurre i costi e migliorare la comunicazione</p>
-                    <div class="d-flex gap-4 flex-wrap">
-                        <div>
-                            <i class="ri-percent-line"></i> Risparmio fino al 50%
-                        </div>
-                        <div>
-                            <i class="ri-phone-line"></i> Centralini VoIP
-                        </div>
-                        <div>
-                            <i class="ri-global-line"></i> Chiamate Illimitate
-                        </div>
-                    </div>
-                </div>
+    <section class="hero hero-secondary text-center">
+        <div class="hero-pattern"></div>
+        <div class="container position-relative z-2" data-aos="fade-up">
+            <div class="hero-icon mb-3" data-aos="zoom-in">
+                <i class="ri-phone-line"></i>
+            </div>
+            <h1 class="hero-title text-white" data-aos="fade-up" data-aos-delay="100">
+                Telefonia <span class="text-gradient">Privati e Fibra Casa</span>
+            </h1>
+            <p class="hero-subtitle" data-aos="fade-up" data-aos-delay="200">
+                Piani mobile e connessioni internet per la famiglia. Ti aiutiamo a scegliere la tariffa migliore e a risparmiare
+            </p>
+            <div class="hero-cta" data-aos="fade-up" data-aos-delay="300">
+                <a href="#offerte" class="btn btn-primary btn-lg smooth-scroll" aria-label="Scopri le promozioni telefoniche attive">
+                    <i class="ri-arrow-down-line me-1"></i> Scopri le Offerte
+                </a>
+            </div>
+            <div class="hero-breadcrumb mt-4" data-aos="fade-up" data-aos-delay="400">
+                <?php echo generate_breadcrumbs($breadcrumbs); ?>
             </div>
         </div>
     </section>
-
-    <!-- Business Plans -->
-    <section class="py-5">
+    
+    <!-- Dynamic Promotions Section -->
+    <section id="offerte" class="section-plans">
         <div class="container">
-            <h2 class="text-center mb-5">Piani Telefonia Business</h2>
+            <div class="section-header text-center mb-5" data-aos="fade-up">
+                <h2 class="section-title">Offerte e <span class="text-gradient">Promozioni Attive</span></h2>
+                <p class="section-subtitle">Le migliori tariffe mobile e fibra selezionate per te questo mese</p>
+            </div>
             
-            <div class="row g-4">
-                <div class="col-lg-4">
-                    <div class="plan-card">
-                        <h3 class="text-center">Basic Business</h3>
-                        <div class="plan-price text-center">
-                            €19<small>/mese</small>
+            <div class="row g-4 justify-content-center">
+                <?php if (empty($promotions)): ?>
+                    <div class="col-12 text-center py-5">
+                        <div class="alert alert-info border-0 shadow-sm d-inline-block p-4 rounded-4" style="max-width: 500px;">
+                            <i class="ri-information-line text-primary display-6 mb-3 d-block"></i>
+                            <h5 class="fw-bold">Nessuna promozione attiva online</h5>
+                            <p class="text-muted mb-0">Contattaci direttamente o passa in negozio per scoprire le offerte personalizzate del giorno di tutti i gestori.</p>
                         </div>
-                        <ul class="plan-features">
-                            <li><i class="ri-check-line"></i> 1 Linea telefonica</li>
-                            <li><i class="ri-check-line"></i> 500 minuti nazionali</li>
-                            <li><i class="ri-check-line"></i> Numero fisso incluso</li>
-                            <li><i class="ri-check-line"></i> Segreteria telefonica</li>
-                            <li><i class="ri-check-line"></i> App mobile</li>
-                            <li><i class="ri-close-line text-muted"></i> Centralino virtuale</li>
-                        </ul>
-                        <button class="btn btn-outline-primary w-100">Scopri di più</button>
                     </div>
-                </div>
-                
-                <div class="col-lg-4">
-                    <div class="plan-card featured">
-                        <h3 class="text-center">Professional</h3>
-                        <div class="plan-price text-center">
-                            €39<small>/mese</small>
+                <?php else: ?>
+                    <?php 
+                    $delay = 0;
+                    foreach ($promotions as $promo): 
+                        $delay += 100;
+                        $is_featured = (int)$promo['is_featured'] === 1;
+                        $features_arr = !empty($promo['features']) ? explode("\n", $promo['features']) : [];
+                    ?>
+                        <div class="col-lg-3 col-md-6" data-aos="fade-up" data-aos-delay="<?= $delay; ?>">
+                            <div class="plan-card <?= $is_featured ? 'featured' : ''; ?>">
+                                <div class="plan-header">
+                                    <div class="operator-logo-wrap">
+                                        <?php if (!empty($promo['logo_path']) && file_exists('../' . $promo['logo_path'])): ?>
+                                            <img src="<?= url($promo['logo_path']); ?>" alt="<?= htmlspecialchars($promo['operator_name']); ?> Logo">
+                                        <?php else: ?>
+                                            <div class="operator-logo-fallback">
+                                                <i class="ri-phone-line"></i>
+                                                <span><?= htmlspecialchars($promo['operator_name']); ?></span>
+                                            </div>
+                                        <?php endif; ?>
+                                    </div>
+                                    <h3 class="plan-title"><?= htmlspecialchars($promo['plan_name']); ?></h3>
+                                </div>
+                                <div class="plan-price">
+                                    €<?= number_format($promo['price'], 2, ',', '.'); ?><small><?= htmlspecialchars($promo['price_detail']); ?></small>
+                                </div>
+                                <ul class="plan-features">
+                                    <?php foreach ($features_arr as $feat): 
+                                        $feat = trim($feat);
+                                        if (empty($feat)) continue;
+                                    ?>
+                                        <li>
+                                            <i class="ri-checkbox-circle-line text-success"></i>
+                                            <span><?= htmlspecialchars($feat); ?></span>
+                                        </li>
+                                    <?php endforeach; ?>
+                                </ul>
+                                <a href="#calcolatore" class="btn <?= $is_featured ? 'btn-primary' : 'btn-outline-primary'; ?> plan-btn w-100 select-promo-btn" data-id="<?= $promo['id']; ?>">
+                                    Seleziona e Calcola
+                                </a>
+                            </div>
                         </div>
-                        <ul class="plan-features">
-                            <li><i class="ri-check-line"></i> 3 Linee telefoniche</li>
-                            <li><i class="ri-check-line"></i> Minuti ILLIMITATI nazionali</li>
-                            <li><i class="ri-check-line"></i> 500 minuti internazionali</li>
-                            <li><i class="ri-check-line"></i> Centralino virtuale</li>
-                            <li><i class="ri-check-line"></i> IVR personalizzato</li>
-                            <li><i class="ri-check-line"></i> Registrazione chiamate</li>
-                        </ul>
-                        <button class="btn btn-primary w-100">Più venduto</button>
-                    </div>
-                </div>
-                
-                <div class="col-lg-4">
-                    <div class="plan-card">
-                        <h3 class="text-center">Enterprise</h3>
-                        <div class="plan-price text-center">
-                            €99<small>/mese</small>
-                        </div>
-                        <ul class="plan-features">
-                            <li><i class="ri-check-line"></i> Linee ILLIMITATE</li>
-                            <li><i class="ri-check-line"></i> Chiamate ILLIMITATE ovunque</li>
-                            <li><i class="ri-check-line"></i> Centralino avanzato</li>
-                            <li><i class="ri-check-line"></i> CRM integrato</li>
-                            <li><i class="ri-check-line"></i> Videoconferenze HD</li>
-                            <li><i class="ri-check-line"></i> Supporto dedicato 24/7</li>
-                        </ul>
-                        <button class="btn btn-outline-primary w-100">Contattaci</button>
-                    </div>
-                </div>
+                    <?php endforeach; ?>
+                <?php endif; ?>
             </div>
         </div>
     </section>
-
-    <!-- Operators -->
-    <section class="py-5 bg-light">
-        <div class="container">
-            <h2 class="text-center mb-5">Partner e Operatori</h2>
-            <p class="text-center lead mb-5">Collaboriamo con i principali operatori per offrirti le migliori tariffe</p>
+    
+    <!-- Partner & Operators -->
+    <section class="section-operators">
+        <div class="container position-relative z-1">
+            <div class="section-header text-center mb-5" data-aos="fade-up">
+                <h2 class="section-title">I Nostri <span class="text-gradient">Brand Partner</span></h2>
+                <p class="section-subtitle">Siamo rivenditori autorizzati e partner ufficiali per la telefonia mobile e fissa</p>
+            </div>
             
-            <div class="row g-4">
-                <div class="col-md-3 col-6">
+            <div class="row g-4 justify-content-center">
+                <div class="col-lg-3 col-md-4 col-6" data-aos="zoom-in" data-aos-delay="100">
                     <div class="operator-card">
                         <div class="operator-logo">
-                            <i class="ri-phone-fill" style="font-size: 3rem; color: #ff0000;"></i>
+                            <i class="ri-smartphone-line" style="font-size: 2.5rem; color: var(--ks-orange);"></i>
                         </div>
-                        <h5>Vodafone Business</h5>
-                        <p class="text-muted mb-0">Soluzioni enterprise</p>
+                        <h5>Kena Mobile</h5>
+                        <p>Rete TIM 5G a tariffe imbattibili</p>
                     </div>
                 </div>
                 
-                <div class="col-md-3 col-6">
+                <div class="col-lg-3 col-md-4 col-6" data-aos="zoom-in" data-aos-delay="200">
                     <div class="operator-card">
                         <div class="operator-logo">
-                            <i class="ri-phone-fill" style="font-size: 3rem; color: #003996;"></i>
+                            <i class="ri-global-line" style="font-size: 2.5rem; color: #7c4dff;"></i>
                         </div>
-                        <h5>TIM Business</h5>
-                        <p class="text-muted mb-0">Fibra e telefonia</p>
+                        <h5>Lycamobile</h5>
+                        <p>Rete Vodafone 5G e chiamate all'estero</p>
                     </div>
                 </div>
                 
-                <div class="col-md-3 col-6">
+                <div class="col-lg-3 col-md-4 col-6" data-aos="zoom-in" data-aos-delay="300">
                     <div class="operator-card">
                         <div class="operator-logo">
-                            <i class="ri-phone-fill" style="font-size: 3rem; color: #ff7900;"></i>
+                            <i class="ri-phone-fill" style="font-size: 2.5rem; color: #003996;"></i>
                         </div>
-                        <h5>WindTre Business</h5>
-                        <p class="text-muted mb-0">Convergenza fisso-mobile</p>
+                        <h5>Fastweb Mobile</h5>
+                        <p>5G incluso e massima trasparenza</p>
                     </div>
                 </div>
                 
-                <div class="col-md-3 col-6">
+                <div class="col-lg-3 col-md-4 col-6" data-aos="zoom-in" data-aos-delay="400">
                     <div class="operator-card">
                         <div class="operator-logo">
-                            <i class="ri-phone-fill" style="font-size: 3rem; color: #7c4dff;"></i>
+                            <i class="ri-wifi-line" style="font-size: 2.5rem; color: var(--ks-green);"></i>
                         </div>
-                        <h5>Fastweb Business</h5>
-                        <p class="text-muted mb-0">Ultra fibra e cloud</p>
+                        <h5>Fastweb Casa</h5>
+                        <p>Fibra Ultra FTTH fino a 2.5 Gbps</p>
                     </div>
                 </div>
             </div>
@@ -292,40 +196,43 @@ $current_page = 'servizi';
     </section>
 
     <!-- Services Features -->
-    <section class="py-5">
+    <section class="section-features">
         <div class="container">
-            <h2 class="text-center mb-5">Servizi Inclusi</h2>
+            <div class="section-header text-center mb-5" data-aos="fade-up">
+                <h2 class="section-title">Servizi <span class="text-gradient">Inclusi in Negozio</span></h2>
+                <p class="section-subtitle">Gestiamo ogni aspetto per evitarti code, attese e problemi burocratici</p>
+            </div>
             
             <div class="row g-4">
-                <div class="col-md-6 col-lg-3">
-                    <div class="service-feature text-center">
-                        <i class="ri-customer-service-2-line"></i>
-                        <h4>Centralino VoIP</h4>
-                        <p>Centralino virtuale con IVR, code di attesa, musica personalizzata</p>
+                <div class="col-md-6 col-lg-3" data-aos="fade-up" data-aos-delay="100">
+                    <div class="service-feature">
+                        <i class="ri-checkbox-multiple-line"></i>
+                        <h4>Portabilità Facile (MNP)</h4>
+                        <p>Passa a un nuovo operatore mantenendo il tuo numero. Gestiamo noi la pratica in pochi minuti.</p>
                     </div>
                 </div>
                 
-                <div class="col-md-6 col-lg-3">
-                    <div class="service-feature text-center">
+                <div class="col-md-6 col-lg-3" data-aos="fade-up" data-aos-delay="200">
+                    <div class="service-feature">
                         <i class="ri-smartphone-line"></i>
-                        <h4>App Mobile</h4>
-                        <p>Gestisci le chiamate aziendali dal tuo smartphone ovunque tu sia</p>
+                        <h4>Configurazione SIM ed eSIM</h4>
+                        <p>Inseriamo la SIM nel tuo cellulare, configuriamo internet (APN) e verifichiamo il funzionamento.</p>
                     </div>
                 </div>
                 
-                <div class="col-md-6 col-lg-3">
-                    <div class="service-feature text-center">
-                        <i class="ri-video-chat-line"></i>
-                        <h4>Videoconferenze</h4>
-                        <p>Meeting online HD con condivisione schermo fino a 100 partecipanti</p>
+                <div class="col-md-6 col-lg-3" data-aos="fade-up" data-aos-delay="300">
+                    <div class="service-feature">
+                        <i class="ri-home-wifi-line"></i>
+                        <h4>Fibra per la Famiglia</h4>
+                        <p>Controlliamo gratis la copertura a casa tua e attiviamo la fibra più veloce al miglior prezzo.</p>
                     </div>
                 </div>
                 
-                <div class="col-md-6 col-lg-3">
-                    <div class="service-feature text-center">
-                        <i class="ri-bar-chart-box-line"></i>
-                        <h4>Analytics</h4>
-                        <p>Report dettagliati su chiamate, costi e performance del team</p>
+                <div class="col-md-6 col-lg-3" data-aos="fade-up" data-aos-delay="400">
+                    <div class="service-feature">
+                        <i class="ri-customer-service-line"></i>
+                        <h4>Assistenza Post-Vendita</h4>
+                        <p>Ricariche telefoniche, sostituzione SIM smarrite, cambio piano o risoluzione di problemi di linea.</p>
                     </div>
                 </div>
             </div>
@@ -333,36 +240,81 @@ $current_page = 'servizi';
     </section>
 
     <!-- Savings Calculator -->
-    <section class="py-5">
+    <section id="calcolatore" class="section-calculator">
         <div class="container">
-            <div class="savings-calculator">
-                <div class="row align-items-center">
+            <div class="savings-calculator" data-aos="fade-up">
+                <div class="row align-items-center g-4">
                     <div class="col-lg-6">
-                        <h3><i class="ri-calculator-line"></i> Calcola il Tuo Risparmio</h3>
-                        <p class="lead">Scopri quanto puoi risparmiare passando alle nostre soluzioni business</p>
-                        <form class="mt-4">
+                        <h3><i class="ri-calculator-line text-orange me-2"></i> Calcola e Prenota il Risparmio</h3>
+                        <p class="lead text-muted">Seleziona una promozione e scopri quanto risparmi all'anno sulle tue SIM</p>
+                        
+                        <form class="mt-4" id="calcForm">
+                            <!-- CSRF Security Token -->
+                            <input type="hidden" name="csrf_token" value="<?php echo $_SESSION['csrf_token'] ?? ''; ?>">
+                            <!-- Honeypot anti-spam -->
+                            <input type="text" name="website" style="display:none !important" tabindex="-1" autocomplete="off">
+                            
                             <div class="mb-3">
-                                <label>Spesa telefonica mensile attuale</label>
+                                <label for="promoSelect" class="form-label fw-bold">1. Scegli la promozione di interesse *</label>
+                                <select id="promoSelect" name="promotion_id" class="form-select" onchange="calculateSavings()" required>
+                                    <option value="" disabled selected>Seleziona offerta...</option>
+                                    <?php foreach ($promotions as $promo): ?>
+                                        <option value="<?= $promo['id'] ?>" data-price="<?= $promo['price'] ?>">
+                                            <?= htmlspecialchars($promo['operator_name'] . ' - ' . $promo['plan_name'] . ' (€' . number_format($promo['price'], 2, ',', '.') . $promo['price_detail'] . ')') ?>
+                                        </option>
+                                    <?php endforeach; ?>
+                                </select>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="currentSpend" class="form-label fw-bold">2. Spesa mensile attuale per SIM (€) *</label>
                                 <div class="input-group">
                                     <span class="input-group-text">€</span>
-                                    <input type="number" class="form-control" id="currentSpend" placeholder="es. 200">
+                                    <input type="number" step="0.01" class="form-control form-control-has-group" id="currentSpend" name="current_spend" placeholder="es. 15" oninput="calculateSavings()" required>
                                 </div>
                             </div>
+                            
                             <div class="mb-3">
-                                <label>Numero di linee</label>
-                                <input type="number" class="form-control" id="numLines" placeholder="es. 5">
+                                <label for="numLines" class="form-label fw-bold">3. Numero di SIM in famiglia *</label>
+                                <input type="number" class="form-control" id="numLines" name="num_lines" placeholder="es. 1" min="1" value="1" oninput="calculateSavings()" required>
                             </div>
-                            <button type="button" class="btn btn-primary" onclick="calculateSavings()">
-                                Calcola Risparmio
+                            
+                            <div class="mb-3">
+                                <label for="customerPhone" class="form-label fw-bold">4. Numero di cellulare per contatto *</label>
+                                <input type="tel" class="form-control" id="customerPhone" name="phone" placeholder="es. 347 1234567" required>
+                            </div>
+
+                            <div class="form-check mb-4">
+                                <input class="form-check-input" type="checkbox" id="privacyCheck" name="privacy" value="1" required>
+                                <label class="form-check-label text-muted" for="privacyCheck" style="font-size: 0.85rem;">
+                                    Accetto la <a href="../privacy.php" target="_blank">Privacy Policy</a> per essere ricontattato in negozio.
+                                </label>
+                            </div>
+                            
+                            <button type="submit" class="btn btn-primary w-100 py-3" id="btnSubmitCalc">
+                                <i class="ri-send-plane-line me-1"></i> Calcola e Prenota Passaggio
                             </button>
                         </form>
                     </div>
+                    
                     <div class="col-lg-6">
-                        <div class="text-center" id="savingsResult" style="display: none;">
-                            <h4>Risparmio Stimato</h4>
-                            <div class="display-3 text-success">€<span id="savingsAmount">0</span></div>
-                            <p>all'anno</p>
-                            <small class="text-muted">*Stima basata sui nostri piani business</small>
+                        <div class="calculator-result-box" id="savingsResult" style="display: none;">
+                            <h4 id="resultTitle">Risparmio Annuo Stimato</h4>
+                            <div class="display-amount">€<span id="savingsAmount">0</span></div>
+                            <p id="resultText">Pronto per essere bloccato in negozio!</p>
+                            <small id="resultDisclaimer">* Stima indicativa basata sull'offerta selezionata.</small>
+                        </div>
+                        
+                        <div class="calculator-result-box" id="savingsFallback" style="padding: var(--ks-spacing-10);">
+                            <i class="ri-pulse-line display-5 text-orange mb-3"></i>
+                            <h4 class="text-white">Scegli una Promo</h4>
+                            <p class="text-white-50 text-center" style="font-size: 0.95rem;">Per avviare il calcolo e richiedere il passaggio, seleziona una delle offerte disponibili a sinistra.</p>
+                        </div>
+                        
+                        <div class="calculator-result-box bg-success d-none" id="successBox" style="padding: var(--ks-spacing-10);">
+                            <i class="ri-checkbox-circle-line display-4 text-white mb-3"></i>
+                            <h4 class="text-white">Richiesta Inviata!</h4>
+                            <p class="text-white text-center mb-0" style="font-size: 0.95rem;">Abbiamo registrato la tua richiesta di passaggio. Ti contatteremo telefonicamente per preparare la SIM in negozio!</p>
                         </div>
                     </div>
                 </div>
@@ -371,55 +323,55 @@ $current_page = 'servizi';
     </section>
 
     <!-- Additional Services -->
-    <section class="py-5 bg-light">
+    <section class="py-5">
         <div class="container">
-            <h2 class="text-center mb-5">Servizi Aggiuntivi</h2>
+            <h2 class="text-center mb-5" data-aos="fade-up">Servizi <span class="text-gradient">Aggiuntivi Telefonia</span></h2>
             
             <div class="row g-4">
-                <div class="col-md-6">
+                <div class="col-md-6" data-aos="fade-up" data-aos-delay="100">
                     <div class="d-flex">
                         <div class="flex-shrink-0">
-                            <i class="ri-wifi-line" style="font-size: 2rem; color: #0072ff;"></i>
+                            <i class="ri-sim-card-line" style="font-size: 2.5rem; color: var(--ks-orange);"></i>
                         </div>
                         <div class="flex-grow-1 ms-3">
-                            <h5>Connettività Internet</h5>
-                            <p>Fibra ottica fino a 1 Gbps, ADSL, FWA per la tua azienda</p>
+                            <h5 class="fw-bold">Servizio eSIM Immediato</h5>
+                            <p class="text-muted">Attiva le offerte direttamente in formato eSIM per i dispositivi compatibili. Niente plastica e attivazione istantanea in negozio.</p>
                         </div>
                     </div>
                 </div>
                 
-                <div class="col-md-6">
+                <div class="col-md-6" data-aos="fade-up" data-aos-delay="200">
                     <div class="d-flex">
                         <div class="flex-shrink-0">
-                            <i class="ri-sim-card-line" style="font-size: 2rem; color: #0072ff;"></i>
+                            <i class="ri-global-line" style="font-size: 2.5rem; color: var(--ks-orange);"></i>
                         </div>
                         <div class="flex-grow-1 ms-3">
-                            <h5>SIM Aziendali</h5>
-                            <p>Piani mobile con minuti e giga illimitati per il tuo team</p>
+                            <h5 class="fw-bold">Tariffe e Giga per l'Estero</h5>
+                            <p class="text-muted">Piani tariffari specifici Lycamobile con minuti internazionali verso il tuo paese d'origine e roaming UE compreso.</p>
                         </div>
                     </div>
                 </div>
                 
-                <div class="col-md-6">
+                <div class="col-md-6" data-aos="fade-up" data-aos-delay="300">
                     <div class="d-flex">
                         <div class="flex-shrink-0">
-                            <i class="ri-phone-lock-line" style="font-size: 2rem; color: #0072ff;"></i>
+                            <i class="ri-route-line" style="font-size: 2.5rem; color: var(--ks-orange);"></i>
                         </div>
                         <div class="flex-grow-1 ms-3">
-                            <h5>Numero Verde</h5>
-                            <p>Attiva un numero verde 800 per i tuoi clienti</p>
+                            <h5 class="fw-bold">Ricariche Tutti gli Operatori</h5>
+                            <p class="text-muted">Ricarica in tempo reale il tuo numero o quello di familiari per qualsiasi gestore nazionale ed estero principale.</p>
                         </div>
                     </div>
                 </div>
                 
-                <div class="col-md-6">
+                <div class="col-md-6" data-aos="fade-up" data-aos-delay="400">
                     <div class="d-flex">
                         <div class="flex-shrink-0">
-                            <i class="ri-mail-line" style="font-size: 2rem; color: #0072ff;"></i>
+                            <i class="ri-shield-check-line" style="font-size: 2.5rem; color: var(--ks-orange);"></i>
                         </div>
                         <div class="flex-grow-1 ms-3">
-                            <h5>Fax Virtuale</h5>
-                            <p>Invia e ricevi fax via email senza apparecchi fisici</p>
+                            <h5 class="fw-bold">Verifica Copertura Fibra Casa</h5>
+                            <p class="text-muted">Vieni a trovarci per una verifica copertura stradale esatta. Ti mostriamo la tecnologia disponibile (FTTH, FTTC, FWA) prima di attivare.</p>
                         </div>
                     </div>
                 </div>
@@ -428,48 +380,142 @@ $current_page = 'servizi';
     </section>
 
     <!-- CTA Section -->
-    <section class="cta-section">
-        <div class="container">
-            <h2 class="mb-4">Passa al Business Phone System</h2>
-            <p class="lead mb-5">Richiedi una consulenza gratuita e scopri la soluzione perfetta per la tua azienda</p>
-            <div class="d-flex gap-3 justify-content-center flex-wrap">
-                <a href="<?php echo url('preventivo.php'); ?>" class="btn btn-light btn-lg">
-                    <i class="ri-file-list-3-line"></i> Richiedi Preventivo
+    <section class="section-cta-clean text-center">
+        <div class="container" data-aos="fade-up">
+            <h2 class="cta-title">Vuoi Cambiare Operatore o Attivare la Fibra?</h2>
+            <p class="cta-subtitle">Vieni in negozio a Ginosa in via Diaz. Pensiamo noi a SIM, configurazione e verifica copertura!</p>
+            <div class="cta-buttons">
+                <a href="<?php echo url('contatti.php'); ?>" class="btn btn-primary btn-lg">
+                    <i class="ri-map-pin-line me-1"></i> Vieni in Negozio
                 </a>
-                <a href="tel:<?php echo PHONE_PRIMARY; ?>" class="btn btn-outline-light btn-lg">
-                    <i class="ri-phone-line"></i> Chiama Ora
+                <a href="tel:<?php echo PHONE_PRIMARY; ?>" class="btn btn-outline-dark btn-lg">
+                    <i class="ri-phone-line me-1"></i> Chiama Ora
                 </a>
-                <a href="<?php echo whatsapp_link('Salve, vorrei informazioni sui piani telefonia business'); ?>" 
-                   class="btn btn-success btn-lg" target="_blank">
-                    <i class="ri-whatsapp-line"></i> WhatsApp
+                <a href="<?php echo whatsapp_link('Salve, vorrei informazioni sulle offerte Kena, Lyca o Fastweb'); ?>" 
+                   class="btn btn-success btn-lg" target="_blank" rel="noopener">
+                    <i class="ri-whatsapp-line me-1"></i> Chiedi su WhatsApp
                 </a>
             </div>
         </div>
     </section>
 
+    <!-- Footer -->
     <?php include '../includes/footer.php'; ?>
 
-    <!-- Bootstrap JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-    
     <script>
+        // Smooth scroll trigger when clicking "Seleziona e Calcola" from the promotion list
+        document.querySelectorAll('.select-promo-btn').forEach(btn => {
+            btn.addEventListener('click', function(e) {
+                e.preventDefault();
+                const promoId = this.dataset.id;
+                const selectEl = document.getElementById('promoSelect');
+                selectEl.value = promoId;
+                calculateSavings();
+                
+                // Smooth scroll to calculator
+                document.getElementById('calcolatore').scrollIntoView({ behavior: 'smooth' });
+            });
+        });
+
         function calculateSavings() {
+            const selectEl = document.getElementById('promoSelect');
+            const selectedOption = selectEl.options[selectEl.selectedIndex];
+            
             const currentSpend = parseFloat(document.getElementById('currentSpend').value) || 0;
             const numLines = parseInt(document.getElementById('numLines').value) || 1;
             
-            // Calcolo risparmio stimato (40% di media)
-            const estimatedMonthly = numLines * 39; // Piano Professional
-            const currentYearly = currentSpend * 12;
+            const resultBox = document.getElementById('savingsResult');
+            const fallbackBox = document.getElementById('savingsFallback');
+            const successBox = document.getElementById('successBox');
+            const amountSpan = document.getElementById('savingsAmount');
+            
+            // If success box is currently visible, do not overwrite until recalculation
+            if (!successBox.classList.contains('d-none')) {
+                return;
+            }
+
+            if (!selectEl.value) {
+                resultBox.style.display = 'none';
+                fallbackBox.style.display = 'flex';
+                return;
+            }
+
+            const promoPrice = parseFloat(selectedOption.dataset.price) || 0;
+            
+            // If spend is not set, just show 0 or keep fallback
+            if (currentSpend <= 0) {
+                resultBox.style.display = 'none';
+                fallbackBox.style.display = 'flex';
+                return;
+            }
+
+            const estimatedMonthly = numLines * promoPrice;
+            const currentYearly = currentSpend * 12 * numLines;
             const newYearly = estimatedMonthly * 12;
             const savings = currentYearly - newYearly;
             
             if (savings > 0) {
-                document.getElementById('savingsAmount').textContent = savings.toFixed(0);
-                document.getElementById('savingsResult').style.display = 'block';
+                amountSpan.textContent = Math.round(savings);
+                resultBox.style.display = 'flex';
+                fallbackBox.style.display = 'none';
             } else {
-                alert('Con i nostri piani avresti già un ottimo prezzo!');
+                amountSpan.textContent = '0';
+                resultBox.style.display = 'flex';
+                fallbackBox.style.display = 'none';
             }
         }
+
+        // Handle AJAX form submission
+        document.getElementById('calcForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const btnSubmit = document.getElementById('btnSubmitCalc');
+            const phoneVal = document.getElementById('customerPhone').value.trim();
+            const privacyCheck = document.getElementById('privacyCheck').checked;
+            
+            if (phoneVal === '') {
+                alert('Inserisci il tuo numero di cellulare.');
+                return;
+            }
+            if (!privacyCheck) {
+                alert('Devi accettare la privacy policy.');
+                return;
+            }
+
+            btnSubmit.disabled = true;
+            btnSubmit.innerHTML = '<span class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span> Invio in corso...';
+
+            const formData = new FormData(this);
+
+            fetch('../assets/process/process_telephony_request.php', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                btnSubmit.disabled = false;
+                btnSubmit.innerHTML = '<i class="ri-send-plane-line me-1"></i> Calcola e Prenota Passaggio';
+
+                if (data.ok) {
+                    // Hide other boxes and show Success Box
+                    document.getElementById('savingsResult').style.display = 'none';
+                    document.getElementById('savingsFallback').style.display = 'none';
+                    
+                    const successBox = document.getElementById('successBox');
+                    successBox.classList.remove('d-none');
+                    
+                    // Reset form fields
+                    document.getElementById('calcForm').reset();
+                } else {
+                    alert(data.message || 'Errore durante l\'invio della richiesta.');
+                }
+            })
+            .catch(err => {
+                btnSubmit.disabled = false;
+                btnSubmit.innerHTML = '<i class="ri-send-plane-line me-1"></i> Calcola e Prenota Passaggio';
+                alert('Si è verificato un errore di rete.');
+            });
+        });
     </script>
 </body>
 </html>

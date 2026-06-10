@@ -736,25 +736,3 @@ if (!function_exists('ks_build_week_table_detailed')) {
     return $out;
   }
 }
-
-if (!function_exists('ks_hours_notice_for_date')) {
-  function ks_hours_notice_for_date(DateTime $date): ?string {
-    $exc = ks_db_date_exception($date->format('Y-m-d'));
-    if (!empty($exc['found'])) {
-      $n = isset($exc['notice']) ? trim((string)$exc['notice']) : '';
-      if ($n !== '') return $n;
-    }
-
-    $hol = ks_holiday_rule_for_date($date);
-    if ($hol) {
-      $n = isset($hol['notice']) ? trim((string)$hol['notice']) : '';
-      if ($n !== '') return $n;
-    }
-
-    // Fallback agli array
-    $map = ks_store_hours_notices();
-    $k = $date->format('Y-m-d');
-    $n = isset($map[$k]) ? trim((string)$map[$k]) : '';
-    return $n !== '' ? $n : null;
-  }
-}

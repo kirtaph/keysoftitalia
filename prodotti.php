@@ -185,7 +185,7 @@ $products_endpoint = url('assets/ajax/get_products.php');
           <div class="info-icon"><i class="ri-shield-check-line"></i></div>
           <h4 class="info-title">Garanzia & Assistenza</h4>
           <p class="info-text">Per i ricondizionati: garanzia Key Soft Italia. Per i nuovi: supporto post-vendita.</p>
-          <a href="<?= url('garanzia.php'); ?>" class="info-link">Dettagli <i class="ri-arrow-right-line"></i></a>
+          <a href="<?= url('assistenza.php'); ?>" class="info-link">Dettagli <i class="ri-arrow-right-line"></i></a>
         </div>
       </div>
       <div class="col-lg-4" data-aos="fade-up" data-aos-delay="100">
@@ -193,7 +193,7 @@ $products_endpoint = url('assets/ajax/get_products.php');
           <div class="info-icon"><i class="ri-recycle-line"></i></div>
           <h4 class="info-title">Permuta & Ritiro Usato</h4>
           <p class="info-text">Valutiamo il tuo usato per sconto immediato su nuovo/ricondizionato.</p>
-          <a href="<?= url('vendere-usato.php'); ?>" class="info-link">Come funziona <i class="ri-arrow-right-line"></i></a>
+          <a href="<?= url('valuta-usato.php'); ?>" class="info-link">Come funziona <i class="ri-arrow-right-line"></i></a>
         </div>
       </div>
       <div class="col-lg-4" data-aos="fade-up" data-aos-delay="200">
@@ -201,7 +201,7 @@ $products_endpoint = url('assets/ajax/get_products.php');
           <div class="info-icon"><i class="ri-secure-payment-line"></i></div>
           <h4 class="info-title">Pagamenti & Spedizioni</h4>
           <p class="info-text">Pagamenti tracciati. Ritiro in negozio o spedizione rapida.</p>
-          <a href="<?= url('pagamenti-spedizioni.php'); ?>" class="info-link">Info utili <i class="ri-arrow-right-line"></i></a>
+          <a href="<?= url('contatti.php'); ?>" class="info-link">Info utili <i class="ri-arrow-right-line"></i></a>
         </div>
       </div>
     </div>
@@ -340,7 +340,13 @@ const STATE = {
     syncFormWithUrl();
     // leggi UI -> STATE, fetch
     applyUIToState();
-    fetchAndRender();
+    fetchAndRender().then(() => {
+      const usp = new URLSearchParams(window.location.search);
+      const sku = usp.get('sku');
+      if (sku) {
+        openProductModalBySku(sku);
+      }
+    });
   });
 
   // ==== EVENTI ===============================================================
@@ -367,6 +373,19 @@ const STATE = {
       STATE.page = 1;
       fetchAndRender();
     });
+
+    // Rimuove il parametro SKU dall'URL quando si chiude la modale
+    const mEl = document.getElementById('productModal');
+    if (mEl) {
+      mEl.addEventListener('hidden.bs.modal', () => {
+        const usp = new URLSearchParams(window.location.search);
+        if (usp.has('sku')) {
+          usp.delete('sku');
+          const qs = usp.toString();
+          window.history.replaceState(null, '', window.location.pathname + (qs ? '?' + qs : ''));
+        }
+      });
+    }
   }
 
   // ==== FILTRI: popolamento da endpoint =====================================
@@ -648,7 +667,7 @@ function renderProducts(items){
 
         <div class="product-image">
           ${disc ? `<span class="offer-badge">-${disc}%</span>` : ''}
-          <img src="${esc(p.image)}" alt="${esc(p.title)}" loading="lazy">
+          <img src="${esc(p.image)}" alt="${esc(p.title)}" loading="lazy" onerror="this.onerror=null; this.src='<?= asset("img/recond/placeholder.jpg"); ?>';">
         </div>
 
         <div class="product-content">
@@ -672,6 +691,18 @@ function renderProducts(items){
           ${p.url ? `<a class="stretched-link" href="${esc(p.url)}" aria-label="Apri ${esc(p.title)}"></a>` : ''}
         </div>
       </article>`;
+
+    const productCard = card.querySelector('.product-card');
+    if (productCard) {
+      productCard.addEventListener('click', (e) => {
+        if (e.target.closest('[data-no-link]')) {
+          return;
+        }
+        e.preventDefault();
+        openProductModal(p);
+      });
+    }
+
     el.grid.appendChild(card);
   }
 
@@ -722,12 +753,53 @@ function renderProducts(items){
   }
 
   // ==== MODALE DETTAGLI ======================================================
-  function openProductModalBySku(sku){
-    const p = LAST_ITEMS.find(it => it.sku === sku);
-    if (p) openProductModal(p);
+  async function openProductModalBySku(sku){
+    let p = LAST_ITEMS.find(it => it.sku === sku);
+    if (!p) {
+      try {
+        const res = await fetch(ENDPOINT_DETAIL + '?sku=' + encodeURIComponent(sku), {credentials:'same-origin'});
+        if (!res.ok) return;
+        const json = await res.json();
+        if (json && json.ok !== false && json.product) {
+          const prod = json.product;
+          p = {
+            sku: prod.sku,
+            title: (prod.specs && prod.specs.Marca && prod.specs.Modello) 
+              ? (prod.specs.Marca + ' ' + prod.specs.Modello + (prod.specs.Colore ? ' ' + prod.specs.Colore : ''))
+              : (prod.title || 'Prodotto'),
+            price: prod.price,
+            list_price: prod.list_price,
+            grade: prod.specs?.Grado || prod.grade || '',
+            storage: prod.specs?.Storage ? parseInt(prod.specs.Storage) : (prod.storage || null),
+            short_desc: prod.short_desc || '',
+            full_desc: prod.full_desc || '',
+            image: (prod.images && prod.images.length) ? prod.images[0] : '',
+            images: prod.images || [],
+            url: location.origin + location.pathname + '?sku=' + encodeURIComponent(prod.sku),
+            _enriched: true
+          };
+          if (p.image && !/^https?:\/\//i.test(p.image)) {
+            p.image = '<?= rtrim(BASE_URL,"/"); ?>/' + String(p.image).replace(/^\/+/, '');
+          }
+          if (p.images) {
+            p.images = p.images.map(src => /^https?:\/\//i.test(src) ? src : ('<?= rtrim(BASE_URL,"/"); ?>/'+String(src).replace(/^\/+/,'')));
+          }
+        }
+      } catch (err) {
+        console.error("Errore nel recupero dettagli SKU:", err);
+      }
+    }
+    if (p) {
+      openProductModal(p);
+    }
   }
 
   async function openProductModal(p){
+    // Aggiorna l'URL del browser con la SKU corrente
+    const usp = new URLSearchParams(window.location.search);
+    usp.set('sku', p.sku || '');
+    window.history.replaceState(null, '', window.location.pathname + '?' + usp.toString());
+
     const enriched = await enrichProduct(p).catch(()=>p);
     const mEl = document.getElementById('productModal');
     // prezzo in modale (con listino barrato se presente)
@@ -754,6 +826,34 @@ function renderProducts(items){
     document.getElementById('pmFull').innerHTML = (enriched.full_desc || p.full_desc)
       ? `<div class="pm-full-inner">${escapeNL(enriched.full_desc || p.full_desc)}</div>` : '';
 
+    // specs
+    const specsEl = document.getElementById('pmSpecs');
+    specsEl.innerHTML = '';
+    if (enriched.specs) {
+      const specIcons = {
+        'Marca': 'ri-building-line',
+        'Modello': 'ri-smartphone-line',
+        'Colore': 'ri-palette-line',
+        'Storage': 'ri-database-2-line',
+        'Grado': 'ri-shield-flash-line',
+        'Condizione': 'ri-shield-flash-line'
+      };
+      
+      let html = '<div class="pm-specs-grid">';
+      for (const [key, val] of Object.entries(enriched.specs)) {
+        if (!val) continue;
+        const icon = specIcons[key] || 'ri-checkbox-circle-line';
+        html += `
+          <div class="pm-spec">
+            <i class="${icon}"></i>
+            <span class="pm-spec-label">${esc(key)}</span>
+            <span class="pm-spec-val">${esc(val)}</span>
+          </div>`;
+      }
+      html += '</div>';
+      specsEl.innerHTML = html;
+    }
+
     // galleria
     const images = Array.isArray(enriched.images)&&enriched.images.length
       ? enriched.images
@@ -765,30 +865,42 @@ function renderProducts(items){
 
     if (images.length){
       photo.src = images[0]; photo.alt = enriched.title || p.title;
+      photo.onerror = () => {
+        photo.onerror = null;
+        photo.src = '<?= asset("img/recond/placeholder.jpg"); ?>';
+      };
+
       images.forEach((src,i)=>{
         const t=document.createElement('button'); t.type='button'; t.className='pm-thumb'+(i===0?' is-active':'');
         t.innerHTML = `<img src="${esc(src)}" alt="thumb ${i+1}">`;
-        t.addEventListener('click',()=>{ photo.src=src; thumbs.querySelectorAll('.pm-thumb').forEach(x=>x.classList.remove('is-active')); t.classList.add('is-active'); });
+        t.querySelector('img').onerror = (e) => {
+          e.target.onerror = null;
+          e.target.src = '<?= asset("img/recond/placeholder.jpg"); ?>';
+        };
+        t.addEventListener('click',()=>{ 
+          photo.src=src; 
+          thumbs.querySelectorAll('.pm-thumb').forEach(x=>x.classList.remove('is-active')); 
+          t.classList.add('is-active'); 
+        });
         thumbs.appendChild(t);
       });
     }
 
- // bottone Acquista: forza apertura nuova scheda
-const pmBuy = document.getElementById('pmBuy');
-const waUrl = Utils.whatsappLink(
-  `Ciao Key Soft Italia, ho visto sul vostro sito questo prodotto ${(enriched.title||p.title)} (SKU: ${(enriched.sku||p.sku)}).`,
-  { utm_campaign:'prodotti-modal-buy', utm_content: (enriched.sku||p.sku) }
-);
-if (pmBuy){
-  pmBuy.setAttribute('href', waUrl);
-  pmBuy.setAttribute('target','_blank');
-  pmBuy.setAttribute('rel','noopener');
-  pmBuy.addEventListener('click', (ev) => {
-    // se fosse un <button> senza href o bootstrap lo blocca:
-    ev.preventDefault();
-    window.open(waUrl, '_blank', 'noopener');
-  }, { once:true });
-}
+    // bottone Acquista: forza apertura nuova scheda
+    const pmBuy = document.getElementById('pmBuy');
+    const waUrl = Utils.whatsappLink(
+      `Ciao Key Soft Italia, ho visto sul vostro sito questo prodotto ${(enriched.title||p.title)} (SKU: ${(enriched.sku||p.sku)}).`,
+      { utm_campaign:'prodotti-modal-buy', utm_content: (enriched.sku||p.sku) }
+    );
+    if (pmBuy){
+      pmBuy.setAttribute('href', waUrl);
+      pmBuy.setAttribute('target','_blank');
+      pmBuy.setAttribute('rel','noopener');
+      pmBuy.onclick = (ev) => {
+        ev.preventDefault();
+        window.open(waUrl, '_blank', 'noopener');
+      };
+    }
 
     document.getElementById('pmShare').onclick = () => shareProduct(enriched);
 
@@ -859,9 +971,22 @@ if (pmBuy){
   function shareProduct(p){
     const shareUrl = p.url || (location.origin + location.pathname + '?sku=' + encodeURIComponent(p.sku||''));
     const title = p.title || 'Prodotto Key Soft Italia';
-    if (navigator.share){ navigator.share({title, text:title, url:shareUrl}).catch(()=>{}); return; }
-    const l=(screen.width/2)-300,t=(screen.height/2)-300;
-    window.open('https://www.facebook.com/sharer/sharer.php?u='+encodeURIComponent(shareUrl),'_blank',`width=600,height=600,top=${t},left=${l}`);
+    if (navigator.share){ 
+      navigator.share({title, text:title, url:shareUrl}).catch(()=>{}); 
+      return; 
+    }
+    // Fallback: copia negli appunti
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(shareUrl).then(() => {
+        alert("Link del prodotto copiato negli appunti!");
+      }).catch(() => {
+        const l=(screen.width/2)-300,t=(screen.height/2)-300;
+        window.open('https://www.facebook.com/sharer/sharer.php?u='+encodeURIComponent(shareUrl),'_blank',`width=600,height=600,top=${t},left=${l}`);
+      });
+    } else {
+      const l=(screen.width/2)-300,t=(screen.height/2)-300;
+      window.open('https://www.facebook.com/sharer/sharer.php?u='+encodeURIComponent(shareUrl),'_blank',`width=600,height=600,top=${t},left=${l}`);
+    }
   }
 });
 
