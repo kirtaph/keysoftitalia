@@ -17,11 +17,26 @@ if (session_status() === PHP_SESSION_NONE) {
 
 // Carichiamo le promozioni attive
 $promotions = [];
+$partners = [];
 try {
-    $stmt = $pdo->query("SELECT * FROM telephony_promotions WHERE status = 1 ORDER BY is_featured DESC, operator_name ASC, price ASC");
+    $stmt = $pdo->query("
+        SELECT tp.id, tp.plan_name, tp.price, tp.price_detail, tp.features, tp.is_featured,
+               COALESCE(p.name, tp.operator_name) AS operator_name,
+               COALESCE(p.logo_path, tp.logo_path) AS logo_path,
+               p.icon_class AS partner_icon_class,
+               p.icon_color AS partner_icon_color
+        FROM telephony_promotions tp
+        LEFT JOIN telephony_partners p ON tp.partner_id = p.id
+        WHERE tp.status = 1
+        ORDER BY tp.is_featured DESC, operator_name ASC, tp.price ASC
+    ");
     $promotions = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+    $stmtPartners = $pdo->query("SELECT * FROM telephony_partners WHERE status = 1 ORDER BY sort_order ASC, name ASC");
+    $partners = $stmtPartners->fetchAll(PDO::FETCH_ASSOC);
 } catch (PDOException $e) {
-    $promotions = [];
+    $promotions = $promotions ?: [];
+    $partners = [];
 }
 
 // Trova il prezzo minimo delle offerte attive per il calcolo del risparmio per famiglie/privati
@@ -152,45 +167,68 @@ $breadcrumbs = [
             </div>
             
             <div class="row g-4 justify-content-center">
-                <div class="col-lg-3 col-md-4 col-6" data-aos="zoom-in" data-aos-delay="100">
-                    <div class="operator-card">
-                        <div class="operator-logo">
-                            <i class="ri-smartphone-line" style="font-size: 2.5rem; color: var(--ks-orange);"></i>
+                <?php if (!empty($partners)): ?>
+                    <?php 
+                    $delay = 100;
+                    foreach ($partners as $partner): 
+                    ?>
+                        <div class="col-lg-3 col-md-4 col-6" data-aos="zoom-in" data-aos-delay="<?php echo $delay; ?>">
+                            <div class="operator-card">
+                                <div class="operator-logo">
+                                    <i class="<?php echo htmlspecialchars($partner['icon_class']); ?>" style="font-size: 2.5rem; color: <?php echo htmlspecialchars($partner['icon_color']); ?>;"></i>
+                                </div>
+                                <h5><?php echo htmlspecialchars($partner['name']); ?></h5>
+                                <?php if (!empty($partner['description'])): ?>
+                                    <p><?php echo htmlspecialchars($partner['description']); ?></p>
+                                <?php endif; ?>
+                            </div>
                         </div>
-                        <h5>Kena Mobile</h5>
-                        <p>Rete TIM 5G a tariffe imbattibili</p>
-                    </div>
-                </div>
-                
-                <div class="col-lg-3 col-md-4 col-6" data-aos="zoom-in" data-aos-delay="200">
-                    <div class="operator-card">
-                        <div class="operator-logo">
-                            <i class="ri-global-line" style="font-size: 2.5rem; color: #7c4dff;"></i>
+                    <?php 
+                    $delay += 100;
+                    endforeach; 
+                    ?>
+                <?php else: ?>
+                    <!-- Fallback hardcoded operators if DB is empty -->
+                    <div class="col-lg-3 col-md-4 col-6" data-aos="zoom-in" data-aos-delay="100">
+                        <div class="operator-card">
+                            <div class="operator-logo">
+                                <i class="ri-smartphone-line" style="font-size: 2.5rem; color: var(--ks-orange);"></i>
+                            </div>
+                            <h5>Kena Mobile</h5>
+                            <p>Rete TIM 5G a tariffe imbattibili</p>
                         </div>
-                        <h5>Lycamobile</h5>
-                        <p>Rete Vodafone 5G e chiamate all'estero</p>
                     </div>
-                </div>
-                
-                <div class="col-lg-3 col-md-4 col-6" data-aos="zoom-in" data-aos-delay="300">
-                    <div class="operator-card">
-                        <div class="operator-logo">
-                            <i class="ri-phone-fill" style="font-size: 2.5rem; color: #003996;"></i>
+                    
+                    <div class="col-lg-3 col-md-4 col-6" data-aos="zoom-in" data-aos-delay="200">
+                        <div class="operator-card">
+                            <div class="operator-logo">
+                                <i class="ri-global-line" style="font-size: 2.5rem; color: #7c4dff;"></i>
+                            </div>
+                            <h5>Lycamobile</h5>
+                            <p>Rete Vodafone 5G e chiamate all'estero</p>
                         </div>
-                        <h5>Fastweb Mobile</h5>
-                        <p>5G incluso e massima trasparenza</p>
                     </div>
-                </div>
-                
-                <div class="col-lg-3 col-md-4 col-6" data-aos="zoom-in" data-aos-delay="400">
-                    <div class="operator-card">
-                        <div class="operator-logo">
-                            <i class="ri-wifi-line" style="font-size: 2.5rem; color: var(--ks-green);"></i>
+                    
+                    <div class="col-lg-3 col-md-4 col-6" data-aos="zoom-in" data-aos-delay="300">
+                        <div class="operator-card">
+                            <div class="operator-logo">
+                                <i class="ri-phone-fill" style="font-size: 2.5rem; color: #003996;"></i>
+                            </div>
+                            <h5>Fastweb Mobile</h5>
+                            <p>5G incluso e massima trasparenza</p>
                         </div>
-                        <h5>Fastweb Casa</h5>
-                        <p>Fibra Ultra FTTH fino a 2.5 Gbps</p>
                     </div>
-                </div>
+                    
+                    <div class="col-lg-3 col-md-4 col-6" data-aos="zoom-in" data-aos-delay="400">
+                        <div class="operator-card">
+                            <div class="operator-logo">
+                                <i class="ri-wifi-line" style="font-size: 2.5rem; color: var(--ks-green);"></i>
+                            </div>
+                            <h5>Fastweb Casa</h5>
+                            <p>Fibra Ultra FTTH fino a 2.5 Gbps</p>
+                        </div>
+                    </div>
+                <?php endif; ?>
             </div>
         </div>
     </section>

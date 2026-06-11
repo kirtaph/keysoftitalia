@@ -24,6 +24,11 @@ include_once 'includes/header.php';
             <span class="badge bg-danger ms-1 d-none" id="requestsBadgeCount">0</span>
         </button>
     </li>
+    <li class="nav-item" role="presentation">
+        <button class="nav-link fw-bold" id="partners-tab" data-bs-toggle="tab" data-bs-target="#partners-panel" type="button" role="tab" aria-selected="false">
+            <i class="fas fa-handshake me-1"></i> Brand Partner
+        </button>
+    </li>
 </ul>
 
 <div class="tab-content" id="telephonyTabsContent">
@@ -80,6 +85,34 @@ include_once 'includes/header.php';
             </div>
         </div>
     </div>
+
+    <!-- PANEL 3: PARTNERS -->
+    <div class="tab-pane fade" id="partners-panel" role="tabpanel" aria-labelledby="partners-tab">
+        <div class="card shadow-sm border-0">
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th style="width: 80px;" class="text-center">Icona / Logo</th>
+                                <th>Nome Partner</th>
+                                <th>Sottotitolo / Descrizione</th>
+                                <th>Classe Icona</th>
+                                <th>Colore Icona</th>
+                                <th class="text-center" style="width: 80px;">Logo</th>
+                                <th class="text-center" style="width: 100px;">Ordinamento</th>
+                                <th class="text-center" style="width: 100px;">Stato</th>
+                                <th class="text-center" style="width: 120px;">Azioni</th>
+                            </tr>
+                        </thead>
+                        <tbody id="partnerTableBody">
+                            <!-- Loaded via AJAX -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 
 <!-- Modal for Add/Edit Promotion -->
@@ -96,8 +129,14 @@ include_once 'includes/header.php';
                     
                     <div class="row g-3">
                         <div class="col-md-6">
-                            <label class="form-label fw-bold">Nome Operatore *</label>
-                            <input type="text" class="form-control" id="operator_name" name="operator_name" required placeholder="es. TIM, Vodafone, Fastweb, Iliad">
+                            <label class="form-label fw-bold">Brand Partner (Operatore) *</label>
+                            <select class="form-select" id="partner_id" name="partner_id" required>
+                                <option value="">— Seleziona un operatore —</option>
+                            </select>
+                            <div class="mt-2 d-flex align-items-center gap-2" id="partner-preview-wrap" style="display:none!important">
+                                <div id="partner-logo-preview"></div>
+                                <span id="partner-name-preview" class="fw-bold text-muted small"></span>
+                            </div>
                         </div>
                         
                         <div class="col-md-6">
@@ -113,13 +152,6 @@ include_once 'includes/header.php';
                         <div class="col-md-6">
                             <label class="form-label fw-bold">Prezzo Dettaglio</label>
                             <input type="text" class="form-control" id="price_detail" name="price_detail" required value="/mese" placeholder="es. /mese, una tantum">
-                        </div>
-                        
-                        <div class="col-md-12">
-                            <label class="form-label fw-bold">Logo Operatore *</label>
-                            <input type="file" class="form-control" id="logo_file" name="logo_file" accept="image/*">
-                            <div class="form-text">Carica un logo per l'operatore. Formati supportati: PNG, JPG, WEBP, SVG.</div>
-                            <div id="preview-logo" class="mt-2"></div>
                         </div>
 
                         <div class="col-md-12">
@@ -148,6 +180,74 @@ include_once 'includes/header.php';
             <div class="modal-footer bg-light">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annulla</button>
                 <button type="button" class="btn btn-primary" id="savePromoBtn"><i class="fas fa-save me-1"></i> Salva Offerta</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal for Add/Edit Brand Partner -->
+<div class="modal fade" id="partnerModal" tabindex="-1" aria-hidden="true" data-bs-backdrop="static">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content border-0 shadow-lg">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title" id="partnerModalLabel">Nuovo Brand Partner</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body p-4">
+                <form id="partnerForm" enctype="multipart/form-data">
+                    <input type="hidden" id="partnerId" name="id">
+                    
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold">Nome Partner *</label>
+                            <input type="text" class="form-control" id="partner_name" name="name" required placeholder="es. Kena Mobile, Fastweb Casa">
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold">Sottotitolo / Descrizione</label>
+                            <input type="text" class="form-control" id="partner_description" name="description" placeholder="es. Rete TIM 5G a tariffe imbattibili">
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold">Classe Icona (Remix Icon) *</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light"><i id="partnerIconPreview" class="ri-smartphone-line"></i></span>
+                                <input type="text" class="form-control" id="partner_icon_class" name="icon_class" required value="ri-smartphone-line" placeholder="es. ri-smartphone-line, ri-wifi-line">
+                            </div>
+                            <small class="text-muted">Puoi usare qualsiasi icona da <a href="https://remixicon.com/" target="_blank">Remix Icon</a>.</small>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold">Colore Icona *</label>
+                            <input type="text" class="form-control" id="partner_icon_color" name="icon_color" required value="var(--ks-orange)" placeholder="es. var(--ks-orange), #7c4dff, #003996">
+                            <small class="text-muted">Supporta HEX, RGB o CSS variables (es: `var(--ks-orange)`, `var(--ks-green)`).</small>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold">Ordinamento (Crescente)</label>
+                            <input type="number" class="form-control" id="partner_sort_order" name="sort_order" required value="0">
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold">Stato Pubblicazione *</label>
+                            <select class="form-select" id="partner_status" name="status" required>
+                                <option value="1">Attivo</option>
+                                <option value="0">Disattivato</option>
+                            </select>
+                        </div>
+
+                        <div class="col-md-12">
+                            <label class="form-label fw-bold">Logo Brand (Immagine)</label>
+                            <input type="file" class="form-control" id="partner_logo_file" name="logo_file" accept="image/*">
+                            <div class="form-text">Carica il logo ufficiale dell'operatore. Se presente, verrà usato nelle offerte al posto dell'icona. Formati: PNG, JPG, WEBP, SVG.</div>
+                            <div id="partner-logo-current" class="mt-2"></div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer bg-light">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annulla</button>
+                <button type="button" class="btn btn-primary" id="savePartnerBtn"><i class="fas fa-save me-1"></i> Salva Partner</button>
             </div>
         </div>
     </div>
@@ -183,6 +283,13 @@ document.addEventListener('DOMContentLoaded', function() {
     const requestsBadgeCount = document.getElementById('requestsBadgeCount');
     const addPromoBtn = document.getElementById('addPromoBtn');
     const actionBtnArea = document.getElementById('actionBtnArea');
+
+    const partnerModal = new bootstrap.Modal(document.getElementById('partnerModal'));
+    const partnerModalTitle = document.getElementById('partnerModalLabel');
+    const partnerForm = document.getElementById('partnerForm');
+    const partnerIdInput = document.getElementById('partnerId');
+    const partnerTableBody = document.getElementById('partnerTableBody');
+    const savePartnerBtn = document.getElementById('savePartnerBtn');
     
     // Switch add buttons dynamically based on active tab
     document.getElementById('promos-tab').addEventListener('shown.bs.tab', function() {
@@ -202,6 +309,16 @@ document.addEventListener('DOMContentLoaded', function() {
         `;
         document.getElementById('refreshRequestsBtn').addEventListener('click', fetchRequests);
         fetchRequests();
+    });
+    
+    document.getElementById('partners-tab').addEventListener('shown.bs.tab', function() {
+        actionBtnArea.innerHTML = `
+            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#partnerModal" id="addPartnerBtn">
+                <i class="fas fa-plus"></i> Aggiungi Brand Partner
+            </button>
+        `;
+        document.getElementById('addPartnerBtn').addEventListener('click', () => resetPartnerForm());
+        fetchPartners();
     });
 
     function fetchPromotions() {
@@ -370,12 +487,29 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
+    function loadPartnersDropdown(selectedId = null) {
+        fetch('ajax_actions/telephony_actions.php?action=list_partners')
+            .then(r => r.json())
+            .then(data => {
+                const sel = document.getElementById('partner_id');
+                sel.innerHTML = '<option value="">— Seleziona un operatore —</option>';
+                if (data.status === 'success') {
+                    data.partners.forEach(p => {
+                        const opt = document.createElement('option');
+                        opt.value = p.id;
+                        opt.textContent = p.name;
+                        if (selectedId && parseInt(selectedId) === parseInt(p.id)) opt.selected = true;
+                        sel.appendChild(opt);
+                    });
+                }
+            });
+    }
+
     function resetForm() {
         promoForm.reset();
         promoIdInput.value = '';
         modalTitle.textContent = 'Nuova Offerta Telefonia';
-        document.getElementById('preview-logo').innerHTML = '';
-        document.getElementById('logo_file').required = true;
+        loadPartnersDropdown();
     }
 
     addPromoBtn.addEventListener('click', () => {
@@ -392,7 +526,6 @@ document.addEventListener('DOMContentLoaded', function() {
                     if (data.status === 'success') {
                         const p = data.promotion;
                         promoIdInput.value = p.id;
-                        document.getElementById('operator_name').value = p.operator_name;
                         document.getElementById('plan_name').value = p.plan_name;
                         document.getElementById('price').value = p.price;
                         document.getElementById('price_detail').value = p.price_detail || '/mese';
@@ -400,11 +533,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         document.getElementById('status').value = p.status;
                         document.getElementById('is_featured').checked = !!parseInt(p.is_featured);
                         
-                        document.getElementById('preview-logo').innerHTML = p.logo_path 
-                            ? `<img src="../${p.logo_path}" class="preview-thumbnail mt-2">` 
-                            : '';
-
-                        document.getElementById('logo_file').required = false;
+                        loadPartnersDropdown(p.partner_id);
 
                         modalTitle.textContent = 'Modifica Offerta Telefonia';
                         promoModal.show();
@@ -453,6 +582,137 @@ document.addEventListener('DOMContentLoaded', function() {
             if (data.status === 'success') {
                 promoModal.hide();
                 fetchPromotions();
+            } else {
+                alert(data.message || 'Si è verificato un errore.');
+            }
+        });
+    });
+
+    // --- Brand Partners Code ---
+    function fetchPartners() {
+        fetch('ajax_actions/telephony_actions.php?action=list_partners')
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    partnerTableBody.innerHTML = '';
+                    if (data.partners.length === 0) {
+                        partnerTableBody.innerHTML = '<tr><td colspan="8" class="text-center py-4 text-muted">Nessun Brand Partner inserito.</td></tr>';
+                        return;
+                    }
+                    data.partners.forEach(partner => {
+                        const statusBadge = partner.status == 1 
+                            ? '<span class="badge bg-success"><i class="fas fa-check me-1"></i>Attivo</span>' 
+                            : '<span class="badge bg-secondary"><i class="fas fa-eye-slash me-1"></i>Disattivato</span>';
+
+                        const iconHtml = `<i class="${partner.icon_class}" style="font-size: 1.8rem; color: ${partner.icon_color || 'var(--ks-orange)'};"></i>`;
+                        const logoHtml = partner.logo_path
+                            ? `<img src="../${partner.logo_path}" style="max-height:36px;max-width:70px;object-fit:contain;" class="rounded border p-1 bg-white">`
+                            : `<span class="text-muted small">—</span>`;
+
+                        const row = `
+                            <tr id="partner-${partner.id}">
+                                <td class="text-center">${iconHtml}</td>
+                                <td><span class="fw-bold">${partner.name}</span></td>
+                                <td>${partner.description || '<span class="text-muted">-</span>'}</td>
+                                <td><code>${partner.icon_class}</code></td>
+                                <td><code>${partner.icon_color}</code></td>
+                                <td class="text-center">${logoHtml}</td>
+                                <td class="text-center">${partner.sort_order}</td>
+                                <td class="text-center">${statusBadge}</td>
+                                <td class="text-center">
+                                    <button class="btn btn-sm btn-outline-primary edit-partner-btn me-1" data-id="${partner.id}" title="Modifica"><i class="fas fa-edit"></i></button>
+                                    <button class="btn btn-sm btn-outline-danger delete-partner-btn" data-id="${partner.id}" title="Elimina"><i class="fas fa-trash-alt"></i></button>
+                                </td>
+                            </tr>
+                        `;
+                        partnerTableBody.insertAdjacentHTML('beforeend', row);
+                    });
+                }
+            });
+    }
+
+    function resetPartnerForm() {
+        partnerForm.reset();
+        partnerIdInput.value = '';
+        partnerModalTitle.textContent = 'Nuovo Brand Partner';
+        document.getElementById('partnerIconPreview').className = 'ri-smartphone-line';
+        document.getElementById('partner-logo-current').innerHTML = '';
+    }
+
+    // Live preview of icon
+    document.getElementById('partner_icon_class').addEventListener('input', function() {
+        document.getElementById('partnerIconPreview').className = this.value || 'ri-smartphone-line';
+    });
+
+    partnerTableBody.addEventListener('click', function(e) {
+        const editBtn = e.target.closest('.edit-partner-btn');
+        if (editBtn) {
+            const id = editBtn.dataset.id;
+            fetch(`ajax_actions/telephony_actions.php?action=get_partner&id=${id}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'success') {
+                        const p = data.partner;
+                        partnerIdInput.value = p.id;
+                        document.getElementById('partner_name').value = p.name;
+                        document.getElementById('partner_description').value = p.description || '';
+                        document.getElementById('partner_icon_class').value = p.icon_class;
+                        document.getElementById('partner_icon_color').value = p.icon_color;
+                        document.getElementById('partner_sort_order').value = p.sort_order;
+                        document.getElementById('partner_status').value = p.status;
+                        
+                        document.getElementById('partnerIconPreview').className = p.icon_class;
+                        document.getElementById('partner-logo-current').innerHTML = p.logo_path
+                            ? `<img src="../${p.logo_path}" class="preview-thumbnail mt-2" title="Logo corrente"> <small class="text-muted d-block mt-1">Logo attuale — carica un nuovo file per sostituirlo.</small>`
+                            : '';
+                        
+                        partnerModalTitle.textContent = 'Modifica Brand Partner';
+                        partnerModal.show();
+                    }
+                });
+        }
+    });
+
+    partnerTableBody.addEventListener('click', function(e) {
+        const deleteBtn = e.target.closest('.delete-partner-btn');
+        if (deleteBtn) {
+            const id = deleteBtn.dataset.id;
+            if (confirm('Sei sicuro di voler eliminare questo Brand Partner?')) {
+                const formData = new FormData();
+                formData.append('action', 'delete_partner');
+                formData.append('id', id);
+
+                fetch('ajax_actions/telephony_actions.php', { method: 'POST', body: formData })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.status === 'success') {
+                            fetchPartners();
+                        } else {
+                            alert(data.message || 'Errore durante l\'eliminazione.');
+                        }
+                    });
+            }
+        }
+    });
+
+    savePartnerBtn.addEventListener('click', function() {
+        if (!partnerForm.checkValidity()) {
+            partnerForm.reportValidity();
+            return;
+        }
+        
+        const formData = new FormData(partnerForm);
+        formData.append('action', partnerIdInput.value ? 'edit_partner' : 'add_partner');
+        
+        fetch('ajax_actions/telephony_actions.php', {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 'success') {
+                partnerModal.hide();
+                fetchPartners();
             } else {
                 alert(data.message || 'Si è verificato un errore.');
             }

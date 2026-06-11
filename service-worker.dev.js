@@ -2,7 +2,7 @@
  * Key Soft Italia — Service Worker (DEV)
  * Goal: force fresh CSS/JS from network while developing; cache images.
  */
-const VERSION = 'dev-2';
+const VERSION = 'dev-3';
 const IMG_CACHE = 'img-cache-' + VERSION;
 
 self.addEventListener('install', (event) => {

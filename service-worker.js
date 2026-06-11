@@ -1,4 +1,4 @@
-const CACHE_NAME = 'v1';
+const CACHE_NAME = 'v2';
 const CSS_CACHE_NAME = 'css-no-cache';
 
 // Installazione del service worker

@@ -315,15 +315,15 @@ $breadcrumbs = [
 
     <!-- Video Player Modal -->
     <div class="modal fade" id="videoPlayerModal" tabindex="-1" aria-hidden="true" data-bs-backdrop="static">
-        <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-dialog modal-lg modal-dialog-centered" id="videoPlayerDialog">
             <div class="modal-content border-0 bg-dark text-white shadow-lg">
                 <div class="modal-header border-0 bg-dark text-white p-3 d-flex align-items-center justify-content-between">
                     <h5 class="modal-title text-truncate fw-bold" id="videoPlayerTitle">Riproduttore Video</h5>
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body p-0">
-                    <div class="ratio ratio-16x9 bg-black">
-                        <iframe id="videoPlayerIframe" src="" allowfullscreen allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share" style="border:none; overflow:hidden;"></iframe>
+                    <div class="ratio ratio-16x9 bg-black" id="videoPlayerRatioContainer">
+                        <iframe id="videoPlayerIframe" src="" allowfullscreen allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share" style="border:none; overflow:hidden; width:100%; height:100%;"></iframe>
                     </div>
                 </div>
             </div>
@@ -383,11 +383,13 @@ $breadcrumbs = [
         const videoPlayerModal = new bootstrap.Modal(videoPlayerModalEl);
         const videoIframe = document.getElementById('videoPlayerIframe');
         const videoTitle = document.getElementById('videoPlayerTitle');
+        const videoDialog = document.getElementById('videoPlayerDialog');
+        const videoRatioContainer = document.getElementById('videoPlayerRatioContainer');
         
         document.addEventListener('click', function(e) {
             const trigger = e.target.closest('.play-trigger');
             if (trigger) {
-                const fbUrl = trigger.getAttribute('data-fb-url');
+                const fbUrl = trigger.getAttribute('data-fb-url') || '';
                 let cardTitle = 'Riproduttore Video';
                 
                 // Find card title to display in modal header
@@ -404,8 +406,23 @@ $breadcrumbs = [
                 
                 videoTitle.textContent = cardTitle;
                 
+                // Parse if vertical (Reel)
+                const isVertical = fbUrl.includes('/reel/') || fbUrl.includes('/reels/') || fbUrl.includes('/share/r/') || fbUrl.includes('reel=1');
+                
+                if (isVertical) {
+                    videoDialog.classList.remove('modal-lg');
+                    videoDialog.classList.add('modal-vertical');
+                    videoRatioContainer.classList.remove('ratio-16x9');
+                    videoRatioContainer.classList.add('ratio-9x16');
+                } else {
+                    videoDialog.classList.remove('modal-vertical');
+                    videoDialog.classList.add('modal-lg');
+                    videoRatioContainer.classList.remove('ratio-9x16');
+                    videoRatioContainer.classList.add('ratio-16x9');
+                }
+                
                 // Construct the Facebook embed URL
-                const embedUrl = "https://www.facebook.com/plugins/video.php?href=" + encodeURIComponent(fbUrl) + "&show_text=0&width=560&autoplay=1";
+                const embedUrl = "https://www.facebook.com/plugins/video.php?href=" + encodeURIComponent(fbUrl) + "&show_text=0&autoplay=1" + (isVertical ? "" : "&width=560");
                 
                 videoIframe.src = embedUrl;
                 videoPlayerModal.show();
