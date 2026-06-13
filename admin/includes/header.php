@@ -108,6 +108,12 @@ $currentPage = basename($_SERVER['PHP_SELF']);
                     <span>Problemi</span>
                 </a>
             </li>
+            <li class="sidebar-item">
+                <a href="team.php" class="sidebar-link <?php echo $currentPage === 'team.php' ? 'active' : ''; ?>">
+                    <i class="fas fa-users"></i>
+                    <span>Membri Team</span>
+                </a>
+            </li>
             
             <li class="sidebar-divider"></li>
             <div class="sidebar-heading">Offerte</div>
@@ -137,6 +143,12 @@ $currentPage = basename($_SERVER['PHP_SELF']);
                 </a>
             </li>
             <li class="sidebar-item">
+                <a href="forniture.php" class="sidebar-link <?php echo $currentPage === 'forniture.php' ? 'active' : ''; ?>">
+                    <i class="fas fa-bolt"></i>
+                    <span>Forniture Luce & Gas</span>
+                </a>
+            </li>
+            <li class="sidebar-item">
                 <a href="sviluppo-web.php" class="sidebar-link <?php echo $currentPage === 'sviluppo-web.php' ? 'active' : ''; ?>">
                     <i class="fas fa-code"></i>
                     <span>Sviluppo Web</span>
@@ -146,6 +158,16 @@ $currentPage = basename($_SERVER['PHP_SELF']);
                 <a href="consulenza-it.php" class="sidebar-link <?php echo $currentPage === 'consulenza-it.php' ? 'active' : ''; ?>">
                     <i class="fas fa-network-wired"></i>
                     <span>Consulenza IT</span>
+                </a>
+            </li>
+
+            <li class="sidebar-divider"></li>
+            <div class="sidebar-heading">Impostazioni Sistema</div>
+            
+            <li class="sidebar-item">
+                <a href="logo_campaigns.php" class="sidebar-link <?php echo $currentPage === 'logo_campaigns.php' ? 'active' : ''; ?>">
+                    <i class="fas fa-images"></i>
+                    <span>Campagne Logo</span>
                 </a>
             </li>
             

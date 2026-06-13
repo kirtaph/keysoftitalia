@@ -20,6 +20,9 @@
 # UTF-8 Encoding
 AddDefaultCharset UTF-8
 
+# PWA Manifest MIME Type
+AddType application/manifest+json .json
+
 # Disable directory browsing
 Options -Indexes
 

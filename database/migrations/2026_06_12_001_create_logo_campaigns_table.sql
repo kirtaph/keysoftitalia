@@ -1,0 +1,14 @@
+-- Migration: Create logo campaigns table
+-- Created At: 2026-06-12
+
+CREATE TABLE IF NOT EXISTS logo_campaigns (
+    id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    start_date DATE NOT NULL,
+    end_date DATE NOT NULL,
+    logo_path VARCHAR(255) NOT NULL,
+    effect_class VARCHAR(50) DEFAULT NULL,
+    status TINYINT(1) DEFAULT 1,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;

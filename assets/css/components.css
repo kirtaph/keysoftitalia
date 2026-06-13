@@ -195,11 +195,12 @@
   align-items: center;
   gap: var(--ks-spacing-3);
   text-decoration: none;
-  transition: transform var(--ks-transition-base);
+  transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  will-change: transform;
 }
 
 .logo:hover {
-  transform: scale(1.05);
+  transform: scale(1.03);
 }
 
 .logo-icon {
@@ -255,13 +256,13 @@
 .nav-main {
   display: flex;
   align-items: center;
-  gap: var(--ks-spacing-8);
+  gap: var(--ks-spacing-3);
 }
 
 .nav-menu {
   display: flex;
   list-style: none;
-  gap: var(--ks-spacing-6);
+  gap: 4px;
   margin: 0;
   padding: 0;
   align-items: center;
@@ -274,9 +275,9 @@
 .nav-link {
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 8px 16px;
-  font-size: 14px;
+  gap: 6px;
+  padding: 8px 10px;
+  font-size: 13.5px;
   font-weight: 600;
   color: var(--ks-text-secondary);
   text-decoration: none;
@@ -284,6 +285,7 @@
   border-radius: 10px;
   border: 1px solid transparent;
   position: relative;
+  white-space: nowrap;
 }
 
 .nav-link i {
@@ -388,19 +390,20 @@
 /* CTA in nav (desktop) */
 .nav-actions {
   display: flex;
-  gap: var(--ks-spacing-3);
+  gap: 10px;
 }
 
 .nav-cta {
-  padding: 10px 24px;
-  font-size: 14px;
-  border-radius: 14px;
+  padding: 8px 18px;
+  font-size: 13.5px;
+  border-radius: 12px;
   font-weight: 700;
   text-decoration: none;
   transition: all var(--ks-transition-base);
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
+  white-space: nowrap;
 }
 
 .nav-cta-assistenza {

@@ -190,60 +190,27 @@ $breadcrumbs = [
     <!-- Versione Desktop: Grid -->
     <div class="row g-4 justify-content-center mt-4 d-none d-md-flex">
       <?php
-      $about_team = [
-        [
-          'name' => 'Patrizio Cuscito',
-          'role' => 'Founder & CEO',
-          'photo' => 'patrizio.png',
-          'bio'  => 'Tecnico e sviluppatore con oltre 20 anni di esperienza. Esperto in riparazioni elettroniche avanzate e sviluppo software, guida Key Soft Italia unendo competenza e visione innovativa.',
-          'skills' => ['Diagnostica', 'Sviluppo', 'Leadership'],
-          'aos' => 'fade-right'
-        ],
-        [
-          'name' => 'Vito Moro',
-          'role' => 'Founder & Marketing Expert',
-          'photo' => 'vito.png',
-          'bio'  => 'Co-fondatore di Key Soft Italia, è il motore creativo del gruppo. Si occupa di marketing e comunicazione con un approccio strategico e sempre orientato al cliente.',
-          'skills' => ['Marketing', 'Strategia', 'Branding'],
-          'aos' => 'fade-up'
-        ],
-        [
-          'name' => 'Giulio Ricciardi',
-          'role' => 'Founder & IT Expert',
-          'photo' => 'giulio.png',
-          'bio'  => 'Specialista in assistenza tecnica informatica e reti aziendali. Coordina gli interventi e garantisce supporto costante ai clienti business e privati.',
-          'skills' => ['Networking', 'Assistenza IT', 'Gestione Clienti'],
-          'aos' => 'fade-left'
-        ],
-        [
-          'name' => 'Francesca Angelillo',
-          'role' => 'Customer Care',
-          'photo' => 'francesca.png',
-          'bio'  => 'Accogliente e precisa, è il primo sorriso che i clienti incontrano in negozio. Gestisce preventivi, comunicazioni e relazioni con grande professionalità.',
-          'skills' => ['Relazioni', 'Organizzazione', 'Comunicazione'],
-          'aos' => 'fade-right'
-        ],
-        [
-          'name' => 'Niccolò Colafemmina',
-          'role' => 'Tecnico Informatico',
-          'photo' => 'niccolo.png',
-          'bio'  => 'Tecnico giovane e appassionato, si occupa di assistenza hardware e software, aggiornamenti e installazioni con rapidità e precisione.',
-          'skills' => ['Hardware', 'Software', 'Supporto Tecnico'],
-          'aos' => 'fade-up'
-        ]
-      ];
+      $about_team = [];
+      try {
+          $stmt = $pdo->query("SELECT * FROM team_members WHERE status = 1 ORDER BY sort_order ASC, name ASC");
+          $about_team = $stmt->fetchAll(PDO::FETCH_ASSOC);
+      } catch (PDOException $e) {
+          // Fallback array if table doesn't exist or DB error
+      }
       $delay = 0;
-      foreach ($about_team as $member): $delay += 100; ?>
-        <div class="col-lg-4 col-md-6" data-aos="<?= $member['aos']; ?>" data-aos-delay="<?= $delay; ?>">
+      foreach ($about_team as $member): $delay += 100; 
+          $skills_array = $member['skills'] ? array_map('trim', explode(',', $member['skills'])) : [];
+      ?>
+        <div class="col-lg-4 col-md-6" data-aos="<?= $member['aos_animation'] ?? 'fade-up'; ?>" data-aos-delay="<?= $delay; ?>">
           <div class="team-card">
             <div class="team-avatar">
-              <img src="<?= asset('img/team/' . $member['photo']); ?>" alt="Foto di <?= $member['name']; ?>, <?= $member['role']; ?> di Key Soft Italia" class="team-photo img-fluid" loading="lazy">
+              <img src="<?= asset($member['photo_path']); ?>" alt="Foto di <?= $member['name']; ?>, <?= $member['role']; ?> di Key Soft Italia" class="team-photo img-fluid" loading="lazy">
             </div>
             <h4 class="team-name"><?= $member['name']; ?></h4>
             <p class="team-role"><?= $member['role']; ?></p>
             <p class="team-bio"><?= $member['bio']; ?></p>
             <div class="team-skills">
-              <?php foreach ($member['skills'] as $skill): ?>
+              <?php foreach ($skills_array as $skill): ?>
                 <span class="skill-tag"><?= $skill; ?></span>
               <?php endforeach; ?>
             </div>
@@ -256,11 +223,13 @@ $breadcrumbs = [
 <div class="team-swiper d-md-none mt-4" data-aos="fade-up">
   <div class="swiper teamSwiper">
     <div class="swiper-wrapper">
-      <?php foreach ($about_team as $member): ?>
+      <?php foreach ($about_team as $member): 
+          $skills_array = $member['skills'] ? array_map('trim', explode(',', $member['skills'])) : [];
+      ?>
         <div class="swiper-slide">
           <div class="team-card mx-auto">
             <div class="team-avatar">
-              <img src="<?= asset('img/team/' . $member['photo']); ?>"
+              <img src="<?= asset($member['photo_path']); ?>"
                    alt="Foto di <?= $member['name']; ?>, <?= $member['role']; ?> di Key Soft Italia"
                    class="team-photo img-fluid" loading="lazy">
             </div>
@@ -268,7 +237,7 @@ $breadcrumbs = [
             <p class="team-role"><?= $member['role']; ?></p>
             <p class="team-bio"><?= $member['bio']; ?></p>
             <div class="team-skills">
-              <?php foreach ($member['skills'] as $skill): ?>
+              <?php foreach ($skills_array as $skill): ?>
                 <span class="skill-tag"><?= $skill; ?></span>
               <?php endforeach; ?>
             </div>

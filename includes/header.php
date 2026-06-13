@@ -18,7 +18,8 @@ $current_page = get_current_page();
       <!-- Logo -->
       <a href="<?php echo url(); ?>" class="logo">
         <div class="logo-mark">
-          <img src="<?php echo asset('img/logo.png'); ?>" alt="Key Soft Italia" class="logo-img" width="48" height="48" decoding="async">
+          <?php $mainLogo = ($activeLogoCampaign && !empty($activeLogoCampaign['logo_path'])) ? asset($activeLogoCampaign['logo_path']) : asset('img/logo.png'); ?>
+          <img src="<?php echo $mainLogo; ?>" alt="Key Soft Italia" class="logo-img" width="48" height="48" decoding="async">
         </div>
         <div class="logo-text">
           <div class="logo-title">Key Soft Italia</div>
@@ -29,34 +30,31 @@ $current_page = get_current_page();
         <!-- Nav desktop -->
         <nav class="nav-main" aria-label="Navigazione principale">
           <ul class="nav-menu">
-            <li class="nav-item">
-              <a href="<?php echo url('chi-siamo.php'); ?>" class="nav-link <?php echo $current_page == 'chi-siamo' ? 'active' : ''; ?>">
-                <i class="ri-team-line"></i> Chi Siamo
-              </a>
-            </li>
+            <li class="nav-item"><a href="<?php echo url('prodotti.php'); ?>" class="nav-link <?php echo $current_page == 'prodotti' ? 'active' : ''; ?>"><i class="ri-smartphone-line"></i> Prodotti</a></li>
 
             <li class="nav-item">
               <a href="<?php echo url('servizi.php'); ?>" class="nav-link <?php echo $current_page == 'servizi' ? 'active' : ''; ?>">
                 <i class="ri-service-line"></i> Servizi <i class="ri-arrow-down-s-line"></i>
               </a>
               <div class="nav-dropdown" role="menu">
-                <a href="<?php echo url('servizi/riparazioni.php'); ?>" class="nav-dropdown-item"><i class="ri-tools-line"></i> Riparazioni & Assistenza</a>
                 <a href="<?php echo url('servizi/vendita.php'); ?>" class="nav-dropdown-item"><i class="ri-shopping-bag-line"></i> Vendita al Dettaglio</a>
-                <a href="<?php echo url('servizi/telefonia.php'); ?>" class="nav-dropdown-item"><i class="ri-sim-card-line"></i> Telefonia & Servizi Casa</a>
-                <a href="<?php echo url('servizi/sviluppo-web.php'); ?>" class="nav-dropdown-item"><i class="ri-code-line"></i> Sviluppo Web & App</a>
-                <a href="<?php echo url('servizi/consulenza-it.php'); ?>" class="nav-dropdown-item"><i class="ri-shield-check-line"></i> Consulenza IT & Reti</a>
+                <a href="<?php echo url('servizi/telefonia.php'); ?>" class="nav-dropdown-item"><i class="ri-sim-card-line"></i> Telefonia Fissa e Mobile</a>
+                <a href="<?php echo url('servizi/forniture.php'); ?>" class="nav-dropdown-item"><i class="ri-home-wifi-line"></i> Forniture Domestiche</a>
+                <a href="<?php echo url('servizi/sviluppo-web.php'); ?>" class="nav-dropdown-item"><i class="ri-code-line"></i> Sviluppo Web e App</a>
+                <a href="<?php echo url('servizi/liberty-commerce.php'); ?>" class="nav-dropdown-item"><i class="ri-store-3-line"></i> Liberty Commerce</a>
               </div>
             </li>
 
-            <li class="nav-item"><a href="<?php echo url('prodotti.php'); ?>" class="nav-link <?php echo $current_page == 'prodotti' ? 'active' : ''; ?>"><i class="ri-smartphone-line"></i> Prodotti</a></li>
+            <li class="nav-item"><a href="<?php echo url('servizi/riparazioni.php'); ?>" class="nav-link <?php echo $current_page == 'riparazioni' ? 'active' : ''; ?>"><i class="ri-tools-line"></i> Laboratorio</a></li>
             <li class="nav-item"><a href="<?php echo url('video.php'); ?>" class="nav-link <?php echo $current_page == 'video' ? 'active' : ''; ?>"><i class="ri-play-circle-line"></i> Video</a></li>
+            <li class="nav-item"><a href="<?php echo url('chi-siamo.php'); ?>" class="nav-link <?php echo $current_page == 'chi-siamo' ? 'active' : ''; ?>"><i class="ri-team-line"></i> Chi Siamo</a></li>
             <li class="nav-item"><a href="<?php echo url('contatti.php'); ?>" class="nav-link <?php echo $current_page == 'contatti' ? 'active' : ''; ?>"><i class="ri-map-pin-line"></i> Contatti</a></li>
           </ul>
 
           <!-- CTA -->
           <div class="nav-actions">
-            <a href="<?php echo url('assistenza.php'); ?>" class="nav-cta nav-cta-assistenza"><i class="ri-customer-service-line"></i> Assistenza</a>
-            <a href="<?php echo url('preventivo.php'); ?>" class="nav-cta nav-cta-preventivo"><i class="ri-file-list-3-line"></i> Preventivo</a>
+            <a href="<?php echo url('assistenza.php'); ?>" class="nav-cta nav-cta-assistenza"><i class="ri-customer-service-line"></i> Richiedi Assistenza</a>
+            <a href="<?php echo url('prenota-riparazione.php'); ?>" class="nav-cta nav-cta-preventivo"><i class="ri-tools-line"></i> Nuova Riparazione</a>
           </div>
         </nav>
 
@@ -77,7 +75,7 @@ $current_page = get_current_page();
   <div class="offcanvas-header">
     <div class="logo">
       <div class="logo-mark">
-        <img src="<?php echo asset('img/logo.png'); ?>" alt="Key Soft Italia" class="logo-img" width="40" height="40">
+        <img src="<?php echo $mainLogo; ?>" alt="Key Soft Italia" class="logo-img" width="40" height="40">
       </div>
       <div class="logo-text">
         <div class="logo-title">Key Soft Italia</div>
@@ -93,8 +91,8 @@ $current_page = get_current_page();
     <ul class="mobile-nav">
 
       <li class="mobile-nav-item">
-        <a href="<?php echo url('chi-siamo.php'); ?>" class="mobile-nav-link">
-          <i class="ri-user-3-line"></i> Chi Siamo
+        <a href="<?php echo url('prodotti.php'); ?>" class="mobile-nav-link">
+          <i class="ri-smartphone-line"></i> Prodotti
         </a>
       </li>
 
@@ -103,27 +101,27 @@ $current_page = get_current_page();
           <i class="ri-grid-line"></i> Servizi
         </a>
         <div class="mobile-nav-dropdown">
-          <a href="<?php echo url('servizi/riparazioni.php'); ?>" class="mobile-nav-dropdown-item">
-            <i class="ri-tools-line"></i> Riparazioni
-          </a>
           <a href="<?php echo url('servizi/vendita.php'); ?>" class="mobile-nav-dropdown-item">
-            <i class="ri-shopping-bag-line"></i> Vendita
+            <i class="ri-shopping-bag-line"></i> Vendita al Dettaglio
           </a>
           <a href="<?php echo url('servizi/telefonia.php'); ?>" class="mobile-nav-dropdown-item">
-            <i class="ri-sim-card-line"></i> Telefonia
+            <i class="ri-sim-card-line"></i> Telefonia Fissa e Mobile
+          </a>
+          <a href="<?php echo url('servizi/forniture.php'); ?>" class="mobile-nav-dropdown-item">
+            <i class="ri-home-wifi-line"></i> Forniture Domestiche
           </a>
           <a href="<?php echo url('servizi/sviluppo-web.php'); ?>" class="mobile-nav-dropdown-item">
-            <i class="ri-code-line"></i> Sviluppo Web
+            <i class="ri-code-line"></i> Sviluppo Web e App
           </a>
-          <a href="<?php echo url('servizi/consulenza-it.php'); ?>" class="mobile-nav-dropdown-item">
-            <i class="ri-shield-check-line"></i> Consulenza IT
+          <a href="<?php echo url('servizi/liberty-commerce.php'); ?>" class="mobile-nav-dropdown-item">
+            <i class="ri-store-3-line"></i> Liberty Commerce
           </a>
         </div>
       </li>
 
       <li class="mobile-nav-item">
-        <a href="<?php echo url('prodotti.php'); ?>" class="mobile-nav-link">
-          <i class="ri-smartphone-line"></i> Prodotti
+        <a href="<?php echo url('servizi/riparazioni.php'); ?>" class="mobile-nav-link">
+          <i class="ri-tools-line"></i> Laboratorio
         </a>
       </li>
 
@@ -134,19 +132,25 @@ $current_page = get_current_page();
       </li>
 
       <li class="mobile-nav-item">
+        <a href="<?php echo url('chi-siamo.php'); ?>" class="mobile-nav-link">
+          <i class="ri-user-3-line"></i> Chi Siamo
+        </a>
+      </li>
+
+      <li class="mobile-nav-item">
         <a href="<?php echo url('contatti.php'); ?>" class="mobile-nav-link">
           <i class="ri-contacts-book-2-line"></i> Contatti
         </a>
       </li>
     </ul>
 
-    <!-- CTA principali -->
+    <!-- CTA Mobile -->
     <div class="mobile-nav-actions">
       <a href="<?php echo url('assistenza.php'); ?>" class="mobile-nav-cta mobile-nav-cta-assistenza">
-        <i class="ri-customer-service-line"></i> Assistenza
+        <i class="ri-customer-service-line"></i> Richiedi Assistenza
       </a>
-      <a href="<?php echo url('preventivo.php'); ?>" class="mobile-nav-cta mobile-nav-cta-preventivo">
-        <i class="ri-file-list-3-line"></i> Preventivo
+      <a href="<?php echo url('prenota-riparazione.php'); ?>" class="mobile-nav-cta mobile-nav-cta-preventivo">
+        <i class="ri-tools-line"></i> Nuova Riparazione
       </a>
     </div>
 

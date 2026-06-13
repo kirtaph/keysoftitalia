@@ -1,0 +1,124 @@
+/* 
+ * CSS per Effetti Campagne Logo (Natale, Halloween, Estate, ecc.)
+ */
+
+/* =========================================
+   NATALE (theme-xmas)
+========================================= */
+html.theme-xmas body::before {
+    content: '';
+    position: fixed;
+    top: 0; left: 0; width: 100vw; height: 100vh;
+    pointer-events: none;
+    z-index: 9999;
+    background-image: 
+        radial-gradient(4px 4px at 100px 50px, #fff, transparent),
+        radial-gradient(6px 6px at 200px 150px, #fff, transparent),
+        radial-gradient(3px 3px at 300px 250px, #fff, transparent),
+        radial-gradient(4px 4px at 400px 350px, #fff, transparent),
+        radial-gradient(6px 6px at 500px 100px, #fff, transparent),
+        radial-gradient(3px 3px at 50px 200px, #fff, transparent),
+        radial-gradient(4px 4px at 150px 300px, #fff, transparent),
+        radial-gradient(6px 6px at 250px 400px, #fff, transparent),
+        radial-gradient(3px 3px at 350px 500px, #fff, transparent);
+    background-size: 550px 550px;
+    animation: xmasSnow 15s linear infinite;
+    opacity: 0.8;
+}
+
+@keyframes xmasSnow {
+    0% { transform: translateY(-550px); }
+    100% { transform: translateY(0); }
+}
+
+html.theme-xmas .header {
+    border-bottom: 2px solid #e74c3c;
+}
+
+html.theme-xmas .logo-mark {
+    animation: xmasLogoBounce 3s ease-in-out infinite;
+}
+
+@keyframes xmasLogoBounce {
+    0%, 100% { transform: rotate(-3deg); }
+    50% { transform: rotate(3deg); }
+}
+
+/* =========================================
+   HALLOWEEN (theme-halloween)
+========================================= */
+html.theme-halloween body::after {
+    content: '';
+    position: fixed;
+    bottom: -50px; right: -50px; width: 300px; height: 300px;
+    pointer-events: none;
+    z-index: 9998;
+    background: radial-gradient(circle, rgba(255,165,0,0.1) 0%, transparent 70%);
+    animation: hallowGlow 4s alternate infinite;
+}
+
+@keyframes hallowGlow {
+    0% { opacity: 0.5; transform: scale(1); }
+    100% { opacity: 1; transform: scale(1.1); }
+}
+
+html.theme-halloween .header {
+    border-bottom: 2px solid #ff7300;
+}
+
+html.theme-halloween .logo-img {
+    filter: drop-shadow(0 0 8px rgba(255, 115, 0, 0.6));
+    animation: hallowFloat 6s ease-in-out infinite;
+}
+
+@keyframes hallowFloat {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-4px); }
+}
+
+/* =========================================
+   ESTATE (theme-summer)
+========================================= */
+html.theme-summer body::before {
+    content: '';
+    position: fixed;
+    top: -10vw; left: -10vw; width: 40vw; height: 40vw;
+    pointer-events: none;
+    z-index: 9998;
+    background: radial-gradient(circle, rgba(255, 230, 0, 0.15) 0%, transparent 60%);
+    animation: summerSun 10s alternate infinite;
+}
+
+@keyframes summerSun {
+    0% { transform: scale(1); opacity: 0.8; }
+    100% { transform: scale(1.3); opacity: 1; }
+}
+
+html.theme-summer .logo-img {
+    filter: drop-shadow(0 0 10px rgba(255, 215, 0, 0.4));
+}
+
+/* =========================================
+   BLACK FRIDAY (theme-blackfriday)
+========================================= */
+html.theme-blackfriday .header {
+    background: #111 !important;
+    border-bottom: 2px solid #e74c3c;
+}
+html.theme-blackfriday .nav-link,
+html.theme-blackfriday .logo-title,
+html.theme-blackfriday .logo-subtitle {
+    color: #fff !important;
+}
+html.theme-blackfriday .nav-link:hover {
+    color: #e74c3c !important;
+}
+
+html.theme-blackfriday .logo-mark {
+    animation: bfFlash 2s infinite;
+}
+
+@keyframes bfFlash {
+    0%, 100% { filter: drop-shadow(0 0 5px rgba(231,76,60, 0.2)); }
+    50% { filter: drop-shadow(0 0 15px rgba(231,76,60, 0.8)); }
+}
