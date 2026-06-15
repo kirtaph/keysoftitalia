@@ -44,16 +44,55 @@ $canonical        = url(ltrim($_SERVER['REQUEST_URI'] ?? '', '/'));
 // Check for active logo campaigns
 $activeLogoCampaign = null;
 try {
-    $stmtCamp = $pdo->prepare("
-        SELECT * FROM logo_campaigns 
+    // 1. First, check if there is an active flyer
+    $stmtFlyer = $pdo->query("
+        SELECT COUNT(*) 
+        FROM flyers 
         WHERE status = 1 
           AND start_date <= CURRENT_DATE 
-          AND end_date >= CURRENT_DATE 
-        ORDER BY end_date ASC 
-        LIMIT 1
+          AND end_date >= CURRENT_DATE
     ");
-    $stmtCamp->execute();
-    $activeLogoCampaign = $stmtCamp->fetch(PDO::FETCH_ASSOC);
+    $hasActiveFlyer = $stmtFlyer->fetchColumn() > 0;
+
+    if ($hasActiveFlyer) {
+        // Retrieve the special flyer campaign if it is enabled (status = 1)
+        $stmtSystemCamp = $pdo->prepare("
+            SELECT * FROM logo_campaigns 
+            WHERE status = 1 AND system_key = 'flyer_active'
+            LIMIT 1
+        ");
+        $stmtSystemCamp->execute();
+        $activeLogoCampaign = $stmtSystemCamp->fetch(PDO::FETCH_ASSOC);
+    }
+
+    // 2. If no active flyer or the flyer campaign is disabled/missing, look for matching seasonal/recurring campaigns
+    if (!$activeLogoCampaign) {
+        // Determine the active seasonal campaign based on month-day matching (recurring annually).
+        // If start_date month-day is <= end_date month-day (same year interval, e.g., 06-01 to 08-31)
+        // If start_date month-day is > end_date month-day (crosses new year, e.g., 12-01 to 01-06)
+        $stmtCamp = $pdo->query("
+            SELECT * FROM logo_campaigns 
+            WHERE status = 1 
+              AND system_key IS NULL
+              AND (
+                (
+                  DATE_FORMAT(start_date, '%m-%d') <= DATE_FORMAT(end_date, '%m-%d') 
+                  AND DATE_FORMAT(CURRENT_DATE, '%m-%d') BETWEEN DATE_FORMAT(start_date, '%m-%d') AND DATE_FORMAT(end_date, '%m-%d')
+                )
+                OR
+                (
+                  DATE_FORMAT(start_date, '%m-%d') > DATE_FORMAT(end_date, '%m-%d') 
+                  AND (
+                    DATE_FORMAT(CURRENT_DATE, '%m-%d') >= DATE_FORMAT(start_date, '%m-%d') 
+                    OR DATE_FORMAT(CURRENT_DATE, '%m-%d') <= DATE_FORMAT(end_date, '%m-%d')
+                  )
+                )
+              )
+            ORDER BY DATE_FORMAT(end_date, '%m-%d') ASC 
+            LIMIT 1
+        ");
+        $activeLogoCampaign = $stmtCamp->fetch(PDO::FETCH_ASSOC);
+    }
 } catch (Exception $e) {
     // ignore
 }

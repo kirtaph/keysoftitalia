@@ -46,9 +46,9 @@ try {
 }
 
 // SEO Meta
-$page_title = "Vendita Computer e Accessori - Key Soft Italia | Prodotti Ricondizionati Garantiti";
-$page_description = "Vendita computer, notebook, smartphone ricondizionati e accessori a Ginosa. Prodotti garantiti Key-Renew con risparmio fino al 40%. Consulenza e assistenza.";
-$page_keywords = "vendita computer ginosa, notebook ricondizionati, smartphone usati garantiti, accessori informatica, key-renew";
+$page_title = "Vendita Computer, Elettronica ed Elettrodomestici - Key Soft Italia";
+$page_description = "Vendita computer, notebook, smartphone ricondizionati nei nostri laboratori e prodotti nuovi a Ginosa. Ampia scelta di TV, Hi-Fi, elettrodomestici, videosorveglianza e telefonia fissa.";
+$page_keywords = "vendita computer ginosa, notebook ricondizionati, smartphone usati garantiti, accessori informatica, vendita elettrodomestici, smart tv ginosa, videosorveglianza";
 
 // Breadcrumbs
 $breadcrumbs = [
@@ -76,10 +76,10 @@ $breadcrumbs = [
                 <i class="ri-shopping-cart-line"></i>
             </div>
             <h1 class="hero-title text-white" data-aos="fade-up" data-aos-delay="100">
-                Vendita <span class="text-gradient">Hardware e Ricondizionati</span>
+                Vendita <span class="text-gradient">Hardware e Elettronica</span>
             </h1>
             <p class="hero-subtitle" data-aos="fade-up" data-aos-delay="200">
-                Dispositivi selezionati nuovi e usati certificati <strong>Key-Renew</strong> con risparmio fino al 40%
+                Dispositivi nuovi e ricondizionati certificati nei nostri laboratori con risparmio fino al 40%
             </p>
             <div class="hero-cta" data-aos="fade-up" data-aos-delay="300">
                 <a href="#categorie" class="btn btn-primary btn-lg smooth-scroll" aria-label="Scopri le nostre categorie di prodotti">
@@ -97,70 +97,102 @@ $breadcrumbs = [
         <div class="container">
             <div class="section-header text-center mb-5" data-aos="fade-up">
                 <h2 class="section-title">Le Nostre <span class="text-gradient">Categorie</span></h2>
-                <p class="section-subtitle">Ampia selezione di prodotti nuovi e ricondizionati con setup iniziale incluso</p>
+                <p class="section-subtitle">Un'ampia selezione di prodotti nuovi ed usati garantiti con il supporto diretto dei nostri tecnici</p>
             </div>
             
             <div class="row g-4 mt-2">
-                <div class="col-lg-3 col-md-6" data-aos="fade-up" data-aos-delay="100">
+                <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="100">
                     <div class="category-card">
                         <div class="category-icon">
                             <i class="ri-computer-line"></i>
                         </div>
-                        <h3 class="category-title">Computer Desktop</h3>
-                        <p class="category-description">PC fissi per casa e ufficio</p>
+                        <h3 class="category-title">Informatica & Notebook</h3>
+                        <p class="category-description">PC Desktop e portatili per ogni esigenza</p>
                         <ul class="category-list">
-                            <li>PC Gaming</li>
-                            <li>Workstation</li>
-                            <li>PC Office</li>
-                            <li>All-in-One</li>
+                            <li>PC fissi assemblati per Office e Gaming</li>
+                            <li>Notebook e Workstation ricondizionati</li>
+                            <li>Componenti hardware e Monitor PC</li>
+                            <li>Tastiere, Mouse ed Accessori informatici</li>
                         </ul>
                     </div>
                 </div>
                 
-                <div class="col-lg-3 col-md-6" data-aos="fade-up" data-aos-delay="200">
-                    <div class="category-card">
-                        <div class="category-icon">
-                            <i class="ri-macbook-line"></i>
-                        </div>
-                        <h3 class="category-title">Notebook</h3>
-                        <p class="category-description">Portatili per ogni esigenza</p>
-                        <ul class="category-list">
-                            <li>Ultrabook</li>
-                            <li>Gaming Laptop</li>
-                            <li>Business</li>
-                            <li>Chromebook</li>
-                        </ul>
-                    </div>
-                </div>
-                
-                <div class="col-lg-3 col-md-6" data-aos="fade-up" data-aos-delay="300">
+                <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="200">
                     <div class="category-card">
                         <div class="category-icon">
                             <i class="ri-smartphone-line"></i>
                         </div>
-                        <h3 class="category-title">Smartphone & Tablet</h3>
-                        <p class="category-description">Dispositivi mobili ricondizionati</p>
+                        <h3 class="category-title">Telefonia & Protezione</h3>
+                        <p class="category-description">Dispositivi mobili e protezione display professionale</p>
                         <ul class="category-list">
-                            <li>iPhone</li>
-                            <li>Samsung Galaxy</li>
-                            <li>iPad</li>
-                            <li>Android Tablet</li>
+                            <li>Smartphone nuovi e ricondizionati in laboratorio</li>
+                            <li>Tablet Android e iPad garantiti 12 mesi</li>
+                            <li><strong>MyShape Protection:</strong> Pellicole display anti-shock e autorigeneranti tagliate su misura al plotter per qualsiasi modello</li>
+                            <li>Cover, accessori per ricarica e telefonia fissa</li>
                         </ul>
                     </div>
                 </div>
                 
-                <div class="col-lg-3 col-md-6" data-aos="fade-up" data-aos-delay="400">
+                <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="300">
                     <div class="category-card">
                         <div class="category-icon">
-                            <i class="ri-headphone-line"></i>
+                            <i class="ri-tv-2-line"></i>
                         </div>
-                        <h3 class="category-title">Accessori</h3>
-                        <p class="category-description">Tutto per il tuo setup</p>
+                        <h3 class="category-title">TV, Audio & Hi-Fi</h3>
+                        <p class="category-description">Intrattenimento multimediale per la casa</p>
                         <ul class="category-list">
-                            <li>Monitor PC</li>
-                            <li>Tastiere & Mouse</li>
-                            <li>Cuffie & Speaker</li>
-                            <li>Dischi Storage</li>
+                            <li>Smart TV Led e Oled di ultima generazione</li>
+                            <li>Sistemi Hi-Fi e amplificatori audio</li>
+                            <li>Cuffie, auricolari bluetooth e speaker wireless</li>
+                            <li>Soundbar, decoder e accessori audio-video</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="400">
+                    <div class="category-card">
+                        <div class="category-icon">
+                            <i class="ri-fridge-line"></i>
+                        </div>
+                        <h3 class="category-title">Elettrodomestici & Bellezza</h3>
+                        <p class="category-description">Per la cura della casa e della persona</p>
+                        <ul class="category-list">
+                            <li>Piccoli e grandi elettrodomestici per la cucina</li>
+                            <li>Rasoi elettrici, regolabarba e cura capelli</li>
+                            <li>Asciugacapelli e piastre professionali</li>
+                            <li>Prodotti tecnologici per la bellezza e il benessere</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="500">
+                    <div class="category-card">
+                        <div class="category-icon">
+                            <i class="ri-eye-line"></i>
+                        </div>
+                        <h3 class="category-title">Videosorveglianza</h3>
+                        <p class="category-description">Sicurezza avanzata per ambienti privati e commerciali</p>
+                        <ul class="category-list">
+                            <li>Telecamere IP ad alta definizione (nuove/ricondizionate)</li>
+                            <li>Sistemi NVR/DVR di registrazione continua</li>
+                            <li>Kit di sorveglianza gestibili da smartphone</li>
+                            <li>Accessori e alimentatori per impianti di sicurezza</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="600">
+                    <div class="category-card">
+                        <div class="category-icon">
+                            <i class="ri-database-2-line"></i>
+                        </div>
+                        <h3 class="category-title">Storage & Networking</h3>
+                        <p class="category-description">Soluzioni per la connettività e l'archiviazione</p>
+                        <ul class="category-list">
+                            <li>Hard Disk esterni ed unità SSD ad alta velocità</li>
+                            <li>Modem Router Wi-Fi e ripetitori di segnale</li>
+                            <li>Switch di rete, cavi LAN e adattatori internet</li>
+                            <li>Chiavette USB e schede di memoria SD</li>
                         </ul>
                     </div>
                 </div>
@@ -173,7 +205,7 @@ $breadcrumbs = [
         <div class="container position-relative z-2">
             <div class="section-header text-center mb-5" data-aos="fade-up">
                 <h2 class="section-title">Prodotti in <span class="text-gradient">Evidenza</span></h2>
-                <p class="section-subtitle">Le migliori offerte su dispositivi ricondizionati certificati Key-Renew e nuovi</p>
+                <p class="section-subtitle">Le migliori offerte su dispositivi ricondizionati nei nostri laboratori e prodotti nuovi</p>
             </div>
             
             <div class="row g-4 mt-2">
@@ -191,7 +223,7 @@ $breadcrumbs = [
                         // Calculate discount if list price is set
                         $discount = 0;
                         if (!empty($product['list_price']) && !empty($product['price_eur']) && (float)$product['list_price'] > (float)$product['price_eur']) {
-                            $discount = round((( (float)$product['list_price'] - (float)$product['price_eur'] ) / (float)$product['list_price']) * 100);
+                             $discount = round((( (float)$product['list_price'] - (float)$product['price_eur'] ) / (float)$product['list_price']) * 100);
                         }
                         
                         // Construct cover image url
@@ -208,7 +240,7 @@ $breadcrumbs = [
                         } elseif (!$is_refurbished) {
                             $badge_html = '<div class="product-badge bg-blue">Nuovo</div>';
                         } else {
-                            $badge_html = '<div class="product-badge bg-dark">Key-Renew</div>';
+                            $badge_html = '<div class="product-badge bg-dark">Ricondizionato</div>';
                         }
                     ?>
                         <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="<?= $delay; ?>">
@@ -250,6 +282,78 @@ $breadcrumbs = [
             </div>
         </div>
     </section>
+
+    <!-- MyShape Protection Section -->
+    <section id="myshape" class="section bg-white border-top border-bottom position-relative overflow-hidden">
+        <div class="container position-relative z-2">
+            <div class="row align-items-center g-5">
+                <div class="col-lg-6" data-aos="fade-right">
+                    <div class="pe-lg-4">
+                        <span class="badge bg-orange mb-3">Servizio Esclusivo</span>
+                        <h2 class="section-title mb-4">Protezione su Misura con <span class="text-gradient">MyShape Protection</span></h2>
+                        <p class="lead mb-4 text-dark fw-semibold">Dì addio ai vetri temperati che si scheggiano o si sollevano continuamente.</p>
+                        <p class="text-secondary mb-4">
+                            Presso il nostro negozio a Ginosa disponiamo del sistema plotter professionale <strong>MyShape Protection</strong>. Tagliamo e applichiamo all'istante pellicole protettive ultra-resistenti di livello militare, adattabili a qualsiasi modello di smartphone, tablet, smartwatch e persino console portatili.
+                        </p>
+                        <div class="row g-3">
+                            <div class="col-sm-6">
+                                <div class="d-flex align-items-center gap-2">
+                                    <i class="ri-shield-flash-line text-orange fa-lg"></i>
+                                    <span class="text-dark fw-bold small">Protezione Anti-Shock</span>
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="d-flex align-items-center gap-2">
+                                    <i class="ri-magic-line text-orange fa-lg"></i>
+                                    <span class="text-dark fw-bold small">Film Autorigenerante</span>
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="d-flex align-items-center gap-2">
+                                    <i class="ri-scan-2-line text-orange fa-lg"></i>
+                                    <span class="text-dark fw-bold small">Taglio al Millimetro</span>
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="d-flex align-items-center gap-2">
+                                    <i class="ri-contrast-drop-line text-orange fa-lg"></i>
+                                    <span class="text-dark fw-bold small">Finitura Lucida o Opaca</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-6" data-aos="fade-left">
+                    <div class="card bg-light border-0 p-4 p-md-5 rounded-4 shadow-sm">
+                        <h4 class="fw-bold mb-3"><i class="ri-settings-4-line text-orange me-2"></i>Come Funziona il Servizio?</h4>
+                        <ol class="list-unstyled mb-0">
+                            <li class="mb-3 d-flex gap-3">
+                                <div class="badge bg-dark rounded-circle d-flex align-items-center justify-content-center" style="width: 28px; height: 28px; flex-shrink: 0;">1</div>
+                                <div>
+                                    <h5 class="fw-bold mb-1" style="font-size: 15px;">Selezione del Modello</h5>
+                                    <p class="text-muted small mb-0">Troviamo il file di taglio esatto per il tuo dispositivo nel database MyShape (oltre 30.000 modelli).</p>
+                                </div>
+                            </li>
+                            <li class="mb-3 d-flex gap-3">
+                                <div class="badge bg-dark rounded-circle d-flex align-items-center justify-content-center" style="width: 28px; height: 28px; flex-shrink: 0;">2</div>
+                                <div>
+                                    <h5 class="fw-bold mb-1" style="font-size: 15px;">Taglio On-Demand</h5>
+                                    <p class="text-muted small mb-0">Il plotter professionale incide la pellicola in poliuretano termoplastico (TPU) al millimetro in pochi secondi.</p>
+                                </div>
+                            </li>
+                            <li class="d-flex gap-3">
+                                <div class="badge bg-dark rounded-circle d-flex align-items-center justify-content-center" style="width: 28px; height: 28px; flex-shrink: 0;">3</div>
+                                <div>
+                                    <h5 class="fw-bold mb-1" style="font-size: 15px;">Applicazione Professionale</h5>
+                                    <p class="text-muted small mb-0">I nostri tecnici puliscono lo schermo ed applicano la pellicola a regola d'arte, garantendo l'assenza di bolle o imperfezioni.</p>
+                                </div>
+                            </li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
     
     <!-- Why Choose Us -->
     <section id="benefici" class="service-category">
@@ -267,7 +371,7 @@ $breadcrumbs = [
                         </div>
                         <h3 class="benefit-title">Qualità Certificata</h3>
                         <p class="benefit-text">
-                            Ogni dispositivo ricondizionato Key-Renew viene sottoposto a oltre 30 test hardware e software in laboratorio.
+                            Ogni dispositivo ricondizionato nei nostri laboratori viene sottoposto a oltre 30 severi test hardware e software.
                         </p>
                     </div>
                 </div>
@@ -279,7 +383,7 @@ $breadcrumbs = [
                         </div>
                         <h3 class="benefit-title">Risparmio Garantito</h3>
                         <p class="benefit-text">
-                            Risparmia fino al 40% rispetto al prezzo di listino del nuovo, senza compromessi sull'efficienza del dispositivo.
+                            Risparmia fino al 40% rispetto al prezzo di listino del nuovo, senza compromessi sulle performance del dispositivo.
                         </p>
                     </div>
                 </div>
@@ -291,7 +395,7 @@ $breadcrumbs = [
                         </div>
                         <h3 class="benefit-title">Garanzia di 12 Mesi</h3>
                         <p class="benefit-text">
-                            Tutti i nostri prodotti ricondizionati Key-Renew sono protetti da 12 mesi di garanzia scritta contro ogni difetto.
+                            Tutti i nostri prodotti ricondizionati in laboratorio sono protetti da 12 mesi di garanzia scritta contro ogni difetto.
                         </p>
                     </div>
                 </div>

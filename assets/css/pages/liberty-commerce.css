@@ -280,6 +280,87 @@
   box-shadow: var(--ks-shadow-md);
 }
 
+/* ===== DEMO DOWNLOAD FORM CARD STYLING ===== */
+.section-demo {
+  padding: var(--ks-spacing-16) 0;
+  background-color: var(--ks-gray-50) !important;
+}
+
+.section-demo .card {
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.06) !important;
+  border: 1px solid var(--ks-gray-200) !important;
+  border-radius: 24px !important;
+  overflow: hidden !important;
+  padding: 0 !important; /* Rimuove il padding di default di Bootstrap card se applicato */
+}
+
+.section-demo .card-body {
+  padding: 2.5rem !important;
+}
+
+.section-demo .bg-primary {
+  background: linear-gradient(135deg, var(--ks-dark) 0%, var(--ks-dark-secondary) 100%) !important;
+  border-bottom: 3px solid var(--ks-orange) !important;
+  margin: 0 !important;
+  padding: 2rem !important;
+  color: #ffffff !important;
+}
+
+.section-demo .bg-primary h3,
+.section-demo .bg-primary p,
+.section-demo .bg-primary i {
+  color: #ffffff !important;
+}
+
+.section-demo .bg-pattern {
+  background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E") repeat;
+}
+
+.section-demo .form-control {
+  border: 1px solid var(--ks-gray-300);
+  border-radius: var(--ks-radius-lg);
+  padding: 12px 16px;
+  font-size: 15px;
+  background-color: var(--ks-bg-primary);
+  transition: all var(--ks-transition-fast);
+}
+
+.section-demo .form-control:focus {
+  border-color: var(--ks-orange);
+  box-shadow: 0 0 0 3px rgba(255, 107, 53, 0.12);
+  outline: none;
+}
+
+.section-demo .btn-primary {
+  background-color: var(--ks-orange) !important;
+  border-color: var(--ks-orange) !important;
+  font-weight: 700;
+  padding: 14px 28px;
+  border-radius: var(--ks-radius-lg);
+  box-shadow: 0 4px 14px rgba(255, 107, 53, 0.2);
+}
+
+.section-demo .btn-primary:hover {
+  background-color: var(--ks-orange-hover) !important;
+  border-color: var(--ks-orange-hover) !important;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(255, 107, 53, 0.35);
+}
+
+.section-demo .form-check-input:checked {
+  background-color: var(--ks-orange) !important;
+  border-color: var(--ks-orange) !important;
+}
+
+.section-demo .form-check-label a {
+  color: var(--ks-orange);
+  font-weight: 600;
+}
+
+.section-demo .form-check-label a:hover {
+  color: var(--ks-orange-hover);
+}
+
 /* ===== RESPONSIVE ===== */
 @media (max-width: 992px) {
   .section-cta-clean .cta-title {
@@ -289,3 +370,4 @@
     font-size: var(--ks-text-base);
   }
 }
+

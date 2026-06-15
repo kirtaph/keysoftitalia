@@ -47,17 +47,17 @@ $services = [
     'icon'     => 'ri-shopping-bag-line',
     'color'    => 'green',
     'title'    => 'Vendita & Ricondizionati',
-    'subtitle' => 'Nuovo e Key-Renew certificato, con setup incluso',
+    'subtitle' => 'Nuovo e ricondizionato certificato in laboratorio, con pellicole MyShape e setup incluso',
     'url'      => 'servizi/vendita.php',
     'features' => [
       'Smartphone e laptop (nuovo/usato garantito)',
-      'Ricondizionati Key-Renew testati 30+ punti',
-      'Permuta usato con valutazione immediata',
+      'Ricondizionati certificati dai nostri tecnici in laboratorio',
+      'MyShape Protection: pellicole autorigeneranti tagliate su misura',
       'Accessori originali e compatibili selezionati',
       'Trasferimento dati e configurazione account',
       'Garanzia fino a 12 mesi'
     ],
-    'badges' => ['Prezzi Trasparenti', 'Permuta Subito', 'Garanzia']
+    'badges' => ['Prezzi Trasparenti', 'MyShape Protection', 'Garanzia']
   ],
   [
     'icon'     => 'ri-server-line',
@@ -94,18 +94,18 @@ $services = [
   [
     'icon'     => 'ri-apps-2-line',
     'color'    => 'teal',
-    'title'    => 'App, Automazioni & LibertyCommerce',
-    'subtitle' => 'Web app su misura e distribuzione gestionale LibertyCommerce',
-    'url'      => 'servizi/app-automazioni.php',
+    'title'    => 'Software Gestionali & Web App',
+    'subtitle' => 'Sviluppo di applicazioni web su misura con backend dedicato e fornitura LibertyCommerce',
+    'url'      => 'servizi/liberty-commerce.php',
     'features' => [
-      'Distribuzione, setup e formazione LibertyCommerce',
-      'Magazzino, documenti, POS e fatturazione elettronica',
-      'Migrazione dati e personalizzazioni operative',
-      'Integrazioni API: corrispettivi, energy, CRM',
-      'Flussi WhatsApp (whatsappweb.js) e template',
-      'Key-OS: moduli ordini/ricondizionati con ruoli'
+      'Sviluppo Web Application professionali su misura (ERP, CRM e gestionali)',
+      'Pannelli di controllo amministrativi stabili con database e backend dedicato',
+      'Distribuzione, installazione e formazione per LibertyCommerce e Comanda Facile',
+      'Integrazioni API complesse: corrispettivi telematici, fatturazione ed e-commerce',
+      'Automazione dei processi aziendali e digitalizzazione flussi di lavoro',
+      'Migrazione sicura dei dati da precedenti software gestionali'
     ],
-    'badges' => ['Partner LibertyCommerce', 'Formazione', 'Migrazione Dati']
+    'badges' => ['Partner LibertyCommerce', 'Web App Professionali', 'Backend Dedicato']
   ],
   [
     'icon'     => 'ri-sim-card-line',
@@ -122,23 +122,7 @@ $services = [
       'Pagamenti e rinnovi in negozio'
     ],
     'badges' => ['Tutti gli Operatori', 'Zero Costi Attivazione', 'Risparmio Reale']
-  ],
-  [
-    'icon'     => 'ri-shield-check-line',
-    'color'    => 'purple',
-    'title'    => 'MyShape Protection (Plus)',
-    'subtitle' => 'Protezione su misura per display e device',
-    'url'      => 'servizi/myshape.php',
-    'features' => [
-      'Pellicole tagliate al millimetro in negozio',
-      'Protezione display anti-urto/anti-graffio',
-      'Applicazione professionale senza bolle',
-      'Piani protezione con sostituzione agevolata',
-      'Bundle consigliato con riparazioni/vendita',
-      'Ampia compatibilità modelli'
-    ],
-    'badges' => ['Partner/Plus', 'Protezione Totale', 'Attivazione Immediata']
-  ],
+  ]
 ];
 
 ?>

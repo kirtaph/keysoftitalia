@@ -1,0 +1,14 @@
+-- Migration: Create liberty_demo_requests table
+-- Created At: 2026-06-15
+
+CREATE TABLE IF NOT EXISTS liberty_demo_requests (
+    id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    company VARCHAR(100) DEFAULT NULL,
+    email VARCHAR(100) NOT NULL,
+    phone VARCHAR(50) NOT NULL,
+    city VARCHAR(100) DEFAULT NULL,
+    status TINYINT(1) DEFAULT 0, -- 0: Nuovo, 1: Gestito
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;

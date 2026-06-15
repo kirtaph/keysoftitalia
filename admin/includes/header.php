@@ -160,6 +160,12 @@ $currentPage = basename($_SERVER['PHP_SELF']);
                     <span>Consulenza IT</span>
                 </a>
             </li>
+            <li class="sidebar-item">
+                <a href="liberty_demo.php" class="sidebar-link <?php echo $currentPage === 'liberty_demo.php' ? 'active' : ''; ?>">
+                    <i class="fas fa-file-download"></i>
+                    <span>Demo Liberty</span>
+                </a>
+            </li>
 
             <li class="sidebar-divider"></li>
             <div class="sidebar-heading">Impostazioni Sistema</div>

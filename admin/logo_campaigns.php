@@ -55,11 +55,13 @@
                         <div class="col-md-6">
                             <label class="form-label fw-bold">Data Inizio *</label>
                             <input type="date" class="form-control" id="start_date" name="start_date" required>
+                            <div class="form-text text-info"><i class="fas fa-redo-alt me-1"></i> Ricorrente (solo giorno/mese)</div>
                         </div>
                         
                         <div class="col-md-6">
                             <label class="form-label fw-bold">Data Fine *</label>
                             <input type="date" class="form-control" id="end_date" name="end_date" required>
+                            <div class="form-text text-info"><i class="fas fa-redo-alt me-1"></i> Ricorrente (solo giorno/mese)</div>
                         </div>
                         
                         <div class="col-md-12">
@@ -76,7 +78,10 @@
                                 <option value="theme-xmas">Neve (Natale)</option>
                                 <option value="theme-halloween">Pipistrelli (Halloween)</option>
                                 <option value="theme-summer">Luce Estiva</option>
-                                <option value="theme-blackfriday">Sconto / Lampeggi</option>
+                                <option value="theme-blackfriday">Sconto / Lampeggi (Black Friday)</option>
+                                <option value="theme-spring">Petali / Primavera</option>
+                                <option value="theme-autumn">Foglie / Autunno</option>
+                                <option value="theme-winter">Ghiaccio / Inverno</option>
                             </select>
                             <div class="form-text">Attiva animazioni globali nel sito (es. neve che cade).</div>
                         </div>
@@ -130,26 +135,37 @@ document.addEventListener('DOMContentLoaded', function() {
                             : '<span class="badge bg-secondary">Disattivato</span>';
 
                         const logoHtml = c.logo_path 
-                            ? `<img src="../${c.logo_path}" style="max-height: 40px; max-width: 80px; object-fit: contain; background: #222; padding: 2px; border-radius: 4px;">` 
+                            ? `<img src="../assets/${c.logo_path}" style="max-height: 40px; max-width: 80px; object-fit: contain; background: #222; padding: 2px; border-radius: 4px;">` 
                             : '-';
                         
                         let effectLabel = c.effect_class;
                         if(effectLabel === 'theme-xmas') effectLabel = 'Neve (Natale)';
-                        else if(effectLabel === 'theme-halloween') effectLabel = 'Pipistrelli';
+                        else if(effectLabel === 'theme-halloween') effectLabel = 'Pipistrelli (Halloween)';
                         else if(effectLabel === 'theme-summer') effectLabel = 'Luce Estiva';
-                        else if(effectLabel === 'theme-blackfriday') effectLabel = 'Black Friday';
+                        else if(effectLabel === 'theme-blackfriday') effectLabel = 'Sconto / Lampeggi (Black Friday)';
+                        else if(effectLabel === 'theme-spring') effectLabel = 'Petali (Primavera)';
+                        else if(effectLabel === 'theme-autumn') effectLabel = 'Foglie (Autunno)';
+                        else if(effectLabel === 'theme-winter') effectLabel = 'Ghiaccio (Inverno)';
                         else if(!effectLabel) effectLabel = '<span class="text-muted">Nessuno</span>';
+
+                        const periodText = c.system_key === 'flyer_active'
+                            ? '<span class="badge bg-info text-dark"><i class="fas fa-file-pdf me-1"></i> Quando Volantino Attivo</span>'
+                            : `${formatDate(c.start_date)} - ${formatDate(c.end_date)} (Ricorrente)`;
+
+                        const deleteBtnHtml = c.system_key 
+                            ? `<button class="btn btn-sm btn-outline-secondary" disabled title="Le campagne di sistema non possono essere eliminate"><i class="fas fa-lock"></i></button>`
+                            : `<button class="btn btn-sm btn-outline-danger delete-btn" data-id="${c.id}"><i class="fas fa-trash"></i></button>`;
 
                         const row = `
                             <tr>
                                 <td class="text-center">${logoHtml}</td>
-                                <td class="fw-bold">${c.name}</td>
-                                <td>${formatDate(c.start_date)} - ${formatDate(c.end_date)}</td>
+                                <td class="fw-bold">${c.name} ${c.system_key ? ' <span class="badge bg-warning text-dark">Sistema</span>' : ''}</td>
+                                <td>${periodText}</td>
                                 <td>${effectLabel}</td>
                                 <td class="text-center">${statusBadge}</td>
                                 <td class="text-center">
                                     <button class="btn btn-sm btn-outline-primary edit-btn" data-id="${c.id}"><i class="fas fa-edit"></i></button>
-                                    <button class="btn btn-sm btn-outline-danger delete-btn" data-id="${c.id}"><i class="fas fa-trash"></i></button>
+                                    ${deleteBtnHtml}
                                 </td>
                             </tr>
                         `;
@@ -165,6 +181,12 @@ document.addEventListener('DOMContentLoaded', function() {
         document.getElementById('campaignModalLabel').textContent = 'Nuova Campagna';
         document.getElementById('preview-logo').innerHTML = '';
         document.getElementById('logo_file').required = true;
+        
+        // Show and make date inputs required for standard campaigns
+        document.getElementById('start_date').required = true;
+        document.getElementById('end_date').required = true;
+        document.getElementById('start_date').closest('.col-md-6').style.display = 'block';
+        document.getElementById('end_date').closest('.col-md-6').style.display = 'block';
     });
 
     tableBody.addEventListener('click', e => {
@@ -185,11 +207,24 @@ document.addEventListener('DOMContentLoaded', function() {
                         document.getElementById('status').value = c.status;
                         
                         if (c.logo_path) {
-                            document.getElementById('preview-logo').innerHTML = `<img src="../${c.logo_path}" style="max-height:60px; background:#222; padding:4px; border-radius:4px;">`;
+                            document.getElementById('preview-logo').innerHTML = `<img src="../assets/${c.logo_path}" style="max-height:60px; background:#222; padding:4px; border-radius:4px;">`;
                             document.getElementById('logo_file').required = false;
                         } else {
                             document.getElementById('preview-logo').innerHTML = '';
                             document.getElementById('logo_file').required = true;
+                        }
+
+                        // Customize UI for system campaigns
+                        if (c.system_key) {
+                            document.getElementById('start_date').required = false;
+                            document.getElementById('end_date').required = false;
+                            document.getElementById('start_date').closest('.col-md-6').style.display = 'none';
+                            document.getElementById('end_date').closest('.col-md-6').style.display = 'none';
+                        } else {
+                            document.getElementById('start_date').required = true;
+                            document.getElementById('end_date').required = true;
+                            document.getElementById('start_date').closest('.col-md-6').style.display = 'block';
+                            document.getElementById('end_date').closest('.col-md-6').style.display = 'block';
                         }
 
                         document.getElementById('campaignModalLabel').textContent = 'Modifica Campagna';
