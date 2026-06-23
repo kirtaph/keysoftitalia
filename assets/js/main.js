@@ -1,7 +1,28 @@
-/**
- * Key Soft Italia - Main JavaScript
- * Funzionalità principali e interazioni
- */
+(function() {
+    if (window.KS_MAIN_JS_LOADED) return;
+    window.KS_MAIN_JS_LOADED = true;
+
+    // Robust DOM Ready helper to ensure initialization even when script runs late
+    const ready = (callback) => {
+        if (document.readyState !== 'loading') {
+            callback();
+        } else {
+            document.addEventListener('DOMContentLoaded', callback);
+        }
+    };
+
+// ===== AOS COMPATIBILITY LAYER =====
+window.AOS = window.AOS || {
+    init: function(options) {
+        window.KSReveal?.init(options);
+    },
+    refresh: function() {
+        window.KSReveal?.refresh();
+    },
+    refreshHard: function() {
+        window.KSReveal?.refresh();
+    }
+};
 
 // ===== CONFIGURAZIONE GLOBALE =====
 var KS = window.KS || {
@@ -242,8 +263,17 @@ class Navigation {
 
 // ===== FORM HANDLER =====
 class FormHandler {
-    constructor(formSelector) {
-        this.form = document.querySelector(formSelector);
+    constructor(formSelectorOrElement) {
+        if (typeof formSelectorOrElement === 'string') {
+            try {
+                this.form = document.querySelector(formSelectorOrElement);
+            } catch (e) {
+                console.warn('Invalid selector passed to FormHandler:', formSelectorOrElement);
+                this.form = null;
+            }
+        } else {
+            this.form = formSelectorOrElement;
+        }
         if (this.form) {
             this.init();
         }
@@ -425,34 +455,329 @@ class LazyLoader {
     }
 }
 
+// ===== MOTORE UNICO DI REVEAL ON SCROLL =====
+// Un solo sistema, robusto e fail-safe, per le animazioni d'ingresso legate
+// allo scroll. Principi:
+//  - COPERTURA AUTOMATICA: funziona su tutte le pagine agganciando elementi di
+//    contenuto generici, senza dipendere da attributi data-aos messi a mano
+//    (che però vengono rispettati se presenti, con la loro direzione).
+//  - FAIL-SAFE: lo stato "nascosto" è applicato SOLO via JS (classe .ks-reveal).
+//    Se il JS non parte o va in errore, nulla resta invisibile. In più un timer
+//    di sicurezza rivela comunque tutto ciò che è in vista dopo pochi secondi.
+//  - BIDIREZIONALE: gli elementi entrano scrollando e si ri-nascondono uscendo.
+//  - NIENTE TIMING FRAGILE: nessun requestAnimationFrame (sospeso nelle tab in
+//    background); ci si affida al primo callback asincrono dell'IntersectionObserver.
+class KSRevealEngine {
+    constructor() {
+        this.observer = null;
+        this.items = [];
+        this.failsafeTimer = null;
+        this.options = { offset: 8, once: false };
+        this.reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        this.mutationObserver = null;
+        this.debounceTimer = null;
+        this.targetsSet = new Set();
+
+        // Contenuto da animare automaticamente, presente su tutte le pagine.
+        this.autoSelectors = [
+            'section h1', 'section h2', 'section h3',
+            '.section-header', '.section-title', '.section-subtitle',
+            '.page-header h1', '.page-header p',
+            '.card', '[class*="-card"]',
+            '.service-item', '.service-block', '.plan-card',
+            '.process-step', '.experience-box', '.savings-calculator',
+            '.featured-flyer-cover',
+            '.feature-list > li', '.feature-list > div',
+            '.stat-item', '.benefit-item',
+            '.about-image', '.about-text',
+            '.contact-info', '.contact-form-wrapper'
+        ].join(',');
+
+        // Mai animare elementi dentro questi contenitori (UI fissa, nav, ecc.).
+        this.skipInside = 'nav, .navbar, footer, #cookie-banner, .modal, .offcanvas, .toast, [data-no-anim]';
+    }
+
+    init(options = {}) {
+        this.options = { ...this.options, ...options };
+        this.refresh();
+
+        // Inizializza MutationObserver per rivelare elementi inseriti dinamicamente (es. AJAX o widget)
+        if (!this.mutationObserver && typeof MutationObserver !== 'undefined') {
+            this.mutationObserver = new MutationObserver((mutations) => {
+                let shouldRefresh = false;
+                for (const mutation of mutations) {
+                    if (mutation.addedNodes.length > 0) {
+                        for (const node of mutation.addedNodes) {
+                            if (node.nodeType === 1) {
+                                if (node.matches && (node.matches(this.autoSelectors) || node.querySelector(this.autoSelectors) || node.matches('[data-aos]') || node.querySelector('[data-aos]'))) {
+                                    shouldRefresh = true;
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                    if (shouldRefresh) break;
+                }
+                if (shouldRefresh) {
+                    clearTimeout(this.debounceTimer);
+                    this.debounceTimer = setTimeout(() => this.refresh(), 100);
+                }
+            });
+            this.mutationObserver.observe(document.body, { childList: true, subtree: true });
+        }
+    }
+
+    // Ricostruisce la lista (utile dopo contenuti caricati via AJAX o carousel).
+    refresh() {
+        // Movimento ridotto o IO non supportato → lascia tutto visibile.
+        if (this.reduced || !('IntersectionObserver' in window)) return;
+
+        const targets = this.collect();
+        if (!targets.length) return;
+
+        // Stato iniziale nascosto applicato SOLO ora, via JS (fail-safe).
+        targets.forEach(el => el.classList.add('ks-reveal'));
+
+        this.observer?.disconnect();
+        this.observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('ks-in');
+                    this.checkAndAnimateCounter(entry.target);
+                    if (this.options.once) this.observer.unobserve(entry.target);
+                } else {
+                    const rect = entry.boundingClientRect;
+                    if (rect.top < 0) {
+                        // Se l'elemento è già sopra la viewport (scrollato oltre), lo teniamo visibile
+                        entry.target.classList.add('ks-in');
+                        if (this.options.once) this.observer.unobserve(entry.target);
+                    } else if (!this.options.once) {
+                        // Solo se l'elemento si trova sotto la viewport lo nascondiamo di nuovo
+                        entry.target.classList.remove('ks-in');
+                    }
+                }
+            });
+        }, {
+            root: null,
+            threshold: 0.1,
+            rootMargin: `0px 0px -${this.options.offset}% 0px`
+        });
+
+        this.items = targets;
+        targets.forEach(el => this.observer.observe(el));
+
+        // SICUREZZA: se per qualunque motivo qualcosa resta nascosto, dopo 3.5s
+        // viene rivelato comunque (nessun contenuto deve mai restare invisibile).
+        clearTimeout(this.failsafeTimer);
+        this.failsafeTimer = setTimeout(() => {
+            const vh = window.innerHeight || document.documentElement.clientHeight;
+            this.items.forEach(el => {
+                const r = el.getBoundingClientRect();
+                if (r.top < vh && r.bottom > 0) el.classList.add('ks-in');
+            });
+        }, 3500);
+    }
+
+    collect() {
+        const raw = new Set();
+        // 1) rispetta gli attributi data-aos esistenti (intento esplicito)
+        document.querySelectorAll('[data-aos]').forEach(el => raw.add(el));
+        // 2) copertura automatica del contenuto
+        document.querySelectorAll(this.autoSelectors).forEach(el => raw.add(el));
+
+        // scarta gli elementi dentro contenitori da saltare
+        const kept = new Set();
+        raw.forEach(el => {
+            if (el.closest(this.skipInside)) return;
+            
+            // Non animare elementi all'interno di slider, caroselli o hero secondari (siano essi automatici o con data-aos),
+            // poiché le loro animazioni sono gestite interamente via CSS agganciate agli stati attivi della pagina (body.ks-dom-ready, .active)
+            if (el.closest('.swiper-wrapper, .carousel-inner, .carousel-item, .hero-secondary')) return;
+            
+            kept.add(el);
+        });
+
+        const out = [];
+        kept.forEach(el => {
+            // gli elementi con data-aos si tengono sempre (rispetta il lavoro esistente)
+            if (!el.hasAttribute('data-aos')) {
+                // per la copertura automatica, evita reveal annidati: se un antenato
+                // è già un target, salta (altrimenti sembrano "doppi")
+                let p = el.parentElement, nested = false;
+                while (p) { if (kept.has(p)) { nested = true; break; } p = p.parentElement; }
+                if (nested) return;
+            }
+            out.push(el);
+        });
+
+        // Memorizza l'insieme dei target definitivi per una rapida consultazione nello staggerOf
+        this.targetsSet = new Set(out);
+
+        // direzione + stagger a cascata tra fratelli vicini
+        out.forEach(el => {
+            el.dataset.ksDir = this.dirOf(el);
+            el.style.setProperty('--ks-d', `${this.staggerOf(el)}ms`);
+        });
+        return out;
+    }
+
+    dirOf(el) {
+        const aos = (el.getAttribute('data-aos') || '').toLowerCase();
+        if (aos.includes('down')) return 'down';
+        if (aos.includes('left')) return 'left';
+        if (aos.includes('right')) return 'right';
+        if (aos.includes('zoom')) return 'zoom';
+        return 'up';
+    }
+
+    staggerOf(el) {
+        const declared = parseInt(el.getAttribute('data-aos-delay'), 10);
+        if (!isNaN(declared)) return Math.min(declared, 400);
+
+        let index = 0;
+        let sib = el;
+        let hasSiblingTargets = false;
+
+        // Cerca l'indice tra i fratelli diretti
+        while (sib = sib.previousElementSibling) {
+            if (this.targetsSet?.has(sib)) {
+                hasSiblingTargets = true;
+                index++;
+            }
+        }
+
+        // Se non ci sono fratelli animati diretti, controlla se il genitore (es. colonna Bootstrap) ha fratelli con elementi animati
+        if (!hasSiblingTargets && el.parentElement) {
+            const parent = el.parentElement;
+            let parentSib = parent;
+            let parentIndex = 0;
+            let hasParentSiblingTargets = false;
+
+            while (parentSib = parentSib.previousElementSibling) {
+                // Cerca se ci sono elementi animati tra i discendenti dello stesso livello del fratello del genitore
+                const descendants = Array.from(parentSib.querySelectorAll('*'));
+                const hasTarget = descendants.some(desc => this.targetsSet?.has(desc));
+                if (hasTarget) {
+                    hasParentSiblingTargets = true;
+                    parentIndex++;
+                }
+            }
+
+            if (hasParentSiblingTargets) {
+                index = parentIndex;
+            }
+        }
+
+        return Math.min(index * 80, 400);
+    }
+
+    checkAndAnimateCounter(target) {
+        const counters = target.matches('.stat-number, .stat-value, .ks-counter') 
+            ? [target] 
+            : Array.from(target.querySelectorAll('.stat-number, .stat-value, .ks-counter'));
+            
+        counters.forEach(el => {
+            if (el.dataset.ksCounterDone) return;
+            el.dataset.ksCounterDone = 'true';
+            
+            const originalText = el.textContent.trim();
+            const numberRegex = /\d+/g;
+            const matches = originalText.match(numberRegex);
+            
+            if (!matches) return;
+            
+            const targets = matches.map(m => parseInt(m, 10));
+            const duration = 1200; // 1.2 secondi
+            const startTime = performance.now();
+            
+            // Imposta larghezza fissa e display per evitare spostamenti di layout durante il conteggio
+            const rect = el.getBoundingClientRect();
+            if (rect.width > 0) {
+                el.style.width = rect.width + 'px';
+                el.style.display = 'inline-block';
+            }
+            
+            const animate = (currentTime) => {
+                const elapsed = currentTime - startTime;
+                const progress = Math.min(elapsed / duration, 1);
+                
+                // Easing cubic ease-out
+                const ease = 1 - Math.pow(1 - progress, 3);
+                
+                let index = 0;
+                const updatedText = originalText.replace(numberRegex, () => {
+                    const targetVal = targets[index++];
+                    const currentVal = Math.floor(ease * targetVal);
+                    if (targetVal >= 1000) {
+                        return currentVal.toLocaleString('it-IT');
+                    }
+                    return currentVal;
+                });
+                
+                el.textContent = updatedText;
+                
+                if (progress < 1) {
+                    requestAnimationFrame(animate);
+                } else {
+                    // Ripristina l'allineamento originario ed esatto testo finale
+                    el.textContent = originalText;
+                    el.style.width = '';
+                    el.style.display = '';
+                }
+            };
+            
+            requestAnimationFrame(animate);
+        });
+    }
+}
+
+window.KSReveal = window.KSReveal || new KSRevealEngine();
+
 // ===== INITIALIZE ON DOM READY =====
-document.addEventListener('DOMContentLoaded', () => {
+ready(() => {
     // Initialize navigation
-    new Navigation();
+    try {
+        new Navigation();
+    } catch (e) {
+        console.warn('Navigation failed to initialize:', e);
+    }
 
     // Initialize forms
-    document.querySelectorAll('form[data-ajax="true"]').forEach(form => {
-        new FormHandler(`#${form.id}`);
-    });
+    try {
+        document.querySelectorAll('form[data-ajax="true"]').forEach(form => {
+            new FormHandler(form);
+        });
+    } catch (e) {
+        console.warn('FormHandler failed to initialize:', e);
+    }
 
     // Initialize lazy loading
-    new LazyLoader();
+    try {
+        new LazyLoader();
+    } catch (e) {
+        console.warn('LazyLoader failed to initialize:', e);
+    }
 
-    // Initialize AOS animations (if available)
-    if (typeof AOS !== 'undefined') {
-        AOS.init({
-            duration: 800,
-            once: true,
-            offset: 100
+    // Initialize reveal animations (motore unico)
+    try {
+        window.KSReveal.init({
+            once: false,
+            offset: 8
         });
+    } catch (e) {
+        console.warn('Reveal animations failed to initialize:', e);
     }
 
     // Initialize Bootstrap Tooltips
-    if (typeof bootstrap !== 'undefined' && bootstrap.Tooltip) {
-        const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
-        tooltipTriggerList.map(function (tooltipTriggerEl) {
-            return new bootstrap.Tooltip(tooltipTriggerEl);
-        });
+    try {
+        if (typeof bootstrap !== 'undefined' && bootstrap.Tooltip) {
+            const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+            tooltipTriggerList.map(function (tooltipTriggerEl) {
+                return new bootstrap.Tooltip(tooltipTriggerEl);
+            });
+        }
+    } catch (e) {
+        console.warn('Bootstrap Tooltips failed to initialize:', e);
     }
 
     // WhatsApp CTA tracking
@@ -520,7 +845,7 @@ document.addEventListener('DOMContentLoaded', () => {
 window.KS = KS;
 window.Utils = Utils;
 
-document.addEventListener('DOMContentLoaded', function () {
+ready(function () {
     var el = document.getElementById('heroCarousel');
     if (el && typeof bootstrap !== 'undefined' && bootstrap.Carousel) {
         // inizializza/forza autoplay anche se i data-attr non venissero letti
@@ -535,7 +860,9 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 });
 
-document.addEventListener("DOMContentLoaded", function () {
+ready(function () {
+    if (typeof Swiper === 'undefined' || !document.querySelector('.recond-swiper')) return;
+
     new Swiper(".recond-swiper", {
         loop: true,
         autoplay: {
@@ -556,7 +883,9 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 });
 
-document.addEventListener("DOMContentLoaded", function () {
+ready(function () {
+    if (typeof Swiper === 'undefined' || !document.querySelector('.brand-swiper')) return;
+
     new Swiper(".brand-swiper", {
         slidesPerView: 5,
         spaceBetween: 30,
@@ -575,7 +904,9 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 });
 
-document.addEventListener("DOMContentLoaded", function () {
+ready(function () {
+    if (typeof Swiper === 'undefined' || !document.querySelector('.testimonial-swiper')) return;
+
     new Swiper(".testimonial-swiper", {
         loop: true,
         autoplay: {
@@ -608,3 +939,9 @@ document.querySelectorAll('a.smooth-scroll').forEach(link => {
         }
     });
 });
+
+    // Export classes to global scope
+    window.Navigation = Navigation;
+    window.FormHandler = FormHandler;
+    window.KSRevealEngine = KSRevealEngine;
+})();

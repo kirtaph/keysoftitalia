@@ -45,14 +45,6 @@ $page_keywords = "riparazioni smartphone ginosa, assistenza computer taranto, ri
 <html lang="it">
 <head>
     <?php include 'includes/head.php'; ?>
-    <title><?php echo $page_title; ?></title>
-    <meta name="description" content="<?php echo $page_description; ?>">
-    <meta name="keywords" content="<?php echo $page_keywords; ?>">
-    <meta property="og:title" content="<?php echo $page_title; ?>">
-    <meta property="og:description" content="<?php echo $page_description; ?>">
-    <meta property="og:type" content="website">
-    <meta property="og:url" content="<?php echo 'https://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI']; ?>">
-    <meta property="og:image" content="<?php echo asset('images/og-image.jpg'); ?>">
     <link rel="stylesheet" href="<?php echo asset_version('css/pages/home.css'); ?>">
 </head>
 <body>

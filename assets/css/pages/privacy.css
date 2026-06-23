@@ -1,7 +1,12 @@
-/**
- * Key Soft Italia - Privacy Policy Page Styles
- * Stili specifici per la pagina Privacy Policy
- */
+:root {
+    --color-primary: var(--ks-brand);
+    --color-secondary: var(--ks-brand-hover);
+    --color-dark: var(--ks-dark);
+    --color-text: var(--ks-text-primary);
+    --color-text-secondary: var(--ks-text-secondary);
+    --color-gray: var(--ks-gray-200);
+    --color-gray-light: var(--ks-bg-secondary);
+}
 
 /* Privacy Card */
 .section-privacy {
@@ -10,9 +15,10 @@
 
 .privacy-card {
     background: white;
-    border-radius: 15px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+    border-radius: var(--ks-radius-xl, 16px);
+    box-shadow: var(--ks-shadow-lg);
     padding: 40px;
+    border: 1px solid rgba(0, 0, 0, 0.03);
 }
 
 .privacy-header {
@@ -190,9 +196,10 @@
 .sidebar-card {
     background: white;
     padding: 25px;
-    border-radius: 10px;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+    border-radius: var(--ks-radius-lg, 12px);
+    box-shadow: var(--ks-shadow-md);
     margin-bottom: 25px;
+    border: 1px solid rgba(0, 0, 0, 0.03);
 }
 
 .sidebar-card.bg-primary {

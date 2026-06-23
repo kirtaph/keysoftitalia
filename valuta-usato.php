@@ -20,13 +20,6 @@ $breadcrumbs = [
 <html lang="it">
 <head>
   <?php include 'includes/head.php'; ?>
-  <title><?php echo htmlspecialchars($page_title); ?></title>
-  <?php echo generate_meta_tags([
-      'title'       => $page_title,
-      'description' => $page_description,
-      'keywords'    => $page_keywords,
-      'url'         => url('valuta-usato.php')
-  ]); ?>
   <link rel="stylesheet" href="<?php echo asset_version('css/pages/valuta-usato.css'); ?>">
 </head>
 <body data-aos-easing="ease-in-out" data-aos-duration="800" data-aos-once="true">

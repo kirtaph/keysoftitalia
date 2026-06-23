@@ -26,13 +26,6 @@ $booking_ref = isset($_GET['ref']) ? preg_replace('/[^A-Za-z0-9\-\_]/', '', $_GE
 <html lang="it">
 <head>
   <?php include 'includes/head.php'; ?>
-  <title><?php echo htmlspecialchars($page_title); ?></title>
-  <?php echo generate_meta_tags([
-      'title'       => $page_title,
-      'description' => $page_description,
-      'keywords'    => $page_keywords,
-      'url'         => url('prenota-riparazione.php')
-  ]); ?>
   <link rel="stylesheet" href="<?php echo asset_version('css/pages/prenota-riparazione.css'); ?>">
 </head>
 <body data-aos-easing="ease-in-out" data-aos-duration="800" data-aos-once="true">
@@ -508,14 +501,8 @@ $booking_ref = isset($_GET['ref']) ? preg_replace('/[^A-Za-z0-9\-\_]/', '', $_GE
 
 <?php include 'includes/footer.php'; ?>
 
-<!-- JS -->
-<script defer src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-<script defer src="<?php echo asset('js/main.js'); ?>"></script>
-<script defer src="https://unpkg.com/aos@next/dist/aos.js"></script>
 <script>
 document.addEventListener('DOMContentLoaded', function(){
-  if (window.AOS) AOS.init();
-
   // Imposta data minima = oggi
   const dateInput = document.getElementById('preferred_date');
   if (dateInput){

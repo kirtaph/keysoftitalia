@@ -24,13 +24,6 @@ $breadcrumbs = [
 <html lang="it">
 <head>
   <?php include 'includes/head.php'; ?>
-  <title><?php echo htmlspecialchars($page_title); ?></title>
-  <?php echo generate_meta_tags([
-      'title' => $page_title,
-      'description' => $page_description,
-      'keywords'    => $page_keywords,
-      'url'         => url('preventivo.php')
-  ]); ?>
   <link rel="stylesheet" href="<?php echo asset_version('css/pages/preventivo.css'); ?>">
 </head>
 <body data-aos-easing="ease-in-out" data-aos-duration="800" data-aos-once="true">
@@ -442,12 +435,6 @@ $ld_faq = [
 <script type="application/ld+json"><?php echo json_encode($ld_faq, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES); ?></script>
 
 <?php include 'includes/footer.php'; ?>
-
-<!-- JS -->
-<script defer src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-<script defer src="<?php echo asset('js/main.js'); ?>"></script>
-<script defer src="https://unpkg.com/aos@next/dist/aos.js"></script>
-<script>document.addEventListener('DOMContentLoaded', function(){ if (window.AOS) AOS.init(); });</script>
 
 <!-- Wizard IIFE -->
 <script>

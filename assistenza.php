@@ -21,13 +21,6 @@ $breadcrumbs = [
 <html lang="it">
 <head>
     <?php include 'includes/head.php'; ?>
-    <title><?php echo htmlspecialchars($page_title); ?></title>
-    <?php echo generate_meta_tags([
-        'title' => $page_title,
-        'description' => $page_description,
-        'keywords' => $page_keywords,
-        'url' => url('assistenza.php')
-    ]); ?>
     <link rel="stylesheet" href="<?php echo asset_version('css/pages/assistenza.css'); ?>">
 </head>
 <body data-aos-easing="ease-in-out" data-aos-duration="800" data-aos-once="true">
@@ -448,11 +441,6 @@ $ld = [
 </script>
 
 <?php include 'includes/footer.php'; ?>
-
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-<script src="<?php echo asset('js/main.js'); ?>"></script>
-<script src="https://unpkg.com/aos@next/dist/aos.js"></script>
-<script>AOS.init();</script>
 
 <script>
 // ===== ASSISTENZA FORM - Script Unificato e Ottimizzato =====

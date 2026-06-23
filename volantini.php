@@ -72,30 +72,19 @@ try {
     $flyer_items = [];
 }
 
-$ld_flyers = [
-    '@context'        => 'https://schema.org',
-    '@type'           => 'ItemList',
-    'name'            => 'Volantini e offerte Key Soft Italia',
-    'itemListElement' => $flyer_items
-];
+if (!empty($flyer_items)) {
+    $page_schema = [
+        '@context'        => 'https://schema.org',
+        '@type'           => 'ItemList',
+        'name'            => 'Volantini e offerte Key Soft Italia',
+        'itemListElement' => $flyer_items
+    ];
+}
 ?>
 <!DOCTYPE html>
 <html lang="it">
 <head>
     <?php include 'includes/head.php'; ?>
-    <title><?php echo htmlspecialchars($page_title); ?></title>
-
-    <meta name="description" content="<?php echo htmlspecialchars($page_description); ?>">
-    <meta name="keywords" content="<?php echo htmlspecialchars($page_keywords); ?>">
-
-    <link rel="canonical" href="<?php echo htmlspecialchars($canonical_url); ?>">
-
-    <meta property="og:title" content="<?php echo htmlspecialchars($page_title); ?>">
-    <meta property="og:description" content="<?php echo htmlspecialchars($page_description); ?>">
-    <meta property="og:type" content="website">
-    <meta property="og:url" content="<?php echo htmlspecialchars($canonical_url); ?>">
-    <meta property="og:image" content="<?php echo asset('images/og-image.jpg'); ?>">
-
     <link rel="stylesheet" href="<?php echo asset_version('css/pages/volantini.css'); ?>">
 </head>
 <body data-aos-easing="ease-in-out" data-aos-duration="800" data-aos-once="true">
@@ -241,20 +230,10 @@ include __DIR__.'/includes/recond_swiper.php';
     </div>
 </div>
 
-<!-- JSON-LD -->
-<?php if (!empty($flyer_items)): ?>
-<script type="application/ld+json">
-<?php echo json_encode($ld_flyers, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT); ?>
-</script>
-<?php endif; ?>
+
 
 <?php include 'includes/footer.php'; ?>
 
-<!-- JS -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-<script src="<?php echo asset('js/main.js'); ?>"></script>
-<script src="https://unpkg.com/aos@next/dist/aos.js"></script>
-<script>AOS.init();</script>
 <script>
 (function(){
   const FLYERS_ENDPOINT = "<?php echo asset('ajax/get_flyers.php'); ?>";

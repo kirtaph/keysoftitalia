@@ -186,9 +186,10 @@ if (!defined('BASE_PATH')) {
         © <?php echo date('Y'); ?> Key Soft Italia. Tutti i diritti riservati.
       </div>
       <div class="footer-bottom-links">
-        <a href="<?php echo url('privacy.php'); ?>" class="footer-bottom-link">Privacy Policy</a>
-        <a href="<?php echo url('privacy.php'); ?>" class="footer-bottom-link">Termini di Servizio</a>
-        <a href="<?php echo url('privacy.php'); ?>" class="footer-bottom-link">Cookie Policy</a>
+        <a href="<?php echo url('privacy.php?tab=privacy'); ?>" class="footer-bottom-link">Privacy Policy</a>
+        <a href="<?php echo url('privacy.php?tab=terms'); ?>" class="footer-bottom-link">Termini di Servizio</a>
+        <a href="<?php echo url('privacy.php?tab=cookies'); ?>" class="footer-bottom-link">Cookie Policy</a>
+        <a href="#" id="open-consent-manager" class="footer-bottom-link">Preferenze cookie</a>
         <a href="<?php echo url('admin'); ?>" class="footer-bottom-link">Amministrazione</a>
       </div>
     </div>
@@ -247,37 +248,34 @@ if (!defined('BASE_PATH')) {
   }
 ?>
 
-<!-- Cookie Banner (Bootstrap 5) -->
+<!-- Cookie Banner (Bootstrap 5 - Premium Dark Glassmorphism) -->
 <div id="cookie-banner"
      class="position-fixed bottom-0 start-50 translate-middle-x z-3"
-     style="display:none; max-width: 920px; width: calc(100% - 1.5rem);">
-  <div class="card shadow-lg border-0" style="border-radius: 16px;">
-    <div class="card-body p-3 p-md-4">
+     style="display:none; max-width: 920px; width: calc(100% - 1.5rem); margin-bottom: 1.5rem;">
+  <div class="card shadow-lg border-0" style="border-radius: 16px; background: rgba(30, 35, 48, 0.95); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.08) !important;">
+    <div class="card-body p-3 p-md-4 text-white">
       <div class="d-flex flex-column flex-md-row align-items-md-center gap-3">
         <div class="flex-grow-1">
-          <strong class="d-block mb-1">Questo sito usa solo statistiche anonime (GA4 con Consent Mode)</strong>
-          <small class="text-muted">
+          <strong class="d-block mb-1 text-white" style="font-family: var(--ks-font-heading); font-weight: 600;">
+            <i class="ri-shield-user-line me-2 text-warning" style="vertical-align: middle; font-size: 1.1rem;"></i>Questo sito usa solo statistiche anonime (GA4 con Consent Mode)
+          </strong>
+          <small style="color: rgba(255, 255, 255, 0.7); font-size: 13px;">
             Per migliorare i contenuti usiamo Google Analytics in modalità rispettosa della privacy.
             Puoi accettare o rifiutare le statistiche anonime. Nessuna pubblicità personalizzata.
-            <a href="<?php echo PRIVACY_URL; ?>" class="link-primary">Leggi la Privacy Policy</a>.
+            <a href="<?php echo PRIVACY_URL; ?>" class="text-warning text-decoration-none fw-semibold">Leggi la Privacy Policy</a>.
           </small>
         </div>
         <div class="d-flex align-items-center gap-2 ms-md-3">
-          <button id="btn-cookie-decline" type="button" class="btn btn-outline-secondary btn-sm">
+          <button id="btn-cookie-decline" type="button" class="btn btn-outline-light btn-sm px-3" style="border-radius: 8px; font-size: 13px; font-weight: 500;">
             Rifiuta
           </button>
-          <button id="btn-cookie-accept" type="button" class="btn btn-primary btn-sm">
+          <button id="btn-cookie-accept" type="button" class="btn btn-sm px-3 text-white" style="background: var(--ks-orange); border: none; border-radius: 8px; font-size: 13px; font-weight: 600; transition: all 0.2s;">
             Accetta
           </button>
         </div>
       </div>
     </div>
   </div>
-</div>
-
-<!-- Link per riaprire le preferenze (mettilo nel tuo footer dove vuoi) -->
-<div class="text-center mt-2">
-  <a href="#" id="open-consent-manager" class="small text-muted">Preferenze cookie</a>
 </div>
 
 <script>
@@ -437,14 +435,4 @@ function showToast({title='', message='', type='info', delay=4500} = {}){
         window.scrollTo({ top: y, behavior: 'smooth' });
     }
 </script>
-    <!-- AOS JS -->
-    <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
-    <script>
-      AOS.init({
-        duration: 800, // Durata default
-        easing: 'ease-in-out', // Easing fluido
-        once: true, // Anima solo una volta
-        mirror: false // Non anima al reverse scroll
-      });
-    </script>
-<script src="<?php echo asset('js/main.js'); ?>"></script>
+<script src="<?php echo asset_version('js/main.js'); ?>"></script>

@@ -8,7 +8,7 @@ require_once __DIR__ . '/config/config.php';
 // Meta
 $page_title       = "Ops! Pagina non trovata (404) - Key Soft Italia";
 $page_description = "La pagina che cerchi non esiste più o è stata spostata. Torna alla Home o contattaci.";
-$noindex          = true;
+$meta_robots      = "noindex, follow";
 
 // Helper
 $h = static fn($s)=>htmlspecialchars((string)$s, ENT_QUOTES, 'UTF-8');
@@ -40,13 +40,6 @@ $documenti = $u('contatti.php#faq');           // “Documentation” -> FAQ/Doc
 <html lang="it">
 <head>
   <?php include 'includes/head.php'; ?>
-  <title><?= $h($page_title); ?></title>
-  <meta name="description" content="<?= $h($page_description); ?>">
-  <?php if(!empty($noindex)): ?><meta name="robots" content="noindex,follow"><?php endif; ?>
-  <meta property="og:title" content="<?= $h($page_title); ?>">
-  <meta property="og:description" content="<?= $h($page_description); ?>">
-  <meta property="og:type" content="website">
-  <meta property="og:url" content="https://<?= $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI']; ?>">
   <link rel="stylesheet" href="<?= asset_version('css/pages/404.css'); ?>">
 </head>
 <body>

@@ -4,6 +4,33 @@ require_once '../assets/php/functions.php';
 
 $page_title = "Social Media Marketing e Gestione - " . SITE_NAME;
 $page_description = "Gestione professionale social media, campagne pubblicitarie, creazione contenuti e strategie di marketing digitale per far crescere il tuo brand.";
+$page_keywords = "social media marketing ginosa, gestione social network, campagne facebook instagram, pubblicità online, web marketing";
+
+$page_schema = [
+    '@context' => 'https://schema.org',
+    '@type' => 'Service',
+    'name' => 'Social Media Marketing e Gestione',
+    'description' => $page_description,
+    'provider' => [
+        '@type' => 'ComputerStore',
+        'name' => COMPANY_NAME,
+        'image' => asset('images/logo.png'),
+        'telephone' => PHONE_PRIMARY,
+        'address' => [
+            '@type' => 'PostalAddress',
+            'streetAddress' => COMPANY_ADDRESS,
+            'addressLocality' => COMPANY_CITY,
+            'addressRegion' => COMPANY_PROVINCE,
+            'postalCode' => COMPANY_ZIP,
+            'addressCountry' => 'IT'
+        ]
+    ],
+    'areaServed' => [
+        '@type' => 'AdministrativeArea',
+        'name' => COMPANY_CITY
+    ]
+];
+
 $current_page = 'servizi';
 ?>
 <!DOCTYPE html>

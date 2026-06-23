@@ -3,13 +3,13 @@
  * Fully PWA compliant: handles precaching, offline fallback, and asset caching.
  */
 
-const CACHE_NAME = 'ks-pwa-v1';
+const CACHE_NAME = 'ks-pwa-v5';
 const OFFLINE_URL = 'offline.html';
 
 // Asset da pre-memorizzare all'installazione
 const PRECACHE_ASSETS = [
   OFFLINE_URL,
-  'favicon.ico',
+  'assets/favicon.ico',
   'assets/css/variables.css',
   'assets/css/main.css',
   'assets/css/components.css',
@@ -21,14 +21,21 @@ const PRECACHE_ASSETS = [
   'assets/img/pwa/icon-maskable-512.png'
 ];
 
-// Installa ed esegui il precaching
+// Installa ed esegui il precaching in modo robusto
 self.addEventListener('install', (event) => {
   event.waitUntil(
     caches.open(CACHE_NAME)
       .then((cache) => {
         console.log('[Service Worker] Pre-caching offline page and shell assets');
-        // Usa url alternativi se necessario, ma prova a caricare tutti gli asset
-        return cache.addAll(PRECACHE_ASSETS);
+        
+        // Caching resiliente: se un file fallisce (es. 404), non interrompe l'installazione
+        const cachePromises = PRECACHE_ASSETS.map((asset) => {
+          return cache.add(asset).catch((err) => {
+            console.warn(`[Service Worker] Failed to precache asset: ${asset}`, err);
+          });
+        });
+        
+        return Promise.all(cachePromises);
       })
       .then(() => self.skipWaiting())
   );
@@ -94,17 +101,33 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  // 3. Strategia per gli Asset Statici (CSS, JS, Immagini, Font)
-  // Utilizziamo Cache-First per caricamento istantaneo
+  // 3. Strategia Network-First per Fogli di Stile e Script (permette aggiornamenti immediati del codice modificato)
+  if (req.destination === 'style' || req.destination === 'script' || /\.(css|js)$/i.test(url.pathname)) {
+    event.respondWith(
+      fetch(req)
+        .then((response) => {
+          if (response && response.status === 200 && url.origin === self.location.origin) {
+            const responseClone = response.clone();
+            caches.open(CACHE_NAME).then((cache) => {
+              cache.put(req, responseClone);
+            });
+          }
+          return response;
+        })
+        .catch(() => {
+          return caches.match(req, { ignoreSearch: true });
+        })
+    );
+    return;
+  }
+
+  // 4. Strategia Cache-First per Immagini e Font (caricamento istantaneo)
   if (
-    req.destination === 'style' ||
-    req.destination === 'script' ||
     req.destination === 'image' ||
     req.destination === 'font' ||
-    /\.(css|js|png|jpe?g|webp|gif|svg|ico|woff2?|ttf)$/i.test(url.pathname)
+    /\.(png|jpe?g|webp|gif|svg|ico|woff2?|ttf)$/i.test(url.pathname)
   ) {
     event.respondWith(
-      // ignoreSearch: true permette di ignorare ?v=timestamp del cache busting
       caches.match(req, { ignoreSearch: true })
         .then((cachedResponse) => {
           if (cachedResponse) {
@@ -112,7 +135,6 @@ self.addEventListener('fetch', (event) => {
           }
 
           return fetch(req).then((response) => {
-            // Salva solo risposte valide del nostro stesso dominio
             if (response && response.status === 200 && url.origin === self.location.origin) {
               const responseClone = response.clone();
               caches.open(CACHE_NAME).then((cache) => {
@@ -121,9 +143,7 @@ self.addEventListener('fetch', (event) => {
             }
             return response;
           }).catch((err) => {
-            // Fallback specifico per le immagini se siamo offline
             if (req.destination === 'image') {
-              // Ritorna l'icona o il logo pre-cacheato se disponibile
               return caches.match('assets/img/logo.png');
             }
             throw err;

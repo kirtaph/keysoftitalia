@@ -26,38 +26,8 @@ $breadcrumbs = [
 <!DOCTYPE html>
 <html lang="it">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?php echo $page_title; ?></title>
-    
-    <?php echo generate_meta_tags([
-        'title' => $page_title,
-        'description' => $page_description,
-        'keywords' => $page_keywords,
-        'url' => url('servizi/sviluppo.php')
-    ]); ?>
-    
-    <!-- Preconnect -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    
-    <!-- Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    
-    <!-- Icons -->
-    <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
-    
-    <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    
-    <!-- Custom CSS -->
-    <link rel="stylesheet" href="<?php echo asset('css/variables.css'); ?>">
-    <link rel="stylesheet" href="<?php echo asset('css/main.css'); ?>">
-    <link rel="stylesheet" href="<?php echo asset('css/components.css'); ?>">
-    <link rel="stylesheet" href="<?php echo asset('css/pages/servizi-detail.css'); ?>">
-    
-    <!-- Favicon -->
-    <link rel="icon" type="image/x-icon" href="<?php echo asset('images/favicon.ico'); ?>">
+    <?php include '../includes/head.php'; ?>
+    <link rel="stylesheet" href="<?php echo asset_version('css/pages/servizi-detail.css'); ?>">
 </head>
 <body>
     

@@ -20,18 +20,6 @@ $breadcrumbs = [
 <html lang="it">
 <head>
   <?php include 'includes/head.php'; ?>
-  <title><?= $page_title; ?></title>
-  <meta name="description" content="<?= $page_description; ?>">
-  <meta name="keywords" content="<?= $page_keywords; ?>">
-  <link rel="canonical" href="https://<?= $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI']; ?>">
-
-  <!-- Open Graph -->
-  <meta property="og:title" content="<?= $page_title; ?>">
-  <meta property="og:description" content="<?= $page_description; ?>">
-  <meta property="og:type" content="website">
-  <meta property="og:url" content="https://<?= $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI']; ?>">
-  <meta property="og:image" content="<?= asset('images/og-image.jpg'); ?>">
-
   <!-- CSS di pagina -->
   <link rel="stylesheet" href="<?= asset_version('css/pages/chi-siamo.css'); ?>">
 </head>

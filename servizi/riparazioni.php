@@ -14,6 +14,32 @@ require_once BASE_PATH . 'config/config.php';
 // SEO Meta
 $page_title = "Servizi Riparazione Computer e Smartphone - Key Soft Italia";
 $page_description = "Riparazione professionale di computer, notebook, smartphone, tablet e console a Ginosa. Interventi rapidi e garantiti con componenti originali.";
+$page_keywords = "riparazione smartphone ginosa, riparazione computer ginosa, riparazione tablet, assistenza pc, riparazione schermo iphone, cambio batteria";
+
+$page_schema = [
+    '@context' => 'https://schema.org',
+    '@type' => 'Service',
+    'name' => 'Riparazione Computer e Smartphone',
+    'description' => $page_description,
+    'provider' => [
+        '@type' => 'ComputerStore',
+        'name' => COMPANY_NAME,
+        'image' => asset('images/logo.png'),
+        'telephone' => PHONE_PRIMARY,
+        'address' => [
+            '@type' => 'PostalAddress',
+            'streetAddress' => COMPANY_ADDRESS,
+            'addressLocality' => COMPANY_CITY,
+            'addressRegion' => COMPANY_PROVINCE,
+            'postalCode' => COMPANY_ZIP,
+            'addressCountry' => 'IT'
+        ]
+    ],
+    'areaServed' => [
+        '@type' => 'AdministrativeArea',
+        'name' => COMPANY_CITY
+    ]
+];
 
 // Breadcrumbs
 $breadcrumbs = [

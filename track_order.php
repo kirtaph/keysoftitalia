@@ -76,14 +76,13 @@ if ($order_id && $track_code) {
 // SEO Meta
 $page_title = "Traccia il tuo Ordine" . (defined('SEO_TITLE_SUFFIX') ? SEO_TITLE_SUFFIX : " | Key Soft Italia");
 $page_description = "Segui lo stato di avanzamento del tuo ordine su Key Soft Italia.";
+$page_keywords = "traccia ordine, stato ordine, tracking key soft, riparazione stato";
 ?>
 
 <!DOCTYPE html>
 <html lang="it">
 <head>
     <?php include 'includes/head.php'; ?>
-    <title><?php echo $page_title; ?></title>
-    <meta name="description" content="<?php echo $page_description; ?>">
     <link rel="stylesheet" href="<?php echo asset_version('css/pages/track-order.css'); ?>">
 </head>
 <body data-aos-easing="ease-in-out" data-aos-duration="800" data-aos-once="true">
@@ -335,17 +334,5 @@ $page_description = "Segui lo stato di avanzamento del tuo ordine su Key Soft It
 
     <?php include 'includes/footer.php'; ?>
     
-    <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            if (typeof AOS !== 'undefined') {
-                AOS.init({
-                    duration: 800,
-                    once: true,
-                    easing: 'ease-in-out'
-                });
-            }
-        });
-    </script>
 </body>
 </html>

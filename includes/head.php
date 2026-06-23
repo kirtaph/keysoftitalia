@@ -37,9 +37,42 @@ if (function_exists('generate_csrf_token')) {
 
 $page_title       = $page_title       ?? SITE_NAME;
 $page_description = $page_description ?? SITE_DESCRIPTION;
+$page_keywords    = $page_keywords    ?? SEO_KEYWORDS;
+$meta_robots      = $meta_robots      ?? 'index, follow';
 $og_image         = $og_image         ?? asset('images/og-image.jpg');
-// Canonical dell'URL corrente
-$canonical        = url(ltrim($_SERVER['REQUEST_URI'] ?? '', '/'));
+
+// Canonical pulito dell'URL corrente (previene duplicati per tracking query string)
+if (!isset($canonical)) {
+    $current_script = $_SERVER['SCRIPT_NAME'] ?? '';
+    $app_path = function_exists('_detect_base_path') ? _detect_base_path() : '/';
+    if ($app_path !== '/' && strpos($current_script, $app_path) === 0) {
+        $rel_path = substr($current_script, strlen($app_path));
+    } else {
+        $rel_path = ltrim($current_script, '/');
+    }
+    
+    // Consenti solo parametri vitali per la SEO
+    $allowed_params = [];
+    if ($rel_path === 'volantini.php') {
+        $allowed_params = ['flyer'];
+    } elseif ($rel_path === 'prodotti.php') {
+        $allowed_params = ['id', 'category', 'brand'];
+    }
+    
+    $query_string = '';
+    if (!empty($allowed_params)) {
+        $params = [];
+        foreach ($allowed_params as $param) {
+            if (!empty($_GET[$param])) {
+                $params[$param] = $_GET[$param];
+            }
+        }
+        if (!empty($params)) {
+            $query_string = '?' . http_build_query($params);
+        }
+    }
+    $canonical = url($rel_path . $query_string);
+}
 
 // Check for active logo campaigns
 $activeLogoCampaign = null;
@@ -106,9 +139,9 @@ try {
 
 <title><?php echo htmlspecialchars($page_title, ENT_QUOTES, 'UTF-8'); ?></title>
 <meta name="description" content="<?php echo htmlspecialchars($page_description, ENT_QUOTES, 'UTF-8'); ?>">
-<meta name="keywords" content="<?php echo htmlspecialchars(SEO_KEYWORDS, ENT_QUOTES, 'UTF-8'); ?>">
+<meta name="keywords" content="<?php echo htmlspecialchars($page_keywords, ENT_QUOTES, 'UTF-8'); ?>">
 <meta name="author" content="Key Soft Italia">
-<meta name="robots" content="index, follow">
+<meta name="robots" content="<?php echo htmlspecialchars($meta_robots, ENT_QUOTES, 'UTF-8'); ?>">
 <link rel="canonical" href="<?php echo htmlspecialchars($canonical, ENT_QUOTES, 'UTF-8'); ?>">
 
 <!-- Open Graph -->
@@ -133,7 +166,7 @@ try {
 <!-- PWA Meta & Manifest -->
 <link rel="manifest" href="<?php echo url('manifest.json'); ?>">
 <meta name="theme-color" content="#FF6B35">
-<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="KeySoft">
 <link rel="apple-touch-icon" href="<?php echo asset('img/pwa/icon-192.png'); ?>">
@@ -165,8 +198,22 @@ try {
 <link rel="stylesheet" href="<?php echo asset_version('css/campaigns.css'); ?>">
 <?php endif; ?>
 
-<!-- AOS CSS -->
-<link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
+<noscript>
+  <style>
+    body { opacity: 1 !important; }
+    .ks-reveal { opacity: 1 !important; transform: none !important; filter: none !important; }
+    .hero-secondary .hero-pattern { opacity: 0.35 !important; }
+    .hero-secondary .hero-icon,
+    .hero-secondary .hero-title,
+    .hero-secondary .hero-subtitle,
+    .hero-secondary .hero-cta,
+    .hero-secondary .hero-breadcrumb {
+      opacity: 1 !important;
+      transform: none !important;
+      filter: none !important;
+    }
+  </style>
+</noscript>
 
 <!-- Schema.org JSON-LD (dinamico) -->
 <?php
@@ -190,7 +237,7 @@ try {
 //     }
 // }
 
-$schema = [
+$schema = $page_schema ?? [
     '@context'  => 'https://schema.org',
     '@type'     => 'ComputerStore',
     'name'      => COMPANY_NAME,
@@ -206,8 +253,6 @@ $schema = [
         'postalCode'      => COMPANY_ZIP,
         'addressCountry'  => 'IT'
     ],
-    // Se vuoi inserire le coordinate, aggiungi qui 'geo' => ['@type'=>'GeoCoordinates','latitude'=>..., 'longitude'=>...]
-    //'openingHoursSpecification' => $openingSpecs,
     'sameAs' => array_values(array_filter([
         SOCIAL_FACEBOOK,
         SOCIAL_INSTAGRAM,

@@ -23,7 +23,10 @@ body {
   line-height: var(--ks-leading-normal);
   color: var(--ks-text-primary);
   background-color: var(--ks-bg-primary);
-  overflow-x: hidden;
+  /* clip (non hidden) per evitare lo scroll orizzontale SENZA trasformare
+     il body in contenitore di scroll: così il documento scrolla normalmente
+     e IntersectionObserver/scrollTo funzionano correttamente. */
+  overflow-x: clip;
 }
 
 /* ===== TYPOGRAPHY ===== */
@@ -436,5 +439,68 @@ textarea.form-control {
 @media print {
   .no-print {
     display: none !important;
+  }
+}
+
+/* ===== REVEAL ON SCROLL (motore unico .ks-reveal) =====
+   Lo stato nascosto (.ks-reveal) è applicato SOLO via JS: senza JS il
+   contenuto resta visibile (fail-safe). .ks-in rivela l'elemento. */
+.ks-reveal {
+  opacity: 0;
+  transform: translateY(26px);
+  filter: blur(4px);
+  transition:
+    opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1) var(--ks-d, 0ms),
+    transform 0.8s cubic-bezier(0.16, 1, 0.3, 1) var(--ks-d, 0ms),
+    filter 0.8s cubic-bezier(0.16, 1, 0.3, 1) var(--ks-d, 0ms);
+  will-change: opacity, transform, filter;
+}
+
+.ks-reveal[data-ks-dir="down"]  { transform: translateY(-26px); }
+.ks-reveal[data-ks-dir="left"]  { transform: translateX(30px); }
+.ks-reveal[data-ks-dir="right"] { transform: translateX(-30px); }
+.ks-reveal[data-ks-dir="zoom"]  { transform: scale(0.95); }
+
+.ks-reveal.ks-in {
+  opacity: 1;
+  transform: none;
+  filter: blur(0px);
+}
+
+/* ===== PAGE LOAD TRANSITIONS ===== */
+body {
+  opacity: 0;
+  transition: opacity 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+body.ks-dom-ready {
+  opacity: 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+
+  .ks-reveal {
+    opacity: 1 !important;
+    transform: none !important;
+    filter: none !important;
+    transition: none !important;
+    will-change: auto;
+  }
+
+  body {
+    opacity: 1 !important;
+    transition: none !important;
+  }
+
+  .hero-secondary .hero-pattern,
+  .hero-secondary .hero-icon,
+  .hero-secondary .hero-title,
+  .hero-secondary .hero-subtitle,
+  .hero-secondary .hero-cta,
+  .hero-secondary .hero-breadcrumb {
+    opacity: 1 !important;
+    transform: none !important;
+    filter: none !important;
+    transition: none !important;
   }
 }

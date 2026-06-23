@@ -4,6 +4,33 @@ require_once '../assets/php/functions.php';
 
 $page_title = "Sviluppo Siti Web e E-commerce - " . SITE_NAME;
 $page_description = "Creazione siti web professionali, e-commerce, gestionali web e app mobile. Design moderno e SEO ottimizzato.";
+$page_keywords = "creazione siti web ginosa, sviluppo e-commerce, web agency taranto, realizzazione siti internet, posizionamento seo";
+
+$page_schema = [
+    '@context' => 'https://schema.org',
+    '@type' => 'Service',
+    'name' => 'Sviluppo Siti Web e E-commerce',
+    'description' => $page_description,
+    'provider' => [
+        '@type' => 'ComputerStore',
+        'name' => COMPANY_NAME,
+        'image' => asset('images/logo.png'),
+        'telephone' => PHONE_PRIMARY,
+        'address' => [
+            '@type' => 'PostalAddress',
+            'streetAddress' => COMPANY_ADDRESS,
+            'addressLocality' => COMPANY_CITY,
+            'addressRegion' => COMPANY_PROVINCE,
+            'postalCode' => COMPANY_ZIP,
+            'addressCountry' => 'IT'
+        ]
+    ],
+    'areaServed' => [
+        '@type' => 'AdministrativeArea',
+        'name' => COMPANY_CITY
+    ]
+];
+
 $current_page = 'servizi';
 ?>
 <!DOCTYPE html>

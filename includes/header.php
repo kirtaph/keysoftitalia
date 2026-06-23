@@ -8,6 +8,40 @@ if (!defined('BASE_PATH')) {
 }
 $current_page = get_current_page();
 ?>
+<script>
+  (function() {
+    var loader = document.createElement('div');
+    loader.id = 'ks-top-loader';
+    loader.style.cssText = 'position:fixed;top:0;left:0;width:0%;height:3px;background:linear-gradient(90deg,#FF6B35,#ff8c5a);z-index:99999;transition:width 0.3s ease,opacity 0.5s ease;box-shadow:0 0 8px rgba(255,107,53,0.6);pointer-events:none;';
+    document.body.appendChild(loader);
+    
+    loader.style.width = '30%';
+    var progress = 30;
+    var interval = setInterval(function() {
+      if (progress < 90) {
+        progress += Math.random() * 8;
+        loader.style.width = progress + '%';
+      }
+    }, 120);
+    
+    window.addEventListener('load', function() {
+      clearInterval(interval);
+      loader.style.width = '100%';
+      setTimeout(function() {
+        loader.style.opacity = '0';
+        setTimeout(function() { loader.remove(); }, 500);
+      }, 150);
+    });
+    
+    if (document.readyState !== 'loading') {
+      document.body.classList.add('ks-dom-ready');
+    } else {
+      document.addEventListener('DOMContentLoaded', function() {
+        document.body.classList.add('ks-dom-ready');
+      });
+    }
+  })();
+</script>
 
 <?php include_partial('topbar.php'); ?>
 

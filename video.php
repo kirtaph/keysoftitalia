@@ -37,6 +37,7 @@ if (!empty($videos)) {
 // SEO Meta
 $page_title = "Video Prodotti e Recensioni - Key Soft Italia";
 $page_description = "Guarda le nostre video presentazioni dei dispositivi tech e prodotti ricondizionati in negozio. Recensioni e novità da Key Soft Italia.";
+$page_keywords = "video recensioni smartphone, recensione ricondizionati, video tech ginosa, unboxing cellulari";
 
 // Breadcrumbs
 $breadcrumbs = [
