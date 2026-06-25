@@ -1,4 +1,8 @@
 <?php
+if (php_sapi_name() !== 'cli') {
+    die('Access denied. CLI only.');
+}
+
 $file = 'test_products.csv';
 $handle = fopen($file, "r");
 

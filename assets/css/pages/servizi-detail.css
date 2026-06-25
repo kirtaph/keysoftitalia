@@ -5,7 +5,6 @@
 
 /* Hero Service */
 .hero-service {
-    background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-secondary) 100%);
     padding: 120px 0 80px;
 }
 

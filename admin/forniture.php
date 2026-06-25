@@ -259,22 +259,6 @@ include_once 'includes/header.php';
     </div>
 </div>
 
-<style>
-.preview-thumbnail {
-    max-height: 80px;
-    max-width: 150px;
-    border-radius: 6px;
-    border: 1px solid #dee2e6;
-    object-fit: contain;
-    background: #f8f9fa;
-    padding: 5px;
-}
-.badge-status-in-attesa { background-color: #ffe8d6; color: #a05a00; }
-.badge-status-contattato { background-color: #dbf0fe; color: #005a9e; }
-.badge-status-completato { background-color: #d4f4dd; color: #16a34a; }
-.badge-status-annullato { background-color: #fee2e2; color: #dc2626; }
-</style>
-
 <?php include_once 'includes/footer.php'; ?>
 
 <script>

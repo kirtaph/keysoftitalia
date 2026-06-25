@@ -768,6 +768,97 @@ ready(() => {
         console.warn('Reveal animations failed to initialize:', e);
     }
 
+    // 3D Tilt on cards
+    try {
+        var tiltCards = document.querySelectorAll('.service-item, .advantage-card, .testimonial-card');
+        tiltCards.forEach(function(card) {
+            card.addEventListener('mouseenter', function() {
+                this.style.transition = 'transform 0.1s ease-out';
+            });
+            card.addEventListener('mousemove', function(e) {
+                var rect = this.getBoundingClientRect();
+                var x = e.clientX - rect.left;
+                var y = e.clientY - rect.top;
+                var centerX = rect.width / 2;
+                var centerY = rect.height / 2;
+                var rotateX = ((y - centerY) / centerY) * -15;
+                var rotateY = ((x - centerX) / centerX) * 15;
+                this.style.transform = 'perspective(800px) rotateX(' + rotateX + 'deg) rotateY(' + rotateY + 'deg) scale3d(1.03,1.03,1.03)';
+            });
+            card.addEventListener('mouseleave', function() {
+                this.style.transition = 'transform 0.5s ease-out';
+                this.style.transform = '';
+                var self = this;
+                setTimeout(function() {
+                    self.style.transition = '';
+                }, 500);
+            });
+        });
+    } catch (e) {
+        console.warn('3D Tilt fallito:', e);
+    }
+
+    // Secondary Hero Decorations (theme detection, blob injection, parallax)
+    try {
+        var path = window.location.pathname;
+        var themeMap = {
+            '404.php': '_404',
+            'assistenza.php': 'teal',
+            'chi-siamo.php': 'indigo-pink',
+            'contatti.php': 'blue-cyan',
+            'prenota-riparazione.php': 'blue-orange',
+            'preventivo.php': 'amber-orange',
+            'privacy.php': 'gray',
+            'prodotti.php': 'red-amber',
+            'servizi.php': 'purple-cyan',
+            'track_order.php': 'cyan-indigo',
+            'valuta-usato.php': 'green-teal',
+            'video.php': 'red-purple',
+            'volantini.php': 'pink-orange',
+            'consulenza-it.php': 'indigo-teal',
+            'forniture.php': 'amber-red',
+            'liberty-commerce.php': 'blue-purple',
+            'riparazioni.php': 'blue-orange',
+            'siti-web.php': 'purple-cyan',
+            'social-media.php': 'pink-orange',
+            'sviluppo-web.php': 'purple-cyan',
+            'sviluppo.php': 'purple-indigo',
+            'telefonia.php': 'green-blue',
+            'vendita.php': 'red-orange'
+        };
+        var theme = 'default';
+        for (var key in themeMap) {
+            if (path.indexOf(key) !== -1) {
+                theme = themeMap[key];
+                break;
+            }
+        }
+        var hero = document.querySelector('.hero-secondary');
+        if (hero) {
+            hero.dataset.heroTheme = theme;
+            var overlay = document.createElement('div');
+            overlay.className = 'secondary-overlay';
+            hero.insertBefore(overlay, hero.firstChild);
+            var blobs = document.createElement('div');
+            blobs.className = 'secondary-blobs';
+            blobs.innerHTML = '<div class="sblob sblob--1"></div><div class="sblob sblob--2"></div><div class="sblob sblob--3"></div>';
+            hero.insertBefore(blobs, overlay.nextElementSibling);
+        }
+        /* parallax on hero-pattern */
+        var pat = document.querySelector('.hero-secondary .hero-pattern');
+        if (pat) {
+            window.addEventListener('scroll', function() {
+                var rect = hero.getBoundingClientRect();
+                var scrollY = window.scrollY || window.pageYOffset;
+                if (rect.bottom > 0 && rect.top < window.innerHeight) {
+                    pat.style.backgroundPositionY = (scrollY * 0.15) + 'px, ' + (scrollY * 0.1) + 'px';
+                }
+            }, { passive: true });
+        }
+    } catch (e) {
+        console.warn('Hero decorations fallite:', e);
+    }
+
     // Initialize Bootstrap Tooltips
     try {
         if (typeof bootstrap !== 'undefined' && bootstrap.Tooltip) {

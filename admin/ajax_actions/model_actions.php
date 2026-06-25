@@ -1,28 +1,21 @@
 <?php
-require_once '../../config/config.php';
-
-header('Content-Type: application/json');
-
-if (!isset($_SESSION['user_id'])) {
-    echo json_encode(['status' => 'error', 'message' => 'Non autorizzato']);
-    exit;
-}
+require_once __DIR__ . '/init.php';
 
 $action = $_REQUEST['action'] ?? '';
 
 try {
     if ($action === 'get') {
         $id = $_GET['id'] ?? null;
-        if (!$id) throw new Exception('ID mancante');
+        if (!$id) jsonError('ID mancante');
 
         $stmt = $pdo->prepare("SELECT * FROM models WHERE id = ?");
         $stmt->execute([$id]);
         $data = $stmt->fetch(PDO::FETCH_ASSOC);
 
         if ($data) {
-            echo json_encode(['status' => 'success', 'data' => $data]);
+            jsonSuccess(['data' => $data]);
         } else {
-            echo json_encode(['status' => 'error', 'message' => 'Modello non trovato']);
+            jsonError('Modello non trovato');
         }
     } elseif ($action === 'list') {
         $brand_id = $_GET['brand_id'] ?? null;
@@ -38,40 +31,40 @@ try {
         $stmt->execute($params);
         $models = $stmt->fetchAll(PDO::FETCH_ASSOC);
         
-        echo json_encode(['status' => 'success', 'models' => $models]);
+        jsonSuccess(['models' => $models]);
 
     } elseif ($action === 'add') {
         $brand_id = $_POST['brand_id'] ?? null;
         $name = $_POST['name'] ?? '';
         
-        if (!$brand_id || !$name) throw new Exception('Dati mancanti');
+        if (!$brand_id || !$name) jsonError('Dati mancanti');
 
         $stmt = $pdo->prepare("INSERT INTO models (brand_id, name, is_active) VALUES (?, ?, 1)");
         $stmt->execute([$brand_id, $name]);
 
-        echo json_encode(['status' => 'success', 'message' => 'Modello aggiunto']);
+        jsonSuccess(['message' => 'Modello aggiunto']);
     } elseif ($action === 'edit') {
         $id = $_POST['id'] ?? null;
         $brand_id = $_POST['brand_id'] ?? null;
         $name = $_POST['name'] ?? '';
         
-        if (!$id || !$brand_id || !$name) throw new Exception('Dati mancanti');
+        if (!$id || !$brand_id || !$name) jsonError('Dati mancanti');
 
         $stmt = $pdo->prepare("UPDATE models SET brand_id = ?, name = ? WHERE id = ?");
         $stmt->execute([$brand_id, $name, $id]);
 
-        echo json_encode(['status' => 'success', 'message' => 'Modello aggiornato']);
+        jsonSuccess(['message' => 'Modello aggiornato']);
     } elseif ($action === 'delete') {
         $id = $_POST['id'] ?? null;
-        if (!$id) throw new Exception('ID mancante');
+        if (!$id) jsonError('ID mancante');
 
         $stmt = $pdo->prepare("DELETE FROM models WHERE id = ?");
         $stmt->execute([$id]);
 
-        echo json_encode(['status' => 'success', 'message' => 'Modello eliminato']);
+        jsonSuccess(['message' => 'Modello eliminato']);
     } else {
-        throw new Exception('Azione non valida');
+        jsonError('Azione non valida');
     }
-} catch (Exception $e) {
-    echo json_encode(['status' => 'error', 'message' => $e->getMessage()]);
+} catch (Throwable $e) {
+    jsonError('Errore del server.', $e);
 }

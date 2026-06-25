@@ -11,5 +11,7 @@ Disallow: /private/
 Disallow: /search
 Disallow: /*?*utm_*
 
+Crawl-delay: 10
+
 # Sitemaps (update the domain if in subfolder replace with full absolute URL)
 Sitemap: https://www.keysoftitalia.it/sitemap.xml

@@ -38,26 +38,6 @@ $current_page = 'servizi';
 <head>
     <?php include '../includes/head.php'; ?>
     <style>
-        .service-hero {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            padding: 100px 0;
-            color: white;
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .service-hero::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320"><path fill="%23ffffff10" d="M0,32L48,53.3C96,75,192,117,288,128C384,139,480,117,576,90.7C672,64,768,32,864,48C960,64,1056,128,1152,144C1248,160,1344,128,1392,112L1440,96L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path></svg>') no-repeat bottom;
-            background-size: cover;
-            opacity: 0.5;
-        }
-        
         .portfolio-item {
             position: relative;
             overflow: hidden;
@@ -242,30 +222,27 @@ $current_page = 'servizi';
     <?php include '../includes/header.php'; ?>
 
     <!-- Hero Section -->
-    <section class="service-hero">
-        <div class="container position-relative">
-            <div class="row align-items-center">
-                <div class="col-lg-8">
+    <section class="hero hero-secondary text-center">
+        <div class="container">
+            <div class="hero-content text-white">
+                <div class="hero-icon">
+                    <i class="ri-code-s-slash-line"></i>
+                </div>
+                <h1 class="hero-title">Sviluppo <span class="text-gradient">Siti Web</span></h1>
+                <p class="hero-subtitle">Creiamo siti web professionali, e-commerce e applicazioni web su misura per far crescere il tuo business online</p>
+                <div class="hero-cta d-flex gap-4 flex-wrap justify-content-center">
+                    <span><i class="ri-smartphone-line"></i> Design Responsive</span>
+                    <span><i class="ri-search-line"></i> SEO Ottimizzato</span>
+                    <span><i class="ri-speed-line"></i> Performance Elevate</span>
+                </div>
+                <div class="hero-breadcrumb mt-4">
                     <nav aria-label="breadcrumb">
-                        <ol class="breadcrumb">
-                            <li class="breadcrumb-item"><a href="<?php echo url(''); ?>" style="color: white;">Home</a></li>
-                            <li class="breadcrumb-item"><a href="<?php echo url('servizi.php'); ?>" style="color: white;">Servizi</a></li>
-                            <li class="breadcrumb-item active" aria-current="page" style="color: white;">Sviluppo Web</li>
+                        <ol class="breadcrumb justify-content-center">
+                            <li class="breadcrumb-item"><a href="<?php echo url(''); ?>">Home</a></li>
+                            <li class="breadcrumb-item"><a href="<?php echo url('servizi.php'); ?>">Servizi</a></li>
+                            <li class="breadcrumb-item active" aria-current="page">Sviluppo Web</li>
                         </ol>
                     </nav>
-                    <h1 class="display-4 fw-bold mb-4">Sviluppo Siti Web</h1>
-                    <p class="lead mb-4">Creiamo siti web professionali, e-commerce e applicazioni web su misura per far crescere il tuo business online</p>
-                    <div class="d-flex gap-4 flex-wrap">
-                        <div>
-                            <i class="ri-smartphone-line"></i> Design Responsive
-                        </div>
-                        <div>
-                            <i class="ri-search-line"></i> SEO Ottimizzato
-                        </div>
-                        <div>
-                            <i class="ri-speed-line"></i> Performance Elevate
-                        </div>
-                    </div>
                 </div>
             </div>
         </div>
@@ -419,7 +396,7 @@ $current_page = 'servizi';
             <div class="row g-4">
                 <div class="col-md-6 col-lg-4">
                     <div class="portfolio-item">
-                        <img src="https://via.placeholder.com/400x300/667eea/ffffff?text=E-commerce" alt="E-commerce" class="portfolio-image">
+                        <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='300'%3E%3Crect fill='%23667eea' width='400' height='300'/%3E%3Ctext x='200' y='150' text-anchor='middle' fill='%23fff' font-size='28' font-weight='bold'%3EE-commerce%3C/text%3E%3C/svg%3E" alt="E-commerce" class="portfolio-image">
                         <div class="portfolio-overlay">
                             <h4>Fashion Store</h4>
                             <p>E-commerce moda con 5000+ prodotti</p>
@@ -430,7 +407,7 @@ $current_page = 'servizi';
                 
                 <div class="col-md-6 col-lg-4">
                     <div class="portfolio-item">
-                        <img src="https://via.placeholder.com/400x300/764ba2/ffffff?text=Corporate" alt="Corporate" class="portfolio-image">
+                        <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='300'%3E%3Crect fill='%23764ba2' width='400' height='300'/%3E%3Ctext x='200' y='150' text-anchor='middle' fill='%23fff' font-size='28' font-weight='bold'%3ECorporate%3C/text%3E%3C/svg%3E" alt="Corporate" class="portfolio-image">
                         <div class="portfolio-overlay">
                             <h4>Studio Legale</h4>
                             <p>Sito istituzionale con area clienti</p>
@@ -441,7 +418,7 @@ $current_page = 'servizi';
                 
                 <div class="col-md-6 col-lg-4">
                     <div class="portfolio-item">
-                        <img src="https://via.placeholder.com/400x300/00c6ff/ffffff?text=Restaurant" alt="Restaurant" class="portfolio-image">
+                        <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='300'%3E%3Crect fill='%2300c6ff' width='400' height='300'/%3E%3Ctext x='200' y='150' text-anchor='middle' fill='%23fff' font-size='28' font-weight='bold'%3ERestaurant%3C/text%3E%3C/svg%3E" alt="Restaurant" class="portfolio-image">
                         <div class="portfolio-overlay">
                             <h4>Ristorante Gourmet</h4>
                             <p>Prenotazioni online e menu digitale</p>
@@ -452,7 +429,7 @@ $current_page = 'servizi';
                 
                 <div class="col-md-6 col-lg-4">
                     <div class="portfolio-item">
-                        <img src="https://via.placeholder.com/400x300/0072ff/ffffff?text=Real+Estate" alt="Real Estate" class="portfolio-image">
+                        <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='300'%3E%3Crect fill='%230072ff' width='400' height='300'/%3E%3Ctext x='200' y='150' text-anchor='middle' fill='%23fff' font-size='28' font-weight='bold'%3EReal Estate%3C/text%3E%3C/svg%3E" alt="Real Estate" class="portfolio-image">
                         <div class="portfolio-overlay">
                             <h4>Agenzia Immobiliare</h4>
                             <p>Portale annunci con ricerca avanzata</p>
@@ -463,7 +440,7 @@ $current_page = 'servizi';
                 
                 <div class="col-md-6 col-lg-4">
                     <div class="portfolio-item">
-                        <img src="https://via.placeholder.com/400x300/ff6b6b/ffffff?text=Fitness" alt="Fitness" class="portfolio-image">
+                        <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='300'%3E%3Crect fill='%23ff6b6b' width='400' height='300'/%3E%3Ctext x='200' y='150' text-anchor='middle' fill='%23fff' font-size='28' font-weight='bold'%3EFitness%3C/text%3E%3C/svg%3E" alt="Fitness" class="portfolio-image">
                         <div class="portfolio-overlay">
                             <h4>Palestra Fitness</h4>
                             <p>Booking corsi e abbonamenti online</p>
@@ -474,7 +451,7 @@ $current_page = 'servizi';
                 
                 <div class="col-md-6 col-lg-4">
                     <div class="portfolio-item">
-                        <img src="https://via.placeholder.com/400x300/4caf50/ffffff?text=Medical" alt="Medical" class="portfolio-image">
+                        <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='300'%3E%3Crect fill='%234caf50' width='400' height='300'/%3E%3Ctext x='200' y='150' text-anchor='middle' fill='%23fff' font-size='28' font-weight='bold'%3EMedical%3C/text%3E%3C/svg%3E" alt="Medical" class="portfolio-image">
                         <div class="portfolio-overlay">
                             <h4>Clinica Medica</h4>
                             <p>Prenotazioni visite e telemedicina</p>

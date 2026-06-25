@@ -504,3 +504,26 @@ body.ks-dom-ready {
     transition: none !important;
   }
 }
+
+/* === Skip-to-content link (accessibility) === */
+.skip-link {
+  position: absolute;
+  top: -100%;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 10000;
+  padding: 12px 24px;
+  background: var(--ks-orange, #FF6B35);
+  color: #fff;
+  font-weight: 600;
+  border-radius: 0 0 8px 8px;
+  text-decoration: none;
+  transition: top 0.2s ease;
+}
+.skip-link:focus {
+  top: 0;
+  outline: none;
+}
+.skip-link:not(:focus) {
+  position: absolute;
+}

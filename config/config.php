@@ -98,7 +98,7 @@ if (!defined('GA_MEASUREMENT_ID')) {
 /* ==========================================================================
    DEBUG / AMBIENTE
    ========================================================================== */
-if (!defined('DEBUG_MODE')) define('DEBUG_MODE', true);
+if (!defined('DEBUG_MODE')) define('DEBUG_MODE', false);
 
 if (!defined('APP_ENV'))        define('APP_ENV', 'prod');
 if (!defined('MAIL_TRANSPORT')) define('MAIL_TRANSPORT', 'smtp'); // usa SMTP in produzione
@@ -106,12 +106,12 @@ if (!defined('MAIL_TRANSPORT')) define('MAIL_TRANSPORT', 'smtp'); // usa SMTP in
 /* ==========================================================================
    SMTP
    ========================================================================== */
-if (!defined('SMTP_HOST'))   define('SMTP_HOST',   'smtp.keysoftitalia.it'); // es: smtps.aruba.it
-if (!defined('SMTP_PORT'))   define('SMTP_PORT',   587);                     // 587 (TLS) o 465 (SSL)
-if (!defined('SMTP_SECURE')) define('SMTP_SECURE', 'tls');                   // 'tls' o 'ssl'
-if (!defined('SMTP_AUTH'))   define('SMTP_AUTH',   true);
-if (!defined('SMTP_USER'))   define('SMTP_USER',   'no-reply@keysoftitalia.it');
-if (!defined('SMTP_PASS'))   define('SMTP_PASS',   '8CGYYJQr2024!');
+if (!defined('SMTP_HOST'))   define('SMTP_HOST',   getenv('SMTP_HOST') ?: 'smtp.keysoftitalia.it');
+if (!defined('SMTP_PORT'))   define('SMTP_PORT',   (int)(getenv('SMTP_PORT') ?: 587));
+if (!defined('SMTP_SECURE')) define('SMTP_SECURE', getenv('SMTP_SECURE') ?: 'tls');
+if (!defined('SMTP_AUTH'))   define('SMTP_AUTH',   filter_var(getenv('SMTP_AUTH') ?: 'true', FILTER_VALIDATE_BOOLEAN));
+if (!defined('SMTP_USER'))   define('SMTP_USER',   getenv('SMTP_USER') ?: 'no-reply@keysoftitalia.it');
+if (!defined('SMTP_PASS'))   define('SMTP_PASS',   getenv('SMTP_PASS') ?: '8CGYYJQr2024!');
 
 if (!defined('EMAIL_ASSISTENZA')) define('EMAIL_ASSISTENZA', 'info@keysoftitalia.it');
 if (!defined('EMAIL_FROM'))       define('EMAIL_FROM',       'no-reply@keysoftitalia.it');
@@ -181,6 +181,16 @@ if (DEBUG_MODE) {
    SESSION (idempotente)
    ========================================================================== */
 if (session_status() === PHP_SESSION_NONE) {
+    $isHttps = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off')
+        || ($_SERVER['SERVER_PORT'] ?? 0) == 443;
+    session_set_cookie_params([
+        'lifetime' => 0,
+        'path'     => '/',
+        'domain'   => '',
+        'secure'   => $isHttps,
+        'httponly' => true,
+        'samesite' => 'Lax',
+    ]);
     session_start();
 }
 
@@ -191,10 +201,12 @@ if (session_status() === PHP_SESSION_NONE) {
 // if (!defined('DB_PORT'))     define('DB_PORT', 3306);
 // if (!defined('DB_NAME'))     define('DB_NAME', 'ks_site_db');
 // if (!defined('DB_USER'))     define('DB_USER', 'keysoftfi_db');
-// if (!defined('DB_PASS'))     define('DB_PASS', 'az2zP389*'); // <-- metti la tua pwd reale
 // if (!defined('DB_CHARSET'))  define('DB_CHARSET', 'utf8mb4');
 
-// --- DB settings (Docker env -> fallback production defaults) ---
+// --- DB settings (Docker env -> fallback defaults) ---
+// NOTA: le credenziali sensibili (DB_PASS, SMTP_USER, SMTP_PASS) vanno
+// impostate tramite variabili d'ambiente o file .env (gitignorato).
+// In Docker sono caricate automaticamente da docker-compose.yml.
 if (!defined('DB_HOST')) define('DB_HOST', getenv('DB_HOST') ?: 'localhost');
 if (!defined('DB_PORT')) define('DB_PORT', (int)(getenv('DB_PORT') ?: 3306));
 if (!defined('DB_NAME')) define('DB_NAME', getenv('DB_NAME') ?: 'ks_site_db');

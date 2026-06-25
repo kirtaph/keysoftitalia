@@ -1,49 +1,40 @@
 <?php
-require_once '../../config/config.php';
+require_once __DIR__ . '/init.php';
 
-header('Content-Type: application/json');
+$action = $_REQUEST['action'] ?? '';
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST' || isset($_GET['action'])) {
-    $action = $_REQUEST['action'] ?? '';
+try {
     $id = $_REQUEST['id'] ?? '';
+    if (!$id) jsonError('ID mancante');
 
-    if (!$id) {
-        echo json_encode(['status' => 'error', 'message' => 'ID mancante']);
-        exit;
-    }
-
-    try {
-        if ($action === 'get') {
-            $stmt = $pdo->prepare("SELECT * FROM repair_bookings WHERE id = ?");
-            $stmt->execute([$id]);
-            $booking = $stmt->fetch(PDO::FETCH_ASSOC);
-
-            if ($booking) {
-                echo json_encode(['status' => 'success', 'booking' => $booking]);
-            } else {
-                echo json_encode(['status' => 'error', 'message' => 'Prenotazione non trovata']);
-            }
-        } elseif ($action === 'edit') {
-            $status = $_POST['status'] ?? '';
-            $notes = $_POST['notes'] ?? '';
-
-            $stmt = $pdo->prepare("UPDATE repair_bookings SET status = ?, notes = ? WHERE id = ?");
-            if ($stmt->execute([$status, $notes, $id])) {
-                echo json_encode(['status' => 'success', 'message' => 'Prenotazione aggiornata']);
-            } else {
-                echo json_encode(['status' => 'error', 'message' => 'Errore durante l\'aggiornamento']);
-            }
-        } elseif ($action === 'delete') {
-            $stmt = $pdo->prepare("DELETE FROM repair_bookings WHERE id = ?");
-            if ($stmt->execute([$id])) {
-                echo json_encode(['status' => 'success', 'message' => 'Prenotazione eliminata']);
-            } else {
-                echo json_encode(['status' => 'error', 'message' => 'Errore durante l\'eliminazione']);
-            }
+    if ($action === 'get') {
+        $stmt = $pdo->prepare("SELECT * FROM repair_bookings WHERE id = ?");
+        $stmt->execute([$id]);
+        $booking = $stmt->fetch(PDO::FETCH_ASSOC);
+        if ($booking) {
+            jsonSuccess(['booking' => $booking]);
         } else {
-            echo json_encode(['status' => 'error', 'message' => 'Azione non valida']);
+            jsonError('Prenotazione non trovata');
         }
-    } catch (PDOException $e) {
-        echo json_encode(['status' => 'error', 'message' => 'Errore Database: ' . $e->getMessage()]);
+    } elseif ($action === 'edit') {
+        $status = $_POST['status'] ?? '';
+        $notes = $_POST['notes'] ?? '';
+        $stmt = $pdo->prepare("UPDATE repair_bookings SET status = ?, notes = ? WHERE id = ?");
+        if ($stmt->execute([$status, $notes, $id])) {
+            jsonSuccess(['message' => 'Prenotazione aggiornata']);
+        } else {
+            jsonError('Errore durante l\'aggiornamento');
+        }
+    } elseif ($action === 'delete') {
+        $stmt = $pdo->prepare("DELETE FROM repair_bookings WHERE id = ?");
+        if ($stmt->execute([$id])) {
+            jsonSuccess(['message' => 'Prenotazione eliminata']);
+        } else {
+            jsonError('Errore durante l\'eliminazione');
+        }
+    } else {
+        jsonError('Azione non valida');
     }
+} catch (Throwable $e) {
+    jsonError('Errore del server.', $e);
 }

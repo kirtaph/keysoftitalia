@@ -1,12 +1,28 @@
 <?php
 declare(strict_types=1);
 ini_set('display_errors', '0');
-ini_set('log_errors', '1');
-ini_set('error_log', '/tmp/php_errors.log');
+ini_set('log_errors', '0');
 session_start();
 require_once '../config/config.php';
 
 header('Content-Type: application/json');
+
+// --- Rate limiting ---
+$maxAttempts = 5;
+$blockMinutes = 15;
+$attemptsKey = 'login_attempts';
+$blockKey = 'login_blocked_until';
+
+if (isset($_SESSION[$blockKey]) && time() < $_SESSION[$blockKey]) {
+    $remaining = ceil(($_SESSION[$blockKey] - time()) / 60);
+    echo json_encode(['success' => false, 'message' => "Troppi tentativi. Riprova tra {$remaining} minuto/i."]);
+    exit;
+}
+
+// Reset block if expired
+if (isset($_SESSION[$blockKey]) && time() >= $_SESSION[$blockKey]) {
+    unset($_SESSION[$attemptsKey], $_SESSION[$blockKey]);
+}
 
 // --- PDO ready ---
 if (!isset($pdo) || !$pdo instanceof PDO) {
@@ -30,26 +46,21 @@ if ($username === '' || $password === '') {
 }
 
 try {
-    // Attenzione: cambia i nomi colonna se nel tuo DB sono diversi
-    error_log("Attempting to log in user: " . $username);
     $stmt = $pdo->prepare('SELECT id, username, password FROM users WHERE username = :u LIMIT 1');
     $stmt->execute([':u' => $username]);
     $user = $stmt->fetch();
 
     if (!$user) {
-        error_log("User not found: " . $username);
         echo json_encode(['success' => false, 'message' => 'Username o password non validi.']);
         exit;
     }
 
     $stored = (string)$user['password'];
     $verified = false;
-    error_log("Stored hash: " . $stored);
 
     // 1) Hash moderni (bcrypt/argon2)
     if (preg_match('/^\$2y\$/', $stored) || preg_match('/^\$argon2(id|i)\$/', $stored)) {
         $verified = password_verify($password, $stored);
-        error_log("Password verification result: " . ($verified ? 'true' : 'false'));
 
         // Rehash se serve (es. cost diverso o migrazione algoritmo)
         if ($verified && password_needs_rehash($stored, PASSWORD_BCRYPT, ['cost' => 12])) {
@@ -78,12 +89,19 @@ try {
     }
 
     if ($verified) {
+        // Reset rate limiter on success
+        unset($_SESSION[$attemptsKey], $_SESSION[$blockKey]);
         session_regenerate_id(true);
         $_SESSION['user_id']  = (int)$user['id'];
         $_SESSION['username'] = (string)$user['username'];
         echo json_encode(['success' => true]);
         exit;
     } else {
+        // Track failed attempt
+        $_SESSION[$attemptsKey] = ($_SESSION[$attemptsKey] ?? 0) + 1;
+        if ($_SESSION[$attemptsKey] >= $maxAttempts) {
+            $_SESSION[$blockKey] = time() + ($blockMinutes * 60);
+        }
         echo json_encode(['success' => false, 'message' => 'Username o password non validi.']);
         exit;
     }

@@ -8,6 +8,7 @@ vendor/
 .env.*
 *.zip
 *.bak
+cache/
 
 # VS Code e OS
 .vscode/

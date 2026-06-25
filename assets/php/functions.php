@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 /**
  * Key Soft Italia - Helper Functions (hardened)
  * Funzioni globali per il sito
@@ -170,7 +172,7 @@ function phone_e164(string $phone, string $cc = '39'): string {
     return '+' . $cc . $digits;
 }
 
-function sanitize_input($data) {
+function sanitize_input(mixed $data): array|string {
     if (is_array($data)) return array_map('sanitize_input', $data);
     $data = trim((string)$data);
     $data = stripslashes($data);
@@ -349,7 +351,7 @@ function generate_breadcrumbs(array $items = []): string {
     return $out;
 }
 
-function debug($data, bool $die = true): void {
+function debug(mixed $data, bool $die = true): void {
     echo '<pre style="background:#222;color:#0f0;padding:10px;margin:10px;border-radius:5px;">';
     print_r($data);
     echo '</pre>';
@@ -385,14 +387,14 @@ function generate_csrf_field(): string { return csrf_field(); }
 /* ---------------------------------------------------------
  |  HTTP helpers
  * --------------------------------------------------------*/
-function redirect(string $url, int $statusCode = 302): void {
+function redirect(string $url, int $statusCode = 302): never {
     header('Location: ' . $url, true, $statusCode);
     exit();
 }
 function is_ajax_request(): bool {
     return !empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest';
 }
-function json_response(array $data, int $statusCode = 200): void {
+function json_response(array $data, int $statusCode = 200): never {
     http_response_code($statusCode);
     header('Content-Type: application/json; charset=utf-8');
     echo json_encode($data, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);

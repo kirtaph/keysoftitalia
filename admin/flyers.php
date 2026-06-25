@@ -171,45 +171,7 @@ include_once 'includes/header.php';
     </div>
 </div>
 
-<style>
-.wizard-step {
-    position: relative;
-    z-index: 1;
-    text-align: center;
-    width: 30px;
-}
-.step-circle {
-    width: 30px;
-    height: 30px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: bold;
-    margin: 0 auto;
-    transition: all 0.3s ease;
-}
-.step-label {
-    font-size: 0.75rem;
-    margin-top: 5px;
-    position: absolute;
-    left: 50%;
-    transform: translateX(-50%);
-    white-space: nowrap;
-    color: #6c757d;
-}
-.wizard-step.active .step-circle {
-    background-color: #0d6efd !important;
-    transform: scale(1.1);
-}
-.wizard-step.active .step-label {
-    color: #0d6efd;
-    font-weight: bold;
-}
-.border-dashed {
-    border: 2px dashed #dee2e6;
-}
-</style>
+
 
 <?php include_once 'includes/footer.php'; ?>
 

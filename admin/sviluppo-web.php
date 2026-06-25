@@ -213,18 +213,6 @@ include_once 'includes/header.php';
     </div>
 </div>
 
-<style>
-.preview-thumbnail {
-    max-height: 120px;
-    max-width: 200px;
-    border-radius: 6px;
-    border: 1px solid #dee2e6;
-    object-fit: cover;
-    background: #f8f9fa;
-    padding: 3px;
-}
-</style>
-
 <?php include_once 'includes/footer.php'; ?>
 
 <script>

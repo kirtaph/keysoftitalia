@@ -1407,6 +1407,278 @@
   color: var(--ks-gray-500);
 }
 
+/* ===== SECONDARY HERO THEMES & DECORATIONS ===== */
+
+/* keyframes: mesh gradient */
+@keyframes secondaryMeshShift {
+  0% { background-position: 0% 0%, 100% 0%, 50% 50%; }
+  25% { background-position: 30% 40%, 60% 30%, 40% 60%; }
+  50% { background-position: 50% 20%, 30% 50%, 20% 80%; }
+  75% { background-position: 20% 60%, 70% 40%, 60% 20%; }
+  100% { background-position: 0% 0%, 100% 0%, 50% 50%; }
+}
+
+@keyframes secondaryBlob1 {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  33% { transform: translate(50px, -30px) scale(1.15); }
+  66% { transform: translate(-30px, 40px) scale(0.9); }
+}
+
+@keyframes secondaryBlob2 {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  25% { transform: translate(-40px, 35px) scale(1.08); }
+  50% { transform: translate(35px, -25px) scale(0.88); }
+  75% { transform: translate(-20px, -35px) scale(1.12); }
+}
+
+/* dark overlay */
+.secondary-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background: rgba(0, 0, 0, 0.55);
+}
+
+/* blobs wrapper */
+.secondary-blobs {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.sblob {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(70px);
+  opacity: 0.45;
+  will-change: transform;
+}
+
+/* default blob colors — overridden per theme */
+.sblob--1 { width: min(500px, 45vw); height: min(500px, 45vw); top: -20%; right: -8%; animation: secondaryBlob1 16s ease-in-out infinite; }
+.sblob--2 { width: min(350px, 35vw); height: min(350px, 35vw); bottom: -15%; left: -8%; animation: secondaryBlob2 20s ease-in-out infinite; }
+.sblob--3 { width: min(280px, 30vw); height: min(280px, 30vw); top: 40%; left: 55%; animation: secondaryBlob2 14s ease-in-out infinite reverse; opacity: 0.3; }
+
+/* mesh gradient backgrounds per theme */
+[data-hero-theme],
+.hero-secondary {
+  background:
+    radial-gradient(ellipse 80% 60% at 20% 20%, var(--mesh-1, rgba(59,130,246,0.18)) 0%, transparent 60%),
+    radial-gradient(ellipse 70% 50% at 80% 30%, var(--mesh-2, rgba(139,92,246,0.14)) 0%, transparent 55%),
+    radial-gradient(ellipse 60% 50% at 50% 80%, var(--mesh-3, rgba(239,68,68,0.10)) 0%, transparent 50%),
+    linear-gradient(135deg, var(--ks-dark) 0%, var(--ks-dark-secondary) 100%);
+  background-size: 200% 200%, 200% 200%, 200% 200%, 100% 100%;
+  animation: secondaryMeshShift 20s ease-in-out infinite;
+}
+
+/* ===== THEME PALETTES ===== */
+
+/* blue-orange (riparazioni) */
+[data-hero-theme="blue-orange"] {
+  --mesh-1: rgba(59,130,246,0.20);
+  --mesh-2: rgba(255,107,53,0.16);
+  --mesh-3: rgba(139,92,246,0.10);
+}
+[data-hero-theme="blue-orange"] .sblob--1 { background: var(--ks-blue); }
+[data-hero-theme="blue-orange"] .sblob--2 { background: var(--ks-orange); }
+[data-hero-theme="blue-orange"] .sblob--3 { background: var(--ks-purple); }
+
+/* indigo-teal (consulenza IT) */
+[data-hero-theme="indigo-teal"] {
+  --mesh-1: rgba(99,102,241,0.20);
+  --mesh-2: rgba(20,184,166,0.16);
+  --mesh-3: rgba(139,92,246,0.10);
+}
+[data-hero-theme="indigo-teal"] .sblob--1 { background: #6366f1; }
+[data-hero-theme="indigo-teal"] .sblob--2 { background: #14b8a6; }
+[data-hero-theme="indigo-teal"] .sblob--3 { background: var(--ks-purple); }
+
+/* purple-cyan (sviluppo web, servizi) */
+[data-hero-theme="purple-cyan"] {
+  --mesh-1: rgba(139,92,246,0.20);
+  --mesh-2: rgba(6,182,212,0.16);
+  --mesh-3: rgba(99,102,241,0.10);
+}
+[data-hero-theme="purple-cyan"] .sblob--1 { background: var(--ks-purple); }
+[data-hero-theme="purple-cyan"] .sblob--2 { background: #06b6d4; }
+[data-hero-theme="purple-cyan"] .sblob--3 { background: #6366f1; }
+
+/* blue-cyan (contatti) */
+[data-hero-theme="blue-cyan"] {
+  --mesh-1: rgba(59,130,246,0.20);
+  --mesh-2: rgba(6,182,212,0.16);
+  --mesh-3: rgba(99,102,241,0.10);
+}
+[data-hero-theme="blue-cyan"] .sblob--1 { background: var(--ks-blue); }
+[data-hero-theme="blue-cyan"] .sblob--2 { background: #06b6d4; }
+[data-hero-theme="blue-cyan"] .sblob--3 { background: #6366f1; }
+
+/* teal (assistenza) */
+[data-hero-theme="teal"] {
+  --mesh-1: rgba(20,184,166,0.20);
+  --mesh-2: rgba(34,197,94,0.16);
+  --mesh-3: rgba(59,130,246,0.10);
+}
+[data-hero-theme="teal"] .sblob--1 { background: #14b8a6; }
+[data-hero-theme="teal"] .sblob--2 { background: var(--ks-green); }
+[data-hero-theme="teal"] .sblob--3 { background: var(--ks-blue); }
+
+/* indigo-pink (chi siamo) */
+[data-hero-theme="indigo-pink"] {
+  --mesh-1: rgba(99,102,241,0.20);
+  --mesh-2: rgba(236,72,153,0.16);
+  --mesh-3: rgba(139,92,246,0.10);
+}
+[data-hero-theme="indigo-pink"] .sblob--1 { background: #6366f1; }
+[data-hero-theme="indigo-pink"] .sblob--2 { background: #ec4899; }
+[data-hero-theme="indigo-pink"] .sblob--3 { background: var(--ks-purple); }
+
+/* amber-orange (preventivo, valuta usato) */
+[data-hero-theme="amber-orange"] {
+  --mesh-1: rgba(245,158,11,0.20);
+  --mesh-2: rgba(255,107,53,0.16);
+  --mesh-3: rgba(239,68,68,0.10);
+}
+[data-hero-theme="amber-orange"] .sblob--1 { background: #f59e0b; }
+[data-hero-theme="amber-orange"] .sblob--2 { background: var(--ks-orange); }
+[data-hero-theme="amber-orange"] .sblob--3 { background: var(--ks-red); }
+
+/* red-amber (prodotti) */
+[data-hero-theme="red-amber"] {
+  --mesh-1: rgba(239,68,68,0.20);
+  --mesh-2: rgba(245,158,11,0.16);
+  --mesh-3: rgba(255,107,53,0.10);
+}
+[data-hero-theme="red-amber"] .sblob--1 { background: var(--ks-red); }
+[data-hero-theme="red-amber"] .sblob--2 { background: #f59e0b; }
+[data-hero-theme="red-amber"] .sblob--3 { background: var(--ks-orange); }
+
+/* pink-orange (volantini/offerte) */
+[data-hero-theme="pink-orange"] {
+  --mesh-1: rgba(236,72,153,0.20);
+  --mesh-2: rgba(255,107,53,0.16);
+  --mesh-3: rgba(239,68,68,0.10);
+}
+[data-hero-theme="pink-orange"] .sblob--1 { background: #ec4899; }
+[data-hero-theme="pink-orange"] .sblob--2 { background: var(--ks-orange); }
+[data-hero-theme="pink-orange"] .sblob--3 { background: var(--ks-red); }
+
+/* red-purple (video) */
+[data-hero-theme="red-purple"] {
+  --mesh-1: rgba(239,68,68,0.20);
+  --mesh-2: rgba(139,92,246,0.16);
+  --mesh-3: rgba(236,72,153,0.10);
+}
+[data-hero-theme="red-purple"] .sblob--1 { background: var(--ks-red); }
+[data-hero-theme="red-purple"] .sblob--2 { background: var(--ks-purple); }
+[data-hero-theme="red-purple"] .sblob--3 { background: #ec4899; }
+
+/* green-teal (valuta usato) */
+[data-hero-theme="green-teal"] {
+  --mesh-1: rgba(34,197,94,0.20);
+  --mesh-2: rgba(20,184,166,0.16);
+  --mesh-3: rgba(59,130,246,0.10);
+}
+[data-hero-theme="green-teal"] .sblob--1 { background: var(--ks-green); }
+[data-hero-theme="green-teal"] .sblob--2 { background: #14b8a6; }
+[data-hero-theme="green-teal"] .sblob--3 { background: var(--ks-blue); }
+
+/* green-blue (telefonia) */
+[data-hero-theme="green-blue"] {
+  --mesh-1: rgba(34,197,94,0.20);
+  --mesh-2: rgba(59,130,246,0.16);
+  --mesh-3: rgba(20,184,166,0.10);
+}
+[data-hero-theme="green-blue"] .sblob--1 { background: var(--ks-green); }
+[data-hero-theme="green-blue"] .sblob--2 { background: var(--ks-blue); }
+[data-hero-theme="green-blue"] .sblob--3 { background: #14b8a6; }
+
+/* amber-red (forniture luce/gas) */
+[data-hero-theme="amber-red"] {
+  --mesh-1: rgba(245,158,11,0.20);
+  --mesh-2: rgba(239,68,68,0.16);
+  --mesh-3: rgba(255,107,53,0.10);
+}
+[data-hero-theme="amber-red"] .sblob--1 { background: #f59e0b; }
+[data-hero-theme="amber-red"] .sblob--2 { background: var(--ks-red); }
+[data-hero-theme="amber-red"] .sblob--3 { background: var(--ks-orange); }
+
+/* red-orange (vendita hardware) */
+[data-hero-theme="red-orange"] {
+  --mesh-1: rgba(239,68,68,0.20);
+  --mesh-2: rgba(255,107,53,0.16);
+  --mesh-3: rgba(245,158,11,0.10);
+}
+[data-hero-theme="red-orange"] .sblob--1 { background: var(--ks-red); }
+[data-hero-theme="red-orange"] .sblob--2 { background: var(--ks-orange); }
+[data-hero-theme="red-orange"] .sblob--3 { background: #f59e0b; }
+
+/* blue-purple (liberty commerce) */
+[data-hero-theme="blue-purple"] {
+  --mesh-1: rgba(59,130,246,0.20);
+  --mesh-2: rgba(139,92,246,0.16);
+  --mesh-3: rgba(99,102,241,0.10);
+}
+[data-hero-theme="blue-purple"] .sblob--1 { background: var(--ks-blue); }
+[data-hero-theme="blue-purple"] .sblob--2 { background: var(--ks-purple); }
+[data-hero-theme="blue-purple"] .sblob--3 { background: #6366f1; }
+
+/* cyan-indigo (track order) */
+[data-hero-theme="cyan-indigo"] {
+  --mesh-1: rgba(6,182,212,0.20);
+  --mesh-2: rgba(99,102,241,0.16);
+  --mesh-3: rgba(59,130,246,0.10);
+}
+[data-hero-theme="cyan-indigo"] .sblob--1 { background: #06b6d4; }
+[data-hero-theme="cyan-indigo"] .sblob--2 { background: #6366f1; }
+[data-hero-theme="cyan-indigo"] .sblob--3 { background: var(--ks-blue); }
+
+/* purple-indigo (sviluppo software) */
+[data-hero-theme="purple-indigo"] {
+  --mesh-1: rgba(139,92,246,0.20);
+  --mesh-2: rgba(99,102,241,0.16);
+  --mesh-3: rgba(59,130,246,0.10);
+}
+[data-hero-theme="purple-indigo"] .sblob--1 { background: var(--ks-purple); }
+[data-hero-theme="purple-indigo"] .sblob--2 { background: #6366f1; }
+[data-hero-theme="purple-indigo"] .sblob--3 { background: var(--ks-blue); }
+
+/* default fallback */
+[data-hero-theme="default"] .sblob--1 { background: var(--ks-orange); }
+[data-hero-theme="default"] .sblob--2 { background: var(--ks-purple); }
+[data-hero-theme="default"] .sblob--3 { background: var(--ks-blue); }
+
+/* 404 error */
+[data-hero-theme="_404"] {
+  --mesh-1: rgba(239,68,68,0.15);
+  --mesh-2: rgba(107,114,128,0.12);
+  --mesh-3: rgba(75,85,99,0.10);
+}
+[data-hero-theme="_404"] .sblob--1 { background: var(--ks-red); }
+[data-hero-theme="_404"] .sblob--2 { background: #6b7280; }
+[data-hero-theme="_404"] .sblob--3 { background: #4b5563; }
+
+/* gray (privacy) */
+[data-hero-theme="gray"] {
+  --mesh-1: rgba(156,163,175,0.12);
+  --mesh-2: rgba(107,114,128,0.10);
+  --mesh-3: rgba(75,85,99,0.08);
+}
+[data-hero-theme="gray"] .sblob--1 { background: #9ca3af; }
+[data-hero-theme="gray"] .sblob--2 { background: #6b7280; }
+[data-hero-theme="gray"] .sblob--3 { background: #4b5563; }
+
+/* upgrade pattern — topography lines + dots */
+.hero-secondary .hero-pattern {
+  background:
+    url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M10 10 Q 30 5, 50 20 T 90 30' stroke='%23ffffff' stroke-width='0.5' fill='none' opacity='0.05'/%3E%3Cpath d='M5 30 Q 25 15, 45 40 T 85 50' stroke='%23ffffff' stroke-width='0.4' fill='none' opacity='0.04'/%3E%3Cpath d='M15 50 Q 35 35, 55 60 T 95 70' stroke='%23ffffff' stroke-width='0.5' fill='none' opacity='0.05'/%3E%3Cpath d='M8 70 Q 28 55, 48 80 T 88 90' stroke='%23ffffff' stroke-width='0.3' fill='none' opacity='0.04'/%3E%3Cpath d='M20 90 Q 40 75, 60 95 T 98 40' stroke='%23ffffff' stroke-width='0.4' fill='none' opacity='0.04'/%3E%3C/svg%3E") repeat,
+    url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.04'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E") repeat;
+  background-size: 100px 100px, 60px 60px;
+  will-change: background-position;
+}
+
 /* ===== HERO SECONDARY ENTRANCE TRANSITIONS ===== */
 .hero-secondary .hero-pattern {
   opacity: 0;

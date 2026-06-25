@@ -1,7 +1,6 @@
 <?php include 'includes/header.php'; ?>
 
-<div class="admin-content">
-    <div class="d-flex justify-content-between align-items-center mb-4">
+<div class="d-flex justify-content-between align-items-center mb-4">
         <div>
             <h1 class="h3 mb-0">Campagne Logo</h1>
             <p class="text-muted">Gestisci loghi ed effetti dinamici in base al periodo dell'anno.</p>
@@ -32,7 +31,6 @@
             </div>
         </div>
     </div>
-</div>
 
 <!-- Modal Campagna -->
 <div class="modal fade" id="campaignModal" tabindex="-1" aria-hidden="true">

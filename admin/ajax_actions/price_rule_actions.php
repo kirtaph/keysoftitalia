@@ -1,7 +1,5 @@
 <?php
-include_once '../../config/config.php';
-
-header('Content-Type: application/json');
+require_once __DIR__ . '/init.php';
 
 $action = $_REQUEST['action'] ?? null;
 $id = $_REQUEST['id'] ?? null;
@@ -13,9 +11,9 @@ try {
             $stmt->execute([$id]);
             $rule = $stmt->fetch(PDO::FETCH_ASSOC);
             if ($rule) {
-                echo json_encode(['status' => 'success', 'rule' => $rule]);
+                jsonSuccess(['rule' => $rule]);
             } else {
-                throw new Exception('Regola di prezzo non trovata.');
+                jsonError('Regola di prezzo non trovata.');
             }
             break;
 
@@ -31,7 +29,7 @@ try {
                 $_POST['notes'] ?? '',
                 isset($_POST['is_active']) ? 1 : 0
             ]);
-            echo json_encode(['status' => 'success', 'message' => 'Regola aggiunta con successo.']);
+            jsonSuccess(['message' => 'Regola aggiunta con successo.']);
             break;
 
         case 'edit':
@@ -47,25 +45,24 @@ try {
                 isset($_POST['is_active']) ? 1 : 0,
                 $id
             ]);
-            echo json_encode(['status' => 'success', 'message' => 'Regola aggiornata con successo.']);
+            jsonSuccess(['message' => 'Regola aggiornata con successo.']);
             break;
 
         case 'delete':
             if (empty($id)) {
-                throw new Exception('ID della regola non fornito.');
+                jsonError('ID della regola non fornito.');
             }
             $stmt = $pdo->prepare('DELETE FROM price_rules WHERE id = ?');
             $stmt->execute([$id]);
-            echo json_encode(['status' => 'success', 'message' => 'Regola eliminata con successo.']);
+            jsonSuccess(['message' => 'Regola eliminata con successo.']);
             break;
 
         case 'update_price':
             $min = $_POST['min_price'] ?? null;
             $max = $_POST['max_price'] ?? null;
             
-            if (!$id) throw new Exception('ID mancante');
+            if (!$id) jsonError('ID mancante');
             
-            // Allow updating just one or both
             $sql = "UPDATE price_rules SET ";
             $params = [];
             $updates = [];
@@ -79,7 +76,7 @@ try {
                 $params[] = $max === '' ? null : $max;
             }
             
-            if (empty($updates)) throw new Exception('Nessun dato da aggiornare');
+            if (empty($updates)) jsonError('Nessun dato da aggiornare');
             
             $sql .= implode(', ', $updates) . " WHERE id = ?";
             $params[] = $id;
@@ -87,20 +84,18 @@ try {
             $stmt = $pdo->prepare($sql);
             $stmt->execute($params);
             
-            echo json_encode(['status' => 'success', 'message' => 'Prezzo aggiornato']);
+            jsonSuccess(['message' => 'Prezzo aggiornato']);
             break;
 
         case 'clone':
-            if (!$id) throw new Exception('ID mancante');
+            if (!$id) jsonError('ID mancante');
             
-            // Get original
             $stmt = $pdo->prepare("SELECT * FROM price_rules WHERE id = ?");
             $stmt->execute([$id]);
             $orig = $stmt->fetch(PDO::FETCH_ASSOC);
             
-            if (!$orig) throw new Exception('Regola originale non trovata');
+            if (!$orig) jsonError('Regola originale non trovata');
             
-            // Insert copy
             $stmt = $pdo->prepare('INSERT INTO price_rules (device_id, issue_id, brand_id, model_id, min_price, max_price, notes, is_active) VALUES (?, ?, ?, ?, ?, ?, ?, ?)');
             $stmt->execute([
                 $orig['device_id'],
@@ -113,14 +108,13 @@ try {
                 $orig['is_active']
             ]);
             
-            echo json_encode(['status' => 'success', 'message' => 'Regola clonata']);
+            jsonSuccess(['message' => 'Regola clonata']);
             break;
 
         default:
-            throw new Exception('Azione non valida.');
+            jsonError('Azione non valida.');
             break;
     }
-} catch (Exception $e) {
-    http_response_code(400);
-    echo json_encode(['status' => 'error', 'message' => $e->getMessage()]);
+} catch (Throwable $e) {
+    jsonError('Errore del server.', $e);
 }

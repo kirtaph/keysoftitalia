@@ -43,6 +43,9 @@ $current_page = get_current_page();
   })();
 </script>
 
+<a href="#main-content" class="skip-link visually-hidden-focusable">Vai al contenuto principale</a>
+<div id="main-content" tabindex="-1"></div>
+
 <?php include_partial('topbar.php'); ?>
 
 <header class="header">

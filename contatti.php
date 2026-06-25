@@ -18,6 +18,16 @@ $breadcrumbs = [
 
 // Endpoint AJAX (adegua al tuo path reale)
 $contact_endpoint = url('assets/process/process_contact.php');
+
+// Schema: contact page (not ComputerStore)
+$page_schema = [
+    '@context'  => 'https://schema.org',
+    '@type'     => 'ContactPage',
+    'name'      => $page_title,
+    'description'=> $page_description,
+    'url'       => url('contatti.php'),
+    'isPartOf'  => ['@id' => url() . '#website'],
+];
 ?>
 <!DOCTYPE html>
 <html lang="it">

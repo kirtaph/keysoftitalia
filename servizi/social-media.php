@@ -38,30 +38,6 @@ $current_page = 'servizi';
 <head>
     <?php include '../includes/head.php'; ?>
     <style>
-        .service-hero {
-            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-            padding: 100px 0;
-            color: white;
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .service-hero::before {
-            content: '';
-            position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
-            animation: pulse 20s ease-in-out infinite;
-        }
-        
-        @keyframes pulse {
-            0%, 100% { transform: rotate(0deg) scale(1); }
-            50% { transform: rotate(180deg) scale(1.1); }
-        }
-        
         .social-platform-card {
             background: white;
             border-radius: 15px;
@@ -244,30 +220,27 @@ $current_page = 'servizi';
     <?php include '../includes/header.php'; ?>
 
     <!-- Hero Section -->
-    <section class="service-hero">
-        <div class="container position-relative">
-            <div class="row align-items-center">
-                <div class="col-lg-8">
+    <section class="hero hero-secondary text-center">
+        <div class="container">
+            <div class="hero-content text-white">
+                <div class="hero-icon">
+                    <i class="ri-megaphone-line"></i>
+                </div>
+                <h1 class="hero-title">Social Media <span class="text-gradient">Marketing</span></h1>
+                <p class="hero-subtitle">Fai crescere il tuo brand sui social media con strategie personalizzate e contenuti di qualità</p>
+                <div class="hero-cta d-flex gap-4 flex-wrap justify-content-center">
+                    <span><i class="ri-user-follow-line"></i> +Followers</span>
+                    <span><i class="ri-heart-line"></i> +Engagement</span>
+                    <span><i class="ri-line-chart-line"></i> +Conversioni</span>
+                </div>
+                <div class="hero-breadcrumb mt-4">
                     <nav aria-label="breadcrumb">
-                        <ol class="breadcrumb">
-                            <li class="breadcrumb-item"><a href="<?php echo url(''); ?>" style="color: white;">Home</a></li>
-                            <li class="breadcrumb-item"><a href="<?php echo url('servizi.php'); ?>" style="color: white;">Servizi</a></li>
-                            <li class="breadcrumb-item active" aria-current="page" style="color: white;">Social Media Marketing</li>
+                        <ol class="breadcrumb justify-content-center">
+                            <li class="breadcrumb-item"><a href="<?php echo url(''); ?>">Home</a></li>
+                            <li class="breadcrumb-item"><a href="<?php echo url('servizi.php'); ?>">Servizi</a></li>
+                            <li class="breadcrumb-item active" aria-current="page">Social Media Marketing</li>
                         </ol>
                     </nav>
-                    <h1 class="display-4 fw-bold mb-4">Social Media Marketing</h1>
-                    <p class="lead mb-4">Fai crescere il tuo brand sui social media con strategie personalizzate e contenuti di qualità</p>
-                    <div class="d-flex gap-4 flex-wrap">
-                        <div>
-                            <i class="ri-user-follow-line"></i> +Followers
-                        </div>
-                        <div>
-                            <i class="ri-heart-line"></i> +Engagement
-                        </div>
-                        <div>
-                            <i class="ri-line-chart-line"></i> +Conversioni
-                        </div>
-                    </div>
                 </div>
             </div>
         </div>
@@ -524,7 +497,7 @@ $current_page = 'servizi';
             
             <div class="portfolio-grid">
                 <div class="portfolio-post">
-                    <img src="https://via.placeholder.com/400x400/f093fb/ffffff?text=Fashion+Brand" alt="Fashion Brand">
+                    <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400'%3E%3Crect fill='%23f093fb' width='400' height='400'/%3E%3Ctext x='200' y='200' text-anchor='middle' fill='%23fff' font-size='28' font-weight='bold'%3EFashion Brand%3C/text%3E%3C/svg%3E" alt="Fashion Brand">
                     <div class="portfolio-post-content">
                         <h5>Fashion Brand</h5>
                         <p class="text-muted mb-0">Instagram: +15K followers in 3 mesi</p>
@@ -532,7 +505,7 @@ $current_page = 'servizi';
                 </div>
                 
                 <div class="portfolio-post">
-                    <img src="https://via.placeholder.com/400x400/f5576c/ffffff?text=Restaurant" alt="Restaurant">
+                    <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400'%3E%3Crect fill='%23f5576c' width='400' height='400'/%3E%3Ctext x='200' y='200' text-anchor='middle' fill='%23fff' font-size='28' font-weight='bold'%3ERestaurant%3C/text%3E%3C/svg%3E" alt="Restaurant">
                     <div class="portfolio-post-content">
                         <h5>Ristorante Gourmet</h5>
                         <p class="text-muted mb-0">Facebook: +300% prenotazioni</p>
@@ -540,7 +513,7 @@ $current_page = 'servizi';
                 </div>
                 
                 <div class="portfolio-post">
-                    <img src="https://via.placeholder.com/400x400/667eea/ffffff?text=Tech+Startup" alt="Tech Startup">
+                    <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400'%3E%3Crect fill='%23667eea' width='400' height='400'/%3E%3Ctext x='200' y='200' text-anchor='middle' fill='%23fff' font-size='28' font-weight='bold'%3ETech Startup%3C/text%3E%3C/svg%3E" alt="Tech Startup">
                     <div class="portfolio-post-content">
                         <h5>Tech Startup</h5>
                         <p class="text-muted mb-0">LinkedIn: 5K+ lead qualificati</p>
@@ -548,7 +521,7 @@ $current_page = 'servizi';
                 </div>
                 
                 <div class="portfolio-post">
-                    <img src="https://via.placeholder.com/400x400/764ba2/ffffff?text=Beauty+Salon" alt="Beauty Salon">
+                    <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400'%3E%3Crect fill='%23764ba2' width='400' height='400'/%3E%3Ctext x='200' y='200' text-anchor='middle' fill='%23fff' font-size='28' font-weight='bold'%3EBeauty Salon%3C/text%3E%3C/svg%3E" alt="Beauty Salon">
                     <div class="portfolio-post-content">
                         <h5>Beauty Salon</h5>
                         <p class="text-muted mb-0">TikTok: Video virale 1M views</p>

@@ -40,6 +40,16 @@ if ($active_tab === 'terms') {
         ['label' => 'Privacy Policy', 'url' => 'privacy.php?tab=privacy']
     ];
 }
+
+// Schema: legal page (not ComputerStore)
+$page_schema = [
+    '@context'  => 'https://schema.org',
+    '@type'     => 'WebPage',
+    'name'      => $page_title,
+    'description'=> $page_description,
+    'url'       => url('privacy.php' . ($active_tab !== 'privacy' ? '?tab=' . $active_tab : '')),
+    'isPartOf'  => ['@id' => url() . '#website'],
+];
 ?>
 
 <!DOCTYPE html>

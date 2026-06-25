@@ -42,6 +42,7 @@ $breadcrumbs = [
     
     <!-- Hero Section -->
     <section class="hero hero-secondary hero-service">
+        <div class="hero-pattern"></div>
         <div class="container">
             <div class="hero-content text-center">
                 <div class="hero-icon">

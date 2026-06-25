@@ -1,7 +1,9 @@
 <?php
-include_once '../../config/config.php';
+require_once __DIR__ . '/init.php';
 
-header('Content-Type: application/json');
+// Additional file extension validation beyond MIME
+$ALLOWED_UPLOAD_EXT = ['jpg', 'jpeg', 'png', 'gif', 'webp'];
+$ALLOWED_UPLOAD_MIME = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
 
 $action = $_REQUEST['action'] ?? null;
 
@@ -109,20 +111,20 @@ try {
                     mkdir($uploadDir, 0755, true);
                 }
 
-                $allowedTypes = ['image/jpeg', 'image/png', 'image/gif'];
-                $maxSize = 2 * 1024 * 1024; // 2MB
+                $maxSize = 2 * 1024 * 1024;
 
                 foreach ($_FILES['product_images']['tmp_name'] as $key => $tmp_name) {
                     if (!empty($tmp_name) && $_FILES['product_images']['error'][$key] == UPLOAD_ERR_OK) {
-                        // Validate file type
-                        $fileType = mime_content_type($tmp_name);
-                        if (!in_array($fileType, $allowedTypes)) {
-                            continue; // Skip invalid file types
+                        $fileExt = strtolower(pathinfo($_FILES['product_images']['name'][$key], PATHINFO_EXTENSION));
+                        if (!in_array($fileExt, $ALLOWED_UPLOAD_EXT)) {
+                            continue;
                         }
-
-                        // Validate file size
+                        $fileType = mime_content_type($tmp_name);
+                        if (!in_array($fileType, $ALLOWED_UPLOAD_MIME)) {
+                            continue;
+                        }
                         if ($_FILES['product_images']['size'][$key] > $maxSize) {
-                            continue; // Skip files that are too large
+                            continue;
                         }
 
                         $fileName = uniqid() . '-' . basename($_FILES['product_images']['name'][$key]);
@@ -235,7 +237,6 @@ try {
             throw new Exception('Azione non valida.');
             break;
     }
-} catch (Exception $e) {
-    http_response_code(400);
-    echo json_encode(['status' => 'error', 'message' => $e->getMessage()]);
+} catch (Throwable $e) {
+    jsonError('Errore del server.', $e);
 }

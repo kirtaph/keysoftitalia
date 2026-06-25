@@ -27,8 +27,27 @@ $currentPage = basename($_SERVER['PHP_SELF']);
     <!-- Custom Admin CSS -->
     <link rel="stylesheet" href="assets/css/admin-theme.css">
     
-    <!-- Chart.js -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <?php
+    // Ensure CSRF token exists for admin AJAX calls
+    require_once __DIR__ . '/../../assets/php/functions.php';
+    if (!isset($_SESSION['csrf_token'])) {
+        $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+    }
+    ?>
+    <script>
+        // Auto-inject CSRF token into all admin POST fetch requests with FormData
+        window.ADMIN_CSRF_TOKEN = '<?php echo $_SESSION['csrf_token']; ?>';
+        (function() {
+            var origFetch = window.fetch;
+            window.fetch = function(url, opts) {
+                if (opts && opts.body && opts.body instanceof FormData && 
+                    (!opts.method || opts.method.toUpperCase() === 'POST')) {
+                    opts.body.append('csrf_token', window.ADMIN_CSRF_TOKEN);
+                }
+                return origFetch.call(this, url, opts);
+            };
+        })();
+    </script>
 </head>
 <body>
 
@@ -37,8 +56,13 @@ $currentPage = basename($_SERVER['PHP_SELF']);
     <nav class="admin-sidebar" id="sidebar">
         <div class="sidebar-header">
             <a href="dashboard.php" class="sidebar-brand">
-                Key Soft Italia
-                <small>Admin Panel</small>
+                <div class="sidebar-brand-icon">
+                    <i class="fas fa-key"></i>
+                </div>
+                <div>
+                    Key Soft Italia
+                    <small>Admin Panel</small>
+                </div>
             </a>
         </div>
         
@@ -204,14 +228,14 @@ $currentPage = basename($_SERVER['PHP_SELF']);
             </button>
             
             <div class="ms-auto d-flex align-items-center">
-                <a href="../index.php" target="_blank" rel="noopener noreferrer" class="btn btn-outline-primary btn-sm me-3 d-none d-md-inline-flex align-items-center">
+                <a href="../index.php" target="_blank" rel="noopener noreferrer" class="btn btn-sm me-3 d-none d-md-inline-flex align-items-center" style="background:rgba(255,107,53,0.08);color:#ff6b35;border:1px solid rgba(255,107,53,0.2);border-radius:10px;font-weight:600;transition:all 0.2s;" onmouseover="this.style.background='#ff6b35';this.style.color='#fff'" onmouseout="this.style.background='rgba(255,107,53,0.08)';this.style.color='#ff6b35'">
                     <i class="fas fa-external-link-alt me-2"></i>Vai al Sito
                 </a>
 
                 <div class="user-profile">
                     <div class="dropdown">
                         <a href="#" class="d-flex align-items-center text-decoration-none dropdown-toggle text-dark" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-                            <div class="user-avatar me-2">
+                            <div class="user-avatar me-2" style="background:linear-gradient(135deg,#ff6b35,#ff8c42);">
                                 <?php echo strtoupper(substr($_SESSION['username'] ?? 'A', 0, 1)); ?>
                             </div>
                             <span class="d-none d-md-inline fw-bold"><?php echo htmlspecialchars($_SESSION['username'] ?? 'Admin'); ?></span>

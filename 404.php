@@ -28,6 +28,15 @@ $waRaw    = defined('COMPANY_WHATSAPP') ? preg_replace('/\D+/', '', COMPANY_WHAT
 $waMsg    = rawurlencode("Ciao! Link non funzionante: {$reqUri}");
 $waLink   = $waRaw ? "https://wa.me/{$waRaw}?text={$waMsg}" : $u('contatti.php');
 
+// Schema: page not found (not ComputerStore)
+$page_schema = [
+    '@context'  => 'https://schema.org',
+    '@type'     => 'WebPage',
+    'name'      => $page_title,
+    'description'=> $page_description,
+    'url'       => url(),
+];
+
 // Pagine interne (adatta gli slug se diversi)
 $homeUrl   = $u('/');
 $contatti  = $u('contatti.php');
@@ -46,17 +55,33 @@ $documenti = $u('contatti.php#faq');           // “Documentation” -> FAQ/Doc
 
 <?php include 'includes/header.php'; ?>
 
-<main class="ks-404-simple">
+<section class="hero hero-secondary text-center">
   <div class="container">
-    <div class="text-center head">
-      <img src="assets/img/404.png" width="40%" aria-hidden="true">
-      <h1 class="title">Oops, la pagina che cerchi non esiste!</h1>
-      <p class="subtitle">
-        <strong>Tranquillo:</strong> ti riportiamo sulla strada giusta. Esplora i link qui sotto oppure contattaci.
-      </p>
+    <div class="hero-content text-white">
+      <div class="hero-icon">
+        <i class="ri-error-warning-line"></i>
+      </div>
+      <h1 class="hero-title">404</h1>
+      <p class="hero-subtitle">Oops, la pagina che cerchi non esiste!<br><strong>Tranquillo:</strong> ti riportiamo sulla strada giusta.</p>
+      <div class="hero-cta">
+        <a href="<?= $homeUrl; ?>" class="btn btn-primary btn-lg">
+          <i class="ri-home-4-line me-1"></i> Torna alla Home
+        </a>
+        <a href="<?= $contatti; ?>" class="btn btn-outline-light btn-lg ms-2">
+          <i class="ri-customer-service-2-line me-1"></i> Contattaci
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="ks-404-links section">
+  <div class="container">
+    <div class="text-center mb-5">
+      <h2 class="section-title">Oppure esplora queste risorse</h2>
     </div>
 
-    <div class="cards row g-3 g-md-4">
+    <div class="cards row g-3 g-md-4 justify-content-center">
       <div class="col-12 col-md-4">
         <a class="info-card" href="mailto:<?= $h($email); ?>">
           <div class="ic"><i class="ri-mail-line"></i></div>
@@ -84,18 +109,6 @@ $documenti = $u('contatti.php#faq');           // “Documentation” -> FAQ/Doc
           </div>
         </a>
       </div>
-
-      <?php /* Se il blog non esiste ancora, commenta questa card */ ?>
-      <div class="col-12 col-md-4">
-        <a class="info-card" href="<?= $h($blog); ?>">
-          <div class="ic"><i class="ri-pushpin-line"></i></div>
-          <div class="txt">
-            <div class="label">Blog</div>
-            <div class="value">Articoli e novità dal negozio</div>
-          </div>
-        </a>
-      </div>
-
       <div class="col-12 col-md-4">
         <a class="info-card" href="<?= $h($preventivo); ?>">
           <div class="ic"><i class="ri-currency-line"></i></div>
@@ -105,7 +118,6 @@ $documenti = $u('contatti.php#faq');           // “Documentation” -> FAQ/Doc
           </div>
         </a>
       </div>
-
       <div class="col-12 col-md-4">
         <a class="info-card" href="<?= $h($documenti); ?>">
           <div class="ic"><i class="ri-file-list-2-line"></i></div>
@@ -115,29 +127,24 @@ $documenti = $u('contatti.php#faq');           // “Documentation” -> FAQ/Doc
           </div>
         </a>
       </div>
-    </div>
-
-    <div class="divider"><span>oppure</span></div>
-
-    <div class="cta text-center">
-      <a href="<?= $homeUrl; ?>" class="btn btn-brand">
-        <i class="ri-home-4-line me-1"></i> Vai alla Home
-      </a>
-      <a href="<?= $waLink; ?>" class="btn btn-whatsapp">
-        <i class="ri-whatsapp-line me-1"></i> WhatsApp
-      </a>
-      <a href="<?= $contatti; ?>" class="btn btn-outline">
-        <i class="ri-customer-service-2-line me-1"></i> Apri ticket
-      </a>
+      <div class="col-12 col-md-4">
+        <a class="info-card" href="<?= $h($waLink); ?>">
+          <div class="ic"><i class="ri-whatsapp-line"></i></div>
+          <div class="txt">
+            <div class="label">WhatsApp</div>
+            <div class="value">Scrivici subito</div>
+          </div>
+        </a>
+      </div>
     </div>
 
     <?php if (defined('ENV') && strtolower((string)constant('ENV'))==='dev'): ?>
-      <p class="muted text-center mt-3">
+      <p class="text-center text-muted mt-4 small">
         Debug (DEV): URI <code><?= $h($reqUri); ?></code>
       </p>
     <?php endif; ?>
   </div>
-</main>
+</section>
 
 <?php include 'includes/footer.php'; ?>
 <script src="<?= asset('js/main.js'); ?>" defer></script>

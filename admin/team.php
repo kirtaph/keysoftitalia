@@ -1,15 +1,14 @@
 <?php include 'includes/header.php'; ?>
 
-<div class="admin-content">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <div>
-            <h1 class="h3 mb-0">Membri del Team</h1>
-            <p class="text-muted">Gestisci i membri visibili nella sezione 'Chi Siamo'.</p>
-        </div>
-        <button class="btn btn-primary" id="addMemberBtn" data-bs-toggle="modal" data-bs-target="#memberModal">
-            <i class="fas fa-plus me-2"></i> Nuovo Membro
-        </button>
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h1 class="h3 mb-0">Membri del Team</h1>
+        <p class="text-muted">Gestisci i membri visibili nella sezione 'Chi Siamo'.</p>
     </div>
+    <button class="btn btn-primary" id="addMemberBtn" data-bs-toggle="modal" data-bs-target="#memberModal">
+        <i class="fas fa-plus me-2"></i> Nuovo Membro
+    </button>
+</div>
 
     <div class="card shadow-sm border-0 mb-4">
         <div class="card-body p-0">
@@ -33,7 +32,6 @@
             </div>
         </div>
     </div>
-</div>
 
 <!-- Modal Membro -->
 <div class="modal fade" id="memberModal" tabindex="-1" aria-hidden="true" data-bs-backdrop="static">

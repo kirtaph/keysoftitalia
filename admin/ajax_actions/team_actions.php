@@ -1,14 +1,5 @@
 <?php
-session_start();
-if (!isset($_SESSION['user_id'])) {
-    http_response_code(403);
-    echo json_encode(['status' => 'error', 'message' => 'Non autorizzato']);
-    exit;
-}
-
-require_once '../../config/config.php';
-
-header('Content-Type: application/json');
+require_once __DIR__ . '/init.php';
 
 $action = $_POST['action'] ?? $_GET['action'] ?? '';
 
@@ -17,19 +8,19 @@ try {
         case 'list':
             $stmt = $pdo->query("SELECT * FROM team_members ORDER BY sort_order ASC, name ASC");
             $members = $stmt->fetchAll(PDO::FETCH_ASSOC);
-            echo json_encode(['status' => 'success', 'members' => $members]);
+            jsonSuccess(['members' => $members]);
             break;
 
         case 'get':
             $id = $_GET['id'] ?? null;
-            if (!$id) throw new Exception('ID mancante');
+            if (!$id) jsonError('ID mancante');
             
             $stmt = $pdo->prepare("SELECT * FROM team_members WHERE id = ?");
             $stmt->execute([$id]);
             $member = $stmt->fetch(PDO::FETCH_ASSOC);
             
-            if (!$member) throw new Exception('Membro non trovato');
-            echo json_encode(['status' => 'success', 'member' => $member]);
+            if (!$member) jsonError('Membro non trovato');
+            jsonSuccess(['member' => $member]);
             break;
 
         case 'add':
@@ -44,12 +35,11 @@ try {
             $status = isset($_POST['status']) ? (int)$_POST['status'] : 1;
             
             if (!$name || !$role) {
-                throw new Exception('Nome e Ruolo sono obbligatori.');
+                jsonError('Nome e Ruolo sono obbligatori.');
             }
 
             $photo_path = null;
             
-            // Upload foto
             if (isset($_FILES['photo_file']) && $_FILES['photo_file']['error'] === UPLOAD_ERR_OK) {
                 $uploadDir = '../../assets/img/team/';
                 if (!is_dir($uploadDir)) {
@@ -61,7 +51,16 @@ try {
                 $allowed = ['png', 'jpg', 'jpeg', 'webp'];
                 
                 if (!in_array($ext, $allowed)) {
-                    throw new Exception('Formato immagine non supportato.');
+                    jsonError('Formato immagine non supportato.');
+                }
+                $finfo = finfo_open(FILEINFO_MIME_TYPE);
+                $mime = finfo_file($finfo, $_FILES['photo_file']['tmp_name']);
+                finfo_close($finfo);
+                if (!in_array($mime, ['image/png', 'image/jpeg', 'image/webp'])) {
+                    jsonError('Tipo MIME non consentito.');
+                }
+                if ($_FILES['photo_file']['size'] > 5 * 1024 * 1024) {
+                    jsonError('File troppo grande. Massimo 5MB.');
                 }
                 
                 $filename = uniqid('team_') . '.' . $ext;
@@ -70,48 +69,44 @@ try {
                 if (move_uploaded_file($_FILES['photo_file']['tmp_name'], $targetPath)) {
                     $photo_path = 'img/team/' . $filename;
                 } else {
-                    throw new Exception("Errore durante l'upload dell'immagine.");
+                    jsonError("Errore durante l'upload dell'immagine.");
                 }
             }
 
             if ($action === 'add') {
                 if (!$photo_path) {
-                    throw new Exception('La foto è obbligatoria per un nuovo membro.');
+                    jsonError('La foto è obbligatoria per un nuovo membro.');
                 }
                 $stmt = $pdo->prepare("INSERT INTO team_members (name, role, photo_path, bio, skills, aos_animation, sort_order, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
                 $stmt->execute([$name, $role, $photo_path, $bio, $skills, $aos_animation, $sort_order, $status]);
             } else {
-                if (!$id) throw new Exception('ID mancante per la modifica.');
+                if (!$id) jsonError('ID mancante per la modifica.');
                 
                 if ($photo_path) {
-                    // Update con nuova foto
-                    // Non cancelliamo le foto precedenti (patrizio.png ecc) perché potrebbero essere reference,
-                    // ma si potrebbe implementare la cancellazione.
                     $stmt = $pdo->prepare("UPDATE team_members SET name=?, role=?, photo_path=?, bio=?, skills=?, aos_animation=?, sort_order=?, status=? WHERE id=?");
                     $stmt->execute([$name, $role, $photo_path, $bio, $skills, $aos_animation, $sort_order, $status, $id]);
                 } else {
-                    // Update senza cambiare foto
                     $stmt = $pdo->prepare("UPDATE team_members SET name=?, role=?, bio=?, skills=?, aos_animation=?, sort_order=?, status=? WHERE id=?");
                     $stmt->execute([$name, $role, $bio, $skills, $aos_animation, $sort_order, $status, $id]);
                 }
             }
             
-            echo json_encode(['status' => 'success']);
+            jsonSuccess([]);
             break;
 
         case 'delete':
             $id = $_POST['id'] ?? null;
-            if (!$id) throw new Exception('ID mancante');
+            if (!$id) jsonError('ID mancante');
             
             $stmt = $pdo->prepare("DELETE FROM team_members WHERE id = ?");
             $stmt->execute([$id]);
             
-            echo json_encode(['status' => 'success']);
+            jsonSuccess([]);
             break;
 
         default:
-            throw new Exception('Azione non valida');
+            jsonError('Azione non valida');
     }
-} catch (Exception $e) {
-    echo json_encode(['status' => 'error', 'message' => $e->getMessage()]);
+} catch (Throwable $e) {
+    jsonError('Errore del server.', $e);
 }

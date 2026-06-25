@@ -21,6 +21,16 @@ $breadcrumbs = [
 
 // Riferimento esterno (es. ORD-2025-0001) passato via link WhatsApp ?ref=...
 $booking_ref = isset($_GET['ref']) ? preg_replace('/[^A-Za-z0-9\-\_]/', '', $_GET['ref']) : '';
+
+// Schema: booking/action page
+$page_schema = [
+    '@context'  => 'https://schema.org',
+    '@type'     => 'WebPage',
+    'name'      => $page_title,
+    'description'=> $page_description,
+    'url'       => url('prenota-riparazione.php'),
+    'isPartOf'  => ['@id' => url() . '#website'],
+];
 ?>
 <!DOCTYPE html>
 <html lang="it">

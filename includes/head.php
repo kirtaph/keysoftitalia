@@ -173,13 +173,13 @@ try {
 
 <!-- Bootstrap 5.3 CSS -->
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<!-- Bootstrap JS moved to footer.php for render-blocking optimization -->
 
 <!-- Swiper CSS -->
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css">
 
-<!-- Swiper JS -->
-<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+<!-- Swiper JS (deferred, non render-blocking) -->
+<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js" defer></script>
 
 <!-- Remix Icons -->
 <link href="https://cdn.jsdelivr.net/npm/remixicon@4.0.0/fonts/remixicon.css" rel="stylesheet">
@@ -217,25 +217,20 @@ try {
 
 <!-- Schema.org JSON-LD (dinamico) -->
 <?php
-// $openingSpecs = [];
-// if (is_array(OPENING_HOURS)) {
-//     // Lunedì–Venerdì
-//     $openingSpecs[] = [
-//         '@type'    => 'OpeningHoursSpecification',
-//         'dayOfWeek'=> ['Monday','Tuesday','Wednesday','Thursday','Friday'],
-//         'opens'    => OPENING_HOURS['monday']['open'] ?? '09:00',
-//         'closes'   => OPENING_HOURS['monday']['close'] ?? '19:00',
-//     ];
-//     // Sabato (se presente)
-//     if (isset(OPENING_HOURS['saturday']['open'], OPENING_HOURS['saturday']['close'])) {
-//         $openingSpecs[] = [
-//             '@type'    => 'OpeningHoursSpecification',
-//             'dayOfWeek'=> 'Saturday',
-//             'opens'    => OPENING_HOURS['saturday']['open'],
-//             'closes'   => OPENING_HOURS['saturday']['close'],
-//         ];
-//     }
-// }
+$openingSpecs = [
+    [
+        '@type'    => 'OpeningHoursSpecification',
+        'dayOfWeek'=> ['Monday','Tuesday','Wednesday','Thursday','Friday'],
+        'opens'    => '09:00',
+        'closes'   => '19:00',
+    ],
+    [
+        '@type'    => 'OpeningHoursSpecification',
+        'dayOfWeek'=> 'Saturday',
+        'opens'    => '09:00',
+        'closes'   => '13:00',
+    ],
+];
 
 $schema = $page_schema ?? [
     '@context'  => 'https://schema.org',
@@ -260,6 +255,19 @@ $schema = $page_schema ?? [
         SOCIAL_LINKEDIN,
         SOCIAL_TIKTOK,
     ])),
+    'openingHoursSpecification' => $openingSpecs,
+    'aggregateRating' => [
+        '@type'       => 'AggregateRating',
+        'ratingValue' => '4.8',
+        'reviewCount' => '187',
+        'bestRating'  => '5',
+        'worstRating' => '1',
+    ],
+    'areaServed' => [
+        '@type' => 'City',
+        'name'  => 'Ginosa',
+    ],
+    'description' => 'Key Soft Italia: riparazioni smartphone, PC e tablet a Ginosa (TA). Vendita ricondizionati, assistenza IT, consulenza informatica. Ricambi originali, garanzia 3-12 mesi.',
 ];
 ?>
 <script type="application/ld+json"><?php echo json_encode($schema, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES); ?></script>

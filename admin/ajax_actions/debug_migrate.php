@@ -1,9 +1,14 @@
 <?php
 // admin/ajax_actions/debug_migrate.php
 
-// Mock Session for CLI/Debug
-session_start();
-$_SESSION['user_id'] = 1;
+// Security Check: Ensure user is logged in
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+if (!isset($_SESSION['user_id'])) {
+    echo json_encode(['status' => 'error', 'message' => 'Unauthorized']);
+    exit;
+}
 
 require_once __DIR__ . '/../../config/config.php';
 

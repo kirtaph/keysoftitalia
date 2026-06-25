@@ -18,6 +18,30 @@
     Header set X-Content-Type-Options "nosniff"
     Header set X-Frame-Options "SAMEORIGIN"
     Header set X-XSS-Protection "1; mode=block"
+    Header set Referrer-Policy "strict-origin-when-cross-origin"
+    Header set Permissions-Policy "geolocation=(), microphone=(), camera=(), usb=(), magnetometer=(), accelerometer=()"
+
+    # Content-Security-Policy
+    # Abilita gradualmente: monitora eventuali blocchi nella console del browser
+    Header set Content-Security-Policy "\
+        default-src 'self'; \
+        script-src 'self' cdn.jsdelivr.net cdnjs.cloudflare.com googletagmanager.com \
+            www.googletagmanager.com www.google-analytics.com www.google.com \
+            connect.facebook.net 'unsafe-inline' 'unsafe-eval'; \
+        style-src 'self' cdn.jsdelivr.net cdnjs.cloudflare.com fonts.googleapis.com \
+            'unsafe-inline'; \
+        font-src 'self' cdn.jsdelivr.net cdnjs.cloudflare.com fonts.gstatic.com; \
+        img-src 'self' data: https:; \
+        connect-src 'self' wa.me www.google-analytics.com www.googletagmanager.com \
+            www.google.com; \
+        frame-src 'self' www.youtube.com www.facebook.com www.google.com; \
+        frame-ancestors 'self'; \
+        form-action 'self'; \
+        base-uri 'self'; \
+    "
+
+    # HSTS - ATTIVA SOLO SE HTTPS È CONFIGURATO CORRETTAMENTE
+    # Header set Strict-Transport-Security "max-age=31536000; includeSubDomains; preload"
 </IfModule>
 
 # UTF-8 Encoding

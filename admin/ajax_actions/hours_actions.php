@@ -1,22 +1,19 @@
 <?php
-include_once '../../config/config.php';
-
-header('Content-Type: application/json');
+require_once __DIR__ . '/init.php';
 
 $action = $_REQUEST['action'] ?? null;
 
 try {
     switch ($action) {
-        // --- WEEKLY HOURS ---
         case 'get_weekly':
             $stmt = $pdo->query("SELECT * FROM ks_store_hours_weekly ORDER BY dow ASC, seg ASC");
             $hours = $stmt->fetchAll(PDO::FETCH_ASSOC);
-            echo json_encode(['status' => 'success', 'data' => $hours]);
+            jsonSuccess(['data' => $hours]);
             break;
 
         case 'save_weekly':
             $hours = $_POST['hours'] ?? [];
-            if (empty($hours)) throw new Exception('Nessun dato ricevuto.');
+            if (empty($hours)) jsonError('Nessun dato ricevuto.');
 
             $pdo->beginTransaction();
             try {
@@ -30,19 +27,17 @@ try {
                     ]);
                 }
                 $pdo->commit();
-                echo json_encode(['status' => 'success', 'message' => 'Orari settimanali aggiornati.']);
+                jsonSuccess(['message' => 'Orari settimanali aggiornati.']);
             } catch (Exception $e) {
                 $pdo->rollBack();
                 throw $e;
             }
             break;
 
-        // --- EXCEPTIONS (CALENDAR) ---
         case 'get_exceptions':
             $start = $_GET['start'] ?? date('Y-m-01');
             $end = $_GET['end'] ?? date('Y-m-t');
             
-            // 1. Fetch Exceptions (grouped by date)
             $stmt = $pdo->prepare("SELECT * FROM ks_store_hours_exceptions WHERE date BETWEEN ? AND ? ORDER BY date ASC, seg ASC");
             $stmt->execute([$start, $end]);
             $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -54,9 +49,7 @@ try {
 
             $events = [];
             
-            // Process Exceptions
             foreach ($grouped as $date => $segments) {
-                // Build a summary title
                 $titles = [];
                 $isAllClosed = true;
                 foreach ($segments as $s) {
@@ -74,7 +67,7 @@ try {
                 $color = $isAllClosed ? '#dc3545' : '#198754';
                 
                 $events[] = [
-                    'id' => 'ex_' . $date, // Grouped ID
+                    'id' => 'ex_' . $date,
                     'title' => $title,
                     'start' => $date,
                     'allDay' => true,
@@ -89,11 +82,9 @@ try {
                 ];
             }
 
-            // 2. Fetch Holidays
             $stmt = $pdo->query("SELECT * FROM ks_store_holidays WHERE active = 1");
             $holidays = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-            // Calculate Holidays for the requested range (years)
             $startYear = date('Y', strtotime($start));
             $endYear = date('Y', strtotime($end));
 
@@ -107,14 +98,13 @@ try {
                         $date = date('Y-m-d', strtotime("$easterDate " . ($h['offset_days'] >= 0 ? '+' : '') . $h['offset_days'] . " days"));
                     }
 
-                    // Check if date is within range
                     if ($date && $date >= $start && $date <= $end) {
-                        $color = '#6f42c1'; // Purple for holidays
+                        $color = '#6f42c1';
                         $title = $h['name'];
                         if ($h['is_closed']) $title .= ' (Chiuso)';
                         
                         $events[] = [
-                            'id' => 'hol_' . $h['id'] . '_' . $year, // Unique ID for calendar
+                            'id' => 'hol_' . $h['id'] . '_' . $year,
                             'title' => $title,
                             'start' => $date,
                             'allDay' => true,
@@ -132,15 +122,13 @@ try {
         case 'save_exception':
             $date = $_POST['date'];
             $notice = $_POST['notice'] ?? null;
-            $segments = $_POST['segments'] ?? []; // Array of [seg => [active, open_time, close_time]]
+            $segments = $_POST['segments'] ?? [];
 
             $pdo->beginTransaction();
             try {
-                // Delete existing for this date
                 $stmt = $pdo->prepare("DELETE FROM ks_store_hours_exceptions WHERE date = ?");
                 $stmt->execute([$date]);
 
-                // Insert segments
                 $stmt = $pdo->prepare("INSERT INTO ks_store_hours_exceptions (date, seg, is_closed, open_time, close_time, notice) VALUES (?, ?, ?, ?, ?, ?)");
                 
                 foreach ([1, 2] as $segNum) {
@@ -148,7 +136,6 @@ try {
                     $active = (isset($s['active']) && $s['active'] == 1);
                     $is_closed = $active ? 0 : 1;
                     
-                    // Se attivo, prendi i tempi; se vuoti o se chiuso, forza NULL
                     $open_time = ($active && !empty($s['open_time'])) ? $s['open_time'] : null;
                     $close_time = ($active && !empty($s['close_time'])) ? $s['close_time'] : null;
                     
@@ -156,7 +143,7 @@ try {
                 }
 
                 $pdo->commit();
-                echo json_encode(['status' => 'success', 'message' => 'Eccezioni salvate correttamente.']);
+                jsonSuccess(['message' => 'Eccezioni salvate correttamente.']);
             } catch (Exception $e) {
                 $pdo->rollBack();
                 throw $e;
@@ -165,32 +152,28 @@ try {
 
         case 'delete_exception':
             $date = $_POST['date'] ?? null;
-            if (!$date) throw new Exception('Data mancante.');
+            if (!$date) jsonError('Data mancante.');
             
             $stmt = $pdo->prepare("DELETE FROM ks_store_hours_exceptions WHERE date = ?");
             $stmt->execute([$date]);
-            echo json_encode(['status' => 'success', 'message' => 'Eccezioni rimosse.']);
+            jsonSuccess(['message' => 'Eccezioni rimosse.']);
             break;
 
-        // --- HOLIDAYS ---
         case 'get_holidays':
             $stmt = $pdo->query("SELECT * FROM ks_store_holidays ORDER BY month ASC, day ASC");
             $holidays = $stmt->fetchAll(PDO::FETCH_ASSOC);
-            echo json_encode(['status' => 'success', 'data' => $holidays]);
+            jsonSuccess(['data' => $holidays]);
             break;
 
         case 'save_holiday':
             $id = $_POST['id'] ?? null;
             $name = $_POST['name'];
-            $rule_type = $_POST['rule_type']; // 'fixed' or 'easter'
+            $rule_type = $_POST['rule_type'];
             $is_closed = $_POST['is_closed'] ?? 1;
             $active = $_POST['active'] ?? 1;
             
-            // Fixed date params
             $month = $_POST['month'] ?? null;
             $day = $_POST['day'] ?? null;
-            
-            // Easter params
             $offset_days = $_POST['offset_days'] ?? 0;
 
             if ($id) {
@@ -200,22 +183,21 @@ try {
                 $stmt = $pdo->prepare("INSERT INTO ks_store_holidays (name, rule_type, month, day, offset_days, is_closed, active) VALUES (?, ?, ?, ?, ?, ?, ?)");
                 $stmt->execute([$name, $rule_type, $month, $day, $offset_days, $is_closed, $active]);
             }
-            echo json_encode(['status' => 'success', 'message' => 'Festività salvata.']);
+            jsonSuccess(['message' => 'Festività salvata.']);
             break;
 
         case 'delete_holiday':
             $id = $_POST['id'] ?? null;
-            if (!$id) throw new Exception('ID mancante.');
+            if (!$id) jsonError('ID mancante.');
             
             $stmt = $pdo->prepare("DELETE FROM ks_store_holidays WHERE id=?");
             $stmt->execute([$id]);
-            echo json_encode(['status' => 'success', 'message' => 'Festività rimossa.']);
+            jsonSuccess(['message' => 'Festività rimossa.']);
             break;
 
         default:
-            throw new Exception('Azione non valida.');
+            jsonError('Azione non valida.');
     }
-} catch (Exception $e) {
-    http_response_code(400);
-    echo json_encode(['status' => 'error', 'message' => $e->getMessage()]);
+} catch (Throwable $e) {
+    jsonError('Errore del server.', $e);
 }

@@ -1,16 +1,5 @@
 <?php
-require_once '../../config/config.php';
-
-header('Content-Type: application/json');
-
-// Security Check
-if (session_status() === PHP_SESSION_NONE) {
-    session_start();
-}
-if (!isset($_SESSION['user_id'])) {
-    echo json_encode(['status' => 'error', 'message' => 'Unauthorized']);
-    exit;
-}
+require_once __DIR__ . '/init.php';
 
 $action = $_POST['action'] ?? 'preview';
 
@@ -57,6 +46,19 @@ try {
     if ($action === 'preview') {
         if (!isset($_FILES['csv_file'])) {
             throw new Exception('Nessun file caricato');
+        }
+        $csvExt = strtolower(pathinfo($_FILES['csv_file']['name'], PATHINFO_EXTENSION));
+        if ($csvExt !== 'csv') {
+            throw new Exception('Sono ammessi solo file CSV.');
+        }
+        $finfo = finfo_open(FILEINFO_MIME_TYPE);
+        $csvMime = finfo_file($finfo, $_FILES['csv_file']['tmp_name']);
+        finfo_close($finfo);
+        if (!in_array($csvMime, ['text/csv', 'text/plain', 'application/csv', 'application/vnd.ms-excel'])) {
+            throw new Exception('Tipo MIME non consentito: ' . $csvMime);
+        }
+        if ($_FILES['csv_file']['size'] > 10 * 1024 * 1024) {
+            throw new Exception('File CSV troppo grande. Massimo 10MB.');
         }
 
         $file = $_FILES['csv_file']['tmp_name'];
@@ -244,8 +246,8 @@ try {
         echo json_encode(['status' => 'success', 'message' => "Importati $imported prodotti."]);
     }
 
-} catch (Exception $e) {
+} catch (Throwable $e) {
     if ($pdo->inTransaction()) $pdo->rollBack();
-    echo json_encode(['status' => 'error', 'message' => $e->getMessage()]);
+    jsonError('Errore del server.', $e);
 }
 ?>

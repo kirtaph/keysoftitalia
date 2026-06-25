@@ -1,5 +1,14 @@
 <?php
-require_once 'e:/xampp/htdocs/keysoftitalia/config/config.php';
+// Security Check: Ensure user is logged in
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+if (!isset($_SESSION['user_id'])) {
+    echo json_encode(['status' => 'error', 'message' => 'Unauthorized']);
+    exit;
+}
+
+require_once __DIR__ . '/../../config/config.php';
 
 try {
     $tables = ['issues', 'brands', 'models'];

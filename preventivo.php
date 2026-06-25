@@ -19,6 +19,16 @@ $page_keywords    = "preventivo informatica, stima riparazione smartphone, stima
 $breadcrumbs = [
   ['label' => 'Preventivo', 'url' => 'preventivo.php']
 ];
+
+// Schema: service page (not ComputerStore)
+$page_schema = [
+    '@context'  => 'https://schema.org',
+    '@type'     => 'Service',
+    'name'      => $page_title,
+    'description'=> $page_description,
+    'url'       => url('preventivo.php'),
+    'provider'  => ['@id' => url() . '#ComputerStore'],
+];
 ?>
 <!DOCTYPE html>
 <html lang="it">

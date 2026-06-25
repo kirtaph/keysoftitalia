@@ -26,6 +26,8 @@ $pages = [
     'valuta-usato.php' => ['priority' => '0.8', 'changefreq' => 'weekly'],
     'volantini.php' => ['priority' => '0.8', 'changefreq' => 'daily'],
     'video.php' => ['priority' => '0.7', 'changefreq' => 'weekly'],
+    'privacy.php' => ['priority' => '0.4', 'changefreq' => 'monthly'],
+    'track_order.php' => ['priority' => '0.3', 'changefreq' => 'monthly'],
 ];
 
 // Leggi la cartella servizi per trovare le sottopagine

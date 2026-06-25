@@ -51,6 +51,8 @@ $page_keywords = "riparazioni smartphone ginosa, assistenza computer taranto, ri
 
     <?php include 'includes/header.php'; ?>
 
+<main id="main-content">
+
 <!-- HERO CAROUSEL -->
 <section id="heroCarousel" class="carousel slide hero-carousel" data-bs-ride="carousel" data-bs-interval="6000" data-bs-pause="false" data-bs-touch="true" data-bs-wrap="true" data-bs-keyboard="true" aria-label="Carousel di presentazione servizi" data-aos="fade-in" data-aos-duration="1000">
   <div class="carousel-inner">
@@ -68,6 +70,7 @@ $page_keywords = "riparazioni smartphone ginosa, assistenza computer taranto, ri
   <div class="carousel-item active">
     <div class="hero-slide d-flex align-items-center bg-hero-flyer"
          style="background-image: url('<?php echo !empty($featured_flyer['cover_image']) ? htmlspecialchars($featured_flyer['cover_image']) : asset('images/hero/hero-flyer-bg.jpg'); ?>');">
+      <img class="hero-slide-bg" src="<?php echo !empty($featured_flyer['cover_image']) ? htmlspecialchars($featured_flyer['cover_image']) : asset('images/hero/hero-flyer-bg.jpg'); ?>" alt="Volantino offerte Key Soft Italia" aria-hidden="true" width="1920" height="600" fetchpriority="high">
       <div class="container position-relative" style="z-index:2;">
         <div class="row align-items-center">
 
@@ -151,6 +154,11 @@ $page_keywords = "riparazioni smartphone ginosa, assistenza computer taranto, ri
         </div>
       </div>
       <div class="overlay"></div>
+      <div class="hero-floating-shapes" aria-hidden="true">
+        <div class="hero-blob hero-blob--1"></div>
+        <div class="hero-blob hero-blob--2"></div>
+        <div class="hero-blob hero-blob--3"></div>
+      </div>
     </div>
   </div>
   <?php endif; ?>
@@ -158,6 +166,7 @@ $page_keywords = "riparazioni smartphone ginosa, assistenza computer taranto, ri
     <!-- Slide 1: Riparazioni -->
     <div class="carousel-item <?php echo empty($featured_flyer) ? 'active' : ''; ?>">
       <div class="hero-slide bg-hero-1 d-flex align-items-center">
+        <img class="hero-slide-bg" src="<?php echo asset('img/hero-repair.jpg'); ?>" alt="Riparazioni smartphone e computer Key Soft Italia" aria-hidden="true" width="1920" height="600" <?php echo empty($featured_flyer) ? 'fetchpriority="high"' : ''; ?>>
         <div class="container position-relative" style="z-index:2;">
           <div class="row align-items-center">
             <div class="col-lg-6">
@@ -183,28 +192,28 @@ $page_keywords = "riparazioni smartphone ginosa, assistenza computer taranto, ri
                 <div class="row g-3">
                   <div class="col-6">
                     <div class="feature-card" data-aos="zoom-in" data-aos-duration="600" data-aos-delay="300">
-                      <i class="ri-exchange-line"></i>
+                      <i class="ri-search-line"></i>
                       <h4>Diagnosi gratuita</h4>
                       <p>Identifichiamo il problema senza costi iniziali</p>
                     </div>
                   </div>
                   <div class="col-6">
                     <div class="feature-card" data-aos="zoom-in" data-aos-duration="600" data-aos-delay="400">
-                      <i class="ri-user-settings-line"></i>
+                      <i class="ri-shield-check-line"></i>
                       <h4>Garanzia 3 mesi</h4>
                       <p>Tranquillità e sicurezza dopo ogni intervento</p>
                     </div>
                   </div>
                   <div class="col-6">
                     <div class="feature-card" data-aos="zoom-in" data-aos-duration="600" data-aos-delay="500">
-                      <i class="ri-shield-check-line"></i>
+                      <i class="ri-refund-2-line"></i>
                       <h4>Dispositivo sostitutivo</h4>
                       <p>Continui a lavorare senza fermarti</p>
                     </div>
                   </div>
                   <div class="col-6">
                     <div class="feature-card" data-aos="zoom-in" data-aos-duration="600" data-aos-delay="600">
-                      <i class="ri-smartphone-line"></i>
+                      <i class="ri-tools-line"></i>
                       <h4>Ricambi originali</h4>
                       <p>Montiamo solo Service Pack genuini</p>
                     </div>
@@ -215,21 +224,27 @@ $page_keywords = "riparazioni smartphone ginosa, assistenza computer taranto, ri
           </div>
         </div>
         <div class="overlay"></div>
+        <div class="hero-floating-shapes" aria-hidden="true">
+          <div class="hero-blob hero-blob--1"></div>
+          <div class="hero-blob hero-blob--2"></div>
+          <div class="hero-blob hero-blob--3"></div>
+        </div>
       </div>
     </div>
 
     <!-- Slide 2: Ricondizionati -->
     <div class="carousel-item">
       <div class="hero-slide bg-hero-2 d-flex align-items-center">
+        <img class="hero-slide-bg" src="<?php echo asset('img/hero-ricondizionati.jpg'); ?>" alt="Dispositivi ricondizionati garantiti 12 mesi" aria-hidden="true" width="1920" height="600">
         <div class="container position-relative" style="z-index:2;">
           <div class="row align-items-center">
             <div class="col-lg-6">
               <div class="hero-content text-white" data-aos="fade-right" data-aos-duration="800" data-aos-delay="200">
                 <div class="hero-badge">
-                  <i class="ri-time-line"></i>
+                  <i class="ri-award-line"></i>
                   <span>Garanzia 12 Mesi*</span>
                 </div>
-                <h1 class="hero-title">Scopri i nostri dispositivi <span class="hero-title-excited">ricondizionati</span> garantiti</h1>
+                <h2 class="hero-title">Scopri i nostri dispositivi <span class="hero-title-excited">ricondizionati</span> garantiti</h2>
                 <p class="hero-description">Smartphone, notebook e tablet testati e certificati. Prezzo conveniente, qualità come nuova.</p>
                 <div class="hero-actions">
                   <a href="<?php echo url('prodotti.php'); ?>" class="btn btn-primary btn-lg" aria-label="Vedi dispositivi ricondizionati">
@@ -246,28 +261,28 @@ $page_keywords = "riparazioni smartphone ginosa, assistenza computer taranto, ri
                 <div class="row g-3">
                   <div class="col-6">
                     <div class="feature-card" data-aos="zoom-in" data-aos-duration="600" data-aos-delay="300">
-                      <i class="ri-exchange-line"></i>
+                      <i class="ri-check-double-line"></i>
                       <h4>40+ test di qualità</h4>
                       <p>Ogni dispositivo è certificato</p>
                     </div>
                   </div>
                   <div class="col-6">
                     <div class="feature-card" data-aos="zoom-in" data-aos-duration="600" data-aos-delay="400">
-                      <i class="ri-user-settings-line"></i>
+                      <i class="ri-money-euro-circle-line"></i>
                       <h4>Risparmi fino al 50%</h4>
                       <p>Massima convenienza senza rinunce</p>
                     </div>
                   </div>
                   <div class="col-6">
                     <div class="feature-card" data-aos="zoom-in" data-aos-duration="600" data-aos-delay="500">
-                      <i class="ri-shield-check-line"></i>
+                      <i class="ri-award-line"></i>
                       <h4>Garanzia 12 mesi</h4>
                       <p>Inclusa in ogni acquisto</p>
                     </div>
                   </div>
                   <div class="col-6">
                     <div class="feature-card" data-aos="zoom-in" data-aos-duration="600" data-aos-delay="600">
-                      <i class="ri-smartphone-line"></i>
+                      <i class="ri-database-2-line"></i>
                       <h4>Passaggio dati incluso</h4>
                       <p>Consegna pronta all’uso</p>
                     </div>
@@ -278,21 +293,27 @@ $page_keywords = "riparazioni smartphone ginosa, assistenza computer taranto, ri
           </div>
         </div>
         <div class="overlay"></div>
+        <div class="hero-floating-shapes" aria-hidden="true">
+          <div class="hero-blob hero-blob--1"></div>
+          <div class="hero-blob hero-blob--2"></div>
+          <div class="hero-blob hero-blob--3"></div>
+        </div>
       </div>
     </div>
 
     <!-- Slide 3: Consulenza IT & Reti -->
     <div class="carousel-item">
       <div class="hero-slide bg-hero-3 d-flex align-items-center">
+        <img class="hero-slide-bg" src="<?php echo asset('img/hero-it.jpg'); ?>" alt="Consulenza IT e reti aziendali a Ginosa" aria-hidden="true" width="1920" height="600">
         <div class="container position-relative" style="z-index:2;">
           <div class="row align-items-center">
             <div class="col-lg-6">
               <div class="hero-content text-white" data-aos="fade-right" data-aos-duration="800" data-aos-delay="200">
                 <div class="hero-badge">
-                  <i class="ri-time-line"></i>
+                  <i class="ri-star-line"></i>
                   <span>20+ Anni di Esperienza</span>
                 </div>
-                <h1 class="hero-title">La tua azienda merita <span class="hero-title-excited">soluzioni IT</span> su misura</h1>
+                <h2 class="hero-title">La tua azienda merita <span class="hero-title-excited">soluzioni IT</span> su misura</h2>
                 <p class="hero-description">Consulenza informatica, reti aziendali e sicurezza digitale. Dal 2004 partner tecnologico di imprese e professionisti.</p>
                 <div class="hero-actions">
                   <a href="<?php echo url('preventivo.php'); ?>" class="btn btn-primary btn-lg" aria-label="Richiedi consulenza IT">
@@ -309,28 +330,28 @@ $page_keywords = "riparazioni smartphone ginosa, assistenza computer taranto, ri
                 <div class="row g-3">
                   <div class="col-6">
                     <div class="feature-card" data-aos="zoom-in" data-aos-duration="600" data-aos-delay="300">
-                      <i class="ri-exchange-line"></i>
+                      <i class="ri-wifi-line"></i>
                       <h4>Reti aziendali sicure</h4>
                       <p>Progettazione e installazione</p>
                     </div>
                   </div>
                   <div class="col-6">
                     <div class="feature-card" data-aos="zoom-in" data-aos-duration="600" data-aos-delay="400">
-                      <i class="ri-user-settings-line"></i>
+                      <i class="ri-lock-line"></i>
                       <h4>Cybersecurity</h4>
                       <p>Protezione dei tuoi dati aziendali</p>
                     </div>
                   </div>
                   <div class="col-6">
                     <div class="feature-card" data-aos="zoom-in" data-aos-duration="600" data-aos-delay="500">
-                      <i class="ri-shield-check-line"></i>
+                      <i class="ri-video-chat-line"></i>
                       <h4>Assistenza da remoto</h4>
                       <p>Supporto rapido e professionale</p>
                     </div>
                   </div>
                   <div class="col-6">
                     <div class="feature-card" data-aos="zoom-in" data-aos-duration="600" data-aos-delay="600">
-                      <i class="ri-smartphone-line"></i>
+                      <i class="ri-customer-service-2-line"></i>
                       <h4>Consulenza su misura</h4>
                       <p>Soluzioni scalabili per PMI e privati</p>
                     </div>
@@ -341,6 +362,11 @@ $page_keywords = "riparazioni smartphone ginosa, assistenza computer taranto, ri
           </div>
         </div>
         <div class="overlay"></div>
+        <div class="hero-floating-shapes" aria-hidden="true">
+          <div class="hero-blob hero-blob--1"></div>
+          <div class="hero-blob hero-blob--2"></div>
+          <div class="hero-blob hero-blob--3"></div>
+        </div>
       </div>
     </div>
   </div>
@@ -598,55 +624,6 @@ include __DIR__.'/includes/recond_swiper.php';
 </section>
 <?php endif; ?>
 
-<?php if (!empty($featured_flyer)): ?>
-<!-- CTA PANELS -->
-<section class="section section-cta-panels" role="region" aria-label="Azioni rapide" data-aos="fade-up" data-aos-duration="1000" data-aos-once="true">
-  <div class="container">
-    <div class="row g-4">
-      <!-- Richiedi Preventivo -->
-      <div class="col-lg-4">
-        <div class="cta-card cta-orange" data-aos="slide-right" data-aos-duration="800" data-aos-delay="200">
-          <div class="cta-icon">
-            <i class="ri-file-list-3-line" aria-hidden="true"></i>
-          </div>
-          <h3 class="cta-title">Richiedi Preventivo</h3>
-          <p class="cta-text">Ottieni un preventivo gratuito per riparazioni, consulenza IT o qualsiasi altro servizio.</p>
-          <a href="<?php echo url('preventivo.php'); ?>" class="btn btn-cta" aria-label="Richiedi preventivo gratuito">
-            <i class="ri-file-list-3-line"></i> Richiedi ora
-          </a>
-        </div>
-      </div>
-      <!-- Prenota Riparazione -->
-      <div class="col-lg-4">
-        <div class="cta-card cta-blue" data-aos="slide-center" data-aos-duration="800" data-aos-delay="200">
-          <div class="cta-icon">
-            <i class="ri-edit-line" aria-hidden="true"></i>
-          </div>
-          <h3 class="cta-title">Prenota riparazione</h3>
-          <p class="cta-text">Accesso prioritario in laboratorio: scegli giorno e ora, attendi la conferma.</p>
-          <a href="<?php echo url('prenota-riparazione.php'); ?>" class="btn btn-cta" aria-label="Prenota riparazione online">
-            <i class="ri-edit-line"></i> Prenota ora
-          </a>
-        </div>
-      </div>
-      <!-- Vendi il tuo usato -->
-      <div class="col-lg-4">
-        <div class="cta-card cta-green" data-aos="slide-left" data-aos-duration="800" data-aos-delay="300">
-          <div class="cta-icon">
-            <i class="ri-recycle-line" aria-hidden="true"></i>
-          </div>
-          <h3 class="cta-title">Vendi il tuo usato</h3>
-          <p class="cta-text">Anche se rotto! Valutiamo e acquistiamo il tuo dispositivo usato al miglior prezzo.</p>
-          <a href="<?php echo url('valuta-usato.php'); ?>" class="btn btn-cta" aria-label="Vendi il tuo dispositivo usato">
-            <i class="ri-recycle-line"></i> Vendi ora
-          </a>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-<?php endif; ?>
-
 <!-- WHY US -->
 <section class="section section-why-us" role="region" aria-label="Perché scegliere noi" data-aos="fade-up" data-aos-duration="1000" data-aos-once="true">
   <div class="container">
@@ -683,7 +660,6 @@ include __DIR__.'/includes/recond_swiper.php';
   </div>
 </section>
 
-<?php if (empty($featured_flyer)): ?>
 <!-- CTA PANELS -->
 <section class="section section-cta-panels" role="region" aria-label="Azioni rapide" data-aos="fade-up" data-aos-duration="1000" data-aos-once="true">
   <div class="container">
@@ -730,7 +706,6 @@ include __DIR__.'/includes/recond_swiper.php';
     </div>
   </div>
 </section>
-<?php endif; ?>
 
 <!-- PARTNER BRANDS -->
 <section class="section section-brands" role="region" aria-label="I nostri partner" data-aos="fade-up" data-aos-duration="1000" data-aos-once="true">
@@ -863,6 +838,8 @@ include __DIR__.'/includes/recond_swiper.php';
     </div>
   </div>
 </section>
+
+</main>
 
 <?php include 'includes/footer.php'; ?>
 

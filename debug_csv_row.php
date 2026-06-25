@@ -1,4 +1,8 @@
 <?php
+if (php_sapi_name() !== 'cli') {
+    die('Access denied. CLI only.');
+}
+
 // debug_csv_row.php
 
 $line = "14467;;Samsung/A12;Smartphone Samsung A12 4/64;PERMUTE;Telefonia/Smartphone;1;Pz;€ 36,40;0%;€ 36,40;€ 29,20;45408;0;€ 115,00;€ 36,40;€ 36,40;€ 36,40;€ 36,40;€ 36,40;€ 36,40;€ 36,40;€ 115,00;€ 36,40;€ 36,40;€ 36,40;€ 36,40;€ 36,40;€ 36,40;€ 36,40;0%;0%;0%;0%;0%;0%;0%;0%;;;Samsung/A12;;;Usato;;;0;0;0;False;0;0;0;False;;;-1;-2;-3;-4;-5;-6;-7;-8;;;;;;;;;web_sconto_offerta_1;web_sconto_offerta_2;web_sconto_offerta_3;web_sconto_offerta_4;web_sconto_offerta_5;web_sconto_offerta_6;web_sconto_offerta_7;web_sconto_offerta_8;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;0;Smartphone Samsung A12 4/64;0;False;False;False;;";

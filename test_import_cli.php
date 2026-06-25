@@ -1,8 +1,12 @@
 <?php
-// test_import_cli.php
+// test_import_cli.php - CLI only
+if (php_sapi_name() !== 'cli') {
+    die('Access denied. CLI only.');
+}
+
 require_once 'config/config.php';
 
-// Mock Session
+// Mock Session (CLI only)
 session_start();
 $_SESSION['user_id'] = 1;
 

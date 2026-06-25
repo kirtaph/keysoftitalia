@@ -1,0 +1,19 @@
+{
+    "name": "keysoftitalia/keysoftitalia",
+    "description": "Key Soft Italia website",
+    "type": "project",
+    "require": {
+        "php": ">=8.1",
+        "phpmailer/phpmailer": "^6.9"
+    },
+    "autoload": {
+        "psr-4": {
+            "KeySoftItalia\\": "src/"
+        }
+    },
+    "scripts": {
+        "post-autoload-dump": [
+            "rm -f cache/dashboard_cache.php"
+        ]
+    }
+}

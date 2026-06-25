@@ -4,7 +4,7 @@
 <link href='https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.css' rel='stylesheet' />
 
 <div class="d-flex justify-content-between align-items-center mb-4">
-    <h2 class="section-title"><i class="fas fa-clock me-2 text-primary"></i>Gestione Orari</h2>
+    <h2 class="section-title"><i class="fas fa-clock me-2" style="color:#ff6b35;"></i>Gestione Orari</h2>
 </div>
 
 <div class="card shadow-sm border-0">
@@ -55,15 +55,15 @@
                             <div class="card-body">
                                 <h6 class="card-title fw-bold">Legenda</h6>
                                 <div class="d-flex align-items-center mb-2">
-                                    <div style="width: 15px; height: 15px; background-color: #198754; border-radius: 3px;" class="me-2"></div>
+                                    <div style="width: 15px; height: 15px; background-color: #22c55e; border-radius: 3px;" class="me-2"></div>
                                     <small>Apertura Straordinaria</small>
                                 </div>
                                 <div class="d-flex align-items-center mb-2">
-                                    <div style="width: 15px; height: 15px; background-color: #dc3545; border-radius: 3px;" class="me-2"></div>
+                                    <div style="width: 15px; height: 15px; background-color: #ef4444; border-radius: 3px;" class="me-2"></div>
                                     <small>Chiusura / Ferie</small>
                                 </div>
                                 <div class="d-flex align-items-center">
-                                    <div style="width: 15px; height: 15px; background-color: #6f42c1; border-radius: 3px;" class="me-2"></div>
+                                    <div style="width: 15px; height: 15px; background-color: #a855f7; border-radius: 3px;" class="me-2"></div>
                                     <small>Festività Ricorrente</small>
                                 </div>
                             </div>
@@ -102,7 +102,7 @@
                         <i class="fas fa-calendar-day me-2"></i>Eccezione Singola
                         <div class="small text-muted" style="font-size: 0.75rem;">Per un giorno specifico (es. Inventario)</div>
                     </button>
-                    <button class="btn btn-outline-purple" id="btnNewHoliday" style="color: #6f42c1; border-color: #6f42c1;">
+                    <button class="btn" id="btnNewHoliday" style="color:#a855f7;border:1px solid #a855f7;background:transparent;border-radius:8px;transition:all 0.2s;" onmouseover="this.style.backgroundColor='#a855f7';this.style.color='#fff'" onmouseout="this.style.backgroundColor='transparent';this.style.color='#a855f7'">
                         <i class="fas fa-gift me-2"></i>Festività Ricorrente
                         <div class="small text-muted" style="font-size: 0.75rem;">Si ripete ogni anno (es. Patrono)</div>
                     </button>
