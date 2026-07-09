@@ -6,9 +6,21 @@ L'API usa le entità del catalogo esistente (`products`, `models`, `brands`,
 `devices` e `product_images`). `external_ref` corrisponde allo SKU univoco del
 prodotto. Tutti gli endpoint, incluso `ping`, richiedono autenticazione.
 
-## Configurazione
+## Configurazione dal pannello amministrativo
 
-Impostare nell'ambiente PHP/FPM o Apache, mai in un file versionato:
+Aprire **Admin → Impostazioni Sistema → API KeyOS**, premere **Genera
+credenziali**, confermare scrivendo `RUOTA` e copiare subito API key e secret
+in KeyOS. Il secret viene mostrato una sola volta.
+
+Le credenziali sono attive immediatamente: non servono terminale né riavvio
+del server. Una nuova generazione invalida subito la coppia precedente.
+
+Il pannello salva la coppia in `config/runtime/keyos-api.php`, escluso da Git.
+La directory deve essere scrivibile dall'utente PHP.
+
+## Configurazione alternativa tramite ambiente
+
+Per installazioni gestite via infrastruttura si possono impostare:
 
 ```text
 KSI_API_KEY=<identificativo casuale>
@@ -18,16 +30,15 @@ KSI_API_LOG_PATH=/percorso/non/pubblico/refurbished-api.log
 KSI_API_RUNTIME_PATH=/percorso/scrivibile/refurbished-api
 ```
 
-Generazione consigliata:
+Le credenziali generate dal pannello hanno precedenza sulle variabili
+d'ambiente. Generazione da terminale, solo come alternativa:
 
 ```bash
 php -r "echo 'KSI_API_KEY=', bin2hex(random_bytes(16)), PHP_EOL; echo 'KSI_API_SECRET=', bin2hex(random_bytes(32)), PHP_EOL;"
 ```
 
-Per ruotare le credenziali, generare una nuova coppia, configurarla sia su
-KeyOS sia sul sito durante una finestra concordata, riavviare PHP/Apache e
-verificare `ping`. Questa versione accetta una sola coppia: il cambio deve
-essere coordinato. Non scrivere mai i valori nei log o nel repository.
+Questa versione accetta una sola coppia. Non scrivere mai i valori nei log o
+nel repository.
 
 Applicare la migration:
 

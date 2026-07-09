@@ -200,6 +200,12 @@ $currentPage = basename($_SERVER['PHP_SELF']);
                     <span>Campagne Logo</span>
                 </a>
             </li>
+            <li class="sidebar-item">
+                <a href="keyos_api.php" class="sidebar-link <?php echo $currentPage === 'keyos_api.php' ? 'active' : ''; ?>">
+                    <i class="fas fa-key"></i>
+                    <span>API KeyOS</span>
+                </a>
+            </li>
             
             <li class="sidebar-divider"></li>
             <div class="sidebar-heading">Impostazioni</div>

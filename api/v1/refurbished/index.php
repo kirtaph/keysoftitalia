@@ -5,8 +5,10 @@ define('KSI_STATELESS_API', true);
 define('BASE_PATH', dirname(__DIR__, 3) . DIRECTORY_SEPARATOR);
 require_once BASE_PATH . 'config/config.php';
 require_once BASE_PATH . 'src/RefurbishedApi.php';
+require_once BASE_PATH . 'src/ApiCredentialStore.php';
 
 use KeySoftItalia\Api\ApiException;
+use KeySoftItalia\Api\ApiCredentialStore;
 use KeySoftItalia\Api\ApiLogger;
 use KeySoftItalia\Api\FileStore;
 use KeySoftItalia\Api\HmacAuthenticator;
@@ -25,6 +27,9 @@ $logger = new ApiLogger(getenv('KSI_API_LOG_PATH') ?: BASE_PATH . 'logs/refurbis
 try {
     $runtime = getenv('KSI_API_RUNTIME_PATH') ?: BASE_PATH . 'cache/refurbished-api';
     $store = new FileStore($runtime);
+    $fileCredentials = (new ApiCredentialStore(BASE_PATH . 'config/runtime/keyos-api.php'))->load();
+    $apiKey = (string)($fileCredentials['api_key'] ?: getenv('KSI_API_KEY'));
+    $apiSecret = (string)($fileCredentials['secret'] ?: getenv('KSI_API_SECRET'));
     (new RateLimiter($store, (int)(getenv('KSI_API_RATE_LIMIT') ?: 60)))->check($ip);
     $headers = function_exists('getallheaders') ? getallheaders() : [];
     foreach ($_SERVER as $name => $value) {
@@ -33,8 +38,8 @@ try {
         }
     }
     (new HmacAuthenticator(
-        (string)getenv('KSI_API_KEY'),
-        (string)getenv('KSI_API_SECRET'),
+        $apiKey,
+        $apiSecret,
         $store
     ))->authenticate($headers, $rawBody);
 

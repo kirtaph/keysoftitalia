@@ -9,6 +9,7 @@ vendor/
 *.zip
 *.bak
 cache/
+config/runtime/
 
 # VS Code e OS
 .vscode/
