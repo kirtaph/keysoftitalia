@@ -180,7 +180,7 @@ if (DEBUG_MODE) {
 /* ==========================================================================
    SESSION (idempotente)
    ========================================================================== */
-if (session_status() === PHP_SESSION_NONE) {
+if (!defined('KSI_STATELESS_API') && session_status() === PHP_SESSION_NONE) {
     $isHttps = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off')
         || ($_SERVER['SERVER_PORT'] ?? 0) == 443;
     session_set_cookie_params([

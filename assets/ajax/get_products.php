@@ -72,6 +72,9 @@ $offset = ($page - 1) * $per;
 $where  = [];
 $params = [];
 
+// Draft e hidden non sono mai pubblici; sold resta visibile ma non disponibile.
+$where[] = "p.api_status IN ('publish', 'sold')";
+
 if ($available !== null) { // filtro solo se richiesto
   $where[] = 'p.is_available = :ava';
   $params[':ava'] = $available;
@@ -139,7 +142,7 @@ $total = (int)($stmt->fetchColumn() ?: 0);
 /** =================== ITEMS =================== */
 $sql = "
 SELECT
-  p.id, p.sku,
+  p.id, p.sku, p.title,
   p.list_price,             -- listino
   p.price_eur,              -- prezzo
   p.short_desc, p.full_desc,
@@ -192,7 +195,7 @@ $items = array_map(function(array $r) use ($baseCover) {
   $detailUrl = url('prodotti.php?sku=' . urlencode($r['sku']));
 
   return [
-    'title'        => $title ?: trim(($r['brand'] ?? '') . ' ' . ($r['model'] ?? '')),
+    'title'        => $r['title'] ?: ($title ?: trim(($r['brand'] ?? '') . ' ' . ($r['model'] ?? ''))),
     'brand'        => $r['brand'] ?? null,
     'model'        => $r['model'] ?? null,
     'device'       => $r['device'] ?? null,

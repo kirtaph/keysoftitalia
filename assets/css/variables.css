@@ -159,6 +159,23 @@
   --ks-transition-base: 250ms ease;
   --ks-transition-slow: 350ms ease;
 
+  /* ===== MOTION (easing + durate per le animazioni) =====
+     Fonte unica di verità per curve e timing di tutto il sito.
+     Usare SEMPRE questi token invece di hard-codare cubic-bezier/ms. */
+  --ks-ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);   /* reveal, entrate "morbide" */
+  --ks-ease-out-soft: cubic-bezier(0.4, 0, 0.2, 1);    /* loop, pulse, stati */
+  --ks-ease-linear:   linear;                          /* spin, rotazioni continue */
+
+  --ks-dur-fast:  150ms;   /* micro-interazioni */
+  --ks-dur-base:  400ms;   /* entrate standard */
+  --ks-dur-slow:  800ms;   /* reveal / hero */
+  --ks-dur-slower: 1000ms; /* reveal enfatici */
+
+  /* Durata ridotta applicata in @media (prefers-reduced-motion: reduce):
+     Duration→~0 e non animation:none, così transizioni e reveal restano
+     funzionali senza movimento (rule a11y raccomandata). */
+  --ks-motion-duration: 0.001ms;
+
   /* ===== Z-INDEX ===== */
   --ks-z-dropdown: 1000;
   --ks-z-sticky: 1020;

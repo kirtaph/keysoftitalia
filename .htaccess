@@ -11,6 +11,9 @@
     
     # Rewrite sitemap.xml to dynamic sitemap.php
     RewriteRule ^sitemap\.xml$ sitemap.php [L]
+
+    # KeyOS refurbished server-to-server API
+    RewriteRule ^api/v1/refurbished(?:/.*)?$ api/v1/refurbished/index.php [QSA,L]
 </IfModule>
 
 # Security Headers (only if module is available)
