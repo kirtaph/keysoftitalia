@@ -44,7 +44,6 @@ $current_page = get_current_page();
 </script>
 
 <a href="#main-content" class="skip-link visually-hidden-focusable">Vai al contenuto principale</a>
-<div id="main-content" tabindex="-1"></div>
 
 <?php include_partial('topbar.php'); ?>
 
@@ -192,7 +191,7 @@ $current_page = get_current_page();
     </div>
 
     <!-- Contatti -->
-    <div class="offcanvas-contacts" style="margin-top: var(--ks-spacing-6); display:flex; flex-direction:row; justify-content:center; gap:15px;">
+    <div class="offcanvas-contacts" style="margin-top: var(--ks-spacing-6); display:flex; flex-direction:row; justify-content:center; gap: var(--ks-spacing-4);">
       <a href="tel:<?php echo preg_replace('/\s+/', '', COMPANY_PHONE); ?>" class="contact-btn" aria-label="Chiama">
         <i class="ri-phone-line"></i>
       </a>

@@ -251,8 +251,8 @@ if (!defined('BASE_PATH')) {
 <!-- Cookie Banner (Bootstrap 5 - Premium Dark Glassmorphism) -->
 <div id="cookie-banner"
      class="position-fixed bottom-0 start-50 translate-middle-x z-3"
-     style="display:none; max-width: 920px; width: calc(100% - 1.5rem); margin-bottom: 1.5rem;">
-  <div class="card shadow-lg border-0" style="border-radius: 16px; background: rgba(30, 35, 48, 0.95); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.08) !important;">
+     style="display:none; max-width: 920px; width: calc(100% - var(--ks-spacing-6)); margin-bottom: var(--ks-spacing-6);">
+  <div class="card shadow-lg border-0" style="border-radius: var(--ks-radius-xl); background: rgba(30, 35, 48, 0.95); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.08) !important;">
     <div class="card-body p-3 p-md-4 text-white">
       <div class="d-flex flex-column flex-md-row align-items-md-center gap-3">
         <div class="flex-grow-1">

@@ -250,6 +250,9 @@ document.addEventListener('DOMContentLoaded', function() {
     // Action Buttons
     const printBtn = document.getElementById('printBtn');
     const waBtn = document.getElementById('waBtn');
+    const escapeHtml = value => String(value ?? '').replace(/[&<>"']/g, char => ({
+        '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+    }[char]));
 
     // Tooltips
     const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
@@ -270,23 +273,23 @@ document.addEventListener('DOMContentLoaded', function() {
                         quoteIdInput.value = q.id;
                         
                         // Update UI
-                        deviceDetails.innerHTML = `<span class="fw-bold">${q.device_type}</span><br>${q.brand_name} ${q.model_name}`;
-                        customerDetails.innerHTML = `<span class="fw-bold">${q.customer_first_name} ${q.customer_last_name}</span><br>${q.customer_phone}<br>${q.customer_email}`;
+                        deviceDetails.innerHTML = `<span class="fw-bold">${escapeHtml(q.device_type)}</span><br>${escapeHtml(q.brand_name)} ${escapeHtml(q.model_name)}`;
+                        customerDetails.innerHTML = `<span class="fw-bold">${escapeHtml(q.customer_first_name)} ${escapeHtml(q.customer_last_name)}</span><br>${escapeHtml(q.customer_phone)}<br>${escapeHtml(q.customer_email)}`;
                         
-                        let condHtml = `<div class="mb-2">Condizione: <span class="badge bg-light text-dark border">${q.device_condition}</span></div>`;
+                        let condHtml = `<div class="mb-2">Condizione: <span class="badge bg-light text-dark border">${escapeHtml(q.device_condition)}</span></div>`;
                         
                         let defects = [];
                         try { defects = JSON.parse(q.defects || '[]'); } catch(e){}
-                        if(defects.length) condHtml += `<div class="mb-1"><span class="text-danger fw-bold">Difetti:</span> ${defects.join(', ')}</div>`;
+                        if(Array.isArray(defects) && defects.length) condHtml += `<div class="mb-1"><span class="text-danger fw-bold">Difetti:</span> ${escapeHtml(defects.join(', '))}</div>`;
                         
                         let accessories = [];
                         try { accessories = JSON.parse(q.accessories || '[]'); } catch(e){}
-                        if(accessories.length) condHtml += `<div><span class="text-success fw-bold">Accessori:</span> ${accessories.join(', ')}</div>`;
+                        if(Array.isArray(accessories) && accessories.length) condHtml += `<div><span class="text-success fw-bold">Accessori:</span> ${escapeHtml(accessories.join(', '))}</div>`;
                         
                         conditionDetails.innerHTML = condHtml;
 
                         statusSelect.value = q.status;
-                        priceInput.value = q.expected_price || '';
+                        priceInput.value = q.expected_price ?? '';
                         notesInput.value = q.notes || '';
 
                         // Function to update links
@@ -297,8 +300,9 @@ document.addEventListener('DOMContentLoaded', function() {
                             printBtn.href = `print_used_quote.php?id=${q.id}&price=${price}`;
                             
                             // Update WhatsApp Link
-                            const phone = q.customer_phone.replace(/[^0-9]/g, '');
-                            let msg = `Ciao ${q.customer_first_name}, abbiamo valutato il tuo ${q.brand_name} ${q.model_name}. `;
+                            const phone = String(q.customer_phone ?? '').replace(/[^0-9]/g, '');
+                            const deviceName = [q.brand_name, q.model_name].filter(Boolean).join(' ') || q.device_type || 'dispositivo';
+                            let msg = `Ciao ${q.customer_first_name ?? ''}, abbiamo valutato il tuo ${deviceName}. `;
                             if (price) {
                                 msg += `La nostra offerta è di € ${parseFloat(price).toLocaleString()}.`;
                             } else {
@@ -316,8 +320,12 @@ document.addEventListener('DOMContentLoaded', function() {
 
                         quoteModal.show();
                     } else {
-                        alert('Errore nel recupero dei dati.');
+                        alert(data.message || 'Errore nel recupero dei dati.');
                     }
+                })
+                .catch(error => {
+                    console.error('Recupero valutazione fallito:', error);
+                    alert('Impossibile caricare la valutazione. Riprova o aggiorna la pagina.');
                 });
         }
     });

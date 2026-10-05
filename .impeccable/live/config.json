@@ -1,0 +1,19 @@
+{
+  "files": [
+    "*.php",
+    "servizi/*.php"
+  ],
+  "exclude": [
+    "admin/**/*.php",
+    "api/**/*.php",
+    "config/**/*.php",
+    "includes/**/*.php",
+    "process/**/*.php",
+    "database/**/*.php",
+    "db_dump/**/*.php",
+    "tests/**/*.php"
+  ],
+  "insertBefore": "</body>",
+  "commentSyntax": "html",
+  "cspChecked": true
+}

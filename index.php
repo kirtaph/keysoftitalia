@@ -46,6 +46,7 @@ $page_keywords = "riparazioni smartphone ginosa, assistenza computer taranto, ri
 <head>
     <?php include 'includes/head.php'; ?>
     <link rel="stylesheet" href="<?php echo asset_version('css/pages/home.css'); ?>">
+    <link rel="stylesheet" href="<?php echo asset_version('css/pages/home-overdrive.css'); ?>">
 </head>
 <body>
 
@@ -54,7 +55,7 @@ $page_keywords = "riparazioni smartphone ginosa, assistenza computer taranto, ri
 <main id="main-content">
 
 <!-- HERO CAROUSEL -->
-<section id="heroCarousel" class="carousel slide hero-carousel" data-bs-ride="carousel" data-bs-interval="6000" data-bs-pause="false" data-bs-touch="true" data-bs-wrap="true" data-bs-keyboard="true" aria-label="Carousel di presentazione servizi" data-aos="fade-in" data-aos-duration="1000">
+<section id="heroCarousel" class="carousel slide hero-carousel" data-bs-ride="carousel" data-bs-interval="6000" data-bs-pause="false" data-bs-touch="true" data-bs-wrap="true" data-bs-keyboard="true" aria-label="Carousel di presentazione servizi">
   <div class="carousel-inner">
   <?php
   // piccola helper per le date
@@ -70,7 +71,7 @@ $page_keywords = "riparazioni smartphone ginosa, assistenza computer taranto, ri
   <div class="carousel-item active">
     <div class="hero-slide d-flex align-items-center bg-hero-flyer"
          style="background-image: url('<?php echo !empty($featured_flyer['cover_image']) ? htmlspecialchars($featured_flyer['cover_image']) : asset('images/hero/hero-flyer-bg.jpg'); ?>');">
-      <img class="hero-slide-bg" src="<?php echo !empty($featured_flyer['cover_image']) ? htmlspecialchars($featured_flyer['cover_image']) : asset('images/hero/hero-flyer-bg.jpg'); ?>" alt="Volantino offerte Key Soft Italia" aria-hidden="true" width="1920" height="600" fetchpriority="high">
+      <img class="hero-slide-bg" src="<?php echo !empty($featured_flyer['cover_image']) ? htmlspecialchars($featured_flyer['cover_image']) : asset('images/hero/hero-flyer-bg.jpg'); ?>" alt="" aria-hidden="true" width="1920" height="600" fetchpriority="high">
       <div class="container position-relative" style="z-index:2;">
         <div class="row align-items-center">
 
@@ -134,7 +135,7 @@ $page_keywords = "riparazioni smartphone ginosa, assistenza computer taranto, ri
                 <?php if (!empty($featured_flyer['cover_image'])): ?>
                   <img src="<?php echo htmlspecialchars($featured_flyer['cover_image']); ?>"
                        alt="Copertina volantino <?php echo htmlspecialchars($featured_flyer['title']); ?>"
-                       loading="lazy">
+                       fetchpriority="high">
                 <?php else: ?>
                   <div class="hero-flyer-placeholder">
                     <i class="ri-price-tag-3-line"></i>
@@ -166,7 +167,7 @@ $page_keywords = "riparazioni smartphone ginosa, assistenza computer taranto, ri
     <!-- Slide 1: Riparazioni -->
     <div class="carousel-item <?php echo empty($featured_flyer) ? 'active' : ''; ?>">
       <div class="hero-slide bg-hero-1 d-flex align-items-center">
-        <img class="hero-slide-bg" src="<?php echo asset('img/hero-repair.jpg'); ?>" alt="Riparazioni smartphone e computer Key Soft Italia" aria-hidden="true" width="1920" height="600" <?php echo empty($featured_flyer) ? 'fetchpriority="high"' : ''; ?>>
+        <img class="hero-slide-bg" src="<?php echo asset('img/hero-repair.jpg'); ?>" alt="" aria-hidden="true" width="1920" height="600" <?php echo empty($featured_flyer) ? 'fetchpriority="high"' : ''; ?>>
         <div class="container position-relative" style="z-index:2;">
           <div class="row align-items-center">
             <div class="col-lg-6">
@@ -235,7 +236,7 @@ $page_keywords = "riparazioni smartphone ginosa, assistenza computer taranto, ri
     <!-- Slide 2: Ricondizionati -->
     <div class="carousel-item">
       <div class="hero-slide bg-hero-2 d-flex align-items-center">
-        <img class="hero-slide-bg" src="<?php echo asset('img/hero-ricondizionati.jpg'); ?>" alt="Dispositivi ricondizionati garantiti 12 mesi" aria-hidden="true" width="1920" height="600">
+        <img class="hero-slide-bg" src="<?php echo asset('img/hero-ricondizionati.jpg'); ?>" alt="" aria-hidden="true" width="1920" height="600">
         <div class="container position-relative" style="z-index:2;">
           <div class="row align-items-center">
             <div class="col-lg-6">
@@ -244,7 +245,7 @@ $page_keywords = "riparazioni smartphone ginosa, assistenza computer taranto, ri
                   <i class="ri-award-line"></i>
                   <span>Garanzia 12 Mesi*</span>
                 </div>
-                <h2 class="hero-title">Scopri i nostri dispositivi <span class="hero-title-excited">ricondizionati</span> garantiti</h2>
+                <h1 class="hero-title">Scopri i nostri dispositivi <span class="hero-title-excited">ricondizionati</span> garantiti</h1>
                 <p class="hero-description">Smartphone, notebook e tablet testati e certificati. Prezzo conveniente, qualità come nuova.</p>
                 <div class="hero-actions">
                   <a href="<?php echo url('prodotti.php'); ?>" class="btn btn-primary btn-lg" aria-label="Vedi dispositivi ricondizionati">
@@ -304,7 +305,7 @@ $page_keywords = "riparazioni smartphone ginosa, assistenza computer taranto, ri
     <!-- Slide 3: Consulenza IT & Reti -->
     <div class="carousel-item">
       <div class="hero-slide bg-hero-3 d-flex align-items-center">
-        <img class="hero-slide-bg" src="<?php echo asset('img/hero-it.jpg'); ?>" alt="Consulenza IT e reti aziendali a Ginosa" aria-hidden="true" width="1920" height="600">
+        <img class="hero-slide-bg" src="<?php echo asset('img/hero-it.jpg'); ?>" alt="" aria-hidden="true" width="1920" height="600">
         <div class="container position-relative" style="z-index:2;">
           <div class="row align-items-center">
             <div class="col-lg-6">
@@ -313,7 +314,7 @@ $page_keywords = "riparazioni smartphone ginosa, assistenza computer taranto, ri
                   <i class="ri-star-line"></i>
                   <span>20+ Anni di Esperienza</span>
                 </div>
-                <h2 class="hero-title">La tua azienda merita <span class="hero-title-excited">soluzioni IT</span> su misura</h2>
+                <h1 class="hero-title">La tua azienda merita <span class="hero-title-excited">soluzioni IT</span> su misura</h1>
                 <p class="hero-description">Consulenza informatica, reti aziendali e sicurezza digitale. Dal 2004 partner tecnologico di imprese e professionisti.</p>
                 <div class="hero-actions">
                   <a href="<?php echo url('preventivo.php'); ?>" class="btn btn-primary btn-lg" aria-label="Richiedi consulenza IT">
@@ -401,55 +402,55 @@ $page_keywords = "riparazioni smartphone ginosa, assistenza computer taranto, ri
       <div class="col-lg-8">
         <div class="services-grid">
           <!-- Riparazioni -->
-          <div class="service-item" data-aos="fade-up" data-aos-duration="600" data-aos-delay="200">
+          <div class="service-item">
             <i class="ri-tools-line" aria-hidden="true"></i>
             <div>
-              <h4>Riparazioni & Assistenza</h4>
+              <h3>Riparazioni & Assistenza</h3>
               <p>Riparazione professionale di smartphone, tablet, PC e console gaming</p>
             </div>
           </div>
 
           <!-- Vendita -->
-          <div class="service-item" data-aos="fade-up" data-aos-duration="600" data-aos-delay="300">
+          <div class="service-item">
             <i class="ri-shopping-bag-line" aria-hidden="true"></i>
             <div>
-              <h4>Vendita al Dettaglio</h4>
+              <h3>Vendita al Dettaglio</h3>
               <p>Dispositivi nuovi e ricondizionati con garanzia, accessori originali</p>
             </div>
           </div>
 
           <!-- MyShape -->
-          <div class="service-item" data-aos="fade-up" data-aos-duration="600" data-aos-delay="400">
+          <div class="service-item">
             <i class="ri-shield-check-line" aria-hidden="true"></i>
             <div>
-              <h4>MyShape Protection</h4>
+              <h3>MyShape Protection</h3>
               <p>Pellicole ANTISHOCK e AUTO-RIGENERANTI, perfette per proteggere gli schermi dei dispositivi</p>
             </div>
           </div>
 
           <!-- Sviluppo -->
-          <div class="service-item" data-aos="fade-up" data-aos-duration="600" data-aos-delay="500">
+          <div class="service-item">
             <i class="ri-global-line" aria-hidden="true"></i>
             <div>
-              <h4>Sviluppo Web & App</h4>
+              <h3>Sviluppo Web & App</h3>
               <p>Creazione siti web, e-commerce e applicazioni mobile su misura</p>
             </div>
           </div>
 
           <!-- Consulenza -->
-          <div class="service-item" data-aos="fade-up" data-aos-duration="600" data-aos-delay="600">
+          <div class="service-item">
             <i class="ri-server-line" aria-hidden="true"></i>
             <div>
-              <h4>Consulenza IT & Reti</h4>
+              <h3>Consulenza IT & Reti</h3>
               <p>Progettazione reti aziendali, sistemi di sicurezza e videosorveglianza</p>
             </div>
           </div>
 
           <!-- Telefonia -->
-          <div class="service-item" data-aos="fade-up" data-aos-duration="600" data-aos-delay="700">
+          <div class="service-item">
             <i class="ri-sim-card-line" aria-hidden="true"></i>
             <div>
-              <h4>Telefonia & Servizi Casa</h4>
+              <h3>Telefonia & Servizi Casa</h3>
               <p>Attivazione SIM, offerte internet casa, luce e gas con i migliori operatori</p>
             </div>
           </div>
@@ -458,7 +459,7 @@ $page_keywords = "riparazioni smartphone ginosa, assistenza computer taranto, ri
 
       <!-- Experience Box (centrato verticalmente solo rispetto alla services-grid) -->
       <div class="col-lg-4">
-        <div class="experience-box" data-aos="flip-left" data-aos-duration="1000" data-aos-delay="300">
+        <div class="experience-box">
           <div class="experience-number">20+</div>
           <div class="experience-text">anni di esperienza</div>
           <div class="experience-stats">
@@ -476,7 +477,7 @@ $page_keywords = "riparazioni smartphone ginosa, assistenza computer taranto, ri
     </div>
 
     <!-- CTA (spostato fuori dalla row per non influenzare la centratura) -->
-    <div class="text-center mt-5" data-aos="fade-up" data-aos-duration="600" data-aos-delay="800">
+    <div class="text-center mt-5">
       <a href="<?php echo url('servizi.php'); ?>" class="btn btn-primary" aria-label="Scopri tutti i servizi">
         Scopri tutti i servizi <i class="ri-arrow-right-line"></i>
       </a>
@@ -486,7 +487,7 @@ $page_keywords = "riparazioni smartphone ginosa, assistenza computer taranto, ri
 </section>
 
 <!-- RECONDITIONED SECTION -->
-<section class="section section-recond" role="region" aria-label="I nostri prodotti in evidenza" data-aos="fade-up" data-aos-duration="1000" data-aos-once="true">
+<section class="section section-recond" role="region" aria-label="I nostri prodotti in evidenza">
   <div class="container">
     <div class="section-header text-center" data-aos="zoom-in" data-aos-duration="800" data-aos-delay="100">
       <h2 class="section-title">I nostri prodotti in evidenza</h2>
@@ -502,7 +503,7 @@ include __DIR__.'/includes/recond_swiper.php';
 ?>
 
     <!-- CTA catalogo completo -->
-    <div class="text-center mt-5" data-aos="fade-up" data-aos-duration="600" data-aos-delay="800">
+    <div class="text-center mt-5">
       <a href="<?php echo url('prodotti.php'); ?>" class="btn btn-primary" aria-label="Scopri tutti i nostri ricondizionati">
         Scopri tutti i nostri prodotti <i class="ri-arrow-right-line"></i>
       </a>
@@ -625,7 +626,7 @@ include __DIR__.'/includes/recond_swiper.php';
 <?php endif; ?>
 
 <!-- WHY US -->
-<section class="section section-why-us" role="region" aria-label="Perché scegliere noi" data-aos="fade-up" data-aos-duration="1000" data-aos-once="true">
+<section class="section section-why-us" role="region" aria-label="Perché scegliere noi">
   <div class="container">
     <div class="section-header text-center" data-aos="zoom-in" data-aos-duration="800" data-aos-delay="100">
       <h2 class="section-title">Perché scegliere Key Soft Italia</h2>
@@ -641,18 +642,17 @@ include __DIR__.'/includes/recond_swiper.php';
           ["icon" => "ri-code-s-slash-line", "title" => "Innovazione & Sviluppo", "text" => "Web, e-commerce e software per far crescere la tua attività."],
           ["icon" => "ri-community-line", "title" => "Affidabilità dal 2004", "text" => "Siamo un punto di riferimento per famiglie e aziende."],
       ];
-      $delay = 200;
       foreach ($advantages as $a): ?>
       <div class="col-lg-4 col-md-6">
-        <div class="advantage-card" data-aos="fade-up" data-aos-duration="600" data-aos-delay="<?php echo $delay; ?>">
+        <div class="advantage-card">
           <div class="advantage-icon"><i class="<?php echo $a['icon']; ?>" aria-hidden="true"></i></div>
-          <h4 class="advantage-title"><?php echo $a['title']; ?></h4>
+          <h3 class="advantage-title"><?php echo $a['title']; ?></h3>
           <p class="advantage-text"><?php echo $a['text']; ?></p>
         </div>
       </div>
-      <?php $delay += 100; endforeach; ?>
+      <?php endforeach; ?>
     </div>
-    <div class="text-center mt-5" data-aos="fade-up" data-aos-duration="600" data-aos-delay="800">
+    <div class="text-center mt-5">
       <a href="<?php echo url('chi-siamo.php'); ?>" class="btn btn-primary" aria-label="Scopri di più su Key Soft Italia">
         Scopri di più <i class="ri-arrow-right-line"></i>
       </a>
@@ -661,12 +661,12 @@ include __DIR__.'/includes/recond_swiper.php';
 </section>
 
 <!-- CTA PANELS -->
-<section class="section section-cta-panels" role="region" aria-label="Azioni rapide" data-aos="fade-up" data-aos-duration="1000" data-aos-once="true">
+<section class="section section-cta-panels" role="region" aria-label="Azioni rapide">
   <div class="container">
     <div class="row g-4">
       <!-- Richiedi Preventivo -->
       <div class="col-lg-4">
-        <div class="cta-card cta-orange" data-aos="slide-right" data-aos-duration="800" data-aos-delay="200">
+        <div class="cta-card cta-orange">
           <div class="cta-icon">
             <i class="ri-file-list-3-line" aria-hidden="true"></i>
           </div>
@@ -679,7 +679,7 @@ include __DIR__.'/includes/recond_swiper.php';
       </div>
       <!-- Prenota Riparazione -->
       <div class="col-lg-4">
-        <div class="cta-card cta-blue" data-aos="slide-center" data-aos-duration="800" data-aos-delay="200">
+        <div class="cta-card cta-blue">
           <div class="cta-icon">
             <i class="ri-edit-line" aria-hidden="true"></i>
           </div>
@@ -692,7 +692,7 @@ include __DIR__.'/includes/recond_swiper.php';
       </div>
       <!-- Vendi il tuo usato -->
       <div class="col-lg-4">
-        <div class="cta-card cta-green" data-aos="slide-left" data-aos-duration="800" data-aos-delay="300">
+        <div class="cta-card cta-green">
           <div class="cta-icon">
             <i class="ri-recycle-line" aria-hidden="true"></i>
           </div>
@@ -708,7 +708,7 @@ include __DIR__.'/includes/recond_swiper.php';
 </section>
 
 <!-- PARTNER BRANDS -->
-<section class="section section-brands" role="region" aria-label="I nostri partner" data-aos="fade-up" data-aos-duration="1000" data-aos-once="true">
+<section class="section section-brands" role="region" aria-label="I nostri partner">
   <div class="container">
     <div class="section-header text-center" data-aos="zoom-in" data-aos-duration="800" data-aos-delay="100">
       <h2 class="section-title">Partner e Brand Trattati</h2>
@@ -718,44 +718,43 @@ include __DIR__.'/includes/recond_swiper.php';
     <!-- Swiper Carousel -->
     <div class="swiper brand-swiper">
       <div class="swiper-wrapper">
-        <!-- LOGHI DEMO (da sostituire con immagini reali in /assets/img/brands/) -->
-        <div class="swiper-slide" data-aos="fade-in" data-aos-duration="600" data-aos-delay="200">
+        <div class="swiper-slide">
           <img src="<?php echo asset('img/brands/apple.png'); ?>" alt="Logo Apple" loading="lazy">
         </div>
-        <div class="swiper-slide" data-aos="fade-in" data-aos-duration="600" data-aos-delay="300">
+        <div class="swiper-slide">
           <img src="<?php echo asset('img/brands/samsung.png'); ?>" alt="Logo Samsung" loading="lazy">
         </div>
-        <div class="swiper-slide" data-aos="fade-in" data-aos-duration="600" data-aos-delay="400">
+        <div class="swiper-slide">
           <img src="<?php echo asset('img/brands/huawei.png'); ?>" alt="Logo Huawei" loading="lazy">
         </div>
-        <div class="swiper-slide" data-aos="fade-in" data-aos-duration="600" data-aos-delay="500">
+        <div class="swiper-slide">
           <img src="<?php echo asset('img/brands/xiaomi.png'); ?>" alt="Logo Xiaomi" loading="lazy">
         </div>
-        <div class="swiper-slide" data-aos="fade-in" data-aos-duration="600" data-aos-delay="600">
+        <div class="swiper-slide">
           <img src="<?php echo asset('img/brands/lenovo.png'); ?>" alt="Logo Lenovo" loading="lazy">
         </div>
-        <div class="swiper-slide" data-aos="fade-in" data-aos-duration="600" data-aos-delay="700">
+        <div class="swiper-slide">
           <img src="<?php echo asset('img/brands/hp.png'); ?>" alt="Logo HP" loading="lazy">
         </div>
-        <div class="swiper-slide" data-aos="fade-in" data-aos-duration="600" data-aos-delay="700">
+        <div class="swiper-slide">
           <img src="<?php echo asset('img/brands/asus.png'); ?>" alt="Logo ASUS" loading="lazy">
         </div>
-        <div class="swiper-slide" data-aos="fade-in" data-aos-duration="600" data-aos-delay="700">
+        <div class="swiper-slide">
           <img src="<?php echo asset('img/brands/brother.png'); ?>" alt="Logo Brother" loading="lazy">
         </div>
-        <div class="swiper-slide" data-aos="fade-in" data-aos-duration="600" data-aos-delay="700">
+        <div class="swiper-slide">
           <img src="<?php echo asset('img/brands/canon.png'); ?>" alt="Logo Canon" loading="lazy">
         </div>
-        <div class="swiper-slide" data-aos="fade-in" data-aos-duration="600" data-aos-delay="700">
+        <div class="swiper-slide">
           <img src="<?php echo asset('img/brands/acer.png'); ?>" alt="Logo Acer" loading="lazy">
         </div>
-        <div class="swiper-slide" data-aos="fade-in" data-aos-duration="600" data-aos-delay="700">
+        <div class="swiper-slide">
           <img src="<?php echo asset('img/brands/motorola.png'); ?>" alt="Logo Motorola" loading="lazy">
         </div>
-        <div class="swiper-slide" data-aos="fade-in" data-aos-duration="600" data-aos-delay="700">
+        <div class="swiper-slide">
           <img src="<?php echo asset('img/brands/realme.png'); ?>" alt="Logo Realme" loading="lazy">
         </div>
-        <div class="swiper-slide" data-aos="fade-in" data-aos-duration="600" data-aos-delay="700">
+        <div class="swiper-slide">
           <img src="<?php echo asset('img/brands/tplink.png'); ?>" alt="Logo TP-Link" loading="lazy">
         </div>
       </div>
@@ -764,7 +763,7 @@ include __DIR__.'/includes/recond_swiper.php';
 </section>
 
 <!-- TESTIMONIALS SECTION -->
-<section class="section section-testimonials" role="region" aria-label="Recensioni clienti" data-aos="fade-up" data-aos-duration="1000" data-aos-once="true">
+<section class="section section-testimonials" role="region" aria-label="Recensioni clienti">
   <div class="container">
     <div class="section-header text-center" data-aos="zoom-in" data-aos-duration="800" data-aos-delay="100">
       <h2 class="section-title">Cosa dicono i nostri clienti</h2>
@@ -787,13 +786,12 @@ include __DIR__.'/includes/recond_swiper.php';
           ["name"=>"Nicola B.","rating"=>4,"text"=>"Professionalità, gentilezza, velocità e servizi top!"],
           ["name"=>"Erasmo S.","rating"=>5,"text"=>"Cordialità e competenza al TOP."],
         ];
-        $delay = 200;
         foreach ($testimonials as $t): 
           // Prendi iniziali dal nome
           $initials = implode('', array_map(fn($part) => mb_substr($part, 0, 1), explode(' ', $t['name'])));
         ?>
           <div class="swiper-slide">
-            <div class="testimonial-card" role="article" aria-label="Recensione di <?php echo $t['name']; ?>" data-aos="fade-up" data-aos-duration="600" data-aos-delay="<?php echo $delay; ?>">
+            <div class="testimonial-card" role="article" aria-label="Recensione di <?php echo $t['name']; ?>">
               <div class="testimonial-top">
                 <div class="testimonial-avatar"><?php echo $initials; ?></div>
                 <div class="testimonial-info">
@@ -808,12 +806,12 @@ include __DIR__.'/includes/recond_swiper.php';
               <p class="testimonial-text">"<?php echo $t['text']; ?>"</p>
             </div>
           </div>
-        <?php $delay += 100; endforeach; ?>
+        <?php endforeach; ?>
       </div>
       <div class="swiper-pagination"></div>
     </div>
 
-    <div class="text-center mt-4" data-aos="fade-up" data-aos-duration="600" data-aos-delay="800">
+    <div class="text-center mt-4">
       <a href="https://www.google.it/maps/place/Key+Soft+Italia" target="_blank" rel="noopener" class="btn btn-primary" aria-label="Leggi tutte le recensioni su Google">
         Leggi tutte le recensioni su Google <i class="ri-arrow-right-line"></i>
       </a>
@@ -822,18 +820,18 @@ include __DIR__.'/includes/recond_swiper.php';
 </section>
 
 <!-- FINAL CTA -->
-<section class="section section-final-cta" role="region" aria-label="Contattaci per assistenza" data-aos="fade-up" data-aos-duration="1000" data-aos-once="true">
+<section class="section section-final-cta" role="region" aria-label="Contattaci per assistenza">
   <div class="container text-center">
-    <h2 class="final-cta-title" data-aos="zoom-in" data-aos-duration="800" data-aos-delay="100">Hai bisogno di assistenza immediata?</h2>
-    <p class="final-cta-subtitle" data-aos="fade-up" data-aos-duration="600" data-aos-delay="200">Il nostro team di esperti è pronto ad aiutarti. Contattaci per un supporto rapido e professionale.</p>
-    <div class="final-cta-actions" data-aos="fade-up" data-aos-duration="600" data-aos-delay="300">
+    <h2 class="final-cta-title">Hai bisogno di assistenza immediata?</h2>
+    <p class="final-cta-subtitle">Il nostro team di esperti è pronto ad aiutarti. Contattaci per un supporto rapido e professionale.</p>
+    <div class="final-cta-actions">
       <a href="tel:<?php echo PHONE_PRIMARY; ?>" class="btn btn-primary btn-lg" aria-label="Chiama al numero <?php echo PHONE_PRIMARY; ?>">
         <i class="ri-phone-line"></i> Chiama ora: <?php echo PHONE_PRIMARY; ?>
       </a>
       <a href="<?php echo whatsapp_link('Ciao Key Soft Italia, ho bisogno di assistenza immediata!', ['utm_campaign' => 'footer-cta']); ?>" 
          target="_blank" rel="noopener" 
          class="btn btn-outline-primary btn-lg" aria-label="Contattaci su WhatsApp">
-        <i class="ri-whatsapp-line"></i> WhatsApp
+         <i class="ri-whatsapp-line"></i> WhatsApp
       </a>
     </div>
   </div>
@@ -843,6 +841,38 @@ include __DIR__.'/includes/recond_swiper.php';
 
 <?php include 'includes/footer.php'; ?>
 
+<!-- Homepage overdrive: scroll choreography (progress spine + odometer stats) -->
+<script src="<?php echo asset_version('js/pages/home-overdrive.js'); ?>" defer></script>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  // Disabilita se l'utente preferisce mobilità ridotta
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+  const elements = document.querySelectorAll('.service-item, .advantage-card');
+  elements.forEach(el => {
+    el.addEventListener('mousemove', e => {
+      const rect = el.getBoundingClientRect();
+      const x = ((e.clientX - rect.left) / rect.width * 100).toFixed(2);
+      const y = ((e.clientY - rect.top) / rect.height * 100).toFixed(2);
+      
+      // Usa requestAnimationFrame per performance ottimali
+      window.requestAnimationFrame(() => {
+        el.style.setProperty('--mouse-x', `${x}%`);
+        el.style.setProperty('--mouse-y', `${y}%`);
+      });
+    });
+    
+    // Resetta la luce al centro all'uscita del mouse
+    el.addEventListener('mouseleave', () => {
+      window.requestAnimationFrame(() => {
+        el.style.setProperty('--mouse-x', '50%');
+        el.style.setProperty('--mouse-y', '50%');
+      });
+    });
+  });
+});
+</script>
 
 </body>
 </html>

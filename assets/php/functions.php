@@ -238,7 +238,7 @@ if (!function_exists('send_assistance_email')) {
     $fascia = $get('time_preference','qualsiasi');
 
     // --- minimal validation
-    if ($name==='' || $phone==='' || $device==='' || $prob==='') return ['ok'=>false,'error'=>'Campi obbligatori mancanti'];
+    if ($name==='' || (($opts['require_phone'] ?? true) && $phone==='') || $device==='' || $prob==='') return ['ok'=>false,'error'=>'Campi obbligatori mancanti'];
     if ($email!=='' && !filter_var($email, FILTER_VALIDATE_EMAIL)) return ['ok'=>false,'error'=>'Email non valida'];
 
     // --- headers

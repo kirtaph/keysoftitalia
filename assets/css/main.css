@@ -103,6 +103,16 @@ a:hover {
   white-space: nowrap;
 }
 
+.btn:hover {
+  transform: translateY(-2px) scale(1.02);
+  box-shadow: var(--ks-shadow-md);
+}
+
+.btn:active {
+  transform: translateY(0) scale(0.98);
+  box-shadow: var(--ks-shadow-sm);
+}
+
 .btn:focus-visible {
   outline: 2px solid var(--ks-orange);
   outline-offset: 2px;

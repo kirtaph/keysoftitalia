@@ -258,10 +258,10 @@ $breadcrumbs = [
                 </div>
                 <div class="ks-right">
                   <button type="button" class="btn btn-wa" id="btn_whatsapp" data-channel="whatsapp">
-                    <i class="ri-whatsapp-line"></i> <span class="btn-text">WhatsApp</span>
+                    <i class="ri-whatsapp-line"></i> <span class="btn-text">Invia via WhatsApp</span>
                   </button>
                   <button type="button" class="btn btn-mail" id="btn_submit" data-channel="form">
-                    <i class="ri-mail-send-line"></i> <span class="btn-text">Invia</span>
+                    <i class="ri-mail-send-line"></i> <span class="btn-text">Invia via Email</span>
                   </button>
                 </div>
               </div>
@@ -612,20 +612,20 @@ document.addEventListener('DOMContentLoaded', function () {
   function validateStep(step) {
     if (step === 1) {
       if (!selectedDevice) {
-        showToast({type:'danger', title:'Dispositivo', message:'Seleziona il tipo di dispositivo.'});
+        showToast({type:'danger', title:'Dispositivo mancante', message:'Per favore, seleziona il tipo di dispositivo per continuare.'});
         return false;
       }
       if (!brandSelect.value) {
-        showToast({type:'danger', title:'Marca', message:'Seleziona la marca del dispositivo.'});
+        showToast({type:'danger', title:'Marca mancante', message:'Scegli la marca del tuo dispositivo dalla lista.'});
         return false;
       }
       if (brandSelect.value === BRAND_OTHER_VALUE && !normalizeText(brandOtherInput.value)) {
-        showToast({type:'danger', title:'Marca', message:'Specifica la marca del dispositivo.'});
+        showToast({type:'danger', title:'Marca mancante', message:'Scrivi la marca del tuo dispositivo nel campo di testo.'});
         return false;
       }
       if (!modelSelect.classList.contains('d-none')) {
          if (modelSelect.value === MODEL_OTHER_VALUE && !normalizeText(modelOtherInput.value)) {
-            showToast({type:'danger', title:'Modello', message:'Specifica il modello del dispositivo.'});
+            showToast({type:'danger', title:'Modello mancante', message:'Inserisci il modello esatto del tuo dispositivo.'});
             return false;
          }
       }
@@ -633,11 +633,11 @@ document.addEventListener('DOMContentLoaded', function () {
 
     if (step === 2) {
       if (!conditionInput.value) {
-        showToast({type:'danger', title:'Stato', message:'Seleziona lo stato del dispositivo.'});
+        showToast({type:'danger', title:'Stato del dispositivo mancante', message:'Seleziona le condizioni estetiche e di funzionamento del dispositivo.'});
         return false;
       }
       if (selectedDefects.has('Altro') && !normalizeText(defectOther.value)) {
-        showToast({type:'danger', title:'Problemi', message:'Hai selezionato “Altro”: descrivi i problemi.'});
+        showToast({type:'danger', title:'Descrizione richiesta', message:'Fornisci una breve descrizione dei difetti o problemi riscontrati.'});
         return false;
       }
     }
@@ -650,11 +650,11 @@ document.addEventListener('DOMContentLoaded', function () {
       const privacy = wizard.elements['privacy'].checked;
 
       if (!first || !last || !email || !phone) {
-        showToast({type:'danger', title:'Dati mancanti', message:'Compila tutti i campi obbligatori.'});
+        showToast({type:'danger', title:'Dati incompleti', message:'Inserisci il tuo nome, cognome, email e numero di telefono.'});
         return false;
       }
       if (!privacy) {
-        showToast({type:'danger', title:'Privacy', message:'Devi accettare la Privacy Policy.'});
+        showToast({type:'danger', title:'Consenso necessario', message:'È necessario accettare la Privacy Policy per poter inviare la richiesta.'});
         return false;
       }
     }
@@ -1029,7 +1029,7 @@ document.addEventListener('DOMContentLoaded', function () {
         window.open(url, '_blank');
         showToast({type:'success', title:'WhatsApp', message:'Apro la chat precompilata…'});
       } else {
-        showToast({type:'success', title:'Inviato', message:'Richiesta registrata correttamente.'});
+        showToast({type:'success', title:'Richiesta inviata con successo!', message:'Abbiamo registrato la tua richiesta di valutazione. Ti risponderemo al più presto.'});
       }
     } catch (err) {
       console.error(err);

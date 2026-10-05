@@ -1,4 +1,8 @@
 <?php
+if (PHP_SAPI !== 'cli') {
+    http_response_code(403);
+    exit('Accesso consentito solo da CLI.');
+}
 require_once 'config/config.php';
 try {
     echo "--- MODELS ---\n";

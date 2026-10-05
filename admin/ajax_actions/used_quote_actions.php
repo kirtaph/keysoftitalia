@@ -8,7 +8,11 @@ try {
     if (!$id) jsonError('ID mancante');
 
     if ($action === 'get') {
-        $stmt = $pdo->prepare("SELECT * FROM used_device_quotes WHERE id = ?");
+        // ip_address is VARBINARY and cannot be encoded directly as UTF-8 JSON.
+        $stmt = $pdo->prepare("SELECT id, created_at, device_type, brand_name, model_name,
+            device_condition, defects, accessories, expected_price, notes,
+            customer_first_name, customer_last_name, customer_email, customer_phone, status
+            FROM used_device_quotes WHERE id = ?");
         $stmt->execute([$id]);
         $quote = $stmt->fetch(PDO::FETCH_ASSOC);
 

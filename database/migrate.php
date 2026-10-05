@@ -1,5 +1,9 @@
 <?php
 // database/migrate.php
+if (PHP_SAPI !== 'cli') {
+    http_response_code(403);
+    exit('Accesso consentito solo da CLI.');
+}
 
 // Adjust path to config as needed. Assuming this file is in /database/ and config is in /admin/config/
 require_once __DIR__ . '/../config/config.php';

@@ -259,6 +259,9 @@ document.addEventListener('DOMContentLoaded', function() {
     const emailBtn = document.getElementById('emailBtn');
     const createRuleBtn = document.getElementById('createRuleBtn');
     const saveQuoteBtn = document.getElementById('saveQuoteBtn');
+    const escapeHtml = value => String(value ?? '').replace(/[&<>"']/g, char => ({
+        '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+    }[char]));
 
     // Current Quote Data
     let currentQuote = {};
@@ -281,8 +284,8 @@ document.addEventListener('DOMContentLoaded', function() {
             priceText = `€ ${parseFloat(min).toLocaleString()}`;
         }
 
-        const name = currentQuote.first_name;
-        const device = `${currentQuote.brand_text} ${currentQuote.model_text}`;
+        const name = currentQuote.first_name ?? '';
+        const device = [currentQuote.brand_text, currentQuote.model_text].filter(Boolean).join(' ') || currentQuote.device_name || 'dispositivo';
         
         let message = `Ciao ${name}, ecco il preventivo richiesto per il tuo ${device}. La stima è di ${priceText}.`;
         
@@ -297,7 +300,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function updateActionLinks(message) {
-        const phone = currentQuote.phone ? currentQuote.phone.replace(/[^0-9]/g, '') : '';
+        const phone = String(currentQuote.phone ?? '').replace(/[^0-9]/g, '');
         const email = currentQuote.email;
         const min = customMin.value;
         const max = customMax.value;
@@ -346,11 +349,17 @@ document.addEventListener('DOMContentLoaded', function() {
                         quoteIdInput.value = q.id;
                         
                         // Update UI
-                        deviceDetails.innerHTML = `<span class="fw-bold fs-5">${q.device_name}</span><br>${q.brand_text} ${q.model_text}`;
-                        customerDetails.innerHTML = `<span class="fw-bold">${q.first_name} ${q.last_name}</span><br>${q.phone}<br>${q.email}`;
+                        deviceDetails.innerHTML = `<span class="fw-bold fs-5">${escapeHtml(q.device_name)}</span><br>${escapeHtml(q.brand_text)} ${escapeHtml(q.model_text)}`;
+                        customerDetails.innerHTML = `<span class="fw-bold">${escapeHtml(q.first_name)} ${escapeHtml(q.last_name)}</span><br>${escapeHtml(q.phone)}<br>${escapeHtml(q.email)}`;
                         
-                        const problems = JSON.parse(q.problems_json || '[]');
-                        problemDetails.innerHTML = problems.map(p => `<span class="badge bg-secondary me-1">${p}</span>`).join('');
+                        let problems = [];
+                        try {
+                            const decoded = JSON.parse(q.problems_json || '[]');
+                            if (Array.isArray(decoded)) problems = decoded;
+                        } catch (error) {
+                            console.warn('Elenco problemi non valido:', error);
+                        }
+                        problemDetails.innerHTML = problems.map(p => `<span class="badge bg-secondary me-1">${escapeHtml(p)}</span>`).join('');
                         
                         descriptionDetails.textContent = q.description || 'Nessuna descrizione aggiuntiva.';
 
@@ -363,8 +372,12 @@ document.addEventListener('DOMContentLoaded', function() {
                         updateMessageTemplate();
                         quoteModal.show();
                     } else {
-                        alert('Errore nel recupero dei dati.');
+                        alert(data.message || 'Errore nel recupero dei dati.');
                     }
+                })
+                .catch(error => {
+                    console.error('Recupero preventivo fallito:', error);
+                    alert('Impossibile caricare il preventivo. Riprova o aggiorna la pagina.');
                 });
         }
     });

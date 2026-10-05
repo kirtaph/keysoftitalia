@@ -251,13 +251,13 @@ $page_schema = [
 
         <div class="col-12">
           <button type="submit" class="btn btn-primary btn-lg w-100">
-            <i class="ri-send-plane-line"></i> Invia Messaggio
+            <i class="ri-send-plane-line"></i> Invia il messaggio
           </button>
         </div>
       </div>
 
       <div class="alert alert-success mt-3 d-none" id="successMessage" role="status" aria-live="polite">
-        <i class="ri-check-line"></i> Messaggio inviato con successo! Ti risponderemo presto.
+        <i class="ri-check-line"></i> Messaggio inviato con successo! Riceverai una risposta al più presto.
       </div>
 
       <div class="alert alert-danger mt-3 d-none" id="errorMessage" role="alert" aria-live="assertive">

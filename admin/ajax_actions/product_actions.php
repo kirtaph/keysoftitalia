@@ -1,5 +1,6 @@
 <?php
 require_once __DIR__ . '/init.php';
+require_once __DIR__ . '/../../src/ProductImageFile.php';
 
 // Additional file extension validation beyond MIME
 $ALLOWED_UPLOAD_EXT = ['jpg', 'jpeg', 'png', 'gif', 'webp'];
@@ -64,6 +65,9 @@ try {
             $stmt = $pdo->prepare('SELECT * FROM products WHERE id = ?');
             $stmt->execute([$id]);
             $product = $stmt->fetch(PDO::FETCH_ASSOC);
+            if (!$product) {
+                jsonError('Prodotto non trovato.');
+            }
 
             $img_stmt = $pdo->prepare('SELECT id, path, is_cover, sort_order FROM product_images WHERE product_id = ? ORDER BY sort_order');
             $img_stmt->execute([$id]);
@@ -78,7 +82,8 @@ try {
             $id = $_POST['id'] ?? null;
             $model_id = $_POST['model_id'];
             $sku = $_POST['sku'];
-            $list_price = $_POST['list_price'] ?: null;
+            $list_price = ($_POST['list_price'] ?? '') !== '' ? $_POST['list_price'] : null;
+            $storage_gb = ($_POST['storage_gb'] ?? '') !== '' ? $_POST['storage_gb'] : null;
             $price_eur = $_POST['price_eur'];
             $is_available = isset($_POST['is_available']) ? 1 : 0;
             $is_featured = isset($_POST['is_featured']) ? 1 : 0;
@@ -89,7 +94,7 @@ try {
                      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)'
                 );
                 $stmt->execute([
-                    $model_id, $sku, $_POST['color'], $_POST['storage_gb'], $_POST['grade'], $list_price, $price_eur, 
+                    $model_id, $sku, $_POST['color'], $storage_gb, $_POST['grade'], $list_price, $price_eur,
                     $_POST['short_desc'], $_POST['full_desc'], $is_available, $is_featured
                 ]);
                 $productId = $pdo->lastInsertId();
@@ -99,14 +104,14 @@ try {
                      list_price = ?, price_eur = ?, short_desc = ?, full_desc = ?, is_available = ?, is_featured = ? WHERE id = ?'
                 );
                 $stmt->execute([
-                    $model_id, $sku, $_POST['color'], $_POST['storage_gb'], $_POST['grade'], $list_price, $price_eur, 
+                    $model_id, $sku, $_POST['color'], $storage_gb, $_POST['grade'], $list_price, $price_eur,
                     $_POST['short_desc'], $_POST['full_desc'], $is_available, $is_featured, $id
                 ]);
                 $productId = $id;
             }
 
             if (isset($_FILES['product_images'])) {
-                $uploadDir = '../../assets/img/recond/';
+                $uploadDir = __DIR__ . '/../../assets/img/recond/';
                 if (!file_exists($uploadDir)) {
                     mkdir($uploadDir, 0755, true);
                 }
@@ -138,7 +143,7 @@ try {
                             $stmt->execute([$productId]);
                             $coverExists = $stmt->fetchColumn() > 0;
 
-                            $isCover = !$coverExists && $key === 0 ? 1 : 0;
+                            $isCover = !$coverExists ? 1 : 0;
 
                             $stmt = $pdo->prepare('INSERT INTO product_images (product_id, path, is_cover) VALUES (?, ?, ?)');
                             $stmt->execute([$productId, $imagePath, $isCover]);
@@ -168,8 +173,8 @@ try {
             // Delete image files from filesystem
             foreach ($images as $image) {
                 if (isset($image['path'])) {
-                    $filePath = '../../' . $image['path'];
-                    if (file_exists($filePath)) {
+                    $filePath = productImageFile($image['path']);
+                    if ($filePath !== null && is_file($filePath)) {
                         unlink($filePath);
                     }
                 }
@@ -195,8 +200,8 @@ try {
                 $stmt->execute([$id]);
 
                 // Delete from filesystem
-                $filePath = '../../' . $image['path'];
-                if (file_exists($filePath)) {
+                $filePath = productImageFile($image['path']);
+                if ($filePath !== null && is_file($filePath)) {
                     unlink($filePath);
                 }
             }
@@ -223,6 +228,11 @@ try {
 
             // Update cover image
             if ($coverImageId) {
+                $stmt = $pdo->prepare('SELECT id FROM product_images WHERE id = ? AND product_id = ?');
+                $stmt->execute([$coverImageId, $productId]);
+                if (!$stmt->fetchColumn()) {
+                    throw new RuntimeException('Immagine di copertina non appartenente al prodotto.');
+                }
                 $stmt = $pdo->prepare('UPDATE product_images SET is_cover = 0 WHERE product_id = ?');
                 $stmt->execute([$productId]);
                 $stmt = $pdo->prepare('UPDATE product_images SET is_cover = 1 WHERE id = ? AND product_id = ?');
@@ -238,5 +248,8 @@ try {
             break;
     }
 } catch (Throwable $e) {
+    if ($pdo->inTransaction()) {
+        $pdo->rollBack();
+    }
     jsonError('Errore del server.', $e);
 }

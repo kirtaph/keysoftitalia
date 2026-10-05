@@ -250,11 +250,11 @@ $breadcrumbs = [
                                     <div class="ks-right">
                                         <a class="btn btn-wa btn-lg" target="_blank" id="send-whatsapp" rel="noopener">
                                             <i class="ri-whatsapp-line"></i>
-                                            <span class="btn-text">WhatsApp</span>
+                                            <span class="btn-text">Invia via WhatsApp</span>
                                         </a>
                                         <button type="submit" class="btn btn-mail btn-lg" id="send-email">
                                             <i class="ri-mail-send-line"></i>
-                                            <span class="btn-text">Mail</span>
+                                            <span class="btn-text">Invia via Email</span>
                                         </button>
                                     </div>
                                 </div>

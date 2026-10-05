@@ -205,10 +205,10 @@ $page_schema = [
             </div>
             <div class="ks-right">
               <a class="btn btn-wa" id="btn_whatsapp" href="#" rel="noopener">
-                <i class="ri-whatsapp-line"></i> <span class="btn-text">WhatsApp</span>
+                <i class="ri-whatsapp-line"></i> <span class="btn-text">Invia via WhatsApp</span>
               </a>
               <button type="button" class="btn btn-mail" id="btn_submit">
-                <i class="ri-mail-send-line"></i> <span class="btn-text">Invia</span>
+                <i class="ri-mail-send-line"></i> <span class="btn-text">Invia via Email</span>
               </button>
             </div>
           </div>
@@ -718,17 +718,17 @@ $ld_faq = [
   function validateStep(n){
     if (n===1){
       if (!selectedDevice){
-        showToast({type:'danger', title:'Dispositivo', message:'Seleziona un dispositivo per continuare.'});
+        showToast({type:'danger', title:'Dispositivo mancante', message:'Per favore, seleziona il tipo di dispositivo per continuare.'});
         return false;
       }
       if (!brandSel.value){
-        showToast({type:'danger', title:'Marca', message:'Seleziona la marca.'});
+        showToast({type:'danger', title:'Marca mancante', message:'Scegli la marca del tuo dispositivo dalla lista.'});
         brandSel.classList.add('is-invalid'); return false;
       }
       brandSel.classList.remove('is-invalid');
 
       if (brandSel.value === ALT_BRAND_VALUE && !normalizeText(brandOther.value)){
-        showToast({type:'danger', title:'Marca', message:'Specifica la marca.'});
+        showToast({type:'danger', title:'Marca mancante', message:'Scrivi la marca del tuo dispositivo nel campo di testo.'});
         brandOther.classList.add('is-invalid'); return false;
       }
       brandOther.classList.remove('is-invalid');
@@ -737,7 +737,7 @@ $ld_faq = [
         // modello via input: facoltativo
       } else {
         if (modelSelect.value === ALT_MODEL_VALUE && !normalizeText(modelOther.value)){
-          showToast({type:'danger', title:'Modello', message:'Specifica il modello.'});
+          showToast({type:'danger', title:'Modello mancante', message:'Inserisci il modello esatto del tuo dispositivo.'});
           modelOther.classList.add('is-invalid'); return false;
         }
         modelOther.classList.remove('is-invalid');
@@ -746,11 +746,11 @@ $ld_faq = [
     }
     if (n===2){
       if (!selectedProblems.size){
-        showToast({type:'danger', title:'Problemi', message:'Seleziona almeno un problema.'});
+        showToast({type:'danger', title:'Nessun problema selezionato', message:'Seleziona almeno un guasto o seleziona "Altro" per descriverlo.'});
         return false;
       }
       if (selectedProblems.has('Altro') && !normalizeText(problemDescr.value)){
-        showToast({type:'danger', title:'Descrizione', message:'Per "Altro" serve una breve descrizione.'});
+        showToast({type:'danger', title:'Descrizione richiesta', message:'Fornisci una breve descrizione del problema riscontrato.'});
         problemDescr.classList.add('is-invalid'); return false;
       }
       problemDescr.classList.remove('is-invalid');
@@ -817,7 +817,7 @@ $ld_faq = [
     if (chkForm && chkForm.checked) { onOk(); return; }
     const modalEl = document.getElementById('privacyModal');
     if (!modalEl || typeof bootstrap === 'undefined'){
-      showToast({type:'danger', title:'Privacy', message:'Devi accettare la Privacy Policy per proseguire.'});
+      showToast({type:'danger', title:'Consenso necessario', message:'È necessario accettare la Privacy Policy per poter procedere.'});
       return;
     }
     const bsModal = new bootstrap.Modal(modalEl, {backdrop:'static'});
@@ -844,7 +844,7 @@ $ld_faq = [
       if (!valid) ok=false;
     });
     if (!ok){
-      showToast({type:'danger', title:'Campi mancanti', message:'Compila i dati richiesti.'});
+      showToast({type:'danger', title:'Dati incompleti', message:'Inserisci il tuo nome, indirizzo email e numero di telefono nei campi obbligatori.'});
       return;
     }
 
@@ -901,7 +901,7 @@ $ld_faq = [
         window.open(href, '_blank', 'noopener');
         showToast({type:'info', title:'WhatsApp', message:'Apro la chat precompilata…', delay:2500});
       } else {
-        showToast({type:'success', title:'Richiesta inviata', message:'Ti contatteremo entro 24 ore.'});
+        showToast({type:'success', title:'Richiesta inviata con successo!', message:'Grazie! Riceverai una risposta con la stima del preventivo entro 24 ore lavorative.'});
       }
 
     } catch(e){

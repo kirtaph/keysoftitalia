@@ -1,0 +1,178 @@
+/**
+ * Key Soft Italia — Homepage Overdrive
+ * Scroll choreography layer: progress spine, heritage stats that assemble
+ * with depth, odometer count-up, and tasteful compositor-driven parallax.
+ *
+ * Progressive enhancement ONLY. Loads after home.css; every effect degrades
+ * to the shipping design + KSReveal when a feature is missing or motion is
+ * reduced. Content is never gated on a class that might not fire.
+ */
+
+/* ============================================================
+   1. SCROLL PROGRESS SPINE
+   A slim vertical rail down the left edge that fills with the
+   brand gradient as the page is read. Pure CSS scroll-timeline
+   where supported; JS sets --ks-progress as the universal path.
+   ============================================================ */
+.ks-spine {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 3px;
+  height: 100vh;
+  height: 100dvh;
+  z-index: 40;
+  pointer-events: none;
+  background: linear-gradient(
+    to bottom,
+    rgba(26, 31, 46, 0.06),
+    rgba(26, 31, 46, 0.10)
+  );
+}
+
+.ks-spine__fill {
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 100%;
+  transform: scaleY(var(--ks-progress, 0));
+  transform-origin: top center;
+  background: linear-gradient(
+    to bottom,
+    var(--ks-orange) 0%,
+    var(--ks-orange-hover) 100%
+  );
+  box-shadow: 0 0 12px rgba(255, 107, 53, 0.55);
+  will-change: transform;
+}
+
+/* A small glowing bead riding the leading edge of the fill. */
+.ks-spine__fill::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: -3px;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  transform: translateX(-50%);
+  background: var(--ks-orange);
+  box-shadow: 0 0 10px 2px rgba(255, 107, 53, 0.75);
+}
+
+/* Preferred path: let the compositor drive the fill from scroll position. */
+@supports (animation-timeline: scroll()) {
+  .ks-spine__fill {
+    transform: scaleY(0);
+    animation: ksSpineFill linear both;
+    animation-timeline: scroll(root block);
+  }
+}
+
+@keyframes ksSpineFill {
+  from { transform: scaleY(0); }
+  to   { transform: scaleY(1); }
+}
+
+/* ============================================================
+   2. HERITAGE STATS — ASSEMBLE WITH DEPTH
+   The "20+ years" block is the trust centrepiece. It is fully
+   visible by default with its real values. When the block
+   scrolls into view the script adds .is-in and each part plays
+   a one-shot depth-assemble. Crucially, .is-in is only ever
+   added in a LIVE browser (behind an IntersectionObserver), so
+   the animation always has a running clock. If it never runs —
+   no JS, headless render, hidden tab, reduced motion — the
+   settled, visible state is what already shows. The reveal only
+   ever enhances an already-visible default; it never gates it.
+   ============================================================ */
+.experience-box.ks-choreo {
+  perspective: 900px;
+}
+
+@keyframes ksAssemble {
+  from { opacity: 0; transform: translateY(26px) translateZ(-40px); }
+  to   { opacity: 1; transform: translateY(0)    translateZ(0); }
+}
+
+.experience-box.ks-choreo.is-in .experience-number,
+.experience-box.ks-choreo.is-in .experience-text,
+.experience-box.ks-choreo.is-in .stat-item {
+  /* Literal easing (not var()): the shipping variables.min.css does not
+     define --ks-ease-out-expo, and an undefined var would void the whole
+     animation shorthand. This is the same curve home.css hardcodes. */
+  animation: ksAssemble 0.7s cubic-bezier(0.16, 1, 0.3, 1) both;
+  will-change: opacity, transform;
+}
+
+/* Staggered settle: headline first, label, then the two stat tiles. */
+.experience-box.ks-choreo.is-in .experience-number { animation-delay: 60ms; }
+.experience-box.ks-choreo.is-in .experience-text   { animation-delay: 160ms; }
+.experience-box.ks-choreo.is-in .stat-item:nth-child(1) { animation-delay: 300ms; }
+.experience-box.ks-choreo.is-in .stat-item:nth-child(2) { animation-delay: 420ms; }
+
+/* Tabular figures so the odometer digits don't jitter width while counting. */
+.experience-number,
+.stat-number {
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum" 1;
+}
+
+/* ============================================================
+   3. PARALLAX DEPTH (compositor-driven, view-timeline)
+   A restrained depth cue — the decorative glow inside the
+   experience box drifts against the content as the section
+   passes through the viewport. Applied to two deliberate
+   surfaces, not blanket-applied to every section.
+   ============================================================ */
+@supports (animation-timeline: view()) {
+  .experience-box {
+    view-timeline-name: --ks-exp-view;
+    view-timeline-axis: block;
+  }
+  .experience-box::before {
+    animation: ksGlowDrift linear both;
+    animation-timeline: --ks-exp-view;
+    animation-range: cover 0% cover 100%;
+  }
+
+  .featured-flyer-cover img {
+    animation: ksCoverParallax linear both;
+    animation-timeline: view();
+    animation-range: cover 0% cover 100%;
+    will-change: transform;
+  }
+}
+
+@keyframes ksGlowDrift {
+  from { transform: translate3d(0, -8%, 0) scale(1.05); }
+  to   { transform: translate3d(0, 8%, 0)  scale(1.05); }
+}
+
+@keyframes ksCoverParallax {
+  from { transform: translate3d(0, -14px, 0) scale(1.06); }
+  to   { transform: translate3d(0, 14px, 0) scale(1.06); }
+}
+
+/* ============================================================
+   4. FALLBACKS & ACCESSIBILITY
+   ============================================================ */
+
+/* Spine is a desktop reading aid; drop it on small screens. */
+@media (max-width: 768px) {
+  .ks-spine { display: none; }
+}
+
+/* Reduced motion: no spine, no parallax, no depth-assemble.
+   The script also skips choreography entirely, so stats keep
+   their real values and every part stays fully visible. */
+@media (prefers-reduced-motion: reduce) {
+  .ks-spine { display: none !important; }
+
+  .experience-box::before,
+  .featured-flyer-cover img,
+  .experience-box.ks-choreo.is-in .experience-number,
+  .experience-box.ks-choreo.is-in .experience-text,
+  .experience-box.ks-choreo.is-in .stat-item {
+    animation: none !important;
+  }
+}

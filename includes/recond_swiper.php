@@ -144,7 +144,7 @@ $KS_BASE = rtrim(BASE_URL, '/').'/';
             ${chips}
           </div>
           <div class="recond-body">
-            <h4 class="recond-title">${title}</h4>
+            <h3 class="recond-title">${title}</h3>
             <div class="recond-price">
               ${oldHtml}<span class="price-current">${price}</span>
             </div>

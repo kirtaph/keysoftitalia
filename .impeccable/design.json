@@ -1,0 +1,156 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-07-18T10:46:00Z",
+  "title": "Design System: Key Soft Italia",
+  "extensions": {
+    "colorMeta": {
+      "primary": {
+        "role": "primary",
+        "displayName": "Vibrant Amber-Orange",
+        "canonical": "oklch(67.5% 0.22 42.5)",
+        "tonalRamp": ["#3f1301", "#7f2c0b", "#bf4a1b", "#e85d2c", "#ff6b35", "#ff9b73", "#ffcbb2", "#ffe5db"]
+      },
+      "dark": {
+        "role": "neutral",
+        "displayName": "Deep Slate Dark",
+        "canonical": "oklch(22.0% 0.03 260)",
+        "tonalRamp": ["#080a0f", "#0f121b", "#161b27", "#1a1f2e", "#2c3444", "#3a4355", "#6b7280", "#cbd5e1"]
+      },
+      "neutral-bg": {
+        "role": "neutral",
+        "displayName": "Pure White",
+        "canonical": "oklch(100% 0 0)",
+        "tonalRamp": ["#111827", "#1f2937", "#4b5563", "#9ca3af", "#d1d5db", "#e5e7eb", "#f3f4f6", "#ffffff"]
+      }
+    },
+    "typographyMeta": {
+      "display": {
+        "displayName": "Display Hero Title",
+        "purpose": "Used exclusively for landing page hero sections."
+      },
+      "body": {
+        "displayName": "Body Prose",
+        "purpose": "Used for all descriptive text, paragraphs, and lists."
+      }
+    },
+    "shadows": [
+      {
+        "name": "neumorphic-outset",
+        "value": "8px 8px 16px var(--ks-nm-dark), -8px -8px 16px var(--ks-nm-light)",
+        "purpose": "Lifts active panels, cards, and interactive elements off the canvas at rest."
+      },
+      {
+        "name": "neumorphic-inset",
+        "value": "inset 6px 6px 12px var(--ks-nm-dark), inset -6px -6px 12px var(--ks-nm-light)",
+        "purpose": "Pressed/sunken feedback for buttons, inputs, and selected components."
+      },
+      {
+        "name": "standard-soft",
+        "value": "0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)",
+        "purpose": "Standard clean card shadow when neumorphism is not active."
+      }
+    ],
+    "motion": [
+      {
+        "name": "ease-out-expo",
+        "value": "cubic-bezier(0.16, 1, 0.3, 1)",
+        "purpose": "Standard page-reveal and element entry curve."
+      },
+      {
+        "name": "ease-out-soft",
+        "value": "cubic-bezier(0.4, 0, 0.2, 1)",
+        "purpose": "State changes, hover states, and micro-interactions."
+      }
+    ],
+    "breakpoints": [
+      { "name": "sm", "value": "576px" },
+      { "name": "md", "value": "768px" },
+      { "name": "lg", "value": "992px" },
+      { "name": "xl", "value": "1200px" }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "Primary action button with workshop orange gradient.",
+      "html": "<button class=\"ds-btn-primary\">PRENOTA RIPARAZIONE</button>",
+      "css": ".ds-btn-primary { display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 12px 24px; font-family: 'Inter', sans-serif; font-size: 16px; font-weight: 700; color: #FFFFFF; background: linear-gradient(135deg, #ff8c42 0%, #f97316 100%); border: none; border-radius: 12px; cursor: pointer; transition: all 250ms ease; box-shadow: 0 4px 15px rgba(249, 115, 22, 0.3); text-decoration: none; } .ds-btn-primary:hover { box-shadow: 0 8px 25px rgba(249, 115, 22, 0.5); transform: translateY(-2px); color: #FFFFFF; } .ds-btn-primary:active { transform: translateY(0); box-shadow: 0 4px 10px rgba(249, 115, 22, 0.3); }"
+    },
+    {
+      "name": "Secondary Button",
+      "kind": "button",
+      "refersTo": "button-secondary",
+      "description": "Secondary outline button for supportive or alternative actions.",
+      "html": "<button class=\"ds-btn-secondary\">Contatta su WhatsApp</button>",
+      "css": ".ds-btn-secondary { display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 12px 24px; font-family: 'Inter', sans-serif; font-size: 16px; font-weight: 700; color: #FF6B35; background: rgba(255, 107, 53, 0.05); border: 1.5px solid rgba(255, 107, 53, 0.15); border-radius: 12px; cursor: pointer; transition: all 250ms ease; box-shadow: 0 4px 10px rgba(255, 107, 53, 0.04); text-decoration: none; } .ds-btn-secondary:hover { background: #FF6B35; color: #FFFFFF; border-color: #FF6B35; box-shadow: 0 8px 20px rgba(255, 107, 53, 0.25); transform: translateY(-2px); } .ds-btn-secondary:active { transform: translateY(0); box-shadow: 0 4px 10px rgba(255, 107, 53, 0.04); }"
+    },
+    {
+      "name": "Standard Card",
+      "kind": "card",
+      "refersTo": "card",
+      "description": "Card layout for grouping information or showing catalog items.",
+      "html": "<div class=\"ds-card\"><h3 style=\"margin-top:0; font-family:'Poppins',sans-serif; color:#111827;\">Riparazione Rapida</h3><p style=\"color:#4B5563; font-family:'Inter',sans-serif; font-size:14px; margin-bottom:0;\">Riparazione smartphone e PC in meno di 24 ore con ricambi di qualità certificata.</p></div>",
+      "css": ".ds-card { background-color: #FFFFFF; border-radius: 16px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06); padding: 24px; transition: all 250ms ease; border: 1px solid rgba(0, 0, 0, 0.03); } .ds-card:hover { transform: translateY(-4px); box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05); border-color: rgba(255, 107, 53, 0.15); }"
+    },
+    {
+      "name": "Text Input",
+      "kind": "input",
+      "refersTo": "input",
+      "description": "Form input field for collecting user information.",
+      "html": "<input type=\"text\" class=\"ds-input\" placeholder=\"Nome Completo\" />",
+      "css": ".ds-input { width: 100%; padding: 12px 16px; font-size: 16px; font-family: 'Inter', sans-serif; line-height: 1.5; color: #111827; background-color: #FFFFFF; border: 1px solid #D1D5DB; border-radius: 12px; transition: all 150ms ease; } .ds-input:focus { outline: none; border-color: #FF6B35; box-shadow: 0 0 0 3px rgba(255, 107, 53, 0.15); }"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Tech Craftsman's Workshop",
+    "overview": "This design system is styled as a meticulous, high-grade workshop. It combines sharp structural layout grids, clear technical documentation rhythms, and a premium 'Neumorphic Hybrid' depth that bridges tangible, tactile controls with modern web efficiency. The visual language conveys expert capability and local reliability, establishing an instant feeling of security when users trust Key Soft with their valuable devices.",
+    "keyCharacteristics": [
+      "Tactile, hybrid neumorphic micro-depth on interactive components.",
+      "Strict layout grid alignment with visible thin borders as clean structural dividers.",
+      "High-readability Poppins and Inter typography pairing.",
+      "Responsive, fluid viewport styling with robust reduced-motion consideration."
+    ],
+    "rules": [
+      {
+        "name": "The 10% Contrast Rule",
+        "body": "The primary brand accent (#FF6B35) is reserved strictly for high-priority interactive elements and must never exceed 10% of any screen surface.",
+        "section": "colors"
+      },
+      {
+        "name": "The Contrast Floor Rule",
+        "body": "Text or controls rendered on any background must have a minimum contrast ratio of 4.5:1. Never use light grey text on soft grey backgrounds.",
+        "section": "colors"
+      },
+      {
+        "name": "The Balanced Headline Rule",
+        "body": "All H1–H3 headings must use text-wrap: balance to prevent awkward line wraps, while long body copy should use text-wrap: pretty to reduce orphan words on smaller viewports.",
+        "section": "typography"
+      },
+      {
+        "name": "The display letter-spacing floor",
+        "body": "Any header larger than 2rem must have a letter-spacing value of no less than -0.02em to maintain clean grotesque typography.",
+        "section": "typography"
+      },
+      {
+        "name": "The Tactile State Rule",
+        "body": "Outset neumorphic elements must transition to inset shadows on focus or hover/active clicks, providing direct, tactile feedback.",
+        "section": "elevation"
+      }
+    ],
+    "dos": [
+      "Do maintain a high color contrast of at least 4.5:1 for all placeholder and helper texts.",
+      "Do respect system reduced-motion preferences by transitioning instantly or with simple crossfades when prefers-reduced-motion is active.",
+      "Do keep line-lengths for prose text between 65ch and 75ch.",
+      "Do use text-wrap: balance on H1 to H3 elements."
+    ],
+    "donts": [
+      "Don't use side-stripe borders (e.g., a left orange border) as decoration on cards or alerts.",
+      "Don't apply gradient text or text clips to headings.",
+      "Don't pair standard box shadows with 1px borders and large blurs on the same element to avoid the ghost card pattern.",
+      "Don't use border radii larger than 16px on standard cards and input fields.",
+      "Don't use decorative technical grid overlays or sketchy hand-drawn illustrations."
+    ]
+  }
+}

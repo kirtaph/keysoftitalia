@@ -2,8 +2,7 @@
 declare(strict_types=1);
 session_start();
 
-require_once __DIR__ . '/../config/config.php'; // $pdo, costanti, helpers
-require_once __DIR__ . '/../assets/php/functions.php'; // $pdo, costanti, helpers
+require_once __DIR__ . '/../../config/config.php'; // $pdo, costanti, helpers
 
 header('Content-Type: application/json; charset=UTF-8');
 
@@ -104,6 +103,7 @@ $payload = [
 /* Opzioni aggiuntive (se la tua funzione le supporta) */
 $tz  = defined('KS_TZ') ? KS_TZ : 'Europe/Rome';
 $opts = [
+  'require_phone' => false, // The contact form accepts email-only enquiries.
   'meta'    => [
     'ip'        => $_SERVER['REMOTE_ADDR'] ?? '',
     'ua'        => $_SERVER['HTTP_USER_AGENT'] ?? '',

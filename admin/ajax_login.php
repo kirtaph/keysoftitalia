@@ -51,6 +51,10 @@ try {
     $user = $stmt->fetch();
 
     if (!$user) {
+        $_SESSION[$attemptsKey] = ($_SESSION[$attemptsKey] ?? 0) + 1;
+        if ($_SESSION[$attemptsKey] >= $maxAttempts) {
+            $_SESSION[$blockKey] = time() + ($blockMinutes * 60);
+        }
         echo json_encode(['success' => false, 'message' => 'Username o password non validi.']);
         exit;
     }

@@ -19,21 +19,34 @@ if (!isset($_SESSION['user_id'])) {
     exit;
 }
 
-// --- Load config & DB ---
-require_once __DIR__ . '/../../config/config.php';
-
 // --- JSON response header ---
 header('Content-Type: application/json');
 
+// GET is reserved for read actions. Mutations always require POST and CSRF.
+$method = $_SERVER['REQUEST_METHOD'] ?? '';
+$action = $_POST['action'] ?? $_GET['action'] ?? '';
+$readActions = ['get', 'list', 'check', 'get_weekly', 'get_exceptions', 'get_holidays',
+    'list_requests', 'list_partners', 'get_partner', 'list_packages', 'get_package',
+    'list_showcase', 'get_showcase'];
+if ($method !== 'POST' && !($method === 'GET' && is_string($action) && in_array($action, $readActions, true))) {
+    http_response_code(405);
+    header('Allow: GET, POST');
+    echo json_encode(['status' => 'error', 'message' => 'Metodo non consentito.']);
+    exit;
+}
+
 // --- CSRF validation for POST requests ---
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+if ($method === 'POST') {
     $token = $_POST['csrf_token'] ?? $_SERVER['HTTP_X_CSRF_TOKEN'] ?? '';
-    if (!isset($_SESSION['csrf_token']) || !hash_equals($_SESSION['csrf_token'], $token)) {
+    if (!is_string($token) || !isset($_SESSION['csrf_token']) || !hash_equals($_SESSION['csrf_token'], $token)) {
         http_response_code(403);
         echo json_encode(['status' => 'error', 'message' => 'Richiesta non valida (CSRF).']);
         exit;
     }
 }
+
+// Validate the request before opening a database connection.
+require_once __DIR__ . '/../../config/config.php';
 
 /**
  * Safe JSON error response — NEVER exposes internal details.

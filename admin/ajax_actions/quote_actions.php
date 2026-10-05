@@ -8,7 +8,12 @@ try {
         $id = $_GET['id'] ?? null;
         if (!$id) jsonError('ID mancante');
 
-        $stmt = $pdo->prepare("SELECT q.*, d.name as device_name FROM quotes q JOIN devices d ON q.device_id = d.id WHERE q.id = ?");
+        // Return the detail fields only: raw VARBINARY ip_address breaks JSON encoding.
+        $stmt = $pdo->prepare("SELECT q.id, q.created_at, q.device_id, q.brand_text, q.model_text,
+            q.problems_json, q.description, q.booking_date, q.booking_time, q.est_min, q.est_max,
+            q.first_name, q.last_name, q.email, q.phone, q.company, q.status, q.notes,
+            d.name AS device_name
+            FROM quotes q JOIN devices d ON q.device_id = d.id WHERE q.id = ?");
         $stmt->execute([$id]);
         $quote = $stmt->fetch(PDO::FETCH_ASSOC);
 
