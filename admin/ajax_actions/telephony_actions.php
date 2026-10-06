@@ -1,5 +1,7 @@
 <?php
 require_once __DIR__ . '/init.php';
+require_once __DIR__ . '/../../src/AdminMedia.php';
+$media = new \KeySoftItalia\AdminMedia();
 
 $action = $_REQUEST['action'] ?? null;
 
@@ -13,12 +15,13 @@ try {
 
         case 'get':
             $id = $_GET['id'] ?? null;
-            if (!$id) jsonError('ID promozione non fornito.');
+            if (!$id) throw new InvalidArgumentException('ID promozione non fornito.');
             
             $stmt = $pdo->prepare('SELECT * FROM telephony_promotions WHERE id = ?');
             $stmt->execute([$id]);
             $promotion = $stmt->fetch(PDO::FETCH_ASSOC);
             
+            if (!$promotion) throw new InvalidArgumentException('Record non trovato.');
             jsonSuccess(['promotion' => $promotion]);
             break;
 
@@ -33,23 +36,32 @@ try {
             $status = isset($_POST['status']) ? (int)$_POST['status'] : 1;
             $is_featured = isset($_POST['is_featured']) ? 1 : 0;
 
-            if (!$partner_id) jsonError('L\'operatore (Brand) è obbligatorio.');
-            if (empty($plan_name)) jsonError('Il nome dell\'offerta è obbligatorio.');
-            if ($price === '') jsonError('Il prezzo è obbligatorio.');
+            if (!$partner_id) throw new InvalidArgumentException('L\'operatore (Brand) è obbligatorio.');
+            if (empty($plan_name)) throw new InvalidArgumentException('Il nome dell\'offerta è obbligatorio.');
+            if ($price === '') throw new InvalidArgumentException('Il prezzo è obbligatorio.');
             
-            $price = floatval($price);
+            $price = \KeySoftItalia\BackendValidation::money($price, 'price');
+            $stmt = $pdo->prepare('SELECT name FROM telephony_partners WHERE id = ?');
+            $stmt->execute([$partner_id]); $partnerName = $stmt->fetchColumn();
+            if ($partnerName === false) throw new InvalidArgumentException('Partner non trovato.');
+            if ($action === 'edit') {
+                $stmt = $pdo->prepare('SELECT id FROM telephony_promotions WHERE id = ?');
+                $stmt->execute([$id]);
+                if (!$stmt->fetchColumn()) throw new InvalidArgumentException('Promozione non trovata.');
+            }
+
 
             if ($action === 'add') {
                 $stmt = $pdo->prepare(
-                    'INSERT INTO telephony_promotions (partner_id, plan_name, price, price_detail, features, is_featured, status)
-                     VALUES (?, ?, ?, ?, ?, ?, ?)'
+                    'INSERT INTO telephony_promotions (partner_id, plan_name, price, price_detail, features, is_featured, status, operator_name)
+                     VALUES (?, ?, ?, ?, ?, ?, ?, ?)'
                 );
-                $stmt->execute([$partner_id, $plan_name, $price, $price_detail, $features, $is_featured, $status]);
+                $stmt->execute([$partner_id, $plan_name, $price, $price_detail, $features, $is_featured, $status, $partnerName]);
             } else {
                 $stmt = $pdo->prepare(
-                    'UPDATE telephony_promotions SET partner_id=?, plan_name=?, price=?, price_detail=?, features=?, is_featured=?, status=? WHERE id = ?'
+                    'UPDATE telephony_promotions SET partner_id=?, plan_name=?, price=?, price_detail=?, features=?, is_featured=?, status=?, operator_name=? WHERE id = ?'
                 );
-                $stmt->execute([$partner_id, $plan_name, $price, $price_detail, $features, $is_featured, $status, $id]);
+                $stmt->execute([$partner_id, $plan_name, $price, $price_detail, $features, $is_featured, $status, $partnerName, $id]);
             }
             
             jsonSuccess(['message' => 'Promozione salvata con successo.']);
@@ -57,7 +69,7 @@ try {
 
         case 'delete':
             $id = $_POST['id'] ?? null;
-            if (!$id) jsonError('ID promozione non fornito.');
+            if (!$id) throw new InvalidArgumentException('ID promozione non fornito.');
 
             $stmt = $pdo->prepare('SELECT logo_path FROM telephony_promotions WHERE id = ?');
             $stmt->execute([$id]);
@@ -66,9 +78,7 @@ try {
             $stmt = $pdo->prepare('DELETE FROM telephony_promotions WHERE id = ?');
             $stmt->execute([$id]);
 
-            if ($promo && $promo['logo_path'] && file_exists('../../' . $promo['logo_path'])) {
-                @unlink('../../' . $promo['logo_path']);
-            }
+            \KeySoftItalia\AdminMedia::remove($promo['logo_path'] ?? null, 'uploads/operators');
 
             jsonSuccess(['message' => 'Promozione eliminata con successo.']);
             break;
@@ -82,8 +92,8 @@ try {
         case 'update_request_status':
             $id = $_POST['id'] ?? null;
             $status = trim($_POST['status'] ?? '');
-            if (!$id) jsonError('ID richiesta non fornito.');
-            if (empty($status)) jsonError('Stato non fornito.');
+            if (!$id) throw new InvalidArgumentException('ID richiesta non fornito.');
+            if (empty($status)) throw new InvalidArgumentException('Stato non fornito.');
 
             $stmt = $pdo->prepare('UPDATE telephony_requests SET status = ? WHERE id = ?');
             $stmt->execute([$status, $id]);
@@ -93,7 +103,7 @@ try {
 
         case 'delete_request':
             $id = $_POST['id'] ?? null;
-            if (!$id) jsonError('ID richiesta non fornito.');
+            if (!$id) throw new InvalidArgumentException('ID richiesta non fornito.');
 
             $stmt = $pdo->prepare('DELETE FROM telephony_requests WHERE id = ?');
             $stmt->execute([$id]);
@@ -109,17 +119,19 @@ try {
 
         case 'get_partner':
             $id = $_GET['id'] ?? null;
-            if (!$id) jsonError('ID partner non fornito.');
+            if (!$id) throw new InvalidArgumentException('ID partner non fornito.');
 
             $stmt = $pdo->prepare('SELECT * FROM telephony_partners WHERE id = ?');
             $stmt->execute([$id]);
             $partner = $stmt->fetch(PDO::FETCH_ASSOC);
 
+            if (!$partner) throw new InvalidArgumentException('Record non trovato.');
             jsonSuccess(['partner' => $partner]);
             break;
 
         case 'add_partner':
         case 'edit_partner':
+            $pdo->beginTransaction();
             $id = $_POST['id'] ?? null;
             $name = trim($_POST['name'] ?? '');
             $description = trim($_POST['description'] ?? '');
@@ -128,45 +140,18 @@ try {
             $sort_order = isset($_POST['sort_order']) ? (int)$_POST['sort_order'] : 0;
             $status = isset($_POST['status']) ? (int)$_POST['status'] : 1;
 
-            if (empty($name)) jsonError('Il nome del partner è obbligatorio.');
-
-            $uploadDir = '../../uploads/operators/';
-            if (!is_dir($uploadDir)) {
-                mkdir($uploadDir, 0755, true);
-            }
+            if (empty($name)) throw new InvalidArgumentException('Il nome del partner è obbligatorio.');
 
             $logo_path = null;
-
             if ($action === 'edit_partner') {
                 $stmt = $pdo->prepare('SELECT logo_path FROM telephony_partners WHERE id = ?');
                 $stmt->execute([$id]);
-                $current_partner = $stmt->fetch(PDO::FETCH_ASSOC);
-                $logo_path = $current_partner['logo_path'] ?? null;
+                $partner = $stmt->fetch(PDO::FETCH_ASSOC);
+                if (!$partner) throw new InvalidArgumentException('Partner non trovato.');
+                $logo_path = $partner['logo_path'];
             }
-
-            if (isset($_FILES['logo_file']) && $_FILES['logo_file']['error'] == UPLOAD_ERR_OK) {
-                $fileExt = strtolower(pathinfo($_FILES['logo_file']['name'], PATHINFO_EXTENSION));
-                if (!in_array($fileExt, ['jpg', 'jpeg', 'png', 'webp', 'gif', 'svg'])) {
-                    jsonError('Estensione file logo non consentita.');
-                }
-                $finfo = finfo_open(FILEINFO_MIME_TYPE);
-                $mime = finfo_file($finfo, $_FILES['logo_file']['tmp_name']);
-                finfo_close($finfo);
-                if (!in_array($mime, ['image/jpeg', 'image/png', 'image/webp', 'image/gif', 'image/svg+xml'])) {
-                    jsonError('Tipo MIME file logo non consentito.');
-                }
-                if ($_FILES['logo_file']['size'] > 5 * 1024 * 1024) {
-                    jsonError('Logo troppo grande. Massimo 5MB.');
-                }
-                if ($action === 'edit_partner' && $logo_path && file_exists('../../' . $logo_path)) {
-                    @unlink('../../' . $logo_path);
-                }
-                $fileName = uniqid() . '-' . preg_replace('/[^a-zA-Z0-9\._-]/', '', basename($_FILES['logo_file']['name']));
-                $targetPath = $uploadDir . $fileName;
-                if (move_uploaded_file($_FILES['logo_file']['tmp_name'], $targetPath)) {
-                    $logo_path = 'uploads/operators/' . $fileName;
-                }
-            }
+            $newLogo = $media->upload($_FILES['logo_file'] ?? null, 'uploads/operators', 5, false, true);
+            if ($newLogo) { $media->retire($logo_path, 'uploads/operators'); $logo_path = $newLogo; }
 
             if ($action === 'add_partner') {
                 $stmt = $pdo->prepare(
@@ -175,19 +160,21 @@ try {
                 );
                 $stmt->execute([$name, $description, $icon_class, $icon_color, $logo_path, $sort_order, $status]);
             } else {
-                if (!$id) jsonError('ID partner non fornito per la modifica.');
+                if (!$id) throw new InvalidArgumentException('ID partner non fornito per la modifica.');
                 $stmt = $pdo->prepare(
                     'UPDATE telephony_partners SET name = ?, description = ?, icon_class = ?, icon_color = ?, logo_path = ?, sort_order = ?, status = ? WHERE id = ?'
                 );
                 $stmt->execute([$name, $description, $icon_class, $icon_color, $logo_path, $sort_order, $status, $id]);
             }
 
+            $pdo->commit();
+            $media->saved();
             jsonSuccess(['message' => 'Partner salvato con successo.']);
             break;
 
         case 'delete_partner':
             $id = $_POST['id'] ?? null;
-            if (!$id) jsonError('ID partner non fornito.');
+            if (!$id) throw new InvalidArgumentException('ID partner non fornito.');
 
             $stmt = $pdo->prepare('SELECT logo_path FROM telephony_partners WHERE id = ?');
             $stmt->execute([$id]);
@@ -196,17 +183,16 @@ try {
             $stmt = $pdo->prepare('DELETE FROM telephony_partners WHERE id = ?');
             $stmt->execute([$id]);
 
-            if ($partner && $partner['logo_path'] && file_exists('../../' . $partner['logo_path'])) {
-                @unlink('../../' . $partner['logo_path']);
-            }
+            \KeySoftItalia\AdminMedia::remove($partner['logo_path'] ?? null, 'uploads/operators');
 
             jsonSuccess(['message' => 'Partner eliminato con successo.']);
             break;
         
         default:
-            jsonError('Azione non valida.');
+            throw new InvalidArgumentException('Azione non valida.');
             break;
     }
 } catch (Throwable $e) {
-    jsonError('Errore del server.', $e);
+    $media->abort();
+    jsonError($e instanceof InvalidArgumentException ? $e->getMessage() : 'Errore del server.', $e);
 }

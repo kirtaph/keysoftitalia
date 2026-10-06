@@ -289,7 +289,7 @@ CREATE TABLE `used_device_quotes` (
   `customer_phone` varchar(40) NOT NULL,
   `contact_channel` varchar(40) NOT NULL DEFAULT 'form',
   `privacy_accepted` tinyint(1) NOT NULL DEFAULT 0,
-  `status` enum('pending','reviewed','contacted') NOT NULL DEFAULT 'pending',
+  `status` enum('pending','reviewed','contacted','accepted','rejected') NOT NULL DEFAULT 'pending',
   `ip_address` varbinary(16) DEFAULT NULL,
   `user_agent` varchar(255) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;

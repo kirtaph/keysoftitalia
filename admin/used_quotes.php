@@ -1,8 +1,9 @@
 <?php
 include_once 'includes/header.php';
 
-$stmt = $pdo->query('SELECT * FROM used_device_quotes ORDER BY created_at DESC');
-$quotes = $stmt->fetchAll();
+require_once __DIR__ . '/../src/AdminList.php';
+$list = \KeySoftItalia\AdminList::load($pdo, 'used', $_GET);
+$quotes = $list['rows'];
 ?>
 
 <div class="d-flex justify-content-between align-items-center mb-4">
@@ -12,31 +13,7 @@ $quotes = $stmt->fetchAll();
     </button>
 </div>
 
-<div class="card mb-4">
-    <div class="card-header bg-white">
-        <i class="fas fa-filter me-2 text-primary"></i> Filtri e Ricerca
-    </div>
-    <div class="card-body">
-        <div class="row g-3">
-            <div class="col-md-6">
-                <div class="input-group">
-                    <span class="input-group-text bg-light"><i class="fas fa-search"></i></span>
-                    <input type="text" id="searchInput" class="form-control" placeholder="Cerca per cliente, email, telefono...">
-                </div>
-            </div>
-            <div class="col-md-6">
-                <select id="statusFilter" class="form-select">
-                    <option value="">Tutti gli stati</option>
-                    <option value="pending">In attesa</option>
-                    <option value="reviewed">Revisionata</option>
-                    <option value="contacted">Contattato</option>
-                    <option value="accepted">Accettata</option>
-                    <option value="rejected">Rifiutata</option>
-                </select>
-            </div>
-        </div>
-    </div>
-</div>
+<?php include __DIR__ . '/includes/list_filters.php'; ?>
 
 <div class="table-responsive">
     <table class="table table-hover align-middle">
@@ -54,6 +31,11 @@ $quotes = $stmt->fetchAll();
             </tr>
         </thead>
         <tbody id="quotesTableBody">
+            <?php if (!$quotes): ?>
+                <tr><td colspan="9" class="text-center py-4">
+                    <?= $list['q'] !== '' || $list['status'] !== '' || $list['device'] !== '' ? 'Nessuna richiesta corrisponde ai filtri. Prova un altro termine o azzera i filtri.' : 'Non sono ancora arrivate richieste.' ?>
+                </td></tr>
+            <?php endif; ?>
             <?php foreach ($quotes as $q): ?>
                 <tr id="quote-<?php echo $q['id']; ?>">
                     <td class="fw-bold">#<?php echo $q['id']; ?></td>
@@ -144,6 +126,8 @@ $quotes = $stmt->fetchAll();
     </table>
 </div>
 
+<?php include __DIR__ . '/includes/list_pagination.php'; ?>
+
 <!-- Modal Gestione Valutazione -->
 <div class="modal fade" id="quoteModal" tabindex="-1" aria-labelledby="quoteModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg">
@@ -233,6 +217,7 @@ $quotes = $stmt->fetchAll();
 
 <?php include_once 'includes/footer.php'; ?>
 
+<script src="../assets/js/pages/admin-feedback.js"></script>
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     const quoteModal = new bootstrap.Modal(document.getElementById('quoteModal'));
@@ -265,8 +250,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const editBtn = e.target.closest('.edit-btn');
         if (editBtn) {
             const id = editBtn.dataset.id;
-            fetch(`ajax_actions/used_quote_actions.php?action=get&id=${id}`)
-                .then(response => response.json())
+            AdminFeedback.request(`ajax_actions/used_quote_actions.php?action=get&id=${id}`)
                 .then(data => {
                     if (data.status === 'success') {
                         const q = data.quote;
@@ -320,12 +304,12 @@ document.addEventListener('DOMContentLoaded', function() {
 
                         quoteModal.show();
                     } else {
-                        alert(data.message || 'Errore nel recupero dei dati.');
+                        AdminFeedback.show(data.message || 'Errore nel recupero dei dati.');
                     }
                 })
                 .catch(error => {
                     console.error('Recupero valutazione fallito:', error);
-                    alert('Impossibile caricare la valutazione. Riprova o aggiorna la pagina.');
+                    AdminFeedback.show(error.message || 'Impossibile caricare la valutazione. Aggiorna la pagina e riprova.');
                 });
         }
     });
@@ -342,19 +326,18 @@ document.addEventListener('DOMContentLoaded', function() {
         const formData = new FormData(quoteForm);
         formData.append('action', 'edit');
 
-        fetch('ajax_actions/used_quote_actions.php', {
+        AdminFeedback.request('ajax_actions/used_quote_actions.php', {
             method: 'POST',
             body: formData
-        })
-        .then(response => response.json())
+        }, this)
         .then(data => {
             if (data.status === 'success') {
                 quoteModal.hide();
-                location.reload();
+                AdminFeedback.reload('Valutazione aggiornata.');
             } else {
-                alert(data.message || 'Errore durante il salvataggio.');
+                AdminFeedback.show(data.message || 'Errore durante il salvataggio.');
             }
-        });
+        }).catch(error => AdminFeedback.show(error.message));
     });
 
     // Delete Button Click
@@ -367,68 +350,21 @@ document.addEventListener('DOMContentLoaded', function() {
                 formData.append('action', 'delete');
                 formData.append('id', id);
 
-                fetch('ajax_actions/used_quote_actions.php', {
+                AdminFeedback.request('ajax_actions/used_quote_actions.php', {
                     method: 'POST',
                     body: formData
-                })
-                .then(response => response.json())
+                }, deleteBtn)
                 .then(data => {
                     if (data.status === 'success') {
-                        document.getElementById(`quote-${id}`).remove();
+                        AdminFeedback.reload('Valutazione eliminata.');
                     } else {
-                        alert(data.message || 'Errore durante l\'eliminazione.');
+                        AdminFeedback.show(data.message || 'Errore durante l\'eliminazione.');
                     }
-                });
+                }).catch(error => AdminFeedback.show(error.message));
             }
         }
     });
 
-    // Search & Filter
-    const searchInput = document.getElementById('searchInput');
-    const statusFilter = document.getElementById('statusFilter');
-    const tableBody = document.querySelector('.table tbody');
-    const tableRows = tableBody.getElementsByTagName('tr');
 
-    function filterTable() {
-        const searchTerm = searchInput.value.toLowerCase();
-        const statusTerm = statusFilter.value.toLowerCase();
-
-        for (let i = 0; i < tableRows.length; i++) {
-            const clientCell = tableRows[i].getElementsByTagName('td')[5];
-            const contactCell = tableRows[i].getElementsByTagName('td')[6];
-            const statusCell = tableRows[i].getElementsByTagName('td')[7];
-
-            if (clientCell && contactCell && statusCell) {
-                const clientText = clientCell.textContent.toLowerCase();
-                const contactText = contactCell.textContent.toLowerCase();
-                const statusText = statusCell.textContent.toLowerCase();
-
-                const searchMatch = clientText.includes(searchTerm) || contactText.includes(searchTerm);
-                
-                let statusMatch = false;
-                if (statusTerm === '') {
-                    statusMatch = true;
-                } else {
-                    const map = {
-                        'pending': 'In Attesa',
-                        'reviewed': 'Revisionata',
-                        'contacted': 'Contattato',
-                        'accepted': 'Accettata',
-                        'rejected': 'Rifiutata'
-                    };
-                    statusMatch = statusText.includes(map[statusTerm].toLowerCase());
-                }
-
-                if (searchMatch && statusMatch) {
-                    tableRows[i].style.display = '';
-                } else {
-                    tableRows[i].style.display = 'none';
-                }
-            }
-        }
-    }
-
-    searchInput.addEventListener('keyup', filterTable);
-    statusFilter.addEventListener('change', filterTable);
 });
 </script>

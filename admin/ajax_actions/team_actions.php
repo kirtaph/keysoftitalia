@@ -1,5 +1,7 @@
 <?php
 require_once __DIR__ . '/init.php';
+require_once __DIR__ . '/../../src/AdminMedia.php';
+$media = new \KeySoftItalia\AdminMedia();
 
 $action = $_POST['action'] ?? $_GET['action'] ?? '';
 
@@ -13,18 +15,19 @@ try {
 
         case 'get':
             $id = $_GET['id'] ?? null;
-            if (!$id) jsonError('ID mancante');
+            if (!$id) throw new InvalidArgumentException('ID mancante');
             
             $stmt = $pdo->prepare("SELECT * FROM team_members WHERE id = ?");
             $stmt->execute([$id]);
             $member = $stmt->fetch(PDO::FETCH_ASSOC);
             
-            if (!$member) jsonError('Membro non trovato');
+            if (!$member) throw new InvalidArgumentException('Membro non trovato');
             jsonSuccess(['member' => $member]);
             break;
 
         case 'add':
         case 'edit':
+            $pdo->beginTransaction();
             $id = $_POST['id'] ?? null;
             $name = trim($_POST['name'] ?? '');
             $role = trim($_POST['role'] ?? '');
@@ -35,52 +38,30 @@ try {
             $status = isset($_POST['status']) ? (int)$_POST['status'] : 1;
             
             if (!$name || !$role) {
-                jsonError('Nome e Ruolo sono obbligatori.');
+                throw new InvalidArgumentException('Nome e Ruolo sono obbligatori.');
             }
 
             $photo_path = null;
             
-            if (isset($_FILES['photo_file']) && $_FILES['photo_file']['error'] === UPLOAD_ERR_OK) {
-                $uploadDir = '../../assets/img/team/';
-                if (!is_dir($uploadDir)) {
-                    mkdir($uploadDir, 0755, true);
-                }
-                
-                $fileInfo = pathinfo($_FILES['photo_file']['name']);
-                $ext = strtolower($fileInfo['extension']);
-                $allowed = ['png', 'jpg', 'jpeg', 'webp'];
-                
-                if (!in_array($ext, $allowed)) {
-                    jsonError('Formato immagine non supportato.');
-                }
-                $finfo = finfo_open(FILEINFO_MIME_TYPE);
-                $mime = finfo_file($finfo, $_FILES['photo_file']['tmp_name']);
-                finfo_close($finfo);
-                if (!in_array($mime, ['image/png', 'image/jpeg', 'image/webp'])) {
-                    jsonError('Tipo MIME non consentito.');
-                }
-                if ($_FILES['photo_file']['size'] > 5 * 1024 * 1024) {
-                    jsonError('File troppo grande. Massimo 5MB.');
-                }
-                
-                $filename = uniqid('team_') . '.' . $ext;
-                $targetPath = $uploadDir . $filename;
-                
-                if (move_uploaded_file($_FILES['photo_file']['tmp_name'], $targetPath)) {
-                    $photo_path = 'img/team/' . $filename;
-                } else {
-                    jsonError("Errore durante l'upload dell'immagine.");
-                }
+            $oldPhoto = null;
+            if ($action === 'edit') {
+                $stmt = $pdo->prepare('SELECT photo_path FROM team_members WHERE id = ?');
+                $stmt->execute([$id]); $currentMember = $stmt->fetch();
+                if (!$currentMember) throw new InvalidArgumentException('Membro non trovato.');
+                $oldPhoto = $currentMember['photo_path'];
             }
+            $photo = $media->upload($_FILES['photo_file'] ?? null, 'assets/img/team');
+            if ($photo) { $photo_path = substr($photo, strlen('assets/')); $media->retire($oldPhoto, 'assets/img/team'); }
+
 
             if ($action === 'add') {
                 if (!$photo_path) {
-                    jsonError('La foto è obbligatoria per un nuovo membro.');
+                    throw new InvalidArgumentException('La foto è obbligatoria per un nuovo membro.');
                 }
                 $stmt = $pdo->prepare("INSERT INTO team_members (name, role, photo_path, bio, skills, aos_animation, sort_order, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
                 $stmt->execute([$name, $role, $photo_path, $bio, $skills, $aos_animation, $sort_order, $status]);
             } else {
-                if (!$id) jsonError('ID mancante per la modifica.');
+                if (!$id) throw new InvalidArgumentException('ID mancante per la modifica.');
                 
                 if ($photo_path) {
                     $stmt = $pdo->prepare("UPDATE team_members SET name=?, role=?, photo_path=?, bio=?, skills=?, aos_animation=?, sort_order=?, status=? WHERE id=?");
@@ -91,22 +72,27 @@ try {
                 }
             }
             
+            $pdo->commit();
+            $media->saved();
             jsonSuccess([]);
             break;
 
         case 'delete':
             $id = $_POST['id'] ?? null;
-            if (!$id) jsonError('ID mancante');
+            if (!$id) throw new InvalidArgumentException('ID mancante');
             
+            $stmt = $pdo->prepare('SELECT photo_path FROM team_members WHERE id = ?');
+            $stmt->execute([$id]); $member = $stmt->fetch();
             $stmt = $pdo->prepare("DELETE FROM team_members WHERE id = ?");
             $stmt->execute([$id]);
-            
+            \KeySoftItalia\AdminMedia::remove($member['photo_path'] ?? null, 'assets/img/team');
             jsonSuccess([]);
             break;
 
         default:
-            jsonError('Azione non valida');
+            throw new InvalidArgumentException('Azione non valida');
     }
 } catch (Throwable $e) {
-    jsonError('Errore del server.', $e);
+    $media->abort();
+    jsonError($e instanceof InvalidArgumentException ? $e->getMessage() : 'Errore del server.', $e);
 }

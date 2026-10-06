@@ -16,6 +16,7 @@ final class BackendPdo extends PDO
     }
     public function lastInsertId(?string $name = null): string|false { return '123'; }
     public function beginTransaction(): bool { $this->transaction = true; return true; }
+    public function commit(): bool { $this->transaction = false; return true; }
     public function inTransaction(): bool { return $this->transaction; }
     public function rollBack(): bool { $this->transaction = false; $this->rolledBack = true; return true; }
 }
@@ -60,16 +61,31 @@ if (($argv[1] ?? '') === '--endpoint') {
     $_GET = $request['get'] ?? [];
     $_REQUEST = array_merge($_GET, $_POST);
     $pdo = new BackendPdo();
+    $throttleDirectory = sys_get_temp_dir() . '/ksi-backend-' . bin2hex(random_bytes(6));
     ob_start();
-    register_shutdown_function(static function () use ($pdo): void {
+    register_shutdown_function(static function () use ($pdo, $throttleDirectory): void {
         $output = ob_get_clean();
         echo json_encode(['http' => http_response_code() ?: 200, 'body' => json_decode($output, true),
             'session' => $_SESSION, 'queries' => $pdo->queries, 'rolled_back' => $pdo->rolledBack, 'output' => $output]);
+        foreach (glob($throttleDirectory . '/*') ?: [] as $file) unlink($file);
+        if (is_dir($throttleDirectory)) rmdir($throttleDirectory);
     });
     $paths = ['quote' => 'assets/process/process_quote.php', 'admin' => 'admin/ajax_actions/init.php',
         'login' => 'admin/ajax_login.php', 'contact' => 'assets/process/process_contact.php',
-        'product' => 'admin/ajax_actions/product_actions.php'];
+        'product' => 'admin/ajax_actions/product_actions.php', 'booking_admin' => 'admin/ajax_actions/booking_actions.php',
+        'used_admin' => 'admin/ajax_actions/used_quote_actions.php', 'quote_admin' => 'admin/ajax_actions/quote_actions.php',
+        'user_admin' => 'admin/ajax_actions/user_actions.php', 'price_admin' => 'admin/ajax_actions/price_rule_actions.php',
+        'booking_public' => 'assets/process/process_booking.php', 'utility_public' => 'assets/process/process_utility_request.php',
+        'telephony_public' => 'assets/process/process_telephony_request.php', 'assistance_public' => 'assets/process/process_assistance.php',
+        'used_public' => 'assets/process/process_used_quote.php', 'liberty_public' => 'assets/process/process_liberty_demo.php',
+        'products_ajax' => 'assets/ajax/get_products.php', 'filters_ajax' => 'assets/ajax/get_product_filters.php',
+        'detail_ajax' => 'assets/ajax/get_product_detail.php', 'brands_ajax' => 'assets/ajax/get_brands.php',
+        'models_ajax' => 'assets/ajax/get_models.php', 'issues_ajax' => 'assets/ajax/get_issues.php',
+        'flyers_ajax' => 'assets/ajax/get_flyers.php'];
     $source = file_get_contents(BASE_PATH . $paths[$request['endpoint']]);
+    $_SERVER['SCRIPT_FILENAME'] = BASE_PATH . $paths[$request['endpoint']];
+    $source = str_replace("__DIR__ . '/../../src/", "BASE_PATH . 'src/", $source);
+    $source = str_replace("BASE_PATH . 'config/runtime/login'", '$throttleDirectory', $source);
     // Keep all production request logic; inject the database dependency only.
     $source = preg_replace('/^require_once .*config\/config\.php.*$/m', '', $source);
     $config = file_get_contents(BASE_PATH . 'config/config.php');
@@ -83,8 +99,9 @@ if (($argv[1] ?? '') === '--endpoint') {
         }
     }
     require_once BASE_PATH . 'assets/php/functions.php';
-    if ($request['endpoint'] === 'product') {
+    if (str_starts_with($paths[$request['endpoint']], 'admin/ajax_actions/') && $request['endpoint'] !== 'admin') {
         $init = file_get_contents(BASE_PATH . 'admin/ajax_actions/init.php');
+        $init = str_replace("__DIR__ . '/../../src/", "BASE_PATH . 'src/", $init);
         $init = preg_replace('/^require_once .*config\/config\.php.*$/m', '', $init);
         eval(substr($init, 5));
         $source = str_replace("require_once __DIR__ . '/init.php';", '', $source);
@@ -122,7 +139,7 @@ $valid = ['mode' => 'save', 'csrf_token' => 'valid-token', 'privacy' => 'on', 'd
     'lastName' => 'Rossi', 'email' => 'test@example.com', 'phone' => '3331234567'];
 
 $test('contact bootstrap and validation return JSON', static function () use ($endpoint, $assert): void {
-    $r = $endpoint(['endpoint' => 'contact', 'post' => ['csrf_token' => 'valid-token']]);
+    $r = $endpoint(['endpoint' => 'contact', 'post' => ['csrf_token' => 'valid-token', 'privacy' => 'on']]);
     $assert($r['http'] === 422 && isset($r['body']['errors']['email']));
 });
 $test('contact form accepts an optional empty phone number', static function () use ($endpoint, $assert): void {
@@ -209,4 +226,60 @@ $test('foreign cover image does not erase product cover and rolls back', static 
     $assert($r['body']['status'] === 'error' && $r['rolled_back']);
     $assert(!array_filter($r['queries'], static fn($q) => str_contains($q[0], 'SET is_cover = 0')));
 });
+foreach (['booking_admin', 'used_admin', 'quote_admin'] as $handler) {
+    $test("$handler rejects unknown status before SQL", static function () use ($endpoint, $assert, $handler): void {
+        $r = $endpoint(['endpoint' => $handler, 'post' => ['action' => 'edit', 'id' => '1', 'status' => 'typo', 'csrf_token' => 'valid-token']]);
+        $assert($r['http'] === 422 && $r['queries'] === []);
+    });
+}
+foreach (['-1', '1e6', '9999999999999999999999999'] as $id) {
+    $test("admin rejects invalid ID $id", static function () use ($endpoint, $assert, $id): void {
+        $r = $endpoint(['endpoint' => 'product', 'method' => 'GET', 'get' => ['action' => 'get', 'id' => $id]]);
+        $assert($r['http'] === 422 && $r['queries'] === []);
+    });
+}
+$test('empty quote bounds become SQL NULL', static function () use ($endpoint, $assert): void {
+    $r = $endpoint(['endpoint' => 'quote_admin', 'post' => ['action' => 'edit', 'id' => '1', 'status' => 'pending',
+        'csrf_token' => 'valid-token', 'est_min' => '', 'est_max' => '']]);
+    $assert($r['body']['status'] === 'success' && $r['queries'][0][1][2] === null && $r['queries'][0][1][3] === null);
+});
+$test('quote rejects reversed price bounds', static function () use ($endpoint, $assert): void {
+    $r = $endpoint(['endpoint' => 'quote_admin', 'post' => ['action' => 'edit', 'id' => '1', 'status' => 'pending',
+        'csrf_token' => 'valid-token', 'est_min' => '100', 'est_max' => '20']]);
+    $assert($r['http'] === 422 && $r['queries'] === []);
+});
+$test('product rejects negative price', static function () use ($endpoint, $assert): void {
+    $r = $endpoint(['endpoint' => 'product', 'post' => ['action' => 'add', 'csrf_token' => 'valid-token',
+        'model_id' => '1', 'sku' => 'TEST', 'price_eur' => '-10', 'grade' => 'A']]);
+    $assert($r['http'] === 422 && $r['queries'] === []);
+});
+$test('user rejects malformed email before SQL', static function () use ($endpoint, $assert): void {
+    $r = $endpoint(['endpoint' => 'user_admin', 'post' => ['action' => 'add', 'csrf_token' => 'valid-token',
+        'username' => 'test', 'email' => 'invalid', 'password' => 'test']]);
+    $assert($r['http'] === 422 && $r['queries'] === []);
+});
+foreach (['booking_public', 'utility_public', 'telephony_public', 'assistance_public', 'used_public', 'liberty_public'] as $handler) {
+    $test("$handler rejects GET and missing consent", static function () use ($endpoint, $assert, $handler): void {
+        $get = $endpoint(['endpoint' => $handler, 'method' => 'GET']);
+        $post = $endpoint(['endpoint' => $handler, 'post' => ['csrf_token' => 'valid-token', 'privacy' => 'false']]);
+        $assert($get['http'] === 405 && $post['http'] === 422 && $post['queries'] === []);
+    });
+}
+$test('quote preview still works without customer consent', static function () use ($endpoint, $assert): void {
+    $r = $endpoint(['endpoint' => 'quote', 'post' => ['mode' => 'preview', 'device' => 'smartphone', 'issues' => ['Schermo']]]);
+    $assert($r['http'] === 200 && $r['body']['estimate']['min'] === 49.9);
+});
+$test('booking rejects impossible calendar date', static function () use ($endpoint, $assert): void {
+    $r = $endpoint(['endpoint' => 'booking_public', 'post' => ['csrf_token' => 'valid-token', 'privacy' => 'on',
+        'device_type' => 'smartphone', 'brand_name' => 'Apple', 'model_name' => 'Test', 'preferred_date' => '2099-02-30',
+        'preferred_time_slot' => 'mattina', 'firstName' => 'Mario', 'lastName' => 'Rossi', 'email' => 'test@example.com', 'phone' => '3331234567']]);
+    $assert($r['http'] === 422 && isset($r['body']['errors']['preferred_date']) && $r['queries'] === []);
+});
+foreach (['products_ajax', 'filters_ajax', 'detail_ajax', 'brands_ajax', 'models_ajax', 'issues_ajax', 'flyers_ajax'] as $handler) {
+    $test("$handler rejects POST and malformed query values", static function () use ($endpoint, $assert, $handler): void {
+        $post = $endpoint(['endpoint' => $handler]);
+        $get = $endpoint(['endpoint' => $handler, 'method' => 'GET', 'get' => ['brand_id' => ['invalid']]]);
+        $assert($post['http'] === 405 && $get['http'] === 422 && $get['queries'] === []);
+    });
+}
 exit($failures > 0 ? 1 : 0);

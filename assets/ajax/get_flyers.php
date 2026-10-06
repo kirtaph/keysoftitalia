@@ -1,4 +1,6 @@
 <?php
+require_once __DIR__ . '/../../src/AjaxRequest.php';
+
 // assets/ajax/get_flyers.php
 
 if (!defined('BASE_PATH')) {
@@ -109,7 +111,7 @@ try {
         ];
     }
 
-    echo json_encode([
+    echo \KeySoftItalia\BackendHttp::encode([
         'ok'     => true,
         'status' => $status,
         'today'  => $today,
@@ -121,7 +123,7 @@ try {
         error_log('get_flyers error: ' . $e->getMessage());
     }
     http_response_code(500);
-    echo json_encode([
+    echo \KeySoftItalia\BackendHttp::encode([
         'ok'    => false,
         'error' => 'Errore durante il caricamento dei volantini.',
     ], JSON_UNESCAPED_UNICODE);

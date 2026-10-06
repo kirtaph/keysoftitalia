@@ -1,8 +1,16 @@
 <?php
 declare(strict_types=1);
 ini_set('display_errors', '0');
-ini_set('log_errors', '0');
-session_start();
+ini_set('log_errors', '1');
+require_once __DIR__ . '/../src/BackendHttp.php';
+require_once __DIR__ . '/../src/LoginThrottle.php';
+\KeySoftItalia\BackendHttp::startSession();
+if (!defined('KSI_JSON_ENDPOINT')) define('KSI_JSON_ENDPOINT', true);
+header('Cache-Control: no-store');
+set_exception_handler(static function (Throwable $e): never {
+    error_log('[Admin login] ' . $e->getMessage());
+    \KeySoftItalia\BackendHttp::send(['success' => false, 'message' => 'Accesso momentaneamente non disponibile.'], 500);
+});
 require_once '../config/config.php';
 
 header('Content-Type: application/json');
@@ -32,11 +40,16 @@ if (!isset($pdo) || !$pdo instanceof PDO) {
 
 // --- Solo POST ---
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+    http_response_code(405);
+    header('Allow: POST');
     echo json_encode(['success' => false, 'message' => 'Metodo non consentito.']);
     exit;
 }
 
 // --- Input & basic validation ---
+if (!is_string($_POST['username'] ?? '') || !is_string($_POST['password'] ?? '')) {
+    \KeySoftItalia\BackendHttp::send(['success' => false, 'message' => 'Credenziali non valide.'], 422);
+}
 $username = isset($_POST['username']) ? trim((string)$_POST['username']) : '';
 $password = isset($_POST['password']) ? (string)$_POST['password'] : '';
 
@@ -46,11 +59,19 @@ if ($username === '' || $password === '') {
 }
 
 try {
+    $throttle = new \KeySoftItalia\LoginThrottle(new \KeySoftItalia\Api\FileStore(BASE_PATH . 'config/runtime/login'));
+    $ip = $_SERVER['REMOTE_ADDR'] ?? 'unknown';
+    $remaining = $throttle->remaining($ip, $username);
+    if ($remaining > 0) {
+        header('Retry-After: ' . $remaining);
+        \KeySoftItalia\BackendHttp::send(['success' => false, 'message' => 'Troppi tentativi. Riprova più tardi.'], 429);
+    }
     $stmt = $pdo->prepare('SELECT id, username, password FROM users WHERE username = :u LIMIT 1');
     $stmt->execute([':u' => $username]);
     $user = $stmt->fetch();
 
     if (!$user) {
+        $throttle->failed($ip, $username);
         $_SESSION[$attemptsKey] = ($_SESSION[$attemptsKey] ?? 0) + 1;
         if ($_SESSION[$attemptsKey] >= $maxAttempts) {
             $_SESSION[$blockKey] = time() + ($blockMinutes * 60);
@@ -93,6 +114,7 @@ try {
     }
 
     if ($verified) {
+        $throttle->succeeded($ip, $username);
         // Reset rate limiter on success
         unset($_SESSION[$attemptsKey], $_SESSION[$blockKey]);
         session_regenerate_id(true);
@@ -101,6 +123,7 @@ try {
         echo json_encode(['success' => true]);
         exit;
     } else {
+        $throttle->failed($ip, $username);
         // Track failed attempt
         $_SESSION[$attemptsKey] = ($_SESSION[$attemptsKey] ?? 0) + 1;
         if ($_SESSION[$attemptsKey] >= $maxAttempts) {
@@ -110,7 +133,8 @@ try {
         exit;
     }
 } catch (PDOException $e) {
-    // error_log($e->getMessage());
+    error_log('[Admin login database] ' . $e->getMessage());
+    http_response_code(500);
     echo json_encode(['success' => false, 'message' => 'Errore del database.']);
     exit;
 }

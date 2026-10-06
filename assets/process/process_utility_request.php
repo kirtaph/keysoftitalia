@@ -2,9 +2,11 @@
 // assets/process/process_utility_request.php
 
 declare(strict_types=1);
+require_once __DIR__ . '/../../src/PublicRequest.php';
+
 
 if (session_status() === PHP_SESSION_NONE) {
-    session_start();
+    \KeySoftItalia\BackendHttp::startSession();
 }
 
 require_once __DIR__ . '/../../config/config.php';
@@ -17,13 +19,13 @@ if (
   !hash_equals((string)$_SESSION['csrf_token'], (string)$_POST['csrf_token'])
 ) {
   http_response_code(403);
-  echo json_encode(['ok' => false, 'message' => 'Token CSRF non valido.']);
+  echo \KeySoftItalia\BackendHttp::encode(['ok' => false, 'message' => 'Token CSRF non valido.']);
   exit;
 }
 
 // Honeypot antispam
 if (!empty($_POST['website'] ?? '')) {
-  echo json_encode(['ok' => true, 'message' => 'Richiesta ricevuta.']); // finta success per i bot
+  echo \KeySoftItalia\BackendHttp::encode(['ok' => true, 'message' => 'Richiesta ricevuta.']); // finta success per i bot
   exit;
 }
 
@@ -36,7 +38,9 @@ $phone = $trim('phone');
 $privacy = !empty($_POST['privacy']) ? 1 : 0;
 
 $promoId = ctype_digit($promoIdRaw) ? (int)$promoIdRaw : null;
-$currentSpend = $currentSpendRaw !== '' ? floatval($currentSpendRaw) : null;
+$currentSpend = null;
+try { $currentSpend = \KeySoftItalia\BackendValidation::money($currentSpendRaw, 'current_spend'); }
+catch (InvalidArgumentException $e) { /* Report the field error below. */ }
 
 // === Validazione ===
 $errors = [];
@@ -56,7 +60,7 @@ if (!$privacy) {
 
 if (!empty($errors)) {
   http_response_code(422);
-  echo json_encode([
+  echo \KeySoftItalia\BackendHttp::encode([
     'ok'      => false,
     'message' => 'Verifica i campi evidenziati.',
     'errors'  => $errors
@@ -67,7 +71,7 @@ if (!empty($errors)) {
 try {
     // Recupero info promozione dal DB per salvataggio snapshot
     $stmt = $pdo->prepare("
-        SELECT COALESCE(p.name, up.operator_name) AS operator_name, up.plan_name, up.price, up.utility_type 
+        SELECT COALESCE(p.name, 'Partner Energetico') AS operator_name, up.plan_name, up.price, up.utility_type
         FROM utility_promotions up
         LEFT JOIN utility_partners p ON up.partner_id = p.id
         WHERE up.id = ? AND up.status = 1
@@ -77,7 +81,7 @@ try {
 
     if (!$promo) {
         http_response_code(400);
-        echo json_encode(['ok' => false, 'message' => 'La promozione selezionata non è valida o non è più attiva.']);
+        echo \KeySoftItalia\BackendHttp::encode(['ok' => false, 'message' => 'La promozione selezionata non è valida o non è più attiva.']);
         exit;
     }
 
@@ -98,17 +102,18 @@ try {
     ");
     $stmt->execute([$promoId, $operatorName, $planName, $utilityType, $currentSpend, $phone, $estimatedSavings]);
 
-    echo json_encode([
+    echo \KeySoftItalia\BackendHttp::encode([
         'ok' => true,
         'message' => 'La tua richiesta è stata inviata con successo! Ti contatteremo al più presto per finalizzare il passaggio.'
     ]);
     exit;
 
 } catch (Throwable $e) {
+    error_log('[Utility request] ' . $e->getMessage());
     http_response_code(500);
-    echo json_encode([
+    echo \KeySoftItalia\BackendHttp::encode([
         'ok' => false,
-        'message' => 'Si è verificato un errore durante il salvataggio della richiesta: ' . $e->getMessage()
+        'message' => 'Si è verificato un errore durante il salvataggio della richiesta.'
     ]);
     exit;
 }

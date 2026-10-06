@@ -1,6 +1,8 @@
 <?php
 declare(strict_types=1);
-session_start();
+require_once __DIR__ . '/../../src/PublicRequest.php';
+
+\KeySoftItalia\BackendHttp::startSession();
 
 require_once __DIR__ . '/../../config/config.php'; // $pdo, costanti, helpers
 
@@ -9,7 +11,7 @@ header('Content-Type: application/json; charset=UTF-8');
 
 $respond = function (bool $ok, string $msg, array $extra = [], int $code = 200) {
   http_response_code($code);
-  echo json_encode(array_merge(['success' => $ok, 'message' => $msg], $extra));
+  echo \KeySoftItalia\BackendHttp::encode(array_merge(['success' => $ok, 'message' => $msg], $extra));
   exit;
 };
 
@@ -22,7 +24,7 @@ if (empty($_POST['csrf_token']) || $_POST['csrf_token'] !== ($_SESSION['csrf_tok
   if (is_ajax_request()) {
     http_response_code(403);
     header('Content-Type: application/json; charset=UTF-8');
-    echo json_encode(['ok'=>false, 'error'=>'csrf']);
+    echo \KeySoftItalia\BackendHttp::encode(['ok'=>false, 'error'=>'csrf']);
     exit;
   }
   header('Location: ' . ($_SERVER['HTTP_REFERER'] ?? url())); exit;
@@ -118,6 +120,8 @@ try {
     throw new RuntimeException('Funzione send_assistance_email non disponibile.');
   }
 
+  require_once __DIR__ . '/../../src/AdminNotifications.php';
+  \KeySoftItalia\AdminNotifications::capture($pdo, 'contact', $payload);
   $res = send_assistance_email($payload, $opts);
 
   // Normalizziamo il risultato in (success,message)
@@ -130,9 +134,10 @@ try {
   if ($ok) {
     $respond(true, $msg);
   }
-  $respond(false, $msg, [], 200);
+  error_log('[Contact mail] ' . (is_array($res) ? (string)($res['error'] ?? 'Delivery failed') : 'Delivery failed'));
+  $respond(false, 'Errore durante l’invio. Riprova tra poco.', [], 500);
 
 } catch (Throwable $e) {
-  // error_log('send_assistance_email failed: '.$e->getMessage());
+  error_log('[Contact mail] ' . $e->getMessage());
   $respond(false, 'Si è verificato un problema con l’invio. Riprova tra poco o contattaci telefonicamente.', [], 500);
 }

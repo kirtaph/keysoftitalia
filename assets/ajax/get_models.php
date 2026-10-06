@@ -1,4 +1,6 @@
 <?php
+require_once __DIR__ . '/../../src/AjaxRequest.php';
+
 // ajax_models.php
 if (!defined('BASE_PATH')) {
     define('BASE_PATH', dirname(dirname(__DIR__)) . '/');
@@ -8,7 +10,7 @@ header('Content-Type: application/json; charset=utf-8');
 
 $brand = $_GET['brand_id'] ?? '';
 if (!$brand) {
-  echo json_encode(['models' => []]);
+  echo \KeySoftItalia\BackendHttp::encode(['models' => []]);
   exit;
 }
 
@@ -21,4 +23,4 @@ $stmt = $pdo->prepare("
 $stmt->execute(['brand_id' => $brand]);
 $models = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-echo json_encode(['models' => $models], JSON_UNESCAPED_UNICODE);
+echo \KeySoftItalia\BackendHttp::encode(['models' => $models], JSON_UNESCAPED_UNICODE);

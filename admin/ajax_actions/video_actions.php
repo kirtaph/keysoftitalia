@@ -1,5 +1,7 @@
 <?php
 require_once __DIR__ . '/init.php';
+require_once __DIR__ . '/../../src/AdminMedia.php';
+$media = new \KeySoftItalia\AdminMedia();
 
 $action = $_REQUEST['action'] ?? null;
 
@@ -13,17 +15,19 @@ try {
 
         case 'get':
             $id = $_GET['id'] ?? null;
-            if (!$id) jsonError('ID video non fornito.');
+            if (!$id) throw new InvalidArgumentException('ID video non fornito.');
             
             $stmt = $pdo->prepare('SELECT * FROM videos WHERE id = ?');
             $stmt->execute([$id]);
             $video = $stmt->fetch(PDO::FETCH_ASSOC);
             
+            if (!$video) throw new InvalidArgumentException('Record non trovato.');
             jsonSuccess(['video' => $video]);
             break;
 
         case 'add':
         case 'edit':
+            $pdo->beginTransaction();
             $id = $_POST['id'] ?? null;
             $title = trim($_POST['title'] ?? '');
             $fb_video_url = trim($_POST['fb_video_url'] ?? '');
@@ -33,20 +37,16 @@ try {
             $status = isset($_POST['status']) ? (int)$_POST['status'] : 1;
             $is_featured = isset($_POST['is_featured']) ? 1 : 0;
 
-            if (empty($title)) jsonError('Il titolo è obbligatorio.');
-            if (empty($fb_video_url)) jsonError('L\'URL del video Facebook è obbligatorio.');
+            if (empty($title)) throw new InvalidArgumentException('Il titolo è obbligatorio.');
+            if (empty($fb_video_url)) throw new InvalidArgumentException('L\'URL del video Facebook è obbligatorio.');
 
-            if (strpos($fb_video_url, 'facebook.com') === false && strpos($fb_video_url, 'fb.watch') === false) {
-                jsonError('Fornisci un URL video di Facebook valido.');
+            $host = strtolower((string)parse_url($fb_video_url, PHP_URL_HOST));
+            if (parse_url($fb_video_url, PHP_URL_SCHEME) !== 'https' || !(in_array($host, ['facebook.com', 'fb.watch'], true) || str_ends_with($host, '.facebook.com'))) {
+                throw new InvalidArgumentException('Fornisci un URL video di Facebook valido.');
             }
 
             if ($is_featured === 1) {
                 $pdo->exec("UPDATE videos SET is_featured = 0");
-            }
-
-            $uploadDir = '../../uploads/videos/';
-            if (!is_dir($uploadDir)) {
-                mkdir($uploadDir, 0755, true);
             }
 
             $cover_image_path = null;
@@ -55,32 +55,13 @@ try {
                 $stmt = $pdo->prepare('SELECT cover_image FROM videos WHERE id = ?');
                 $stmt->execute([$id]);
                 $current_video = $stmt->fetch(PDO::FETCH_ASSOC);
+                if (!$current_video) throw new InvalidArgumentException('Video non trovato.');
                 $cover_image_path = $current_video['cover_image'] ?? null;
             }
 
-            if (isset($_FILES['cover_image']) && $_FILES['cover_image']['error'] == UPLOAD_ERR_OK) {
-                $fileExt = strtolower(pathinfo($_FILES['cover_image']['name'], PATHINFO_EXTENSION));
-                if (!in_array($fileExt, ['jpg', 'jpeg', 'png', 'webp', 'gif'])) {
-                    jsonError('Estensione file immagine non consentita.');
-                }
-                $finfo = finfo_open(FILEINFO_MIME_TYPE);
-                $mime = finfo_file($finfo, $_FILES['cover_image']['tmp_name']);
-                finfo_close($finfo);
-                if (!in_array($mime, ['image/jpeg', 'image/png', 'image/webp', 'image/gif'])) {
-                    jsonError('Tipo MIME file immagine non consentito.');
-                }
-                if ($_FILES['cover_image']['size'] > 5 * 1024 * 1024) {
-                    jsonError('Immagine troppo grande. Massimo 5MB.');
-                }
-                if ($action === 'edit' && $cover_image_path && file_exists('../../' . $cover_image_path)) {
-                    @unlink('../../' . $cover_image_path);
-                }
-                $fileName = uniqid() . '-' . preg_replace('/[^a-zA-Z0-9\._-]/', '', basename($_FILES['cover_image']['name']));
-                $targetPath = $uploadDir . $fileName;
-                if (move_uploaded_file($_FILES['cover_image']['tmp_name'], $targetPath)) {
-                    $cover_image_path = 'uploads/videos/' . $fileName;
-                }
-            }
+            $newFile = $media->upload($_FILES['cover_image'] ?? null, 'uploads/videos', 5, false);
+            if ($newFile) { $media->retire($cover_image_path, 'uploads/videos'); $cover_image_path = $newFile; }
+
 
             if ($action === 'add') {
                 $stmt = $pdo->prepare(
@@ -95,12 +76,14 @@ try {
                 $stmt->execute([$title, $fb_video_url, $category, $duration, $description, $cover_image_path, $is_featured, $status, $id]);
             }
             
+            $pdo->commit();
+            $media->saved();
             jsonSuccess(['message' => 'Video salvato con successo.']);
             break;
 
         case 'delete':
             $id = $_POST['id'] ?? null;
-            if (!$id) jsonError('ID video non fornito.');
+            if (!$id) throw new InvalidArgumentException('ID video non fornito.');
 
             $stmt = $pdo->prepare('SELECT cover_image FROM videos WHERE id = ?');
             $stmt->execute([$id]);
@@ -109,17 +92,16 @@ try {
             $stmt = $pdo->prepare('DELETE FROM videos WHERE id = ?');
             $stmt->execute([$id]);
 
-            if ($video && $video['cover_image'] && file_exists('../../' . $video['cover_image'])) {
-                @unlink('../../' . $video['cover_image']);
-            }
+            \KeySoftItalia\AdminMedia::remove($video['cover_image'] ?? null, 'uploads/videos');
 
             jsonSuccess(['message' => 'Video eliminato con successo.']);
             break;
         
         default:
-            jsonError('Azione non valida.');
+            throw new InvalidArgumentException('Azione non valida.');
             break;
     }
 } catch (Throwable $e) {
-    jsonError('Errore del server.', $e);
+    $media->abort();
+    jsonError($e instanceof InvalidArgumentException ? $e->getMessage() : 'Errore del server.', $e);
 }

@@ -4,6 +4,8 @@
 # Enable RewriteEngine
 <IfModule mod_rewrite.c>
     RewriteEngine On
+    # Internal source, runtime state and database dumps aren't public resources.
+    RewriteRule ^(?:config|database|db_dump|cache|tests|scratch|src|\.git|\.agents|\.codex|\.claude|\.gemini|\.opencode|\.impeccable)(?:/|$) - [F,L,NC]
     
     # Set RewriteBase dynamically based on subdirectory
     # Uncomment and modify if in a subdirectory

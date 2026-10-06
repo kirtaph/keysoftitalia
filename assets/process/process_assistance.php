@@ -1,14 +1,16 @@
 <?php
+require_once __DIR__ . '/../../src/PublicRequest.php';
+
 require_once __DIR__ . '/../../config/config.php';
 require_once __DIR__ . '/../../assets/php/functions.php';
-session_start();
+\KeySoftItalia\BackendHttp::startSession();
 
 // --- Basic anti-spam
 if (!empty($_POST['website'])) {
   if (is_ajax_request()) {
     http_response_code(400);
     header('Content-Type: application/json; charset=UTF-8');
-    echo json_encode(['ok'=>false, 'error'=>'bad_request']);
+    echo \KeySoftItalia\BackendHttp::encode(['ok'=>false, 'error'=>'bad_request']);
     exit;
   }
   header('Location: ' . ($_SERVER['HTTP_REFERER'] ?? url())); exit;
@@ -19,7 +21,7 @@ if (empty($_POST['csrf_token']) || $_POST['csrf_token'] !== ($_SESSION['csrf_tok
   if (is_ajax_request()) {
     http_response_code(403);
     header('Content-Type: application/json; charset=UTF-8');
-    echo json_encode(['ok'=>false, 'error'=>'csrf']);
+    echo \KeySoftItalia\BackendHttp::encode(['ok'=>false, 'error'=>'csrf']);
     exit;
   }
   header('Location: ' . ($_SERVER['HTTP_REFERER'] ?? url())); exit;
@@ -38,6 +40,13 @@ $data = [
   'time_preference'     => trim($_POST['time_preference'] ?? 'qualsiasi'),
 ];
 
+require_once __DIR__ . '/../../src/AdminNotifications.php';
+if ($data['name'] === '' || $data['phone'] === '' || $data['device_type'] === '' || $data['problem_description'] === ''
+    || ($data['email'] !== '' && !filter_var($data['email'], FILTER_VALIDATE_EMAIL))) {
+    \KeySoftItalia\BackendHttp::send(['ok'=>false,'message'=>'Compila nome, telefono, dispositivo e descrizione; controlla l’indirizzo email.'],422);
+}
+\KeySoftItalia\AdminNotifications::capture($pdo, 'assistance', $data);
+
 // --- Send
 $res = send_assistance_email($data, [
   'to'        => defined('EMAIL_ASSISTENZA') ? EMAIL_ASSISTENZA : 'info@tuodominio.it',
@@ -49,14 +58,14 @@ $res = send_assistance_email($data, [
 if (is_ajax_request()) {
   header('Content-Type: application/json; charset=UTF-8');
   if ($res['ok']) {
-    echo json_encode([
+    echo \KeySoftItalia\BackendHttp::encode([
       'ok'      => true,
       'message' => 'Richiesta inviata con successo. Ti contatteremo al più presto.'
     ]);
     exit;
   } else {
     http_response_code(500);
-    echo json_encode([
+    echo \KeySoftItalia\BackendHttp::encode([
       'ok'      => false,
       'error'   => 'send_failed',
       'message' => 'Si è verificato un errore durante l’invio. Riprova tra poco o utilizza WhatsApp.'

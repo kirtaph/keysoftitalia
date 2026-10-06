@@ -1,4 +1,6 @@
 <?php
+require_once __DIR__ . '/../../src/PublicRequest.php';
+
 /**
  * Processa richiesta "Valuta il tuo Usato"
  * Salva in used_device_quotes e ritorna JSON.
@@ -11,7 +13,7 @@ if (!defined('BASE_PATH')) {
 require_once BASE_PATH . 'config/config.php';
 
 if (session_status() === PHP_SESSION_NONE) {
-    session_start();
+    \KeySoftItalia\BackendHttp::startSession();
 }
 
 header('Content-Type: application/json; charset=utf-8');
@@ -22,7 +24,7 @@ header('Content-Type: application/json; charset=utf-8');
 if (!function_exists('respond')) {
   function respond(array $payload, int $status = 200): void {
       http_response_code($status);
-      echo json_encode($payload, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+      echo \KeySoftItalia\BackendHttp::encode($payload, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
       exit;
   }
 }
@@ -92,7 +94,7 @@ if (empty($_POST['csrf_token']) || empty($_SESSION['csrf_token']) ||
 
     if (is_ajax_request()) {
         http_response_code(403);
-        echo json_encode(['ok' => false, 'error' => 'csrf'], JSON_UNESCAPED_UNICODE);
+        echo \KeySoftItalia\BackendHttp::encode(['ok' => false, 'error' => 'csrf'], JSON_UNESCAPED_UNICODE);
         exit;
     }
 
@@ -193,10 +195,10 @@ try {
     $accessories = array_values(array_filter(array_map('norm', $accessories)));
 
     // Valore richiesto
-    $expectedRaw = str_replace(',', '.', trim((string)($_POST['expected_price'] ?? '')));
-    $expectedPrice = null;
-    if ($expectedRaw !== '' && is_numeric($expectedRaw)) {
-        $expectedPrice = (float)$expectedRaw;
+    try {
+        $expectedPrice = \KeySoftItalia\BackendValidation::money($_POST['expected_price'] ?? '', 'expected_price', true);
+    } catch (InvalidArgumentException $e) {
+        respond(['ok' => false, 'message' => 'Valore richiesto non valido.'], 422);
     }
 
     $notes = norm($_POST['notes'] ?? '');

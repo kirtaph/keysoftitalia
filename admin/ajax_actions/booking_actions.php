@@ -8,7 +8,10 @@ try {
     if (!$id) jsonError('ID mancante');
 
     if ($action === 'get') {
-        $stmt = $pdo->prepare("SELECT * FROM repair_bookings WHERE id = ?");
+        $stmt = $pdo->prepare("SELECT id, created_at, device_type, brand_name, model_name,
+            problem_summary, notes, preferred_date, preferred_time_slot, dropoff_type,
+            customer_first_name, customer_last_name, customer_email, customer_phone,
+            customer_company, status FROM repair_bookings WHERE id = ?");
         $stmt->execute([$id]);
         $booking = $stmt->fetch(PDO::FETCH_ASSOC);
         if ($booking) {

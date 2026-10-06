@@ -2,9 +2,8 @@
 require_once __DIR__ . '/init.php';
 require_once __DIR__ . '/../../src/ProductImageFile.php';
 
-// Additional file extension validation beyond MIME
-$ALLOWED_UPLOAD_EXT = ['jpg', 'jpeg', 'png', 'gif', 'webp'];
-$ALLOWED_UPLOAD_MIME = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
+require_once __DIR__ . '/../../src/ProductUpload.php';
+$movedFiles = [];
 
 $action = $_REQUEST['action'] ?? null;
 
@@ -54,7 +53,7 @@ try {
             $stmt = $pdo->prepare($sql);
             $stmt->execute($params);
             $products = $stmt->fetchAll(PDO::FETCH_ASSOC);
-            echo json_encode(['status' => 'success', 'products' => $products]);
+            echo \KeySoftItalia\BackendHttp::encode(['status' => 'success', 'products' => $products]);
             break;
 
         case 'get':
@@ -74,7 +73,7 @@ try {
             $images = $img_stmt->fetchAll(PDO::FETCH_ASSOC);
             $product['images'] = $images;
 
-            echo json_encode(['status' => 'success', 'product' => $product]);
+            echo \KeySoftItalia\BackendHttp::encode(['status' => 'success', 'product' => $product]);
             break;
 
         case 'add':
@@ -87,6 +86,9 @@ try {
             $price_eur = $_POST['price_eur'];
             $is_available = isset($_POST['is_available']) ? 1 : 0;
             $is_featured = isset($_POST['is_featured']) ? 1 : 0;
+
+            $uploads = \KeySoftItalia\ProductUpload::images($_FILES['product_images'] ?? null);
+            $pdo->beginTransaction();
 
             if ($action === 'add') {
                 $stmt = $pdo->prepare(
@@ -110,49 +112,26 @@ try {
                 $productId = $id;
             }
 
-            if (isset($_FILES['product_images'])) {
-                $uploadDir = __DIR__ . '/../../assets/img/recond/';
-                if (!file_exists($uploadDir)) {
-                    mkdir($uploadDir, 0755, true);
-                }
-
-                $maxSize = 2 * 1024 * 1024;
-
-                foreach ($_FILES['product_images']['tmp_name'] as $key => $tmp_name) {
-                    if (!empty($tmp_name) && $_FILES['product_images']['error'][$key] == UPLOAD_ERR_OK) {
-                        $fileExt = strtolower(pathinfo($_FILES['product_images']['name'][$key], PATHINFO_EXTENSION));
-                        if (!in_array($fileExt, $ALLOWED_UPLOAD_EXT)) {
-                            continue;
-                        }
-                        $fileType = mime_content_type($tmp_name);
-                        if (!in_array($fileType, $ALLOWED_UPLOAD_MIME)) {
-                            continue;
-                        }
-                        if ($_FILES['product_images']['size'][$key] > $maxSize) {
-                            continue;
-                        }
-
-                        $fileName = uniqid() . '-' . basename($_FILES['product_images']['name'][$key]);
-                        $filePath = $uploadDir . $fileName;
-
-                        if (move_uploaded_file($tmp_name, $filePath)) {
-                            $imagePath = 'assets/img/recond/' . $fileName;
-                            
-                            // Check if a cover image already exists
-                            $stmt = $pdo->prepare('SELECT COUNT(*) FROM product_images WHERE product_id = ? AND is_cover = 1');
-                            $stmt->execute([$productId]);
-                            $coverExists = $stmt->fetchColumn() > 0;
-
-                            $isCover = !$coverExists ? 1 : 0;
-
-                            $stmt = $pdo->prepare('INSERT INTO product_images (product_id, path, is_cover) VALUES (?, ?, ?)');
-                            $stmt->execute([$productId, $imagePath, $isCover]);
-                        }
-                    }
-                }
+            $uploadDir = __DIR__ . '/../../assets/img/recond/';
+            if ($uploads && !is_dir($uploadDir) && !mkdir($uploadDir, 0755, true) && !is_dir($uploadDir)) {
+                throw new RuntimeException('Impossibile creare la cartella immagini.');
             }
-            
-            echo json_encode(['status' => 'success', 'message' => 'Prodotto salvato con successo.']);
+            foreach ($uploads as $upload) {
+                $fileName = bin2hex(random_bytes(16)) . '.' . $upload['extension'];
+                $filePath = $uploadDir . $fileName;
+                if (!move_uploaded_file($upload['tmp'], $filePath)) {
+                    throw new RuntimeException('Impossibile salvare l’immagine.');
+                }
+                $movedFiles[] = $filePath;
+                $stmt = $pdo->prepare('SELECT COUNT(*) FROM product_images WHERE product_id = ? AND is_cover = 1');
+                $stmt->execute([$productId]);
+                $isCover = $stmt->fetchColumn() > 0 ? 0 : 1;
+                $stmt = $pdo->prepare('INSERT INTO product_images (product_id, path, is_cover) VALUES (?, ?, ?)');
+                $stmt->execute([$productId, 'assets/img/recond/' . $fileName, $isCover]);
+            }
+            $pdo->commit();
+
+            echo \KeySoftItalia\BackendHttp::encode(['status' => 'success', 'message' => 'Prodotto salvato con successo.']);
             break;
 
         case 'delete':
@@ -180,7 +159,7 @@ try {
                 }
             }
 
-            echo json_encode(['status' => 'success', 'message' => 'Prodotto eliminato con successo.']);
+            echo \KeySoftItalia\BackendHttp::encode(['status' => 'success', 'message' => 'Prodotto eliminato con successo.']);
             break;
 
         case 'delete_image':
@@ -206,7 +185,7 @@ try {
                 }
             }
 
-            echo json_encode(['status' => 'success', 'message' => 'Immagine eliminata con successo.']);
+            echo \KeySoftItalia\BackendHttp::encode(['status' => 'success', 'message' => 'Immagine eliminata con successo.']);
             break;
 
         case 'update_image_details':
@@ -240,7 +219,7 @@ try {
             }
 
             $pdo->commit();
-            echo json_encode(['status' => 'success', 'message' => 'Dettagli immagine aggiornati.']);
+            echo \KeySoftItalia\BackendHttp::encode(['status' => 'success', 'message' => 'Dettagli immagine aggiornati.']);
             break;
         
         default:
@@ -251,5 +230,8 @@ try {
     if ($pdo->inTransaction()) {
         $pdo->rollBack();
     }
-    jsonError('Errore del server.', $e);
+    foreach ($movedFiles as $file) {
+        if (is_file($file)) unlink($file);
+    }
+    jsonError($e instanceof InvalidArgumentException ? $e->getMessage() : 'Errore del server.', $e);
 }

@@ -1,8 +1,9 @@
 <?php
 include_once 'includes/header.php';
 
-$stmt = $pdo->query('SELECT q.*, d.name as device_name FROM quotes q JOIN devices d ON q.device_id = d.id ORDER BY q.created_at DESC');
-$quotes = $stmt->fetchAll();
+require_once __DIR__ . '/../src/AdminList.php';
+$list = \KeySoftItalia\AdminList::load($pdo, 'quotes', $_GET);
+$quotes = $list['rows'];
 ?>
 
 <div class="d-flex justify-content-between align-items-center mb-4">
@@ -12,34 +13,7 @@ $quotes = $stmt->fetchAll();
     </button>
 </div>
 
-<div class="card mb-4">
-    <div class="card-header bg-white">
-        <i class="fas fa-filter me-2 text-primary"></i> Filtri e Ricerca
-    </div>
-    <div class="card-body">
-        <div class="row g-3">
-            <div class="col-md-6">
-                <div class="input-group">
-                    <span class="input-group-text bg-light"><i class="fas fa-search"></i></span>
-                    <input type="text" id="searchInput" class="form-control" placeholder="Cerca per cliente, email, telefono...">
-                </div>
-            </div>
-            <div class="col-md-6">
-                <select id="deviceFilter" class="form-select">
-                    <option value="">Tutti i dispositivi</option>
-                    <?php
-                    $devices_stmt = $pdo->query('SELECT DISTINCT name FROM devices ORDER BY name ASC');
-                    $devices = $devices_stmt->fetchAll(PDO::FETCH_COLUMN);
-                    foreach ($devices as $device): ?>
-                        <option value="<?php echo htmlspecialchars($device, ENT_QUOTES, 'UTF-8'); ?>">
-                            <?php echo htmlspecialchars($device, ENT_QUOTES, 'UTF-8'); ?>
-                        </option>
-                    <?php endforeach; ?>
-                </select>
-            </div>
-        </div>
-    </div>
-</div>
+<?php include __DIR__ . '/includes/list_filters.php'; ?>
 
 <div class="table-responsive">
     <table class="table table-hover align-middle">
@@ -55,6 +29,11 @@ $quotes = $stmt->fetchAll();
             </tr>
         </thead>
         <tbody id="quotesTableBody">
+            <?php if (!$quotes): ?>
+                <tr><td colspan="7" class="text-center py-4">
+                    <?= $list['q'] !== '' || $list['status'] !== '' || $list['device'] !== '' ? 'Nessuna richiesta corrisponde ai filtri. Prova un altro termine o azzera i filtri.' : 'Non sono ancora arrivate richieste.' ?>
+                </td></tr>
+            <?php endif; ?>
             <?php foreach ($quotes as $q): ?>
                 <tr id="quote-<?php echo $q['id']; ?>">
                     <td>
@@ -136,6 +115,8 @@ $quotes = $stmt->fetchAll();
         </tbody>
     </table>
 </div>
+
+<?php include __DIR__ . '/includes/list_pagination.php'; ?>
 
 <!-- Modal Dettagli Preventivo -->
 <div class="modal fade" id="quoteModal" tabindex="-1" aria-labelledby="quoteModalLabel" aria-hidden="true" data-bs-backdrop="static">
@@ -236,6 +217,7 @@ $quotes = $stmt->fetchAll();
 
 <?php include_once 'includes/footer.php'; ?>
 
+<script src="../assets/js/pages/admin-feedback.js"></script>
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     const quoteModal = new bootstrap.Modal(document.getElementById('quoteModal'));
@@ -340,8 +322,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const viewBtn = e.target.closest('.view-btn');
         if (viewBtn) {
             const id = viewBtn.dataset.id;
-            fetch(`ajax_actions/quote_actions.php?action=get&id=${id}`)
-                .then(response => response.json())
+            AdminFeedback.request(`ajax_actions/quote_actions.php?action=get&id=${id}`)
                 .then(data => {
                     if (data.status === 'success') {
                         currentQuote = data.quote;
@@ -372,12 +353,12 @@ document.addEventListener('DOMContentLoaded', function() {
                         updateMessageTemplate();
                         quoteModal.show();
                     } else {
-                        alert(data.message || 'Errore nel recupero dei dati.');
+                        AdminFeedback.show(data.message || 'Errore nel recupero dei dati.');
                     }
                 })
                 .catch(error => {
                     console.error('Recupero preventivo fallito:', error);
-                    alert('Impossibile caricare il preventivo. Riprova o aggiorna la pagina.');
+                    AdminFeedback.show(error.message || 'Impossibile caricare il preventivo. Aggiorna la pagina e riprova.');
                 });
         }
     });
@@ -389,26 +370,25 @@ document.addEventListener('DOMContentLoaded', function() {
         formData.append('est_min', customMin.value);
         formData.append('est_max', customMax.value);
 
-        fetch('ajax_actions/quote_actions.php', {
+        AdminFeedback.request('ajax_actions/quote_actions.php', {
             method: 'POST',
             body: formData
-        })
-        .then(response => response.json())
+        }, this)
         .then(data => {
             if (data.status === 'success') {
                 quoteModal.hide();
-                location.reload();
+                AdminFeedback.reload('Preventivo aggiornato.');
             } else {
-                alert(data.message || 'Errore durante il salvataggio.');
+                AdminFeedback.show(data.message || 'Errore durante il salvataggio.');
             }
-        });
+        }).catch(error => AdminFeedback.show(error.message));
     });
 
     // Create Price Rule Button
     createRuleBtn.addEventListener('click', function() {
         const price = customMin.value;
         if (!price) {
-            alert('Inserisci almeno il prezzo minimo per creare una regola.');
+            AdminFeedback.show('Inserisci almeno il prezzo minimo per creare una regola.');
             return;
         }
         
@@ -418,14 +398,13 @@ document.addEventListener('DOMContentLoaded', function() {
             fd.append('quote_id', currentQuote.id);
             fd.append('price', price);
 
-            fetch('ajax_actions/quote_actions.php', {
+            AdminFeedback.request('ajax_actions/quote_actions.php', {
                 method: 'POST',
                 body: fd
-            })
-            .then(r => r.json())
+            }, this)
             .then(data => {
-                alert(data.message);
-            });
+                AdminFeedback.show(data.message, 'success');
+            }).catch(error => AdminFeedback.show(error.message));
         }
     });
 
@@ -439,55 +418,21 @@ document.addEventListener('DOMContentLoaded', function() {
                 formData.append('action', 'delete');
                 formData.append('id', id);
 
-                fetch('ajax_actions/quote_actions.php', {
+                AdminFeedback.request('ajax_actions/quote_actions.php', {
                     method: 'POST',
                     body: formData
-                })
-                .then(response => response.json())
+                }, deleteBtn)
                 .then(data => {
                     if (data.status === 'success') {
-                        document.getElementById(`quote-${id}`).remove();
+                        AdminFeedback.reload('Preventivo eliminato.');
                     } else {
-                        alert(data.message || 'Errore durante l\'eliminazione.');
+                        AdminFeedback.show(data.message || 'Errore durante l\'eliminazione.');
                     }
-                });
+                }).catch(error => AdminFeedback.show(error.message));
             }
         }
     });
 
-    // Search & Filter (Existing logic kept simple)
-    const searchInput = document.getElementById('searchInput');
-    const deviceFilter = document.getElementById('deviceFilter');
-    const tableBody = document.querySelector('.table tbody');
-    const tableRows = tableBody.getElementsByTagName('tr');
 
-    function filterTable() {
-        const searchTerm = searchInput.value.toLowerCase();
-        const deviceTerm = deviceFilter.value.toLowerCase();
-
-        for (let i = 0; i < tableRows.length; i++) {
-            const deviceCell = tableRows[i].getElementsByTagName('td')[1];
-            const clientCell = tableRows[i].getElementsByTagName('td')[4];
-            const contactCell = tableRows[i].getElementsByTagName('td')[5];
-
-            if (deviceCell && clientCell && contactCell) {
-                const deviceText = deviceCell.textContent.toLowerCase();
-                const clientText = clientCell.textContent.toLowerCase();
-                const contactText = contactCell.textContent.toLowerCase();
-
-                const searchMatch = clientText.includes(searchTerm) || contactText.includes(searchTerm);
-                const deviceMatch = deviceTerm === '' || deviceText.includes(deviceTerm);
-
-                if (searchMatch && deviceMatch) {
-                    tableRows[i].style.display = '';
-                } else {
-                    tableRows[i].style.display = 'none';
-                }
-            }
-        }
-    }
-
-    searchInput.addEventListener('keyup', filterTable);
-    deviceFilter.addEventListener('change', filterTable);
 });
 </script>

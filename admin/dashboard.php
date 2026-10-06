@@ -132,7 +132,7 @@ $flyerColor = $activeFlyer ? 'text-success' : 'text-muted';
 
 <div class="d-flex justify-content-between align-items-center mb-4">
     <div>
-        <h2 class="section-title mb-1"><i class="fas fa-tachometer-alt me-2" style="color:#ff6b35;"></i>Dashboard</h2>
+        <h2 class="section-title mb-1"><i class="fas fa-tachometer-alt me-2" style="color:#ac3b12;"></i>Dashboard</h2>
         <p class="text-muted mb-0">Panoramica delle attività di oggi.</p>
     </div>
     <div class="text-end">
@@ -141,93 +141,18 @@ $flyerColor = $activeFlyer ? 'text-success' : 'text-muted';
     </div>
 </div>
 
-<!-- KPI Cards Row -->
-<div class="row mb-4">
-    <div class="col-xl-2 col-md-4 col-6 mb-4">
-        <div class="card h-100 border-0 shadow-sm">
-            <div class="card-body">
-                <div class="d-flex align-items-center justify-content-between mb-2">
-                    <h6 class="text-muted mb-0 text-uppercase small fw-bold">Oggi</h6>
-                    <div class="icon-shape" style="background:rgba(255,107,53,0.10);color:#ff6b35;width:40px;height:40px;font-size:1rem;">
-                        <i class="fas fa-calendar-day"></i>
-                    </div>
-                </div>
-                <h2 class="fw-bold mb-0"><?php echo $bookingsToday; ?></h2>
-                <span class="text-muted" style="font-size:0.7rem;">Prenotazioni</span>
-            </div>
-        </div>
-    </div>
-    <div class="col-xl-2 col-md-4 col-6 mb-4">
-        <div class="card h-100 border-0 shadow-sm">
-            <div class="card-body">
-                <div class="d-flex align-items-center justify-content-between mb-2">
-                    <h6 class="text-muted mb-0 text-uppercase small fw-bold">Usato</h6>
-                    <div class="icon-shape" style="background:rgba(234,179,8,0.10);color:#eab308;width:40px;height:40px;font-size:1rem;">
-                        <i class="fas fa-tasks"></i>
-                    </div>
-                </div>
-                <h2 class="fw-bold mb-0"><?php echo $pendingQuotes; ?></h2>
-                <span class="text-muted" style="font-size:0.7rem;">Da valutare</span>
-            </div>
-        </div>
-    </div>
-    <div class="col-xl-2 col-md-4 col-6 mb-4">
-        <div class="card h-100 border-0 shadow-sm">
-            <div class="card-body">
-                <div class="d-flex align-items-center justify-content-between mb-2">
-                    <h6 class="text-muted mb-0 text-uppercase small fw-bold">Preventivi</h6>
-                    <div class="icon-shape" style="background:rgba(139,92,246,0.10);color:#8b5cf6;width:40px;height:40px;font-size:1rem;">
-                        <i class="fas fa-file-invoice"></i>
-                    </div>
-                </div>
-                <h2 class="fw-bold mb-0"><?php echo $pendingRepairQuotes; ?></h2>
-                <span class="text-muted" style="font-size:0.7rem;">Da gestire</span>
-            </div>
-        </div>
-    </div>
-    <div class="col-xl-2 col-md-4 col-6 mb-4">
-        <div class="card h-100 border-0 shadow-sm">
-            <div class="card-body">
-                <div class="d-flex align-items-center justify-content-between mb-2">
-                    <h6 class="text-muted mb-0 text-uppercase small fw-bold">Servizi</h6>
-                    <div class="icon-shape" style="background:rgba(59,130,246,0.10);color:#3b82f6;width:40px;height:40px;font-size:1rem;">
-                        <i class="fas fa-headset"></i>
-                    </div>
-                </div>
-                <h2 class="fw-bold mb-0"><?php echo $pendingServiceRequests; ?></h2>
-                <span class="text-muted" style="font-size:0.7rem;">Richieste attesa</span>
-            </div>
-        </div>
-    </div>
-    <div class="col-xl-2 col-md-4 col-6 mb-4">
-        <div class="card h-100 border-0 shadow-sm">
-            <div class="card-body">
-                <div class="d-flex align-items-center justify-content-between mb-2">
-                    <h6 class="text-muted mb-0 text-uppercase small fw-bold">Negozio</h6>
-                    <div class="icon-shape" style="background:<?php echo $isOpen ? 'rgba(34,197,94,0.10)' : 'rgba(239,68,68,0.10)'; ?>;color:<?php echo $isOpen ? '#22c55e' : '#ef4444'; ?>;width:40px;height:40px;font-size:1rem;">
-                        <i class="fas <?php echo $storeIcon; ?>"></i>
-                    </div>
-                </div>
-                <h2 class="fw-bold mb-0 <?php echo $storeColor; ?>"><?php echo $storeStatus; ?></h2>
-                <span class="text-muted" style="font-size:0.7rem;">Ora</span>
-            </div>
-        </div>
-    </div>
-    <div class="col-xl-2 col-md-4 col-6 mb-4">
-        <div class="card h-100 border-0 shadow-sm">
-            <div class="card-body">
-                <div class="d-flex align-items-center justify-content-between mb-2">
-                    <h6 class="text-muted mb-0 text-uppercase small fw-bold">Volantino</h6>
-                    <div class="icon-shape" style="background:rgba(59,130,246,0.10);color:#3b82f6;width:40px;height:40px;font-size:1rem;">
-                        <i class="fas fa-newspaper"></i>
-                    </div>
-                </div>
-                <h5 class="fw-bold mb-0 text-truncate" style="font-size:1rem;"><?php echo $activeFlyer ?: 'Nessuno'; ?></h5>
-                <span class="text-muted" style="font-size:0.7rem;">Campagna</span>
-            </div>
-        </div>
-    </div>
+<div class="workspace-welcome">
+    <div><strong>Le richieste del sito, tutte nello stesso posto</strong><p>Controlla gli arrivi e attiva gli avvisi desktop dal centro notifiche.</p></div>
+    <a href="notifications.php" class="btn btn-primary">Apri centro notifiche <i class="fas fa-arrow-right ms-2" aria-hidden="true"></i></a>
 </div>
+<section class="workspace-summary" aria-label="Riepilogo operativo">
+    <a href="bookings.php"><small>Prenotazioni ricevute oggi</small><strong><?php echo $bookingsToday; ?></strong></a>
+    <a href="used_quotes.php?status=pending"><small>Usato da valutare</small><strong><?php echo $pendingQuotes; ?></strong></a>
+    <a href="quotes.php?status=pending"><small>Preventivi da gestire</small><strong><?php echo $pendingRepairQuotes; ?></strong></a>
+    <a href="notifications.php?unread=1"><small>Servizi in attesa</small><strong><?php echo $pendingServiceRequests; ?></strong></a>
+    <div><small>Negozio ora</small><strong class="<?php echo $storeColor; ?>"><?php echo $isOpen ? 'Aperto' : 'Chiuso'; ?></strong></div>
+    <a href="flyers.php"><small>Volantino attivo</small><span><?php echo htmlspecialchars($activeFlyer ?: 'Nessuno'); ?></span></a>
+</section>
 
 <!-- Charts Row -->
 <div class="row mb-4">
@@ -235,7 +160,7 @@ $flyerColor = $activeFlyer ? 'text-success' : 'text-muted';
     <div class="col-lg-8 mb-4 mb-lg-0">
         <div class="card border-0 shadow-sm h-100">
             <div class="card-header bg-white border-0 py-3 d-flex justify-content-between align-items-center">
-                <h6 class="mb-0 fw-bold" style="color:#ff6b35;"><i class="fas fa-chart-bar me-2"></i>Prenotazioni – Ultimi 30 Giorni</h6>
+                <h6 class="mb-0 fw-bold" style="color:#ac3b12;"><i class="fas fa-chart-bar me-2"></i>Prenotazioni – Ultimi 30 Giorni</h6>
             </div>
             <div class="card-body">
                 <div class="chart-wrapper"><canvas id="bookingsChart"></canvas></div>
@@ -246,7 +171,7 @@ $flyerColor = $activeFlyer ? 'text-success' : 'text-muted';
     <div class="col-lg-4">
         <div class="card border-0 shadow-sm h-100">
             <div class="card-header bg-white border-0 py-3">
-                <h6 class="mb-0 fw-bold" style="color:#ff6b35;"><i class="fas fa-chart-pie me-2"></i>Stato Prenotazioni</h6>
+                <h6 class="mb-0 fw-bold" style="color:#ac3b12;"><i class="fas fa-chart-pie me-2"></i>Stato Prenotazioni</h6>
             </div>
             <div class="card-body d-flex align-items-center justify-content-center">
                 <div class="chart-wrapper"><canvas id="statusChart"></canvas></div>
@@ -261,8 +186,8 @@ $flyerColor = $activeFlyer ? 'text-success' : 'text-muted';
     <div class="col-lg-8 mb-4">
         <div class="card border-0 shadow-sm h-100">
             <div class="card-header bg-white border-0 py-3 d-flex justify-content-between align-items-center">
-                <h6 class="mb-0 fw-bold" style="color:#ff6b35;"><i class="fas fa-history me-2"></i>Attività Recenti</h6>
-                <a href="bookings.php" class="btn btn-sm fw-bold" style="background:rgba(255,107,53,0.08);color:#ff6b35;border:none;border-radius:8px;">Vedi Tutte</a>
+                <h6 class="mb-0 fw-bold" style="color:#ac3b12;"><i class="fas fa-history me-2"></i>Attività Recenti</h6>
+                <a href="bookings.php" class="btn btn-sm fw-bold" style="background:rgba(255,107,53,0.08);color:#ac3b12;border:none;border-radius:8px;">Vedi Tutte</a>
             </div>
             <div class="card-body p-0">
                 <div class="table-responsive">
@@ -339,23 +264,23 @@ $flyerColor = $activeFlyer ? 'text-success' : 'text-muted';
         <!-- Quick Actions -->
         <div class="card border-0 shadow-sm mb-4">
             <div class="card-header bg-white border-0 py-3">
-                <h6 class="mb-0 fw-bold" style="color:#ff6b35;"><i class="fas fa-bolt me-2"></i>Azioni Rapide</h6>
+                <h6 class="mb-0 fw-bold" style="color:#ac3b12;"><i class="fas fa-bolt me-2"></i>Azioni Rapide</h6>
             </div>
             <div class="card-body">
                 <div class="d-grid gap-2">
-                    <a href="bookings.php" class="btn text-start p-3 d-flex align-items-center" style="border:1px solid var(--ks-admin-border);border-radius:12px;background:#fff;transition:all 0.2s;box-shadow:var(--ks-admin-card-shadow);" onmouseover="this.style.borderColor='#ff6b35';this.style.boxShadow='0 4px 12px rgba(255,107,53,0.15)'" onmouseout="this.style.borderColor='var(--ks-admin-border)';this.style.boxShadow='var(--ks-admin-card-shadow)'">
+                    <a href="bookings.php" class="btn text-start p-3 d-flex align-items-center dashboard-shortcut">
                         <div style="background:#ff6b35;color:#fff;border-radius:10px;width:40px;height:40px;display:flex;align-items:center;justify-content:center;margin-right:12px;flex-shrink:0;"><i class="fas fa-calendar-plus"></i></div>
                         <div><div class="fw-bold" style="color:var(--ks-admin-text);">Gestisci Prenotazioni</div><div class="small text-muted">Vedi calendario e appuntamenti</div></div>
                     </a>
-                    <a href="used_quotes.php" class="btn text-start p-3 d-flex align-items-center" style="border:1px solid var(--ks-admin-border);border-radius:12px;background:#fff;transition:all 0.2s;box-shadow:var(--ks-admin-card-shadow);" onmouseover="this.style.borderColor='#eab308';this.style.boxShadow='0 4px 12px rgba(234,179,8,0.15)'" onmouseout="this.style.borderColor='var(--ks-admin-border)';this.style.boxShadow='var(--ks-admin-card-shadow)'">
+                    <a href="used_quotes.php" class="btn text-start p-3 d-flex align-items-center dashboard-shortcut">
                         <div style="background:#eab308;color:#fff;border-radius:10px;width:40px;height:40px;display:flex;align-items:center;justify-content:center;margin-right:12px;flex-shrink:0;"><i class="fas fa-recycle"></i></div>
                         <div><div class="fw-bold" style="color:var(--ks-admin-text);">Valutazioni Usato</div><div class="small text-muted">Gestisci richieste di permuta</div></div>
                     </a>
-                    <a href="products.php" class="btn text-start p-3 d-flex align-items-center" style="border:1px solid var(--ks-admin-border);border-radius:12px;background:#fff;transition:all 0.2s;box-shadow:var(--ks-admin-card-shadow);" onmouseover="this.style.borderColor='#22c55e';this.style.boxShadow='0 4px 12px rgba(34,197,94,0.15)'" onmouseout="this.style.borderColor='var(--ks-admin-border)';this.style.boxShadow='var(--ks-admin-card-shadow)'">
+                    <a href="products.php" class="btn text-start p-3 d-flex align-items-center dashboard-shortcut">
                         <div style="background:#22c55e;color:#fff;border-radius:10px;width:40px;height:40px;display:flex;align-items:center;justify-content:center;margin-right:12px;flex-shrink:0;"><i class="fas fa-box-open"></i></div>
                         <div><div class="fw-bold" style="color:var(--ks-admin-text);">Gestisci Prodotti</div><div class="small text-muted">Aggiungi o modifica prodotti</div></div>
                     </a>
-                    <a href="weekly_hours.php" class="btn text-start p-3 d-flex align-items-center" style="border:1px solid var(--ks-admin-border);border-radius:12px;background:#fff;transition:all 0.2s;box-shadow:var(--ks-admin-card-shadow);" onmouseover="this.style.borderColor='#64748b';this.style.boxShadow='0 4px 12px rgba(100,116,139,0.15)'" onmouseout="this.style.borderColor='var(--ks-admin-border)';this.style.boxShadow='var(--ks-admin-card-shadow)'">
+                    <a href="weekly_hours.php" class="btn text-start p-3 d-flex align-items-center dashboard-shortcut">
                         <div style="background:#64748b;color:#fff;border-radius:10px;width:40px;height:40px;display:flex;align-items:center;justify-content:center;margin-right:12px;flex-shrink:0;"><i class="fas fa-clock"></i></div>
                         <div><div class="fw-bold" style="color:var(--ks-admin-text);">Orari & Chiusure</div><div class="small text-muted">Modifica orari o aggiungi ferie</div></div>
                     </a>
@@ -366,7 +291,7 @@ $flyerColor = $activeFlyer ? 'text-success' : 'text-muted';
         <!-- System Status -->
         <div class="card border-0 shadow-sm" style="background:linear-gradient(135deg,#0f172a 0%,#1a2639 100%);">
             <div class="card-body p-4">
-                <h5 class="fw-bold mb-3 text-white"><i class="fas fa-info-circle me-2" style="color:#ff6b35;"></i>Info Sistema</h5>
+                <h5 class="fw-bold mb-3 text-white"><i class="fas fa-info-circle me-2" style="color:#ac3b12;"></i>Info Sistema</h5>
                 <ul class="list-unstyled mb-0 text-white">
                     <li class="mb-2 d-flex justify-content-between"><span><i class="fas fa-server me-2 opacity-50"></i>PHP Version</span><span class="fw-bold"><?php echo phpversion(); ?></span></li>
                     <li class="mb-2 d-flex justify-content-between"><span><i class="fas fa-database me-2 opacity-50"></i>Database</span><span class="fw-bold">Connected</span></li>

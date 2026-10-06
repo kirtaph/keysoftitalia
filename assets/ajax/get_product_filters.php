@@ -1,6 +1,8 @@
 <?php
 declare(strict_types=1);
-session_start();
+require_once __DIR__ . '/../../src/AjaxRequest.php';
+
+\KeySoftItalia\BackendHttp::startSession();
 
 if (!defined('BASE_PATH')) {
   define('BASE_PATH', dirname(dirname(__DIR__)) . '/');
@@ -62,7 +64,7 @@ try {
     WHERE p.is_available = 1 AND p.storage_gb IS NOT NULL
   ")->fetch();
 
-  echo json_encode([
+  echo \KeySoftItalia\BackendHttp::encode([
     'ok'      => true,
     'filters' => [
       'brands'   => $brands,
@@ -74,5 +76,5 @@ try {
   ], JSON_UNESCAPED_UNICODE);
 } catch (Throwable $e) {
   http_response_code(500);
-  echo json_encode(['ok'=>false, 'error'=>'Query error']);
+  echo \KeySoftItalia\BackendHttp::encode(['ok'=>false, 'error'=>'Query error']);
 }

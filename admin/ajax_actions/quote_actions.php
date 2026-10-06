@@ -60,6 +60,11 @@ try {
 
         $problems = json_decode($quote['problems_json'], true);
         if (empty($problems)) jsonError('Nessun problema specificato nel preventivo');
+        if (!is_array($problems) || count($problems) !== 1 || !is_string($problems[0] ?? null)) {
+            jsonError('La creazione automatica della regola richiede una sola problematica: il totale non può essere applicato a ogni riparazione.');
+        }
+
+        $pdo->beginTransaction();
 
         $count = 0;
         foreach ($problems as $problemName) {
@@ -76,14 +81,14 @@ try {
             $modelId = null;
             $brandId = null;
             
-            $stmt = $pdo->prepare("SELECT id FROM brands WHERE name = ? OR name LIKE ?");
-            $stmt->execute([$quote['brand_text'], $quote['brand_text']]);
+            $stmt = $pdo->prepare("SELECT id FROM brands WHERE device_id = ? AND name = ? LIMIT 1");
+            $stmt->execute([$quote['device_id'], $quote['brand_text']]);
             $brandId = $stmt->fetchColumn();
             
             if ($brandId) {
-                $modelName = trim($quote['model_text']);
-                $stmt = $pdo->prepare("SELECT id FROM models WHERE brand_id = ? AND (name = ? OR name LIKE ?)");
-                $stmt->execute([$brandId, $modelName, "%$modelName%"]);
+                $modelName = trim((string)($quote['model_text'] ?? ''));
+                $stmt = $pdo->prepare("SELECT id FROM models WHERE brand_id = ? AND name = ? LIMIT 1");
+                $stmt->execute([$brandId, $modelName]);
                 $modelId = $stmt->fetchColumn();
             }
             
@@ -106,6 +111,7 @@ try {
             $count++;
         }
 
+        $pdo->commit();
         jsonSuccess(['message' => "$count regole create/aggiornate"]);
 
     } else {

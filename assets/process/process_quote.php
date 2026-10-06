@@ -6,6 +6,8 @@
  */
 
 declare(strict_types=1);
+require_once __DIR__ . '/../../src/PublicRequest.php';
+
 
 if (!defined('BASE_PATH')) {
   define('BASE_PATH', dirname(__DIR__, 2) . DIRECTORY_SEPARATOR);
@@ -16,7 +18,7 @@ header('Content-Type: application/json; charset=utf-8');
 
 function respond(array $data, int $status=200){
   http_response_code($status);
-  echo json_encode($data, JSON_UNESCAPED_UNICODE|JSON_UNESCAPED_SLASHES);
+  echo \KeySoftItalia\BackendHttp::encode($data, JSON_UNESCAPED_UNICODE|JSON_UNESCAPED_SLASHES);
   exit;
 }
 

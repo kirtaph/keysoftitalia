@@ -1,22 +1,18 @@
 <?php
 require_once __DIR__ . '/init.php';
+require_once __DIR__ . '/../../src/ProductImport.php';
 
 $action = $_POST['action'] ?? 'preview';
 
 // Helpers
 function parseCurrency($str) {
-    // Keep only digits, comma, dot, minus
-    $str = preg_replace('/[^\d,.-]/', '', $str); 
-    // Assume Italian format: 1.200,00 -> remove dots, replace comma with dot
-    $str = str_replace('.', '', $str);
-    $str = str_replace(',', '.', $str);
-    return floatval($str);
+    return \KeySoftItalia\ProductImport::currency((string)$str);
 }
 
 function getOrCreateInfo($pdo, $table, $column, $value, $parentIdCol = null, $parentIdVal = null) {
     if (empty($value)) return null;
     
-    $sql = "SELECT id FROM $table WHERE $column LIKE :val";
+    $sql = "SELECT id FROM $table WHERE $column = :val";
     $params = [':val' => $value];
     
     if ($parentIdCol && $parentIdVal) {
@@ -44,7 +40,7 @@ function getOrCreateInfo($pdo, $table, $column, $value, $parentIdCol = null, $pa
 
 try {
     if ($action === 'preview') {
-        if (!isset($_FILES['csv_file'])) {
+        if (!isset($_FILES['csv_file']) || !is_array($_FILES['csv_file']) || ($_FILES['csv_file']['error'] ?? UPLOAD_ERR_NO_FILE) !== UPLOAD_ERR_OK) {
             throw new Exception('Nessun file caricato');
         }
         $csvExt = strtolower(pathinfo($_FILES['csv_file']['name'], PATHINFO_EXTENSION));
@@ -68,11 +64,13 @@ try {
         if ($handle === FALSE) throw new Exception('Impossibile aprire il file');
         
         $firstLine = fgets($handle);
+        if ($firstLine === false || trim($firstLine) === '') {
+            fclose($handle);
+            throw new InvalidArgumentException('File CSV vuoto.');
+        }
         $separator = (substr_count($firstLine, ';') > substr_count($firstLine, ',')) ? ';' : ',';
         rewind($handle);
 
-        // Debug Log
-        file_put_contents('../../debug_import.log', "Separator detected: [$separator]\n", FILE_APPEND);
 
         $previewData = [];
         $row = 0;
@@ -103,9 +101,6 @@ try {
                 $price = parseCurrency($rawPriceB); 
             }
 
-            if ($row <= 5) {
-                file_put_contents('../../debug_import.log', "Row $row: SKU=[$sku] PriceA=[$rawPriceA] PriceB=[$rawPriceB] Parsed=[$price]\n", FILE_APPEND);
-            }
             
             $qty = intval($data[6] ?? 0); 
             $fullDesc = trim($data[41] ?? ''); 
@@ -196,23 +191,24 @@ try {
         }
         fclose($handle);
 
-        echo json_encode(['status' => 'success', 'data' => $previewData]);
+        echo \KeySoftItalia\BackendHttp::encode(['status' => 'success', 'data' => $previewData]);
 
     } elseif ($action === 'import') {
-        $products = json_decode($_POST['products'] ?? '[]', true);
-        if (empty($products)) throw new Exception('Nessun prodotto selezionato');
+        $products = \KeySoftItalia\ProductImport::products($_POST['products'] ?? '[]');
 
         // Get Devices map
         $stmt = $pdo->query("SELECT id, name FROM devices");
         $devices = $stmt->fetchAll(PDO::FETCH_KEY_PAIR); 
         $deviceMap = array_flip($devices); 
-        $defaultDeviceId = $deviceMap['Smartphone'] ?? 1;
+        foreach ($products as $product) {
+            if (!isset($deviceMap[$product['device_type']])) throw new InvalidArgumentException('Tipo dispositivo sconosciuto.');
+        }
 
         $imported = 0;
         $pdo->beginTransaction();
 
         foreach ($products as $p) {
-            $deviceId = $deviceMap[$p['device_type']] ?? $defaultDeviceId;
+            $deviceId = $deviceMap[$p['device_type']];
             
             $brandId = getOrCreateInfo($pdo, 'brands', 'name', $p['brand'], 'device_id', $deviceId);
             $modelId = getOrCreateInfo($pdo, 'models', 'name', $p['model'], 'brand_id', $brandId);
@@ -233,7 +229,7 @@ try {
                 $p['color'],
                 $p['storage'],
                 $p['grade'],
-                $p['price'] * 1.2, 
+                number_format((float)$p['price'] * 1.2, 2, '.', ''),
                 $p['price'],
                 $p['short_desc'],
                 $p['full_desc'],
@@ -243,11 +239,13 @@ try {
         }
 
         $pdo->commit();
-        echo json_encode(['status' => 'success', 'message' => "Importati $imported prodotti."]);
+        echo \KeySoftItalia\BackendHttp::encode(['status' => 'success', 'message' => "Importati $imported prodotti."]);
+    } else {
+        throw new InvalidArgumentException('Azione non valida.');
     }
 
 } catch (Throwable $e) {
     if ($pdo->inTransaction()) $pdo->rollBack();
-    jsonError('Errore del server.', $e);
+    jsonError($e instanceof InvalidArgumentException ? $e->getMessage() : 'Errore del server.', $e);
 }
 ?>

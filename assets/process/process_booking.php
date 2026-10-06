@@ -2,8 +2,10 @@
 // assets/process/process_booking.php
 
 declare(strict_types=1);
+require_once __DIR__ . '/../../src/PublicRequest.php';
 
-session_start();
+
+\KeySoftItalia\BackendHttp::startSession();
 require_once __DIR__ . '/../../config/config.php';
 
 header('Content-Type: application/json; charset=utf-8');
@@ -24,13 +26,13 @@ if (
   !hash_equals((string)$_SESSION['csrf_token'], (string)$_POST['csrf_token'])
 ) {
   http_response_code(403);
-  echo json_encode(['ok' => false, 'error' => 'csrf', 'message' => 'Token CSRF non valido.']);
+  echo \KeySoftItalia\BackendHttp::encode(['ok' => false, 'error' => 'csrf', 'message' => 'Token CSRF non valido.']);
   exit;
 }
 
 // Honeypot antispam
 if (!empty($_POST['website'] ?? '')) {
-  echo json_encode(['ok' => true, 'message' => 'OK']); // finta success
+  echo \KeySoftItalia\BackendHttp::encode(['ok' => true, 'message' => 'OK']); // finta success
   exit;
 }
 
@@ -44,7 +46,7 @@ if (!isset($pdo) || !($pdo instanceof PDO)) {
     ]);
   } catch (Throwable $e) {
     http_response_code(500);
-    echo json_encode(['ok' => false, 'message' => 'Errore di connessione al database.']);
+    echo \KeySoftItalia\BackendHttp::encode(['ok' => false, 'message' => 'Errore di connessione al database.']);
     exit;
   }
 }
@@ -98,8 +100,13 @@ if ($modelName === '') {
 
 if ($preferredDate === '') {
   $errors['preferred_date'] = 'Seleziona una data.';
+} else {
+  $date = DateTimeImmutable::createFromFormat('!Y-m-d', $preferredDate, new DateTimeZone('Europe/Rome'));
+  if (!$date || $date->format('Y-m-d') !== $preferredDate || $preferredDate < date('Y-m-d')) {
+    $errors['preferred_date'] = 'Seleziona una data valida, non precedente a oggi.';
+  }
 }
-if ($preferredTimeSlot === '') {
+if (!in_array($preferredTimeSlot, ['mattina', 'pomeriggio'], true)) {
   $errors['preferred_time_slot'] = 'Seleziona una fascia oraria.';
 }
 if (!in_array($dropoffType, ['in_store', 'pickup', 'on_site'], true)) {
@@ -124,7 +131,7 @@ if (!$privacy) {
 
 if (!empty($errors)) {
   http_response_code(422);
-  echo json_encode([
+  echo \KeySoftItalia\BackendHttp::encode([
     'ok'      => false,
     'message' => 'Verifica i campi evidenziati.',
     'errors'  => $errors
@@ -218,7 +225,7 @@ try {
       $mailResult = send_assistance_email($mailData, $mailOpts);
   }
 
-  echo json_encode([
+  echo \KeySoftItalia\BackendHttp::encode([
     'ok'        => true,
     'id'        => $bookingId,
     'message'   => 'Prenotazione registrata con successo.',
@@ -230,7 +237,7 @@ try {
   // Logga l’errore se hai un logger
   // error_log($e->getMessage());
   http_response_code(500);
-  echo json_encode([
+  echo \KeySoftItalia\BackendHttp::encode([
     'ok'      => false,
     'message' => 'Errore durante il salvataggio della prenotazione.'
   ]);

@@ -17,13 +17,15 @@ try {
 
             $pdo->beginTransaction();
             try {
-                $stmt = $pdo->prepare("UPDATE ks_store_hours_weekly SET open_time = ?, close_time = ?, active = ? WHERE id = ?");
+                $stmt = $pdo->prepare("INSERT INTO ks_store_hours_weekly (dow, seg, open_time, close_time, active) VALUES (?, ?, ?, ?, ?)
+                    ON DUPLICATE KEY UPDATE open_time = VALUES(open_time), close_time = VALUES(close_time), active = VALUES(active)");
                 foreach ($hours as $h) {
                     $stmt->execute([
-                        $h['open_time'],
-                        $h['close_time'],
-                        $h['active'],
-                        $h['id']
+                        $h['dow'],
+                        $h['seg'],
+                        !empty($h['open_time']) ? $h['open_time'] : '00:00',
+                        !empty($h['close_time']) ? $h['close_time'] : '00:00',
+                        $h['active']
                     ]);
                 }
                 $pdo->commit();
@@ -94,7 +96,7 @@ try {
                     if ($h['rule_type'] === 'fixed') {
                         $date = sprintf('%04d-%02d-%02d', $year, $h['month'], $h['day']);
                     } elseif ($h['rule_type'] === 'easter') {
-                        $easterDate = date('Y-m-d', easter_date($year));
+                        $easterDate = (new DateTimeImmutable("$year-03-21"))->modify('+' . easter_days((int)$year) . ' days')->format('Y-m-d');
                         $date = date('Y-m-d', strtotime("$easterDate " . ($h['offset_days'] >= 0 ? '+' : '') . $h['offset_days'] . " days"));
                     }
 
@@ -116,7 +118,7 @@ try {
                 }
             }
             
-            echo json_encode($events);
+            echo \KeySoftItalia\BackendHttp::encode($events);
             break;
 
         case 'save_exception':

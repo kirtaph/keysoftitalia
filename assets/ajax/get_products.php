@@ -1,6 +1,8 @@
 <?php
 declare(strict_types=1);
-session_start();
+require_once __DIR__ . '/../../src/AjaxRequest.php';
+
+\KeySoftItalia\BackendHttp::startSession();
 
 if (!defined('BASE_PATH')) {
   define('BASE_PATH', dirname(dirname(__DIR__)) . '/');
@@ -19,7 +21,7 @@ try {
   }
 } catch (Throwable $e) {
   http_response_code(500);
-  echo json_encode(['ok'=>false,'error'=>'DB connection error']);
+  echo \KeySoftItalia\BackendHttp::encode(['ok'=>false,'error'=>'DB connection error']);
   exit;
 }
 
@@ -179,7 +181,7 @@ try {
   $rows = $stmt->fetchAll();
 } catch (Throwable $e) {
   http_response_code(500);
-  echo json_encode(['ok'=>false,'error'=>'Query error']);
+  echo \KeySoftItalia\BackendHttp::encode(['ok'=>false,'error'=>'Query error']);
   exit;
 }
 
@@ -219,7 +221,7 @@ $items = array_map(function(array $r) use ($baseCover) {
 }, $rows);
 
 /** =================== Output =================== */
-echo json_encode([
+echo \KeySoftItalia\BackendHttp::encode([
   'ok'       => true,
   'page'     => $page,
   'per'      => $per,

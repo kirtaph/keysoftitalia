@@ -1,6 +1,8 @@
 <?php
 declare(strict_types=1);
-session_start();
+require_once __DIR__ . '/../../src/PublicRequest.php';
+
+\KeySoftItalia\BackendHttp::startSession();
 
 require_once __DIR__ . '/../../config/config.php'; // $pdo, costanti, helpers
 require_once __DIR__ . '/../php/functions.php'; // $pdo, costanti, helpers
@@ -9,7 +11,7 @@ header('Content-Type: application/json; charset=UTF-8');
 
 $respond = function (bool $ok, string $msg, array $extra = [], int $code = 200) {
     http_response_code($code);
-    echo json_encode(array_merge(['success' => $ok, 'message' => $msg], $extra));
+    echo \KeySoftItalia\BackendHttp::encode(array_merge(['success' => $ok, 'message' => $msg], $extra));
     exit;
 };
 

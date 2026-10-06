@@ -1,5 +1,6 @@
 <?php
-session_start();
+require_once __DIR__ . '/../src/BackendHttp.php';
+\KeySoftItalia\BackendHttp::startSession();
 if (isset($_SESSION['user_id'])) {
     header('Location: dashboard.php');
     exit;
@@ -258,8 +259,9 @@ if (isset($_SESSION['user_id'])) {
             border-width: 2px;
         }
     </style>
+    <link rel="stylesheet" href="assets/css/admin-workspace.css">
 </head>
-<body>
+<body class="login-page">
 
     <div class="login-bg"></div>
     <div class="login-blob login-blob-1"></div>

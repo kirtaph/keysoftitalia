@@ -1,15 +1,17 @@
 <?php
 declare(strict_types=1);
+require_once __DIR__ . '/../../src/AjaxRequest.php';
+
 require_once __DIR__ . '/../../config/config.php';
 
 if (!isset($pdo) || !($pdo instanceof PDO)) {
-  echo json_encode(['ok'=>false,'error'=>'database connection error']); exit;
+  echo \KeySoftItalia\BackendHttp::encode(['ok'=>false,'error'=>'database connection error']); exit;
 }
 
 header('Content-Type: application/json; charset=utf-8');
 
 $sku = isset($_GET['sku']) ? trim($_GET['sku']) : '';
-if ($sku === '') { echo json_encode(['ok'=>false,'error'=>'missing sku']); exit; }
+if ($sku === '') { echo \KeySoftItalia\BackendHttp::encode(['ok'=>false,'error'=>'missing sku']); exit; }
 
 try {
   $stmt = $pdo->prepare("
@@ -25,7 +27,7 @@ try {
   ");
   $stmt->execute([':sku'=>$sku]);
   $r = $stmt->fetch(PDO::FETCH_ASSOC);
-  if (!$r) { echo json_encode(['ok'=>false,'error'=>'not found']); exit; }
+  if (!$r) { echo \KeySoftItalia\BackendHttp::encode(['ok'=>false,'error'=>'not found']); exit; }
 
   $stmt2 = $pdo->prepare("SELECT path FROM product_images WHERE product_id = :pid ORDER BY is_cover DESC, sort_order ASC, id ASC");
   $stmt2->execute([':pid'=>$r['id']]);
@@ -37,7 +39,7 @@ try {
     'Marca' => $r['brand'], 'Modello' => $r['model'], 'Colore' => $r['color'],
     'Storage' => $r['storage_gb'] ? ($r['storage_gb'].' GB') : null, 'Grado' => $r['grade'],
   ];
-  echo json_encode([
+  echo \KeySoftItalia\BackendHttp::encode([
     'ok'=>true,
     'product'=>[
       'sku'         => $r['sku'],
@@ -56,5 +58,5 @@ try {
     ]
   ], JSON_UNESCAPED_UNICODE);
 } catch (Throwable $e) {
-  echo json_encode(['ok'=>false,'error'=>'query'], JSON_UNESCAPED_UNICODE);
+  echo \KeySoftItalia\BackendHttp::encode(['ok'=>false,'error'=>'query'], JSON_UNESCAPED_UNICODE);
 }

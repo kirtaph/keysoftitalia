@@ -11,6 +11,35 @@ colors:
   text-primary: "#111827"
   text-secondary: "#4B5563"
   text-muted: "#9CA3AF"
+  admin-tone-0: "#c04416"
+  admin-tone-1: "#9c3510"
+  admin-tone-2: "#fff0e9"
+  admin-tone-3: "#f6f7f8"
+  admin-tone-4: "#e0e3e6"
+  admin-tone-5: "#20252b"
+  admin-tone-6: "#59616b"
+  admin-tone-7: "#ac3b12"
+  admin-tone-8: "#872d0d"
+  admin-tone-9: "#b64015"
+  admin-tone-10: "#515961"
+  admin-tone-11: "#f2f3f4"
+  admin-tone-12: "#626b75"
+  admin-tone-13: "#eee9e5"
+  admin-tone-14: "#6d3b25"
+  admin-tone-15: "#faf6f3"
+  admin-tone-16: "#f7f8f9"
+  admin-tone-17: "#eceef0"
+  admin-tone-18: "#a33812"
+  admin-tone-19: "#c1c6cc"
+  admin-tone-20: "#c7ccd1"
+  admin-tone-21: "#414953"
+  admin-tone-22: "#166534"
+  admin-tone-23: "#e9ecef"
+  admin-tone-24: "#fffaf7"
+  admin-tone-25: "#f0f2f4"
+  admin-tone-26: "#a12622"
+  admin-tone-27: "#76320f"
+  admin-tone-28: "#6d4c3b"
 typography:
   display:
     fontFamily: "Poppins, sans-serif"
@@ -24,12 +53,77 @@ typography:
     fontWeight: 400
     lineHeight: 1.5
     letterSpacing: "normal"
+  admin-step-0:
+    fontFamily: "Inter, sans-serif"
+    fontSize: ".7rem"
+    fontWeight: 400
+    lineHeight: 1.55
+  admin-step-1:
+    fontFamily: "Inter, sans-serif"
+    fontSize: ".72rem"
+    fontWeight: 400
+    lineHeight: 1.55
+  admin-step-2:
+    fontFamily: "Inter, sans-serif"
+    fontSize: ".75rem"
+    fontWeight: 400
+    lineHeight: 1.55
+  admin-step-3:
+    fontFamily: "Inter, sans-serif"
+    fontSize: ".78rem"
+    fontWeight: 400
+    lineHeight: 1.55
+  admin-step-4:
+    fontFamily: "Inter, sans-serif"
+    fontSize: ".8rem"
+    fontWeight: 400
+    lineHeight: 1.55
+  admin-step-5:
+    fontFamily: "Inter, sans-serif"
+    fontSize: ".825rem"
+    fontWeight: 400
+    lineHeight: 1.55
+  admin-step-6:
+    fontFamily: "Inter, sans-serif"
+    fontSize: ".85rem"
+    fontWeight: 400
+    lineHeight: 1.55
+  admin-step-7:
+    fontFamily: "Inter, sans-serif"
+    fontSize: ".875rem"
+    fontWeight: 400
+    lineHeight: 1.55
+  admin-step-8:
+    fontFamily: "Inter, sans-serif"
+    fontSize: ".9rem"
+    fontWeight: 400
+    lineHeight: 1.55
+  admin-step-9:
+    fontFamily: "Inter, sans-serif"
+    fontSize: "1.2rem"
+    fontWeight: 400
+    lineHeight: 1.55
+  admin-step-10:
+    fontFamily: "Inter, sans-serif"
+    fontSize: "1.35rem"
+    fontWeight: 400
+    lineHeight: 1.55
+  admin-step-11:
+    fontFamily: "Inter, sans-serif"
+    fontSize: "1.55rem"
+    fontWeight: 400
+    lineHeight: 1.55
 rounded:
   sm: "4px"
   md: "8px"
   lg: "12px"
   xl: "16px"
   "2xl": "24px"
+  admin-5: "5px"
+  admin-6: "6px"
+  admin-7: "7px"
+  admin-9: "9px"
+  admin-10: "10px"
 spacing:
   xs: "4px"
   sm: "8px"
@@ -152,3 +246,18 @@ Key Soft Italia utilizes a Neumorphic Hybrid strategy. Rather than fully drownin
 - **Don't** pair standard box shadows with 1px borders and large blurs on the same element to avoid the "ghost card" pattern.
 - **Don't** use border radii larger than 16px on standard cards and input fields.
 - **Don't** use decorative technical grid overlays or sketchy hand-drawn illustrations.
+
+
+### Admin workspace (October 2026)
+
+The authenticated administration area is a product surface used at the shop counter in daylight, for long sessions with dense tables. Its tokens intentionally differ from the public marketing pages: white navigation, neutral gray canvas, compact Inter typography, solid borders and a darker orange for readable controls. This is an extension of the brand, not a change to the public site.
+
+- Action orange: `#c04416`; hover `#9c3510`; active `#872d0d`; link `#ac3b12`; focus `#b64015`. White button labels meet 4.5:1 on the action orange.
+- Canvas `#f6f7f8`; surfaces `#fff`; hover `#f2f3f4`; table heading `#f7f8f9`; rows `#faf6f3`; selection `#fff0e9` / `#fffaf7`.
+- Ink `#20252b`; secondary `#515961`, `#59616b`, `#626b75`, `#414953`; borders `#e0e3e6`, `#c1c6cc`, `#c7ccd1`, `#eceef0`; utility neutrals `#e9ecef`, `#f0f2f4`, `#eee9e5`.
+- Warm supporting ink `#76320f`, `#6d4c3b`, `#6d3b25`, `#a33812`; success `#166534`; error `#a12622`.
+- Fixed admin type steps: `.7rem`, `.72rem`, `.75rem`, `.78rem`, `.8rem`, `.825rem`, `.85rem`, `.875rem`, `.9rem`, `1rem`, `1.2rem`, `1.35rem`, `1.55rem`; numeric data uses tabular figures.
+- Admin radius steps: 5px badges, 6px utility actions, 7px controls, 9px panels, 10px list surfaces, 12px dialogs. Circular avatars and pill count badges are intentional.
+- Motion: 160ms color/background changes; no decorative page entrances. Reduced motion disables transitions and animation.
+
+The design hook's palette, type and radius warnings on `admin-workspace.css` refer to the public-site token set. They are reviewed, intentional admin-system extensions documented here, not suppressed rules. Existing public-site tokens remain unchanged.

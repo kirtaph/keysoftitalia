@@ -1,4 +1,6 @@
 <?php
+require_once __DIR__ . '/../../src/AjaxRequest.php';
+
 // ajax_issues.php
 if (!defined('BASE_PATH')) {
     define('BASE_PATH', dirname(dirname(__DIR__)) . '/');
@@ -8,7 +10,7 @@ header('Content-Type: application/json; charset=utf-8');
 
 $device = $_GET['device'] ?? '';
 if (!$device) {
-  echo json_encode(['issues' => []]);
+  echo \KeySoftItalia\BackendHttp::encode(['issues' => []]);
   exit;
 }
 
@@ -17,7 +19,7 @@ $stmt = $pdo->prepare("SELECT id FROM devices WHERE slug = :slug LIMIT 1");
 $stmt->execute(['slug' => $device]);
 $device_id = $stmt->fetchColumn();
 if (!$device_id) {
-  echo json_encode(['issues' => []]);
+  echo \KeySoftItalia\BackendHttp::encode(['issues' => []]);
   exit;
 }
 
@@ -30,4 +32,4 @@ $stmt = $pdo->prepare("
 $stmt->execute(['device_id' => $device_id]);
 $issues = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-echo json_encode(['issues' => $issues], JSON_UNESCAPED_UNICODE);
+echo \KeySoftItalia\BackendHttp::encode(['issues' => $issues], JSON_UNESCAPED_UNICODE);

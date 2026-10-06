@@ -1,4 +1,6 @@
 <?php
+require_once __DIR__ . '/../../src/AjaxRequest.php';
+
 // assets/ajax/brands.php
 if (!defined('BASE_PATH')) {
     define('BASE_PATH', dirname(dirname(__DIR__)) . '/');
@@ -8,7 +10,7 @@ header('Content-Type: application/json; charset=utf-8');
 
 $device = $_GET['device'] ?? '';
 if (!$device) {
-  echo json_encode(['brands' => []]);
+  echo \KeySoftItalia\BackendHttp::encode(['brands' => []]);
   exit;
 }
 
@@ -17,7 +19,7 @@ $stmt = $pdo->prepare("SELECT id FROM devices WHERE slug = :slug LIMIT 1");
 $stmt->execute(['slug' => $device]);
 $device_id = $stmt->fetchColumn();
 if (!$device_id) {
-  echo json_encode(['brands' => [['id' => '', 'name' => 'Altra Marca', 'has_models' => false]]]);
+  echo \KeySoftItalia\BackendHttp::encode(['brands' => [['id' => '', 'name' => 'Altra Marca', 'has_models' => false]]]);
   exit;
 }
 
@@ -34,4 +36,4 @@ $brands = $stmt->fetchAll(PDO::FETCH_ASSOC);
 // aggiungi sempre "Altra Marca"
 $brands[] = ['id' => '', 'name' => 'Altra Marca', 'has_models' => false];
 
-echo json_encode(['brands' => $brands], JSON_UNESCAPED_UNICODE);
+echo \KeySoftItalia\BackendHttp::encode(['brands' => $brands], JSON_UNESCAPED_UNICODE);

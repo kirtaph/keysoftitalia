@@ -10,6 +10,10 @@ if (!defined('BASE_PATH')) {
 }
 
 if (!defined('KS_TZ')) define('KS_TZ', 'Europe/Rome');
+// Optional untracked deployment secrets; environment variables take precedence.
+$localConfigPath = __DIR__ . '/local.php';
+$localConfig = is_file($localConfigPath) ? require $localConfigPath : [];
+if (!is_array($localConfig)) $localConfig = [];
 /**
  * ===== Store Opening Hours (config globale) =====
  * - Fuso orario negozio
@@ -111,7 +115,7 @@ if (!defined('SMTP_PORT'))   define('SMTP_PORT',   (int)(getenv('SMTP_PORT') ?: 
 if (!defined('SMTP_SECURE')) define('SMTP_SECURE', getenv('SMTP_SECURE') ?: 'tls');
 if (!defined('SMTP_AUTH'))   define('SMTP_AUTH',   filter_var(getenv('SMTP_AUTH') ?: 'true', FILTER_VALIDATE_BOOLEAN));
 if (!defined('SMTP_USER'))   define('SMTP_USER',   getenv('SMTP_USER') ?: 'no-reply@keysoftitalia.it');
-if (!defined('SMTP_PASS'))   define('SMTP_PASS',   getenv('SMTP_PASS') ?: '8CGYYJQr2024!');
+if (!defined('SMTP_PASS'))   define('SMTP_PASS',   (getenv('SMTP_PASS') !== false ? getenv('SMTP_PASS') : ($localConfig['SMTP_PASS'] ?? '')));
 
 if (!defined('EMAIL_ASSISTENZA')) define('EMAIL_ASSISTENZA', 'info@keysoftitalia.it');
 if (!defined('EMAIL_FROM'))       define('EMAIL_FROM',       'no-reply@keysoftitalia.it');
@@ -173,9 +177,10 @@ if (DEBUG_MODE) {
     error_reporting(E_ALL);
     ini_set('display_errors', '1');
 } else {
-    error_reporting(0);
+    error_reporting(E_ALL);
     ini_set('display_errors', '0');
 }
+ini_set('log_errors', '1');
 
 /* ==========================================================================
    SESSION (idempotente)
@@ -211,7 +216,7 @@ if (!defined('DB_HOST')) define('DB_HOST', getenv('DB_HOST') ?: 'localhost');
 if (!defined('DB_PORT')) define('DB_PORT', (int)(getenv('DB_PORT') ?: 3306));
 if (!defined('DB_NAME')) define('DB_NAME', getenv('DB_NAME') ?: 'ks_site_db');
 if (!defined('DB_USER')) define('DB_USER', getenv('DB_USER') ?: 'keysoftfi_db');
-if (!defined('DB_PASS')) define('DB_PASS', getenv('DB_PASS') ?: 'az2zP389*');
+if (!defined('DB_PASS')) define('DB_PASS', (getenv('DB_PASS') !== false ? getenv('DB_PASS') : ($localConfig['DB_PASS'] ?? '')));
 if (!defined('DB_CHARSET')) define('DB_CHARSET', getenv('DB_CHARSET') ?: 'utf8mb4');
 
 // Istanza PDO globale
@@ -228,6 +233,12 @@ try {
     ]);
 
 } catch (PDOException $e) {
+    error_log('[Database connection] ' . $e->getMessage());
+    if (defined('KSI_JSON_ENDPOINT') && KSI_JSON_ENDPOINT) {
+        require_once BASE_PATH . 'src/BackendHttp.php';
+        \KeySoftItalia\BackendHttp::send(['status' => 'error', 'ok' => false, 'success' => false,
+            'message' => 'Servizio momentaneamente non disponibile.'], 503);
+    }
 
     // Se siamo in debug vogliamo capire cosa succede al volo
     if (DEBUG_MODE) {
