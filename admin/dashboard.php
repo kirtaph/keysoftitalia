@@ -325,12 +325,23 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
 
-    document.getElementById('updateDbBtn')?.addEventListener('click', function() {
+    document.getElementById('updateDbBtn')?.addEventListener('click', async function() {
         if (!confirm('Sei sicuro di voler aggiornare il database?')) return;
-        const ot = this.textContent; this.textContent = 'Aggiornamento...'; this.disabled = true;
-        fetch('ajax_actions/migrate_action.php?action=execute')
-            .then(r => r.json()).then(d => { alert(d.message); if (d.status === 'success') location.reload(); else { this.textContent = ot; this.disabled = false; } })
-            .catch(() => { alert('Errore di comunicazione.'); this.textContent = ot; this.disabled = false; });
+        if (this.disabled) return;
+        const ot = this.textContent; this.textContent = 'Aggiornamento…'; this.disabled = true;
+        const body = new FormData();
+        body.set('action', 'execute');
+        body.set('csrf_token', window.ADMIN_CSRF_TOKEN);
+        try {
+            const response = await fetch('ajax_actions/migrate_action.php', {method: 'POST', body});
+            const data = await response.json();
+            alert(data.message || 'Aggiornamento non riuscito.');
+            if (response.ok && data.status === 'success') location.reload();
+        } catch (_) {
+            alert('Errore di comunicazione. Aggiorna la pagina prima di riprovare.');
+        } finally {
+            this.textContent = ot; this.disabled = false;
+        }
     });
 
     // --- Chart: Bookings Trend ---

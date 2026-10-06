@@ -83,6 +83,6 @@ try {
     }
 
 } catch (Throwable $e) {
-    jsonError('Errore del server.', $e);
+    jsonError($e instanceof InvalidArgumentException ? $e->getMessage() : 'Errore del server.', $e);
 }
 ?>
