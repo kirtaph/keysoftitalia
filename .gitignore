@@ -10,7 +10,6 @@ vendor/
 *.bak
 cache/
 config/runtime/
-config/local.php
 
 # VS Code e OS
 .vscode/
