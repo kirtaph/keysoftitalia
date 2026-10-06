@@ -80,10 +80,16 @@
     }
     async function pushState() {
         if (!inbox) return;
-        const label = document.getElementById('pushState'), enable = document.getElementById('enablePush'), disable = document.getElementById('disablePush');
+        const label = document.getElementById('pushState'), enable = document.getElementById('enablePush'), disable = document.getElementById('disablePush'), configure = document.getElementById('configurePush');
+        if (configure) configure.hidden = true;
         if (!window.isSecureContext) { label.textContent = 'Per attivare le notifiche desktop apri il backend tramite HTTPS. Il centro notifiche funziona anche qui.'; return; }
         if (!('Notification' in window) || !('serviceWorker' in navigator) || !('PushManager' in window)) { label.textContent = 'Questo browser non supporta Web Push. Usa Chrome, Edge o Firefox aggiornati.'; return; }
-        if (!publicKey) { label.textContent = 'Web Push deve essere configurato sul server. Il centro notifiche è già disponibile.'; return; }
+        if (!publicKey) {
+            enable.disabled = true;
+            if (configure) configure.hidden = false;
+            label.textContent = 'Manca la configurazione Web Push del server. Premi “Configura Web Push”, poi attiva le notifiche su questo browser.';
+            return;
+        }
         try {
             registration = await navigator.serviceWorker.getRegistration(new URL('./',location.href).href);
             // Ignore the public site's worker, whose scope is the root.
@@ -111,6 +117,17 @@
         finally { busy = false;if (inbox) inbox.setAttribute('aria-busy','false'); }
     }
     if (inbox) {
+        document.getElementById('configurePush')?.addEventListener('click',async event => {
+            const button = event.currentTarget; button.disabled = true;
+            try {
+                const configured = await api('setup_push',{},true);
+                publicKey = configured.publicKey || '';
+                await load();
+                await pushState();
+            } catch (error) {
+                document.getElementById('pushState').textContent = error.message || 'Configurazione non riuscita. Controlla i permessi e le dipendenze del server.';
+            } finally { button.disabled = false; }
+        });
         document.getElementById('inboxRefresh').addEventListener('click',load);
         document.getElementById('inboxAll').addEventListener('click',() => { unread = false;page = 1;stateUrl();load(); });
         document.getElementById('inboxUnread').addEventListener('click',() => { unread = true;page = 1;stateUrl();load(); });

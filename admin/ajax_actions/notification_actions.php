@@ -7,6 +7,7 @@ use KeySoftItalia\AdminPush as Push;
 $user=(int)$_SESSION['user_id'];
 $action=$_REQUEST['action'] ?? '';
 try {
+    if ($action==='setup_push') { Push::initialize();jsonSuccess(['publicKey'=>Push::configuration()['publicKey'],'message'=>'Web Push configurato. Ora puoi attivare le notifiche su questo browser.']); }
     if ($action==='get') {
         $stmt=$pdo->prepare('SELECT * FROM admin_notifications WHERE id=?');$stmt->execute([(int)($_GET['id'] ?? 0)]);
         $row=$stmt->fetch(PDO::FETCH_ASSOC);

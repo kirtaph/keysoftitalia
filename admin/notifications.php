@@ -6,6 +6,7 @@
 <section class="inbox-settings" aria-label="Notifiche desktop">
     <div class="inbox-settings-copy"><strong>Resta aggiornato, anche con il pannello chiuso</strong><p id="pushState">Verifica delle notifiche desktop…</p></div>
     <button type="button" class="btn btn-primary" id="enablePush" disabled>Attiva notifiche desktop</button>
+    <button type="button" class="btn btn-outline-primary" id="configurePush" hidden>Configura Web Push</button>
     <button type="button" class="btn btn-outline-secondary" id="disablePush" hidden>Disattiva su questo browser</button>
 </section>
 <div id="inboxDetail"></div>

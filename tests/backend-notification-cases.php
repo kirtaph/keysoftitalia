@@ -1,6 +1,15 @@
 <?php
 // Uses the existing real HTTP transport and rollback boundary.
 $endpoint='admin/ajax_actions/notification_actions.php';
+$test('push setup refuses GET',static function()use($request,$assert,$endpoint){
+    $r=$request(['endpoint'=>$endpoint],['action'=>'setup_push'],[],true);$assert($r['http']===405);
+});
+$test('push setup requires CSRF',static function()use($request,$assert,$endpoint){
+    $r=$request(['endpoint'=>$endpoint],['action'=>'setup_push','csrf_token'=>'invalid']);$assert($r['http']===403);
+});
+$test('push setup requires login',static function()use($request,$assert,$endpoint){
+    $r=$request(['endpoint'=>$endpoint,'unauthenticated'=>true],['action'=>'setup_push']);$assert($r['http']===401);
+});
 $test('notification list includes unread count and safe public VAPID key',static function()use($request,$assert,$endpoint){
     $r=$request(['endpoint'=>$endpoint],['action'=>'list'],[],true);
     $assert($r['body']['status']==='success' && is_int($r['body']['unread']) && isset($r['body']['publicKey']) && !isset($r['body']['privateKey']));

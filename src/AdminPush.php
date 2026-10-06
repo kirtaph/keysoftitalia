@@ -4,6 +4,39 @@ namespace KeySoftItalia;
 
 final class AdminPush
 {
+    public static function initialize(): void
+    {
+        $config = self::configuration();
+        if ($config['publicKey'] && $config['privateKey']) return;
+        if ($config['publicKey'] || $config['privateKey']) throw new \InvalidArgumentException('Configurazione incompleta: imposta entrambe le chiavi WEB_PUSH_PUBLIC_KEY e WEB_PUSH_PRIVATE_KEY.');
+        $autoload = __DIR__ . '/../vendor/autoload.php';
+        if (!is_file($autoload)) throw new \InvalidArgumentException('Dipendenze mancanti: installa i pacchetti Composer sul server prima di configurare Web Push.');
+        require_once $autoload;
+        if (!class_exists(\Minishlink\WebPush\VAPID::class)) throw new \InvalidArgumentException('Libreria Web Push mancante: aggiorna le dipendenze Composer sul server.');
+        $path = __DIR__ . '/../config/runtime/web-push.json';
+        if (!is_dir(dirname($path)) && !mkdir(dirname($path),0700,true) && !is_dir(dirname($path))) {
+            throw new \InvalidArgumentException('Il server non può creare config/runtime. Verifica i permessi della cartella.');
+        }
+        if (is_file($path)) throw new \InvalidArgumentException('Il file Web Push esiste ma non contiene chiavi valide. Controlla la configurazione senza sostituire le chiavi già utilizzate.');
+        // Generate before opening; exclusive creation prevents replacing another request's keys.
+        $keys = \Minishlink\WebPush\VAPID::createVapidKeys();
+        $json = json_encode($keys,JSON_THROW_ON_ERROR);
+        $file = @fopen($path,'x');
+        if (!$file) {
+            $saved = self::configuration();
+            if ($saved['publicKey'] && $saved['privateKey']) return;
+            throw new \InvalidArgumentException('Impossibile salvare le chiavi. Verifica che config/runtime sia scrivibile dal server.');
+        }
+        try {
+            chmod($path,0600);
+            if (fwrite($file,$json)!==strlen($json) || !fflush($file)) {
+                throw new \RuntimeException('Salvataggio delle chiavi Web Push non riuscito.');
+            }
+        } catch (\Throwable $e) {
+            fclose($file);unlink($path);throw $e;
+        }
+        fclose($file);
+    }
     public static function configuration(): array
     {
         $path = __DIR__ . '/../config/runtime/web-push.json';

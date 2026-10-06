@@ -19,6 +19,8 @@ Implementazione locale pronta: nuovo tema condiviso, dashboard operativa, centro
 
 ## Attivazione sul server pubblico
 
+Aggiornamento 6 ottobre: se manca la chiave pubblica, il pannello mostra **Configura Web Push**. Il pulsante chiama un endpoint autenticato via POST con CSRF e genera le chiavi private sul server, senza esporle al browser né sostituire chiavi esistenti. Poi diventa disponibile **Attiva notifiche desktop**. Questa operazione richiede le dipendenze Composer già installate e la cartella `config/runtime` scrivibile; non configura il cron job. Verificati rifiuto di GET, sessione mancante e CSRF invalido, oltre alla conservazione delle chiavi durante setup ripetuti.
+
 Requisiti: PHP **8.2+**, MySQL/InnoDB, estensioni OpenSSL con curve EC, cURL e mbstring, HTTPS valido. Composer deve installare le dipendenze del lock file.
 
 1. Pubblicare i file e installare le dipendenze:
