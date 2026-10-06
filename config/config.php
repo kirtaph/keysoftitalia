@@ -212,12 +212,11 @@ if (!defined('KSI_STATELESS_API') && session_status() === PHP_SESSION_NONE) {
 // NOTA: le credenziali sensibili (DB_PASS, SMTP_USER, SMTP_PASS) vanno
 // impostate tramite variabili d'ambiente o file .env (gitignorato).
 // In Docker sono caricate automaticamente da docker-compose.yml.
-if (!defined('DB_HOST')) define('DB_HOST', getenv('DB_HOST') ?: 'localhost');
-if (!defined('DB_PORT')) define('DB_PORT', (int)(getenv('DB_PORT') ?: 3306));
-if (!defined('DB_NAME')) define('DB_NAME', getenv('DB_NAME') ?: 'ks_site_db');
-if (!defined('DB_USER')) define('DB_USER', getenv('DB_USER') ?: 'keysoftfi_db');
-if (!defined('DB_PASS')) define('DB_PASS', (getenv('DB_PASS') !== false ? getenv('DB_PASS') : ($localConfig['DB_PASS'] ?? '')));
-if (!defined('DB_CHARSET')) define('DB_CHARSET', getenv('DB_CHARSET') ?: 'utf8mb4');
+require_once BASE_PATH . 'src/DatabaseSettings.php';
+foreach (\KeySoftItalia\DatabaseSettings::resolve($localConfig) as $setting => $value) {
+    if (!defined($setting)) define($setting, $value);
+}
+unset($setting, $value);
 
 // Istanza PDO globale
 $pdo = null;
@@ -237,7 +236,9 @@ try {
     if (defined('KSI_JSON_ENDPOINT') && KSI_JSON_ENDPOINT) {
         require_once BASE_PATH . 'src/BackendHttp.php';
         \KeySoftItalia\BackendHttp::send(['status' => 'error', 'ok' => false, 'success' => false,
-            'message' => 'Servizio momentaneamente non disponibile.'], 503);
+            'message' => defined('KSI_ADMIN_LOGIN') && KSI_ADMIN_LOGIN
+                ? 'Impossibile collegarsi al database. Verifica la configurazione MySQL del server; le migrazioni non sono necessarie per accedere.'
+                : 'Servizio momentaneamente non disponibile.'], 503);
     }
 
     // Se siamo in debug vogliamo capire cosa succede al volo

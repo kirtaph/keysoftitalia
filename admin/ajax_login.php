@@ -6,12 +6,13 @@ require_once __DIR__ . '/../src/BackendHttp.php';
 require_once __DIR__ . '/../src/LoginThrottle.php';
 \KeySoftItalia\BackendHttp::startSession();
 if (!defined('KSI_JSON_ENDPOINT')) define('KSI_JSON_ENDPOINT', true);
+if (!defined('KSI_ADMIN_LOGIN')) define('KSI_ADMIN_LOGIN', true);
 header('Cache-Control: no-store');
 set_exception_handler(static function (Throwable $e): never {
     error_log('[Admin login] ' . $e->getMessage());
     \KeySoftItalia\BackendHttp::send(['success' => false, 'message' => 'Accesso momentaneamente non disponibile.'], 500);
 });
-require_once '../config/config.php';
+require_once __DIR__ . '/../config/config.php';
 
 header('Content-Type: application/json');
 
