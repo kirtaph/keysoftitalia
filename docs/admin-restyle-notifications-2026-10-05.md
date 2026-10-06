@@ -74,3 +74,19 @@ Valutazione Impeccable del perimetro nuovo: accessibilità 3/4, prestazioni 3/4,
 Fonti: [Web Interface Guidelines](https://github.com/vercel-labs/web-interface-guidelines), [MDN Push API](https://developer.mozilla.org/en-US/docs/Web/API/Push_API), [libreria Web Push PHP](https://github.com/web-push-libs/web-push-php).
 
 ![Centro notifiche](screenshots/admin-notifications-2026-10-05.png)
+
+## Diagnosi invio e prova manuale — 6 ottobre 2026
+
+La registrazione del browser non avvia il worker PHP: per gli avvisi automatici è necessario eseguire `scripts/send-admin-notifications.php` ogni minuto tramite il hosting. Le richieste precedenti alla prima sottoscrizione non vengono inviate retroattivamente.
+
+Il pulsante **Invia notifica di prova** invia subito un messaggio al browser corrente, senza cron. L'azione `test_push` richiede POST, sessione admin, CSRF e una sottoscrizione appartenente all'account; non modifica il cursore delle richieste. Il successo significa che il servizio push ha accettato il messaggio, non che il sistema operativo lo abbia mostrato. Gli errori segnalano registrazioni scadute, rifiuti HTTP e problemi di connessione, senza esporre endpoint o chiavi private.
+
+Verifiche: 136 integrazioni HTTP e 23 test notifiche superati. Il trasporto push è simulato: nessun avviso esterno inviato durante i test. La prova reale e il cron pubblico restano da configurare/verificare.
+
+## Contenuto delle notifiche desktop — 6 ottobre 2026
+
+Gli invii automatici ora riportano la categoria della richiesta singola e aprono la destinazione restituita da AdminNotifications::url. Più richieste tra due invii producono un riepilogo con totale e conteggi per categoria, collegato al centro notifiche filtrato per elementi da leggere. Ogni invio usa un tag legato all'evento o al cursore, così invii successivi non sostituiscono sempre il medesimo avviso. Nomi, recapiti e testo dei clienti restano nel pannello.
+
+Il worker legge titolo, corpo e destinazione dal payload, con valori predefiniti per gli invii precedenti. Accetta destinazioni solo nello stesso dominio e sotto /admin/. Si aggiorna all'apertura del centro notifiche e attiva subito la nuova versione; le sottoscrizioni esistenti rimangono valide. Caricare src/AdminPush.php, admin/notification-worker.js e assets/js/pages/admin-notifications.js, poi aprire il centro notifiche e aggiornarlo prima di inserire una nuova richiesta.
+
+Verifiche: 26 test PHP notifiche superati con trasporto push simulato; test Node del worker superati per contenuto, apertura diretta, URL esterni/percorsi fuori scope, payload assente e notifica di prova. Consegna pubblica del nuovo contenuto da verificare dopo il caricamento.

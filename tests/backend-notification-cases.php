@@ -1,6 +1,11 @@
 <?php
 // Uses the existing real HTTP transport and rollback boundary.
 $endpoint='admin/ajax_actions/notification_actions.php';
+foreach (['GET'=>405,'CSRF'=>403,'login'=>401] as $guard=>$expected) {
+    $test('push probe requires '.$guard,static function()use($request,$assert,$endpoint,$guard,$expected){
+        $r=$request(['endpoint'=>$endpoint,'unauthenticated'=>$guard==='login'],['action'=>'test_push','csrf_token'=>'invalid'],[],$guard==='GET');$assert($r['http']===$expected);
+    });
+}
 $test('push setup refuses GET',static function()use($request,$assert,$endpoint){
     $r=$request(['endpoint'=>$endpoint],['action'=>'setup_push'],[],true);$assert($r['http']===405);
 });

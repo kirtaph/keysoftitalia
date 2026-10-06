@@ -82,6 +82,8 @@
         if (!inbox) return;
         const label = document.getElementById('pushState'), enable = document.getElementById('enablePush'), disable = document.getElementById('disablePush'), configure = document.getElementById('configurePush');
         if (configure) configure.hidden = true;
+        const test = document.getElementById('testPush');
+        if (test) test.hidden = true;
         if (!window.isSecureContext) { label.textContent = 'Per attivare le notifiche desktop apri il backend tramite HTTPS. Il centro notifiche funziona anche qui.'; return; }
         if (!('Notification' in window) || !('serviceWorker' in navigator) || !('PushManager' in window)) { label.textContent = 'Questo browser non supporta Web Push. Usa Chrome, Edge o Firefox aggiornati.'; return; }
         if (!publicKey) {
@@ -94,11 +96,13 @@
             registration = await navigator.serviceWorker.getRegistration(new URL('./',location.href).href);
             // Ignore the public site's worker, whose scope is the root.
             if (registration && registration.scope !== new URL('./',location.href).href) registration = null;
+            if (registration) registration.update().catch(() => {});
             const subscription = registration ? await registration.pushManager.getSubscription() : null;
             if (subscription && Notification.permission === 'granted') {
                 await api('subscribe',{subscription:JSON.stringify(subscription)},true);
                 enable.hidden = true; disable.hidden = false;
-                label.textContent = 'Notifiche attive su questo browser, anche con il pannello chiuso. La consegna dipende dalle impostazioni del browser e del sistema.';
+                if (test) test.hidden = false;
+                label.textContent = 'Browser registrato. Invia una notifica di prova per verificare la ricezione. Gli avvisi automatici richiedono il servizio di invio sul hosting.';
             } else if (Notification.permission === 'denied') {
                 enable.disabled = true;label.textContent = 'Notifiche bloccate. Consenti le notifiche nelle impostazioni di questo sito, poi aggiorna la pagina.';
             } else { enable.disabled = false; enable.hidden = false; disable.hidden = true;label.textContent = 'Attivale su questo browser per ricevere gli avvisi. I dati dei clienti non vengono mostrati sul desktop.'; }
@@ -117,6 +121,18 @@
         finally { busy = false;if (inbox) inbox.setAttribute('aria-busy','false'); }
     }
     if (inbox) {
+        document.getElementById('testPush')?.addEventListener('click',async event => {
+            const button = event.currentTarget; button.disabled = true;
+            const label = document.getElementById('pushState');
+            label.textContent = 'Invio della notifica di prova…';
+            try {
+                const subscription = await registration?.pushManager.getSubscription();
+                if (!subscription) throw new Error('Attiva prima le notifiche su questo browser.');
+                const result = await api('test_push',{subscription:JSON.stringify(subscription)},true);
+                label.textContent = result.message;
+            } catch (error) { label.textContent = error.message || 'Invio della prova non riuscito.'; }
+            finally { button.disabled = false; }
+        });
         document.getElementById('configurePush')?.addEventListener('click',async event => {
             const button = event.currentTarget; button.disabled = true;
             try {

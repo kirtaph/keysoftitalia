@@ -8,7 +8,9 @@
     <button type="button" class="btn btn-primary" id="enablePush" disabled>Attiva notifiche desktop</button>
     <button type="button" class="btn btn-outline-primary" id="configurePush" hidden>Configura Web Push</button>
     <button type="button" class="btn btn-outline-secondary" id="disablePush" hidden>Disattiva su questo browser</button>
+    <button type="button" class="btn btn-outline-primary" id="testPush" hidden>Invia notifica di prova</button>
 </section>
+<p class="small text-muted">Gli avvisi riguardano le nuove richieste ricevute dopo l’attivazione. Per riceverli anche con il pannello chiuso, configura il servizio di invio automatico sul hosting.</p>
 <div id="inboxDetail"></div>
 <div class="inbox-toolbar">
     <div class="inbox-tabs" role="group" aria-label="Filtra le notifiche">

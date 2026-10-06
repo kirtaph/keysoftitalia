@@ -24,5 +24,6 @@ try {
     if ($action==='read_all') { Inbox::markAll($pdo,$user,(int)($_POST['through'] ?? -1));jsonSuccess(); }
     if ($action==='subscribe') { Push::subscribe($pdo,$user,(string)($_POST['subscription'] ?? ''));jsonSuccess(); }
     if ($action==='unsubscribe') { Push::remove($pdo,$user,(string)($_POST['subscription'] ?? ''));jsonSuccess(); }
+    if ($action==='test_push') { Push::test($pdo,$user,(string)($_POST['subscription'] ?? ''));jsonSuccess(['message'=>'Prova accettata dal servizio push. Se non compare, controlla le notifiche del browser e del sistema operativo.']); }
     jsonError('Azione non valida.');
 } catch (InvalidArgumentException $e) { jsonError($e->getMessage(),$e); }

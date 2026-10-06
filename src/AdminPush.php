@@ -80,6 +80,45 @@ final class AdminPush
         $data=self::subscription($json);
         $pdo->prepare('DELETE FROM admin_push_subscriptions WHERE user_id=? AND endpoint_hash=?')->execute([$user,hash('sha256',$data['endpoint'])]);
     }
+    public static function test(\PDO $pdo, int $user, string $json, ?\Minishlink\WebPush\WebPush $sender = null): void
+    {
+        $data = self::subscription($json);
+        $stmt = $pdo->prepare('SELECT id FROM admin_push_subscriptions WHERE user_id=? AND endpoint_hash=?');
+        $stmt->execute([$user,hash('sha256',$data['endpoint'])]);
+        if (!$stmt->fetchColumn()) throw new \InvalidArgumentException('Attiva prima le notifiche su questo browser con questo account.');
+        $config = self::configuration();
+        if (!$config['publicKey'] || !$config['privateKey']) throw new \InvalidArgumentException('Configurazione Web Push mancante.');
+        require_once __DIR__ . '/../vendor/autoload.php';
+        $push = $sender ?? new \Minishlink\WebPush\WebPush(['VAPID'=>$config],['TTL'=>300,'urgency'=>'high'],15,['allow_redirects'=>false]);
+        try {
+            $report = $push->sendOneNotification(\Minishlink\WebPush\Subscription::create($data),json_encode(['title'=>'Notifica di prova','body'=>'Il collegamento Web Push funziona su questo browser.']));
+        } catch (\Throwable $e) {
+            throw new \InvalidArgumentException('Il server non riesce a contattare il servizio push. Verifica la connessione HTTPS in uscita e le estensioni PHP richieste.',0,$e);
+        }
+        if ($report->isSubscriptionExpired()) throw new \InvalidArgumentException('La registrazione del browser è scaduta. Disattiva e riattiva le notifiche.');
+        if (!$report->isSuccess()) {
+            $code = $report->getResponse()?->getStatusCode();
+            throw new \InvalidArgumentException('Il servizio push ha rifiutato la prova' . ($code ? ' (HTTP ' . $code . ')' : '') . '. Verifica le chiavi Web Push o riprova.');
+        }
+    }
+    public static function payload(\PDO $pdo, int $after, int $through): array
+    {
+        $stmt = $pdo->prepare('SELECT source,COUNT(*) AS count FROM admin_notifications WHERE id>? AND id<=? GROUP BY source ORDER BY source');
+        $stmt->execute([$after,$through]);
+        $groups = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+        $total = array_sum(array_column($groups,'count'));
+        if ($total === 1) {
+            $stmt = $pdo->prepare('SELECT id,source,source_id FROM admin_notifications WHERE id>? AND id<=? LIMIT 1');
+            $stmt->execute([$after,$through]);$row = $stmt->fetch(\PDO::FETCH_ASSOC);
+            return ['title'=>AdminNotifications::SOURCES[$row['source']][1] ?? 'Nuova richiesta',
+                'body'=>'È arrivata una nuova richiesta. Apri per vedere i dettagli.',
+                'url'=>AdminNotifications::url($row),'tag'=>'ksi-request-' . $row['id']];
+        }
+        $summary = [];
+        foreach ($groups as $group) $summary[] = $group['count'] . ' × ' . (AdminNotifications::SOURCES[$group['source']][1] ?? 'Richiesta');
+        return ['title'=>$total . ' nuove richieste sul sito','body'=>implode(' · ',$summary),
+            'url'=>'notifications.php?unread=1','tag'=>'ksi-requests-' . $through];
+    }
     public static function deliver(\PDO $pdo, ?\Minishlink\WebPush\WebPush $sender = null): array
     {
         $config=self::configuration();
@@ -87,11 +126,12 @@ final class AdminPush
         require_once __DIR__ . '/../vendor/autoload.php';
         $push=$sender ?? new \Minishlink\WebPush\WebPush(['VAPID'=>$config],['TTL'=>3600,'urgency'=>'normal'],15, ['allow_redirects'=>false]);
         $latest=AdminNotifications::latestId($pdo); $ok=0;$failed=0;$expired=0;
-        // Coalesce arrivals into one generic notification per device. No customer data on the lock screen.
+        // Group arrivals per device and identify request types without customer data.
         foreach ($pdo->query('SELECT s.* FROM admin_push_subscriptions s JOIN users u ON u.id=s.user_id WHERE s.last_notification_id<' . $latest . ' ORDER BY s.id LIMIT 100')->fetchAll(\PDO::FETCH_ASSOC) as $row) {
             try {
                 $data=self::subscription($row['subscription']);
-                $report=$push->sendOneNotification(\Minishlink\WebPush\Subscription::create($data),json_encode(['title'=>'Nuove richieste sul sito','body'=>'Apri il centro notifiche per vedere le richieste ricevute.']));
+                $payload=self::payload($pdo,(int)$row['last_notification_id'],$latest);
+                $report=$push->sendOneNotification(\Minishlink\WebPush\Subscription::create($data),json_encode($payload,JSON_UNESCAPED_UNICODE|JSON_THROW_ON_ERROR));
                 if ($report->isSuccess()) {
                     $pdo->prepare('UPDATE admin_push_subscriptions SET last_notification_id=?,failures=0,last_success_at=NOW() WHERE id=?')->execute([$latest,$row['id']]); ++$ok;
                 } elseif ($report->isSubscriptionExpired()) {
