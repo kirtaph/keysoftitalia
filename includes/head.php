@@ -174,28 +174,29 @@ try {
 <link rel="apple-touch-icon" href="<?php echo asset('img/pwa/icon-192.png'); ?>">
 
 <!-- Bootstrap 5.3 CSS -->
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+<?php require_once __DIR__ . '/../helpers.versioning.php'; ?>
+<link href="<?php echo asset_version('vendor/bootstrap/bootstrap.min.css'); ?>" rel="stylesheet">
 <!-- Bootstrap JS moved to footer.php for render-blocking optimization -->
 
+<?php if (empty($skip_swiper)): ?>
 <!-- Swiper CSS -->
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css">
+<link rel="stylesheet" href="<?php echo asset_version('vendor/swiper/swiper-bundle.min.css'); ?>">
 
 <!-- Swiper JS (deferred, non render-blocking) -->
-<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js" defer></script>
+<script src="<?php echo asset_version('vendor/swiper/swiper-bundle.min.js'); ?>" defer></script>
+<?php endif; ?>
 
 <!-- Remix Icons -->
-<link href="https://cdn.jsdelivr.net/npm/remixicon@4.0.0/fonts/remixicon.css" rel="stylesheet">
+<link href="<?php echo asset_version('vendor/remixicon/remixicon.css'); ?>" rel="stylesheet">
 
-<!-- Google Fonts -->
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<!-- Local copies of the existing Inter and Poppins typefaces. -->
+<link href="<?php echo asset_version('vendor/fonts/fonts.css'); ?>" rel="stylesheet">
 
 <!-- CSS -->
- <?php require_once __DIR__ . '/../helpers.versioning.php'; ?>
 <link rel="stylesheet" href="<?php echo asset_version('css/variables.css'); ?>">
 <link rel="stylesheet" href="<?php echo asset_version('css/main.css'); ?>">
 <link rel="stylesheet" href="<?php echo asset_version('css/components.css'); ?>">
+<link rel="stylesheet" href="<?php echo asset_version('css/site-alignment.css'); ?>">
 <?php if ($activeLogoCampaign && !empty($activeLogoCampaign['effect_class'])): ?>
 <link rel="stylesheet" href="<?php echo asset_version('css/campaigns.css'); ?>">
 <?php endif; ?>

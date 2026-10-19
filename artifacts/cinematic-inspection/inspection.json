@@ -1,0 +1,77 @@
+{
+  "video": {
+    "ffmpeg_version": "7.1-essentials_build-www.gyan.dev built with gcc 14.2.0 (Rev1, Built by MSYS2 project)",
+    "codec": "h264",
+    "pix_fmt": "yuv420p(tv, smpte170m/bt709/iec61966-2-1, progressive)",
+    "audio_codec": "aac",
+    "fps": 24.0,
+    "source_size": [
+      1920,
+      1080
+    ],
+    "size": [
+      1920,
+      1080
+    ],
+    "rotate": 0,
+    "duration": 10.0
+  },
+  "decodedFrames": 240,
+  "actualDurationFromFrames": 10.0,
+  "hasAudio": true,
+  "referenceImages": [
+    {
+      "name": "first_frame.jpg",
+      "size": [
+        2752,
+        1536
+      ],
+      "aspect": 1.79167,
+      "meanPixelDifferenceToVideoEndpoint": 12.16
+    },
+    {
+      "name": "last_frame.jpg",
+      "size": [
+        2752,
+        1536
+      ],
+      "aspect": 1.79167,
+      "meanPixelDifferenceToVideoEndpoint": 2.43
+    }
+  ],
+  "largestFrameChanges": [
+    {
+      "time": 6.417,
+      "meanPixelDelta": 6.85
+    },
+    {
+      "time": 6.375,
+      "meanPixelDelta": 6.84
+    },
+    {
+      "time": 6.333,
+      "meanPixelDelta": 6.83
+    },
+    {
+      "time": 6.458,
+      "meanPixelDelta": 6.81
+    },
+    {
+      "time": 6.292,
+      "meanPixelDelta": 6.76
+    },
+    {
+      "time": 6.5,
+      "meanPixelDelta": 6.67
+    },
+    {
+      "time": 6.25,
+      "meanPixelDelta": 6.55
+    },
+    {
+      "time": 6.542,
+      "meanPixelDelta": 6.54
+    }
+  ],
+  "ffmpeg": "D:\\webprojects\\keysoftitalia\\artifacts\\media-runtime\\imageio_ffmpeg\\binaries\\ffmpeg-win-x86_64-v7.1.exe"
+}

@@ -87,8 +87,9 @@ if (!empty($flyer_items)) {
     <?php include 'includes/head.php'; ?>
     <link rel="stylesheet" href="<?php echo asset_version('css/pages/volantini.css'); ?>">
 </head>
-<body data-aos-easing="ease-in-out" data-aos-duration="800" data-aos-once="true">
+<body class="site-aligned" data-aos-easing="ease-in-out" data-aos-duration="800" data-aos-once="true">
 <?php include 'includes/header.php'; ?>
+<main id="main-content">
 
 <!-- HERO -->
 <section class="hero hero-secondary hero-flyers text-center">
@@ -232,6 +233,7 @@ include __DIR__.'/includes/recond_swiper.php';
 
 
 
+</main>
 <?php include 'includes/footer.php'; ?>
 
 <script>

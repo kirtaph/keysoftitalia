@@ -216,8 +216,9 @@ $current_page = 'servizi';
         }
     </style>
 </head>
-<body>
+<body class="site-aligned">
     <?php include '../includes/header.php'; ?>
+<main id="main-content">
 
     <!-- Hero Section -->
     <section class="hero hero-secondary text-center">
@@ -600,7 +601,8 @@ $current_page = 'servizi';
         </div>
     </section>
 
-    <?php include '../includes/footer.php'; ?>
+    </main>
+<?php include '../includes/footer.php'; ?>
 
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>

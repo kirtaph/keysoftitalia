@@ -1,0 +1,20 @@
+{
+  "variant": "desktop",
+  "frames": 193,
+  "fps": 24,
+  "width": 1440,
+  "height": 810,
+  "webpBytes": 3380116,
+  "avifBytes": 2405877,
+  "storyboardIndices": [
+    0,
+    24,
+    48,
+    72,
+    96,
+    120,
+    144,
+    168,
+    192
+  ]
+}

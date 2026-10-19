@@ -1,0 +1,172 @@
+{
+  "desktop": {
+    "metadata": {
+      "ffmpeg_version": "7.1-essentials_build-www.gyan.dev built with gcc 14.2.0 (Rev1, Built by MSYS2 project)",
+      "codec": "h264",
+      "pix_fmt": "yuv420p(tv, smpte170m/bt709/iec61966-2-1, progressive)",
+      "audio_codec": "aac",
+      "fps": 24.0,
+      "source_size": [
+        1920,
+        1080
+      ],
+      "size": [
+        1920,
+        1080
+      ],
+      "rotate": 0,
+      "duration": 8.0
+    },
+    "frames": 192,
+    "bytes": 4940606,
+    "firstMeanRGBDeltaFromChapter01End": 3.995,
+    "lastMeanRGBDeltaFromRequestedEnd": 8.242,
+    "halfSecondImageChanges": [
+      {
+        "seconds": 0.5,
+        "meanRGBDelta": 1.89
+      },
+      {
+        "seconds": 1.0,
+        "meanRGBDelta": 18.81
+      },
+      {
+        "seconds": 1.5,
+        "meanRGBDelta": 30.03
+      },
+      {
+        "seconds": 2.0,
+        "meanRGBDelta": 35.22
+      },
+      {
+        "seconds": 2.5,
+        "meanRGBDelta": 37.45
+      },
+      {
+        "seconds": 3.0,
+        "meanRGBDelta": 38.01
+      },
+      {
+        "seconds": 3.5,
+        "meanRGBDelta": 38.39
+      },
+      {
+        "seconds": 4.0,
+        "meanRGBDelta": 37.37
+      },
+      {
+        "seconds": 4.5,
+        "meanRGBDelta": 36.15
+      },
+      {
+        "seconds": 5.0,
+        "meanRGBDelta": 32.5
+      },
+      {
+        "seconds": 5.5,
+        "meanRGBDelta": 27.94
+      },
+      {
+        "seconds": 6.0,
+        "meanRGBDelta": 21.81
+      },
+      {
+        "seconds": 6.5,
+        "meanRGBDelta": 19.32
+      },
+      {
+        "seconds": 7.0,
+        "meanRGBDelta": 18.44
+      },
+      {
+        "seconds": 7.5,
+        "meanRGBDelta": 15.52
+      }
+    ]
+  },
+  "mobile": {
+    "metadata": {
+      "ffmpeg_version": "7.1-essentials_build-www.gyan.dev built with gcc 14.2.0 (Rev1, Built by MSYS2 project)",
+      "codec": "h264",
+      "pix_fmt": "yuv420p(tv, smpte170m/bt709/iec61966-2-1, progressive)",
+      "audio_codec": "aac",
+      "fps": 24.0,
+      "source_size": [
+        1080,
+        1920
+      ],
+      "size": [
+        1080,
+        1920
+      ],
+      "rotate": 0,
+      "duration": 8.0
+    },
+    "frames": 192,
+    "bytes": 4753630,
+    "firstMeanRGBDeltaFromChapter01End": 3.322,
+    "lastMeanRGBDeltaFromRequestedEnd": 3.233,
+    "halfSecondImageChanges": [
+      {
+        "seconds": 0.5,
+        "meanRGBDelta": 2.0
+      },
+      {
+        "seconds": 1.0,
+        "meanRGBDelta": 28.12
+      },
+      {
+        "seconds": 1.5,
+        "meanRGBDelta": 42.55
+      },
+      {
+        "seconds": 2.0,
+        "meanRGBDelta": 46.04
+      },
+      {
+        "seconds": 2.5,
+        "meanRGBDelta": 45.97
+      },
+      {
+        "seconds": 3.0,
+        "meanRGBDelta": 42.29
+      },
+      {
+        "seconds": 3.5,
+        "meanRGBDelta": 37.15
+      },
+      {
+        "seconds": 4.0,
+        "meanRGBDelta": 33.15
+      },
+      {
+        "seconds": 4.5,
+        "meanRGBDelta": 30.81
+      },
+      {
+        "seconds": 5.0,
+        "meanRGBDelta": 26.51
+      },
+      {
+        "seconds": 5.5,
+        "meanRGBDelta": 20.68
+      },
+      {
+        "seconds": 6.0,
+        "meanRGBDelta": 18.03
+      },
+      {
+        "seconds": 6.5,
+        "meanRGBDelta": 17.64
+      },
+      {
+        "seconds": 7.0,
+        "meanRGBDelta": 14.18
+      },
+      {
+        "seconds": 7.5,
+        "meanRGBDelta": 12.18
+      }
+    ]
+  }
+}

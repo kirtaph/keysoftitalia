@@ -1,0 +1,232 @@
+[
+  {
+    "antipattern": "design-system-color",
+    "name": "Color outside DESIGN.md",
+    "description": "A literal color is outside the DESIGN.md palette and sidecar tonal ramps. This may be legitimate, but it should be an intentional design-system addition rather than drift.",
+    "severity": "advisory",
+    "file": "D:\\webprojects\\keysoftitalia\\assets\\css\\pages\\home-spatial.css",
+    "line": 2,
+    "snippet": "Undocumented color #101114 is outside DESIGN.md colors",
+    "ignoreValue": "#101114"
+  },
+  {
+    "antipattern": "design-system-color",
+    "name": "Color outside DESIGN.md",
+    "description": "A literal color is outside the DESIGN.md palette and sidecar tonal ramps. This may be legitimate, but it should be an intentional design-system addition rather than drift.",
+    "severity": "advisory",
+    "file": "D:\\webprojects\\keysoftitalia\\assets\\css\\pages\\home-spatial.css",
+    "line": 4,
+    "snippet": "Undocumented color #282a30 is outside DESIGN.md colors",
+    "ignoreValue": "#282a30"
+  },
+  {
+    "antipattern": "design-system-color",
+    "name": "Color outside DESIGN.md",
+    "description": "A literal color is outside the DESIGN.md palette and sidecar tonal ramps. This may be legitimate, but it should be an intentional design-system addition rather than drift.",
+    "severity": "advisory",
+    "file": "D:\\webprojects\\keysoftitalia\\assets\\css\\pages\\home-spatial.css",
+    "line": 5,
+    "snippet": "Undocumented color #101114 is outside DESIGN.md colors",
+    "ignoreValue": "#101114"
+  },
+  {
+    "antipattern": "design-system-color",
+    "name": "Color outside DESIGN.md",
+    "description": "A literal color is outside the DESIGN.md palette and sidecar tonal ramps. This may be legitimate, but it should be an intentional design-system addition rather than drift.",
+    "severity": "advisory",
+    "file": "D:\\webprojects\\keysoftitalia\\assets\\css\\pages\\home-spatial.css",
+    "line": 11,
+    "snippet": "Undocumented color #393c44 is outside DESIGN.md colors",
+    "ignoreValue": "#393c44"
+  },
+  {
+    "antipattern": "design-system-color",
+    "name": "Color outside DESIGN.md",
+    "description": "A literal color is outside the DESIGN.md palette and sidecar tonal ramps. This may be legitimate, but it should be an intentional design-system addition rather than drift.",
+    "severity": "advisory",
+    "file": "D:\\webprojects\\keysoftitalia\\assets\\css\\pages\\home-spatial.css",
+    "line": 13,
+    "snippet": "Undocumented color #101114 is outside DESIGN.md colors",
+    "ignoreValue": "#101114"
+  },
+  {
+    "antipattern": "design-system-font-size",
+    "name": "Font size outside DESIGN.md",
+    "description": "A literal font-size is off the type ramp documented in DESIGN.md typography. Use a documented size step or update the design system if the new step is intentional.",
+    "severity": "advisory",
+    "file": "D:\\webprojects\\keysoftitalia\\assets\\css\\pages\\home-spatial.css",
+    "line": 19,
+    "snippet": "font-size: 15px is off the DESIGN.md type ramp",
+    "ignoreValue": "15px"
+  },
+  {
+    "antipattern": "design-system-color",
+    "name": "Color outside DESIGN.md",
+    "description": "A literal color is outside the DESIGN.md palette and sidecar tonal ramps. This may be legitimate, but it should be an intentional design-system addition rather than drift.",
+    "severity": "advisory",
+    "file": "D:\\webprojects\\keysoftitalia\\assets\\css\\pages\\home-spatial.css",
+    "line": 27,
+    "snippet": "Undocumented color #1d1f24 is outside DESIGN.md colors",
+    "ignoreValue": "#1d1f24"
+  },
+  {
+    "antipattern": "design-system-color",
+    "name": "Color outside DESIGN.md",
+    "description": "A literal color is outside the DESIGN.md palette and sidecar tonal ramps. This may be legitimate, but it should be an intentional design-system addition rather than drift.",
+    "severity": "advisory",
+    "file": "D:\\webprojects\\keysoftitalia\\assets\\css\\pages\\home-spatial.css",
+    "line": 35,
+    "snippet": "Undocumented color #393c44 is outside DESIGN.md colors",
+    "ignoreValue": "#393c44"
+  },
+  {
+    "antipattern": "design-system-radius",
+    "name": "Radius outside DESIGN.md",
+    "description": "A border-radius value is outside the DESIGN.md rounded scale. Use a documented radius token or update the design system if the new shape is intentional.",
+    "severity": "advisory",
+    "file": "D:\\webprojects\\keysoftitalia\\assets\\css\\pages\\home-spatial.css",
+    "line": 36,
+    "snippet": "border-radius: 3px is outside the DESIGN.md rounded scale",
+    "ignoreValue": "3px"
+  },
+  {
+    "antipattern": "design-system-color",
+    "name": "Color outside DESIGN.md",
+    "description": "A literal color is outside the DESIGN.md palette and sidecar tonal ramps. This may be legitimate, but it should be an intentional design-system addition rather than drift.",
+    "severity": "advisory",
+    "file": "D:\\webprojects\\keysoftitalia\\assets\\css\\pages\\home-spatial.css",
+    "line": 39,
+    "snippet": "Undocumented color #393c44 is outside DESIGN.md colors",
+    "ignoreValue": "#393c44"
+  },
+  {
+    "antipattern": "design-system-font-size",
+    "name": "Font size outside DESIGN.md",
+    "description": "A literal font-size is off the type ramp documented in DESIGN.md typography. Use a documented size step or update the design system if the new step is intentional.",
+    "severity": "advisory",
+    "file": "D:\\webprojects\\keysoftitalia\\assets\\css\\pages\\home-spatial.css",
+    "line": 40,
+    "snippet": "font-size: 10px is off the DESIGN.md type ramp",
+    "ignoreValue": "10px"
+  },
+  {
+    "antipattern": "design-system-color",
+    "name": "Color outside DESIGN.md",
+    "description": "A literal color is outside the DESIGN.md palette and sidecar tonal ramps. This may be legitimate, but it should be an intentional design-system addition rather than drift.",
+    "severity": "advisory",
+    "file": "D:\\webprojects\\keysoftitalia\\assets\\css\\pages\\home-spatial.css",
+    "line": 53,
+    "snippet": "Undocumented color #292226 is outside DESIGN.md colors",
+    "ignoreValue": "#292226"
+  },
+  {
+    "antipattern": "design-system-color",
+    "name": "Color outside DESIGN.md",
+    "description": "A literal color is outside the DESIGN.md palette and sidecar tonal ramps. This may be legitimate, but it should be an intentional design-system addition rather than drift.",
+    "severity": "advisory",
+    "file": "D:\\webprojects\\keysoftitalia\\assets\\css\\pages\\home-spatial.css",
+    "line": 56,
+    "snippet": "Undocumented color #393c44 is outside DESIGN.md colors",
+    "ignoreValue": "#393c44"
+  },
+  {
+    "antipattern": "design-system-color",
+    "name": "Color outside DESIGN.md",
+    "description": "A literal color is outside the DESIGN.md palette and sidecar tonal ramps. This may be legitimate, but it should be an intentional design-system addition rather than drift.",
+    "severity": "advisory",
+    "file": "D:\\webprojects\\keysoftitalia\\assets\\css\\pages\\home-spatial.css",
+    "line": 79,
+    "snippet": "Undocumented color #393c44 is outside DESIGN.md colors",
+    "ignoreValue": "#393c44"
+  },
+  {
+    "antipattern": "design-system-color",
+    "name": "Color outside DESIGN.md",
+    "description": "A literal color is outside the DESIGN.md palette and sidecar tonal ramps. This may be legitimate, but it should be an intentional design-system addition rather than drift.",
+    "severity": "advisory",
+    "file": "D:\\webprojects\\keysoftitalia\\assets\\css\\pages\\home-spatial.css",
+    "line": 82,
+    "snippet": "Undocumented color #393c44 is outside DESIGN.md colors",
+    "ignoreValue": "#393c44"
+  },
+  {
+    "antipattern": "design-system-color",
+    "name": "Color outside DESIGN.md",
+    "description": "A literal color is outside the DESIGN.md palette and sidecar tonal ramps. This may be legitimate, but it should be an intentional design-system addition rather than drift.",
+    "severity": "advisory",
+    "file": "D:\\webprojects\\keysoftitalia\\assets\\css\\pages\\home-spatial.css",
+    "line": 89,
+    "snippet": "Undocumented color #101114 is outside DESIGN.md colors",
+    "ignoreValue": "#101114"
+  },
+  {
+    "antipattern": "design-system-color",
+    "name": "Color outside DESIGN.md",
+    "description": "A literal color is outside the DESIGN.md palette and sidecar tonal ramps. This may be legitimate, but it should be an intentional design-system addition rather than drift.",
+    "severity": "advisory",
+    "file": "D:\\webprojects\\keysoftitalia\\assets\\css\\pages\\home-spatial.css",
+    "line": 94,
+    "snippet": "Undocumented color #393c44 is outside DESIGN.md colors",
+    "ignoreValue": "#393c44"
+  },
+  {
+    "antipattern": "design-system-font-size",
+    "name": "Font size outside DESIGN.md",
+    "description": "A literal font-size is off the type ramp documented in DESIGN.md typography. Use a documented size step or update the design system if the new step is intentional.",
+    "severity": "advisory",
+    "file": "D:\\webprojects\\keysoftitalia\\assets\\css\\pages\\home-spatial.css",
+    "line": 107,
+    "snippet": "font-size: 56px is off the DESIGN.md type ramp",
+    "ignoreValue": "56px"
+  },
+  {
+    "antipattern": "design-system-font-size",
+    "name": "Font size outside DESIGN.md",
+    "description": "A literal font-size is off the type ramp documented in DESIGN.md typography. Use a documented size step or update the design system if the new step is intentional.",
+    "severity": "advisory",
+    "file": "D:\\webprojects\\keysoftitalia\\assets\\css\\pages\\home-spatial.css",
+    "line": 109,
+    "snippet": "font-size: 10px is off the DESIGN.md type ramp",
+    "ignoreValue": "10px"
+  },
+  {
+    "antipattern": "design-system-font-size",
+    "name": "Font size outside DESIGN.md",
+    "description": "A literal font-size is off the type ramp documented in DESIGN.md typography. Use a documented size step or update the design system if the new step is intentional.",
+    "severity": "advisory",
+    "file": "D:\\webprojects\\keysoftitalia\\assets\\css\\pages\\home-spatial.css",
+    "line": 124,
+    "snippet": "font-size: 100px is off the DESIGN.md type ramp",
+    "ignoreValue": "100px"
+  },
+  {
+    "antipattern": "design-system-font-size",
+    "name": "Font size outside DESIGN.md",
+    "description": "A literal font-size is off the type ramp documented in DESIGN.md typography. Use a documented size step or update the design system if the new step is intentional.",
+    "severity": "advisory",
+    "file": "D:\\webprojects\\keysoftitalia\\assets\\css\\pages\\home-spatial.css",
+    "line": 125,
+    "snippet": "font-size: 10px is off the DESIGN.md type ramp",
+    "ignoreValue": "10px"
+  },
+  {
+    "antipattern": "design-system-font-size",
+    "name": "Font size outside DESIGN.md",
+    "description": "A literal font-size is off the type ramp documented in DESIGN.md typography. Use a documented size step or update the design system if the new step is intentional.",
+    "severity": "advisory",
+    "file": "D:\\webprojects\\keysoftitalia\\assets\\css\\pages\\home-spatial.css",
+    "line": 128,
+    "snippet": "font-size: 10px is off the DESIGN.md type ramp",
+    "ignoreValue": "10px"
+  },
+  {
+    "antipattern": "design-system-font-size",
+    "name": "Font size outside DESIGN.md",
+    "description": "A literal font-size is off the type ramp documented in DESIGN.md typography. Use a documented size step or update the design system if the new step is intentional.",
+    "severity": "advisory",
+    "file": "D:\\webprojects\\keysoftitalia\\assets\\css\\pages\\home-spatial.css",
+    "line": 139,
+    "snippet": "font-size: 56px !important is off the DESIGN.md type ramp",
+    "ignoreValue": "56px !important"
+  }
+]

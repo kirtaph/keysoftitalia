@@ -37,7 +37,7 @@
             'unsafe-inline'; \
         font-src 'self' cdn.jsdelivr.net cdnjs.cloudflare.com fonts.gstatic.com; \
         img-src 'self' data: https:; \
-        connect-src 'self' wa.me www.google-analytics.com www.googletagmanager.com \
+        connect-src 'self' wa.me www.google-analytics.com *.google-analytics.com www.googletagmanager.com \
             www.google.com; \
         frame-src 'self' www.youtube.com www.facebook.com www.google.com; \
         frame-ancestors 'self'; \
@@ -96,6 +96,7 @@ Options -Indexes
     ExpiresByType image/png "access plus 1 year"
     ExpiresByType image/gif "access plus 1 year"
     ExpiresByType image/webp "access plus 1 year"
+    ExpiresByType image/avif "access plus 1 year"
     ExpiresByType image/svg+xml "access plus 1 year"
     ExpiresByType image/x-icon "access plus 1 year"
     

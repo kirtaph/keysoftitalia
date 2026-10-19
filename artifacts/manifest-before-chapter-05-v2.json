@@ -1,0 +1,297 @@
+{
+  "version": 2,
+  "frameCount": 1393,
+  "fps": 24,
+  "activeViewportHeights": 20,
+  "entryProgress": 0.0256,
+  "sources": [
+    {
+      "start": 0,
+      "end": 239,
+      "desktopPattern": "chapter-01/desktop/sequence/frame-{index}.webp",
+      "mobilePattern": "chapter-01/mobile/sequence/frame-{index}.webp"
+    },
+    {
+      "start": 240,
+      "end": 431,
+      "desktopPattern": "chapter-02/desktop/sequence/frame-{index}.webp",
+      "mobilePattern": "chapter-02/mobile/sequence/frame-{index}.webp"
+    },
+    {
+      "start": 432,
+      "end": 623,
+      "desktopPattern": "chapter-03/desktop/sequence/frame-{index}.webp",
+      "mobilePattern": "chapter-03/mobile/sequence/frame-{index}.webp"
+    },
+    {
+      "start": 624,
+      "end": 1392,
+      "desktopPattern": "chapter-04/desktop/sequence/frame-{index}.webp",
+      "mobilePattern": "chapter-04/mobile/sequence/frame-{index}.webp"
+    }
+  ],
+  "beats": [
+    {
+      "id": "welcome",
+      "scroll": [
+        0,
+        0.0256
+      ],
+      "frames": [
+        0,
+        0
+      ]
+    },
+    {
+      "id": "approach",
+      "scroll": [
+        0.0256,
+        0.144
+      ],
+      "frames": [
+        0,
+        144
+      ]
+    },
+    {
+      "id": "settle",
+      "scroll": [
+        0.144,
+        0.1536
+      ],
+      "frames": [
+        144,
+        239
+      ]
+    },
+    {
+      "id": "computer-link",
+      "scroll": [
+        0.1536,
+        0.1568
+      ],
+      "frames": [
+        240,
+        252
+      ]
+    },
+    {
+      "id": "computer",
+      "scroll": [
+        0.1568,
+        0.2816
+      ],
+      "frames": [
+        252,
+        431
+      ]
+    },
+    {
+      "id": "computer-reading",
+      "scroll": [
+        0.2816,
+        0.32
+      ],
+      "frames": [
+        431,
+        431
+      ]
+    },
+    {
+      "id": "delivery",
+      "scroll": [
+        0.32,
+        0.45
+      ],
+      "frames": [
+        432,
+        623
+      ]
+    },
+    {
+      "id": "delivery-reading",
+      "scroll": [
+        0.45,
+        0.5
+      ],
+      "frames": [
+        623,
+        623
+      ]
+    },
+    {
+      "id": "repair-bridge",
+      "scroll": [
+        0.5,
+        0.6
+      ],
+      "frames": [
+        624,
+        816
+      ]
+    },
+    {
+      "id": "repair-1",
+      "scroll": [
+        0.6,
+        0.7
+      ],
+      "frames": [
+        817,
+        1008
+      ]
+    },
+    {
+      "id": "repair-1-hold",
+      "scroll": [
+        0.7,
+        0.725
+      ],
+      "frames": [
+        1008,
+        1008
+      ]
+    },
+    {
+      "id": "repair-2",
+      "scroll": [
+        0.725,
+        0.825
+      ],
+      "frames": [
+        1009,
+        1200
+      ]
+    },
+    {
+      "id": "repair-2-hold",
+      "scroll": [
+        0.825,
+        0.85
+      ],
+      "frames": [
+        1200,
+        1200
+      ]
+    },
+    {
+      "id": "repair-3",
+      "scroll": [
+        0.85,
+        0.95
+      ],
+      "frames": [
+        1201,
+        1392
+      ]
+    },
+    {
+      "id": "repair-reading",
+      "scroll": [
+        0.95,
+        1
+      ],
+      "frames": [
+        1392,
+        1392
+      ]
+    }
+  ],
+  "avif": true,
+  "copy": {
+    "opening": {
+      "visible": [
+        0,
+        0.0544
+      ],
+      "exit": {
+        "at": 0.0256,
+        "span": 0.0192,
+        "stagger": 0.0022
+      }
+    },
+    "computer": {
+      "visible": [
+        0.256,
+        0.3375
+      ],
+      "minFrame": 390,
+      "side": "right",
+      "enter": {
+        "at": 0.256,
+        "span": 0.0224,
+        "stagger": 0.0032
+      },
+      "exit": {
+        "at": 0.315,
+        "span": 0.015,
+        "stagger": 0.0015
+      }
+    },
+    "delivery": {
+      "visible": [
+        0.4425,
+        0.515
+      ],
+      "minFrame": 600,
+      "side": "left",
+      "enter": {
+        "at": 0.4425,
+        "span": 0.0175,
+        "stagger": 0.0025
+      },
+      "exit": {
+        "at": 0.4975,
+        "span": 0.015,
+        "stagger": 0.0015
+      }
+    },
+    "repair-1": {
+      "visible": [
+        0.615,
+        0.73
+      ],
+      "side": "left",
+      "enter": {
+        "at": 0.615,
+        "span": 0.02,
+        "stagger": 0.0025
+      },
+      "exit": {
+        "at": 0.7125,
+        "span": 0.015,
+        "stagger": 0.0015
+      }
+    },
+    "repair-2": {
+      "visible": [
+        0.735,
+        0.85
+      ],
+      "side": "left",
+      "enter": {
+        "at": 0.735,
+        "span": 0.02,
+        "stagger": 0.0025
+      },
+      "exit": {
+        "at": 0.8325,
+        "span": 0.015,
+        "stagger": 0.0015
+      }
+    },
+    "repair-3": {
+      "visible": [
+        0.9,
+        1
+      ],
+      "side": "left",
+      "enter": {
+        "at": 0.9,
+        "span": 0.02,
+        "stagger": 0.0025
+      }
+    }
+  },
+  "frameVersion": "2026-10-13-ch04-bridge"
+}

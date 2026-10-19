@@ -1,0 +1,47 @@
+{
+  "date": "2026-10-16",
+  "direction": "Continuous ageing from young founders to current founders; replaces rejected cross-dissolve.",
+  "alignedStartImageJob": "114be423-c512-49d4-ab49-dd8416b140cd",
+  "videoJob": "9defee51-96be-414f-b45a-a42b5c1aea34",
+  "keyframeParams": {
+    "model": "gpt_image_2_5",
+    "quality": "high",
+    "resolution": "2k",
+    "aspect_ratio": "3:2",
+    "count": 1,
+    "medias": [
+      {
+        "role": "image",
+        "value": "3cff6da9-9ea9-4dee-97d8-340da0540c1b"
+      },
+      {
+        "role": "image",
+        "value": "5660c6bc-7c13-4aea-9af3-f431c938e7f7"
+      }
+    ],
+    "prompt": "Create a precise photographic START FRAME for an ageing video. IMAGE 1 is the authoritative reference for the THREE YOUNG MEN in 2004, their exact young faces and clothing. IMAGE 2 is ONLY the authoritative composition/pose reference and later-age identity reference. Recreate the pose, waist-up crop, head positions, relative head sizes, viewing direction and dark seamless background of IMAGE 2, but show the men as their YOUNG 2004 selves from IMAGE 1. Identity correspondence and order are essential: LEFT = the young man wearing glasses and the BLUE striped tie who stands on the RIGHT in IMAGE 1; CENTER = the young smiling man with longer dark side-parted hair and the YELLOW striped tie who stands on the LEFT in IMAGE 1; RIGHT = the young man with short spiky dark hair, small goatee, GRAY/SILVER tie and black leather jacket who stands in the CENTER in IMAGE 1. The left young man must NOT be bald, keep his young spiky hair and young face exactly as IMAGE 1. The center man's smile and the right man's face must come from IMAGE 1. Arrange them close together and comfortably shoulder-to-shoulder in exactly the same left/center/right placement as IMAGE 2, so each young face spatially aligns with his own older face. Hands may rest naturally behind shoulders as in IMAGE 2. All three look directly at the camera; mild expressions matching their younger reference. Natural young skin, authentic photographic detail and original 2004 clothes: blue tie/dark coat left; yellow tie/dark cardigan center; silver tie/leather jacket right. Uniform nearly-black studio background with no floor, environment, backdrop edge, text, digits, graphics or framing. Preserve the three actual young identities, do not substitute generic faces or create a blend of young and old. Do not show a collage or before-and-after layout. One seamless color photograph, landscape 3:2."
+  },
+  "videoParams": {
+    "model": "kling_o3_flf",
+    "aspect_ratio": "16:9",
+    "duration": 10,
+    "mode": "pro",
+    "sound": "off",
+    "medias": [
+      {
+        "role": "start_image",
+        "value": "53ea8cc8-f35f-424f-88b7-f58b8765389f"
+      },
+      {
+        "role": "end_image",
+        "value": "7461105f-6ac4-4152-8a41-0457c15109bc"
+      }
+    ],
+    "prompt": "Create one continuous photorealistic AGEING TIME-LAPSE of the SAME THREE MEN from the exact supplied young first frame to the exact supplied older last frame. Their order is already aligned: each man stays in his own left, center or right position for the entire shot. The viewer must SEE them GROW OLDER continuously through intermediate adult ages. Hold the young first frame briefly, then spread the physical ageing smoothly over most of the ten seconds, and settle on the exact present-day final frame. LEFT: the young spiky-haired man with glasses and blue tie continuously matures into the bald smiling man with glasses and white sweater. His hairline gradually recedes, facial structure and skin mature, glasses smoothly modernize. CENTER: the young smiling man with long side-parted hair and yellow tie continuously matures into the curly-haired man in the black shirt; his hair shortens and thins gradually, facial lines develop naturally while preserving his distinctive smile. RIGHT: the young dark-haired man with small goatee, silver tie and leather jacket continuously matures into the short gray-haired clean-shaven man in the dark teal sweater. His facial hair gradually recedes and his hair grays. Clothing changes organically as time passes. At every instant each face and body are SINGLE, SOLID and OPAQUE, naturally reshaping with age, with stable eyes and anatomical features. Maintain recognizable personal identity and a warm human mood. Camera locked, same waist-up group composition, same quiet nearly-black background. Only restrained breathing and micro expression changes. This is an actual smooth physical age progression, not an edit between photographs. Absolutely NO cross-dissolve, NO crossfade, NO opacity blending, NO ghost faces, NO overlaid portraits, NO cuts, NO fade to black, NO walking or people switching positions, NO text, years, digits, graphics, backdrop panels or watermarks. The middle of the clip must show believable INTERMEDIATE AGES, not two superimposed endpoint images."
+  },
+  "editing": "One continuous take. Only saturation ramp added in mastering; no crossfade.",
+  "estimatedCredits": {
+    "alignedImage": 2.75,
+    "video": 12.5
+  }
+}

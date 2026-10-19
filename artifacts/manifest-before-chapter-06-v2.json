@@ -1,0 +1,347 @@
+{
+  "version": 2,
+  "frameCount": 1586,
+  "fps": 24,
+  "activeViewportHeights": 23,
+  "entryProgress": 0.02226087,
+  "sources": [
+    {
+      "start": 0,
+      "end": 239,
+      "desktopPattern": "chapter-01/desktop/sequence/frame-{index}.webp",
+      "mobilePattern": "chapter-01/mobile/sequence/frame-{index}.webp"
+    },
+    {
+      "start": 240,
+      "end": 431,
+      "desktopPattern": "chapter-02/desktop/sequence/frame-{index}.webp",
+      "mobilePattern": "chapter-02/mobile/sequence/frame-{index}.webp"
+    },
+    {
+      "start": 432,
+      "end": 623,
+      "desktopPattern": "chapter-03/desktop/sequence/frame-{index}.webp",
+      "mobilePattern": "chapter-03/mobile/sequence/frame-{index}.webp"
+    },
+    {
+      "start": 624,
+      "end": 1392,
+      "desktopPattern": "chapter-04/desktop/sequence/frame-{index}.webp",
+      "mobilePattern": "chapter-04/mobile/sequence/frame-{index}.webp"
+    },
+    {
+      "start": 1393,
+      "end": 1585,
+      "desktopPattern": "chapter-05/desktop/sequence/frame-{index}.webp",
+      "mobilePattern": "chapter-05/mobile/sequence/frame-{index}.webp"
+    }
+  ],
+  "beats": [
+    {
+      "id": "welcome",
+      "scroll": [
+        0,
+        0.02226087
+      ],
+      "frames": [
+        0,
+        0
+      ]
+    },
+    {
+      "id": "approach",
+      "scroll": [
+        0.02226087,
+        0.12521739
+      ],
+      "frames": [
+        0,
+        144
+      ]
+    },
+    {
+      "id": "settle",
+      "scroll": [
+        0.12521739,
+        0.13356522
+      ],
+      "frames": [
+        144,
+        239
+      ]
+    },
+    {
+      "id": "computer-link",
+      "scroll": [
+        0.13356522,
+        0.13634783
+      ],
+      "frames": [
+        240,
+        252
+      ]
+    },
+    {
+      "id": "computer",
+      "scroll": [
+        0.13634783,
+        0.24486957
+      ],
+      "frames": [
+        252,
+        431
+      ]
+    },
+    {
+      "id": "computer-reading",
+      "scroll": [
+        0.24486957,
+        0.27826087
+      ],
+      "frames": [
+        431,
+        431
+      ]
+    },
+    {
+      "id": "delivery",
+      "scroll": [
+        0.27826087,
+        0.39130435
+      ],
+      "frames": [
+        432,
+        623
+      ]
+    },
+    {
+      "id": "delivery-reading",
+      "scroll": [
+        0.39130435,
+        0.43478261
+      ],
+      "frames": [
+        623,
+        623
+      ]
+    },
+    {
+      "id": "repair-bridge",
+      "scroll": [
+        0.43478261,
+        0.52173913
+      ],
+      "frames": [
+        624,
+        816
+      ]
+    },
+    {
+      "id": "repair-1",
+      "scroll": [
+        0.52173913,
+        0.60869565
+      ],
+      "frames": [
+        817,
+        1008
+      ]
+    },
+    {
+      "id": "repair-1-hold",
+      "scroll": [
+        0.60869565,
+        0.63043478
+      ],
+      "frames": [
+        1008,
+        1008
+      ]
+    },
+    {
+      "id": "repair-2",
+      "scroll": [
+        0.63043478,
+        0.7173913
+      ],
+      "frames": [
+        1009,
+        1200
+      ]
+    },
+    {
+      "id": "repair-2-hold",
+      "scroll": [
+        0.7173913,
+        0.73913043
+      ],
+      "frames": [
+        1200,
+        1200
+      ]
+    },
+    {
+      "id": "repair-3",
+      "scroll": [
+        0.73913043,
+        0.82608696
+      ],
+      "frames": [
+        1201,
+        1392
+      ]
+    },
+    {
+      "id": "repair-reading",
+      "scroll": [
+        0.82608696,
+        0.86956522
+      ],
+      "frames": [
+        1392,
+        1392
+      ]
+    },
+    {
+      "id": "choosing-reveal",
+      "scroll": [
+        0.8695652173913043,
+        0.9565217391304348
+      ],
+      "frames": [
+        1393,
+        1585
+      ]
+    },
+    {
+      "id": "choosing-reading",
+      "scroll": [
+        0.9565217391304348,
+        1
+      ],
+      "frames": [
+        1585,
+        1585
+      ]
+    }
+  ],
+  "avif": true,
+  "copy": {
+    "opening": {
+      "visible": [
+        0,
+        0.04730435
+      ],
+      "exit": {
+        "at": 0.02226087,
+        "span": 0.01669565,
+        "stagger": 0.00191304
+      }
+    },
+    "computer": {
+      "visible": [
+        0.2226087,
+        0.29347826
+      ],
+      "minFrame": 390,
+      "side": "right",
+      "enter": {
+        "at": 0.2226087,
+        "span": 0.01947826,
+        "stagger": 0.00278261
+      },
+      "exit": {
+        "at": 0.27391304,
+        "span": 0.01304348,
+        "stagger": 0.00130435
+      }
+    },
+    "delivery": {
+      "visible": [
+        0.38478261,
+        0.44782609
+      ],
+      "minFrame": 600,
+      "side": "left",
+      "enter": {
+        "at": 0.38478261,
+        "span": 0.01521739,
+        "stagger": 0.00217391
+      },
+      "exit": {
+        "at": 0.4326087,
+        "span": 0.01304348,
+        "stagger": 0.00130435
+      }
+    },
+    "repair-1": {
+      "visible": [
+        0.53478261,
+        0.63478261
+      ],
+      "side": "left",
+      "enter": {
+        "at": 0.53478261,
+        "span": 0.0173913,
+        "stagger": 0.00217391
+      },
+      "exit": {
+        "at": 0.61956522,
+        "span": 0.01304348,
+        "stagger": 0.00130435
+      }
+    },
+    "repair-2": {
+      "visible": [
+        0.63913043,
+        0.73913043
+      ],
+      "side": "left",
+      "enter": {
+        "at": 0.63913043,
+        "span": 0.0173913,
+        "stagger": 0.00217391
+      },
+      "exit": {
+        "at": 0.72391304,
+        "span": 0.01304348,
+        "stagger": 0.00130435
+      }
+    },
+    "repair-3": {
+      "visible": [
+        0.7826087,
+        0.86956522
+      ],
+      "side": "left",
+      "enter": {
+        "at": 0.7826087,
+        "span": 0.0173913,
+        "stagger": 0.00217391
+      },
+      "exit": {
+        "at": 0.8478260869565217,
+        "span": 0.017391304347826087,
+        "stagger": 0.0008695652173913044
+      }
+    },
+    "choosing": {
+      "visible": [
+        0.9391304347826087,
+        1
+      ],
+      "minFrame": 1550,
+      "side": "left",
+      "enter": {
+        "at": 0.9391304347826087,
+        "span": 0.021739130434782608,
+        "stagger": 0.002173913043478261
+      }
+    }
+  },
+  "outro": {
+    "at": 0.98478261,
+    "span": 0.01521739
+  },
+  "frameVersion": "2026-10-15-ch05-selection"
+}

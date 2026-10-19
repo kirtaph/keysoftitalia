@@ -232,14 +232,14 @@ $KS_BASE = rtrim(BASE_URL, '/').'/';
 #<?= $recond_id; ?> .recond-chip.grade.grade-a{background:#22c55e}
 #<?= $recond_id; ?> .recond-chip.grade.grade-b{background:#6366f1}
 #<?= $recond_id; ?> .recond-chip.grade.grade-c{background:#0ea5e9}
-#<?= $recond_id; ?> .recond-card{position:relative;background:#fff;border:1px solid var(--ks-gray-200);border-radius:18px;overflow:hidden;box-shadow:var(--ks-shadow-sm);transition:transform 0.25s ease, box-shadow 0.25s ease;}
+#<?= $recond_id; ?> .recond-card{position:relative;background:var(--site-panel,#fff);border:1px solid var(--ks-gray-200);border-radius:var(--ks-radius-xl);overflow:hidden;box-shadow:var(--ks-shadow-sm);transition:transform 0.25s ease, box-shadow 0.25s ease;}
 #<?= $recond_id; ?> .recond-card:hover{transform:translateY(-5px);box-shadow:var(--ks-shadow-md);}
 #<?= $recond_id; ?> .recond-body{padding:12px 14px 16px}
 #<?= $recond_id; ?> .recond-title{font-size:1rem;font-weight:800;margin:4px 0 6px}
 #<?= $recond_id; ?> .recond-price{display:flex;align-items:baseline;gap:8px}
 #<?= $recond_id; ?> .recond-price .price-old{text-decoration:line-through;color:var(--ks-gray-500)}
 #<?= $recond_id; ?> .recond-price .price-current{font-weight:900;color:var(--ks-orange)}
-#<?= $recond_id; ?> .btn-wa{position:relative;z-index:2;display:inline-flex;align-items:center;justify-content:center;gap:8px;height:44px;border-radius:12px;background:var(--ks-orange);color:#fff;font-weight:800;border:2px solid transparent}
+#<?= $recond_id; ?> .btn-wa{position:relative;z-index:2;display:inline-flex;align-items:center;justify-content:center;gap:8px;height:44px;border-radius:var(--ks-radius-md);background:var(--ks-orange);color:var(--ks-on-brand,#fff);font-weight:600;border:2px solid transparent}
 #<?= $recond_id; ?> .btn-wa:hover{filter:brightness(.98);box-shadow:0 8px 22px rgba(0,0,0,.1);color:#fff;}
 /* skeleton */
 #<?= $recond_id; ?> .is-skeleton .sk-block{height:220px;background:linear-gradient(90deg,#eee,#f5f5f5,#eee);animation:sk 1.2s infinite}

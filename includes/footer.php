@@ -17,7 +17,7 @@ if (!defined('BASE_PATH')) {
     <div class="col-lg-4">
       <div class="footer-card footer-brand-card">
         <a href="<?php echo url(); ?>" class="footer-logo" aria-label="Homepage Key Soft Italia">
-          <img src="<?php echo asset('img/logo.png'); ?>" alt="Key Soft Italia" class="footer-logo-img" width="40" height="40" decoding="async">
+          <img src="<?php echo asset('img/logo.webp'); ?>" alt="Key Soft Italia" class="footer-logo-img" width="40" height="40" decoding="async">
           <div class="footer-logo-text">
             <strong>Key Soft Italia</strong>
             <span class="footer-logo-subititle-text">L'universo della Tecnologia</span>
@@ -435,5 +435,5 @@ function showToast({title='', message='', type='info', delay=4500} = {}){
         window.scrollTo({ top: y, behavior: 'smooth' });
     }
 </script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="<?php echo asset_version('vendor/bootstrap/bootstrap.bundle.min.js'); ?>"></script>
 <script src="<?php echo asset_version('js/main.js'); ?>"></script>

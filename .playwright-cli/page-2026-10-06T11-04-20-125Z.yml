@@ -1,0 +1,745 @@
+- generic [active] [ref=e1]:
+  - link "Vai al contenuto principale" [ref=e2] [cursor=pointer]:
+    - /url: "#main-content"
+  - generic [ref=e5]:
+    - generic [ref=e6]:
+      - link "Chiama 099 829 3794" [ref=e7] [cursor=pointer]:
+        - /url: tel:0998293794
+        - generic [ref=e8]: 
+        - generic [ref=e9]: 099 829 3794
+      - link "Scrivici su WhatsApp" [ref=e10] [cursor=pointer]:
+        - /url: https://wa.me/393483109840?text=Ciao+Key+Soft+Italia%2C+ho+bisogno+di+assistenza&utm_source=site&utm_medium=whatsapp&utm_campaign=general
+        - generic [ref=e11]: 
+        - generic [ref=e12]: WhatsApp
+      - link "Scrivi a info@keysoftitalia.it" [ref=e13] [cursor=pointer]:
+        - /url: mailto:info@keysoftitalia.it
+        - generic [ref=e14]: 
+        - generic [ref=e15]: info@keysoftitalia.it
+    - generic "Stato orari e prossima chiusura/apertura" [ref=e17]:
+      - generic [ref=e18]:
+        - generic [aria-hidden] [ref=e19]: 
+        - text: Chiusi
+      - generic [ref=e20]: Riapre alle 17:00 (tra 3h 55m)
+  - banner [ref=e21]:
+    - generic [ref=e24]:
+      - link "Key Soft Italia Key Soft Italia L'universo della Tecnologia" [ref=e25] [cursor=pointer]:
+        - /url: http://keysoftitalia.test/
+        - img "Key Soft Italia" [ref=e27]
+        - generic [ref=e28]:
+          - generic [ref=e29]: Key Soft Italia
+          - generic [ref=e30]: L'universo della Tecnologia
+      - navigation "Navigazione principale" [ref=e31]:
+        - list [ref=e32]:
+          - listitem [ref=e33]:
+            - link " Prodotti" [ref=e34] [cursor=pointer]:
+              - /url: http://keysoftitalia.test/prodotti.php
+              - generic [ref=e35]: 
+              - text: Prodotti
+          - listitem [ref=e36]:
+            - link " Servizi " [ref=e37] [cursor=pointer]:
+              - /url: http://keysoftitalia.test/servizi.php
+              - generic [ref=e38]: 
+              - text: Servizi
+              - generic [ref=e39]: 
+          - listitem [ref=e40]:
+            - link " Laboratorio" [ref=e41] [cursor=pointer]:
+              - /url: http://keysoftitalia.test/servizi/riparazioni.php
+              - generic [ref=e42]: 
+              - text: Laboratorio
+          - listitem [ref=e43]:
+            - link " Video" [ref=e44] [cursor=pointer]:
+              - /url: http://keysoftitalia.test/video.php
+              - generic [ref=e45]: 
+              - text: Video
+          - listitem [ref=e46]:
+            - link " Chi Siamo" [ref=e47] [cursor=pointer]:
+              - /url: http://keysoftitalia.test/chi-siamo.php
+              - generic [ref=e48]: 
+              - text: Chi Siamo
+          - listitem [ref=e49]:
+            - link " Contatti" [ref=e50] [cursor=pointer]:
+              - /url: http://keysoftitalia.test/contatti.php
+              - generic [ref=e51]: 
+              - text: Contatti
+        - generic [ref=e52]:
+          - link " Richiedi Assistenza" [ref=e53] [cursor=pointer]:
+            - /url: http://keysoftitalia.test/assistenza.php
+            - generic [ref=e54]: 
+            - text: Richiedi Assistenza
+          - link " Nuova Riparazione" [ref=e55] [cursor=pointer]:
+            - /url: http://keysoftitalia.test/prenota-riparazione.php
+            - generic [ref=e56]: 
+            - text: Nuova Riparazione
+  - text:                 
+  - main [ref=e57]:
+    - region "Carousel di presentazione servizi" [ref=e58]:
+      - generic [ref=e59]:
+        - generic [ref=e64]:
+          - generic [ref=e66]:
+            - generic [ref=e67]:
+              - generic [ref=e68]: 
+              - generic [ref=e69]: Riparazione in 24h*
+            - heading "Riparazioni rapide e garantite" [level=1] [ref=e70]
+            - paragraph [ref=e71]: Smartphone, tablet e computer riparati in tempi record. Garanzia inclusa e assistenza completa.
+            - generic [ref=e72]:
+              - link "Richiedi un preventivo per riparazioni" [ref=e73] [cursor=pointer]:
+                - /url: http://keysoftitalia.test/preventivo.php
+                - generic [ref=e74]: 
+                - text: Richiedi un preventivo
+              - link "Richiedi assistenza per dispositivi" [ref=e75] [cursor=pointer]:
+                - /url: http://keysoftitalia.test/assistenza.php
+                - generic [ref=e76]: 
+                - text: Richiedi assistenza
+          - generic [ref=e79]:
+            - generic [ref=e81]:
+              - generic [ref=e82]: 
+              - heading "Diagnosi gratuita" [level=4] [ref=e83]
+              - paragraph [ref=e84]: Identifichiamo il problema senza costi iniziali
+            - generic [ref=e86]:
+              - generic [ref=e87]: 
+              - heading "Garanzia 3 mesi" [level=4] [ref=e88]
+              - paragraph [ref=e89]: Tranquillità e sicurezza dopo ogni intervento
+            - generic [ref=e91]:
+              - generic [ref=e92]: 
+              - heading "Dispositivo sostitutivo" [level=4] [ref=e93]
+              - paragraph [ref=e94]: Continui a lavorare senza fermarti
+            - generic [ref=e96]:
+              - generic [ref=e97]: 
+              - heading "Ricambi originali" [level=4] [ref=e98]
+              - paragraph [ref=e99]: Montiamo solo Service Pack genuini
+        - text:              
+      - generic [ref=e100]:
+        - button "Slide 1" [ref=e101] [cursor=pointer]
+        - button "Slide 2" [ref=e102] [cursor=pointer]
+        - button "Slide 3" [ref=e103] [cursor=pointer]
+    - region "I nostri servizi" [ref=e104]:
+      - generic [ref=e105]:
+        - generic [ref=e106]:
+          - heading "Cosa facciamo" [level=2] [ref=e107]
+          - paragraph [ref=e108]: Soluzioni tecnologiche complete per ogni esigenza
+        - generic [ref=e109]:
+          - generic [ref=e111]:
+            - generic [ref=e112]:
+              - generic [aria-hidden] [ref=e113]: 
+              - generic [ref=e114]:
+                - heading "Riparazioni & Assistenza" [level=3] [ref=e115]
+                - paragraph [ref=e116]: Riparazione professionale di smartphone, tablet, PC e console gaming
+            - generic [ref=e117]:
+              - generic [aria-hidden] [ref=e118]: 
+              - generic [ref=e119]:
+                - heading "Vendita al Dettaglio" [level=3] [ref=e120]
+                - paragraph [ref=e121]: Dispositivi nuovi e ricondizionati con garanzia, accessori originali
+            - generic [ref=e122]:
+              - generic [aria-hidden] [ref=e123]: 
+              - generic [ref=e124]:
+                - heading "MyShape Protection" [level=3] [ref=e125]
+                - paragraph [ref=e126]: Pellicole ANTISHOCK e AUTO-RIGENERANTI, perfette per proteggere gli schermi dei dispositivi
+            - generic [ref=e127]:
+              - generic [aria-hidden] [ref=e128]: 
+              - generic [ref=e129]:
+                - heading "Sviluppo Web & App" [level=3] [ref=e130]
+                - paragraph [ref=e131]: Creazione siti web, e-commerce e applicazioni mobile su misura
+            - generic [ref=e132]:
+              - generic [aria-hidden] [ref=e133]: 
+              - generic [ref=e134]:
+                - heading "Consulenza IT & Reti" [level=3] [ref=e135]
+                - paragraph [ref=e136]: Progettazione reti aziendali, sistemi di sicurezza e videosorveglianza
+            - generic [ref=e137]:
+              - generic [aria-hidden] [ref=e138]: 
+              - generic [ref=e139]:
+                - heading "Telefonia & Servizi Casa" [level=3] [ref=e140]
+                - paragraph [ref=e141]: Attivazione SIM, offerte internet casa, luce e gas con i migliori operatori
+          - generic [ref=e143]:
+            - generic [ref=e144]: 20+
+            - generic [ref=e145]: anni di esperienza
+            - generic [ref=e146]:
+              - generic [ref=e147]:
+                - generic [ref=e148]: 15000+
+                - generic [ref=e149]: Clienti soddisfatti
+              - generic [ref=e150]:
+                - generic [ref=e151]: 24h
+                - generic [ref=e152]: Tempo medio riparazione
+        - link "Scopri tutti i servizi" [ref=e154] [cursor=pointer]:
+          - /url: http://keysoftitalia.test/servizi.php
+          - text: Scopri tutti i servizi
+          - generic [ref=e155]: 
+    - region "I nostri prodotti in evidenza" [ref=e156]:
+      - generic [ref=e157]:
+        - generic [ref=e158]:
+          - heading "I nostri prodotti in evidenza" [level=2] [ref=e159]
+          - paragraph [ref=e160]: Smartphone e altri dispositivi in offerta speciale
+        - generic [ref=e161]:
+          - generic [ref=e162]:
+            - group "NaN / 10" [ref=e163]:
+              - generic [ref=e164]:
+                - generic [ref=e165]:
+                  - generic [ref=e166]: "-22%"
+                  - img "Key Soft OEM Power Bank 50.000mAh NERO" [ref=e167]
+                - generic [ref=e168]:
+                  - heading "Key Soft OEM Power Bank 50.000mAh NERO" [level=3] [ref=e169]
+                  - generic [ref=e170]:
+                    - generic [ref=e171]: € 89,90
+                    - generic [ref=e172]: € 69,90
+                  - link "Richiedi info su Key Soft OEM Power Bank 50.000mAh NERO via WhatsApp" [ref=e173] [cursor=pointer]:
+                    - /url: https://wa.me/393483109840?text=Ciao%20Key%20Soft%20Italia!%20%F0%9F%91%8B%0AHo%20visto%20questo%20prodotto%20sul%20sito%20e%20vorrei%20info%3A%0A%0A%E2%80%A2%20Prodotto%3A%20Key%20Soft%20OEM%20Power%20Bank%2050.000mAh%20NERO%0A%E2%80%A2%20SKU%3A%20PB50K%0A%E2%80%A2%20Prezzo%3A%20%E2%82%AC%2069%2C90%0A%E2%80%A2%20Pagina%3A%20http%3A%2F%2Fkeysoftitalia.test%2Fprodotti.php%3Fsku%3DPB50K%0AGrazie!&utm_source=site&utm_medium=whatsapp&utm_campaign=recond-swiper&utm_content=PB50K
+                    - generic [ref=e174]: 
+                    - text: Acquista
+                  - link "Dettagli Key Soft OEM Power Bank 50.000mAh NERO":
+                    - /url: http://keysoftitalia.test/prodotti.php?sku=PB50K
+            - group "NaN / 10" [ref=e175]:
+              - generic [ref=e176]:
+                - generic [ref=e177]:
+                  - img "HP 255 G6 Ricondizionato Grado A" [ref=e178]
+                  - generic [aria-hidden]:
+                    - generic: Grado A
+                - generic [ref=e180]:
+                  - heading "HP 255 G6 Ricondizionato Grado A" [level=3] [ref=e181]
+                  - generic [ref=e182]: € 249,00
+                  - link "Richiedi info su HP 255 G6 Ricondizionato Grado A via WhatsApp" [ref=e184] [cursor=pointer]:
+                    - /url: https://wa.me/393483109840?text=Ciao%20Key%20Soft%20Italia!%20%F0%9F%91%8B%0AHo%20visto%20questo%20prodotto%20sul%20sito%20e%20vorrei%20info%3A%0A%0A%E2%80%A2%20Prodotto%3A%20HP%20255%20G6%20Ricondizionato%20Grado%20A%0A%E2%80%A2%20SKU%3A%20RIC0231%0A%E2%80%A2%20Prezzo%3A%20%E2%82%AC%20249%2C00%0A%E2%80%A2%20Pagina%3A%20http%3A%2F%2Fkeysoftitalia.test%2Fprodotti.php%3Fsku%3DRIC0231%0AGrazie!&utm_source=site&utm_medium=whatsapp&utm_campaign=recond-swiper&utm_content=RIC0231
+                    - generic [ref=e185]: 
+                    - text: Acquista
+                  - link "Dettagli HP 255 G6 Ricondizionato Grado A":
+                    - /url: http://keysoftitalia.test/prodotti.php?sku=RIC0231
+            - group "NaN / 10" [ref=e186]:
+              - generic [ref=e187]:
+                - generic [ref=e188]:
+                  - img "Huawei P Smart 2019 Ricondizionato Grado A+" [ref=e189]
+                  - generic [aria-hidden]:
+                    - generic: Grado A+
+                - generic [ref=e191]:
+                  - heading "Huawei P Smart 2019 Ricondizionato Grado A+" [level=3] [ref=e192]
+                  - generic [ref=e193]: € 99,00
+                  - link "Richiedi info su Huawei P Smart 2019 Ricondizionato Grado A+ via WhatsApp" [ref=e195] [cursor=pointer]:
+                    - /url: https://wa.me/393483109840?text=Ciao%20Key%20Soft%20Italia!%20%F0%9F%91%8B%0AHo%20visto%20questo%20prodotto%20sul%20sito%20e%20vorrei%20info%3A%0A%0A%E2%80%A2%20Prodotto%3A%20Huawei%20P%20Smart%202019%20Ricondizionato%20Grado%20A%2B%0A%E2%80%A2%20SKU%3A%20RIC0220%0A%E2%80%A2%20Prezzo%3A%20%E2%82%AC%2099%2C00%0A%E2%80%A2%20Pagina%3A%20http%3A%2F%2Fkeysoftitalia.test%2Fprodotti.php%3Fsku%3DRIC0220%0AGrazie!&utm_source=site&utm_medium=whatsapp&utm_campaign=recond-swiper&utm_content=RIC0220
+                    - generic [ref=e196]: 
+                    - text: Acquista
+                  - link "Dettagli Huawei P Smart 2019 Ricondizionato Grado A+":
+                    - /url: http://keysoftitalia.test/prodotti.php?sku=RIC0220
+            - group "NaN / 10" [ref=e197]:
+              - generic [ref=e198]:
+                - generic [ref=e199]:
+                  - generic [ref=e200]: "-17%"
+                  - img "Blow Video Proiettore" [ref=e201]
+                - generic [ref=e202]:
+                  - heading "Blow Video Proiettore" [level=3] [ref=e203]
+                  - generic [ref=e204]:
+                    - generic [ref=e205]: € 179,00
+                    - generic [ref=e206]: € 149,00
+                  - link "Richiedi info su Blow Video Proiettore via WhatsApp" [ref=e207] [cursor=pointer]:
+                    - /url: https://wa.me/393483109840?text=Ciao%20Key%20Soft%20Italia!%20%F0%9F%91%8B%0AHo%20visto%20questo%20prodotto%20sul%20sito%20e%20vorrei%20info%3A%0A%0A%E2%80%A2%20Prodotto%3A%20Blow%20Video%20Proiettore%0A%E2%80%A2%20SKU%3A%20BLOWHD%0A%E2%80%A2%20Prezzo%3A%20%E2%82%AC%20149%2C00%0A%E2%80%A2%20Pagina%3A%20http%3A%2F%2Fkeysoftitalia.test%2Fprodotti.php%3Fsku%3DBLOWHD%0AGrazie!&utm_source=site&utm_medium=whatsapp&utm_campaign=recond-swiper&utm_content=BLOWHD
+                    - generic [ref=e208]: 
+                    - text: Acquista
+                  - link "Dettagli Blow Video Proiettore":
+                    - /url: http://keysoftitalia.test/prodotti.php?sku=BLOWHD
+            - group "NaN / 10" [ref=e209]:
+              - generic [ref=e210]:
+                - generic [ref=e211]:
+                  - generic [ref=e212]: "-45%"
+                  - img "GamePRO Sedia Gaming Red o Blu" [ref=e213]
+                - generic [ref=e214]:
+                  - heading "GamePRO Sedia Gaming Red o Blu" [level=3] [ref=e215]
+                  - generic [ref=e216]:
+                    - generic [ref=e217]: € 179,00
+                    - generic [ref=e218]: € 99,00
+                  - link "Richiedi info su GamePRO Sedia Gaming Red o Blu via WhatsApp" [ref=e219] [cursor=pointer]:
+                    - /url: https://wa.me/393483109840?text=Ciao%20Key%20Soft%20Italia!%20%F0%9F%91%8B%0AHo%20visto%20questo%20prodotto%20sul%20sito%20e%20vorrei%20info%3A%0A%0A%E2%80%A2%20Prodotto%3A%20GamePRO%20Sedia%20Gaming%20Red%20o%20Blu%0A%E2%80%A2%20SKU%3A%20SEDIAPRO1%0A%E2%80%A2%20Prezzo%3A%20%E2%82%AC%2099%2C00%0A%E2%80%A2%20Pagina%3A%20http%3A%2F%2Fkeysoftitalia.test%2Fprodotti.php%3Fsku%3DSEDIAPRO1%0AGrazie!&utm_source=site&utm_medium=whatsapp&utm_campaign=recond-swiper&utm_content=SEDIAPRO1
+                    - generic [ref=e220]: 
+                    - text: Acquista
+                  - link "Dettagli GamePRO Sedia Gaming Red o Blu":
+                    - /url: http://keysoftitalia.test/prodotti.php?sku=SEDIAPRO1
+            - group "NaN / 10" [ref=e221]:
+              - generic [ref=e222]:
+                - generic [ref=e223]:
+                  - generic [ref=e224]: "-14%"
+                  - img "Microsoft Surface Pro 7 Midnight Black" [ref=e225]
+                  - generic [aria-hidden]:
+                    - generic: 256GB
+                    - generic: Grado A
+                - generic [ref=e228]:
+                  - heading "Microsoft Surface Pro 7 Midnight Black" [level=3] [ref=e229]
+                  - generic [ref=e230]:
+                    - generic [ref=e231]: € 699,00
+                    - generic [ref=e232]: € 599,00
+                  - link "Richiedi info su Microsoft Surface Pro 7 Midnight Black via WhatsApp" [ref=e233] [cursor=pointer]:
+                    - /url: https://wa.me/393483109840?text=Ciao%20Key%20Soft%20Italia!%20%F0%9F%91%8B%0AHo%20visto%20questo%20prodotto%20sul%20sito%20e%20vorrei%20info%3A%0A%0A%E2%80%A2%20Prodotto%3A%20Microsoft%20Surface%20Pro%207%20Midnight%20Black%0A%E2%80%A2%20SKU%3A%20RIG%2FSURFACEPRO7%0A%E2%80%A2%20Prezzo%3A%20%E2%82%AC%20599%2C00%0A%E2%80%A2%20Pagina%3A%20http%3A%2F%2Fkeysoftitalia.test%2Fprodotti.php%3Fsku%3DRIG%252FSURFACEPRO7%0AGrazie!&utm_source=site&utm_medium=whatsapp&utm_campaign=recond-swiper&utm_content=RIG%2FSURFACEPRO7
+                    - generic [ref=e234]: 
+                    - text: Acquista
+                  - link "Dettagli Microsoft Surface Pro 7 Midnight Black":
+                    - /url: http://keysoftitalia.test/prodotti.php?sku=RIG%2FSURFACEPRO7
+            - group "NaN / 10" [ref=e235]:
+              - generic [ref=e236]:
+                - generic [ref=e237]:
+                  - generic [ref=e238]: "-17%"
+                  - img "Apple iPhone 14 Nero" [ref=e239]
+                  - generic [aria-hidden]:
+                    - generic: 128GB
+                    - generic: Grado A+
+                - generic [ref=e242]:
+                  - heading "Apple iPhone 14 Nero" [level=3] [ref=e243]
+                  - generic [ref=e244]:
+                    - generic [ref=e245]: € 579,00
+                    - generic [ref=e246]: € 479,00
+                  - link "Richiedi info su Apple iPhone 14 Nero via WhatsApp" [ref=e247] [cursor=pointer]:
+                    - /url: https://wa.me/393483109840?text=Ciao%20Key%20Soft%20Italia!%20%F0%9F%91%8B%0AHo%20visto%20questo%20prodotto%20sul%20sito%20e%20vorrei%20info%3A%0A%0A%E2%80%A2%20Prodotto%3A%20Apple%20iPhone%2014%20Nero%0A%E2%80%A2%20SKU%3A%20IPHONE14%2F128%0A%E2%80%A2%20Prezzo%3A%20%E2%82%AC%20479%2C00%0A%E2%80%A2%20Pagina%3A%20http%3A%2F%2Fkeysoftitalia.test%2Fprodotti.php%3Fsku%3DIPHONE14%252F128%0AGrazie!&utm_source=site&utm_medium=whatsapp&utm_campaign=recond-swiper&utm_content=IPHONE14%2F128
+                    - generic [ref=e248]: 
+                    - text: Acquista
+                  - link "Dettagli Apple iPhone 14 Nero":
+                    - /url: http://keysoftitalia.test/prodotti.php?sku=IPHONE14%2F128
+            - group "NaN / 10" [ref=e249]:
+              - generic [ref=e250]:
+                - generic [ref=e251]:
+                  - generic [ref=e252]: "-20%"
+                  - img "Apple iPhone 13 Nero" [ref=e253]
+                  - generic [aria-hidden]:
+                    - generic: 128GB
+                    - generic: Grado A+
+                - generic [ref=e256]:
+                  - heading "Apple iPhone 13 Nero" [level=3] [ref=e257]
+                  - generic [ref=e258]:
+                    - generic [ref=e259]: € 499,00
+                    - generic [ref=e260]: € 399,00
+                  - link "Richiedi info su Apple iPhone 13 Nero via WhatsApp" [ref=e261] [cursor=pointer]:
+                    - /url: https://wa.me/393483109840?text=Ciao%20Key%20Soft%20Italia!%20%F0%9F%91%8B%0AHo%20visto%20questo%20prodotto%20sul%20sito%20e%20vorrei%20info%3A%0A%0A%E2%80%A2%20Prodotto%3A%20Apple%20iPhone%2013%20Nero%0A%E2%80%A2%20SKU%3A%20IPHONE13%2F128%2FBLACK%0A%E2%80%A2%20Prezzo%3A%20%E2%82%AC%20399%2C00%0A%E2%80%A2%20Pagina%3A%20http%3A%2F%2Fkeysoftitalia.test%2Fprodotti.php%3Fsku%3DIPHONE13%252F128%252FBLACK%0AGrazie!&utm_source=site&utm_medium=whatsapp&utm_campaign=recond-swiper&utm_content=IPHONE13%2F128%2FBLACK
+                    - generic [ref=e262]: 
+                    - text: Acquista
+                  - link "Dettagli Apple iPhone 13 Nero":
+                    - /url: http://keysoftitalia.test/prodotti.php?sku=IPHONE13%2F128%2FBLACK
+            - group "NaN / 10" [ref=e263]:
+              - generic [ref=e264]:
+                - generic [ref=e265]:
+                  - generic [ref=e266]: "-25%"
+                  - img "Samsung Galaxy A16" [ref=e267]
+                  - generic [aria-hidden]:
+                    - generic: 128GB
+                - generic [ref=e269]:
+                  - heading "Samsung Galaxy A16" [level=3] [ref=e270]
+                  - generic [ref=e271]:
+                    - generic [ref=e272]: € 199,00
+                    - generic [ref=e273]: € 149,00
+                  - link "Richiedi info su Samsung Galaxy A16 via WhatsApp" [ref=e274] [cursor=pointer]:
+                    - /url: https://wa.me/393483109840?text=Ciao%20Key%20Soft%20Italia!%20%F0%9F%91%8B%0AHo%20visto%20questo%20prodotto%20sul%20sito%20e%20vorrei%20info%3A%0A%0A%E2%80%A2%20Prodotto%3A%20Samsung%20Galaxy%20A16%0A%E2%80%A2%20SKU%3A%20GALAXYA16%2F128%0A%E2%80%A2%20Prezzo%3A%20%E2%82%AC%20149%2C00%0A%E2%80%A2%20Pagina%3A%20http%3A%2F%2Fkeysoftitalia.test%2Fprodotti.php%3Fsku%3DGALAXYA16%252F128%0AGrazie!&utm_source=site&utm_medium=whatsapp&utm_campaign=recond-swiper&utm_content=GALAXYA16%2F128
+                    - generic [ref=e275]: 
+                    - text: Acquista
+                  - link "Dettagli Samsung Galaxy A16":
+                    - /url: http://keysoftitalia.test/prodotti.php?sku=GALAXYA16%2F128
+            - group "NaN / 10" [ref=e276]:
+              - generic [ref=e277]:
+                - generic [ref=e278]:
+                  - generic [ref=e279]: "-17%"
+                  - img "Apple iPhone 12 Nero" [ref=e280]
+                  - generic [aria-hidden]:
+                    - generic: 128GB
+                    - generic: Grado A+
+                - generic [ref=e283]:
+                  - heading "Apple iPhone 12 Nero" [level=3] [ref=e284]
+                  - generic [ref=e285]:
+                    - generic [ref=e286]: € 419,00
+                    - generic [ref=e287]: € 349,00
+                  - link "Richiedi info su Apple iPhone 12 Nero via WhatsApp" [ref=e288] [cursor=pointer]:
+                    - /url: https://wa.me/393483109840?text=Ciao%20Key%20Soft%20Italia!%20%F0%9F%91%8B%0AHo%20visto%20questo%20prodotto%20sul%20sito%20e%20vorrei%20info%3A%0A%0A%E2%80%A2%20Prodotto%3A%20Apple%20iPhone%2012%20Nero%0A%E2%80%A2%20Prezzo%3A%20%E2%82%AC%20349%2C00%0A%E2%80%A2%20Pagina%3A%20http%3A%2F%2Fkeysoftitalia.test%2Fprodotti.php%3Fsku%3D%0AGrazie!&utm_source=site&utm_medium=whatsapp&utm_campaign=recond-swiper&utm_content=
+                    - generic [ref=e289]: 
+                    - text: Acquista
+                  - link "Dettagli Apple iPhone 12 Nero":
+                    - /url: http://keysoftitalia.test/prodotti.php?sku=
+          - generic [ref=e290]:
+            - button "Go to slide 1" [ref=e291] [cursor=pointer]
+            - button "Go to slide 2" [ref=e292] [cursor=pointer]
+            - button "Go to slide 3" [ref=e293] [cursor=pointer]
+            - button "Go to slide 4" [ref=e294] [cursor=pointer]
+            - button "Go to slide 5" [ref=e295] [cursor=pointer]
+            - button "Go to slide 6" [ref=e296] [cursor=pointer]
+            - button "Go to slide 7" [ref=e297] [cursor=pointer]
+            - button "Go to slide 8" [ref=e298] [cursor=pointer]
+            - button "Go to slide 9" [ref=e299] [cursor=pointer]
+            - button "Go to slide 10" [ref=e300] [cursor=pointer]
+        - link "Scopri tutti i nostri ricondizionati" [ref=e302] [cursor=pointer]:
+          - /url: http://keysoftitalia.test/prodotti.php
+          - text: Scopri tutti i nostri prodotti
+          - generic [ref=e303]: 
+    - region "Perché scegliere noi" [ref=e304]:
+      - generic [ref=e305]:
+        - generic [ref=e306]:
+          - heading "Perché scegliere Key Soft Italia" [level=2] [ref=e307]
+          - paragraph [ref=e308]: "Non solo riparazioni: il nostro valore aggiunto in ogni servizio"
+        - generic [ref=e309]:
+          - generic [ref=e311]:
+            - generic [aria-hidden] [ref=e313]: 
+            - heading "Ricondizionati Certificati" [level=3] [ref=e314]
+            - paragraph [ref=e315]: Ogni dispositivo è testato e garantito 12 mesi, come nuovo.
+          - generic [ref=e317]:
+            - generic [aria-hidden] [ref=e319]: 
+            - heading "Assistenza Continua" [level=3] [ref=e320]
+            - paragraph [ref=e321]: Supporto dedicato anche dopo la vendita, sempre disponibili.
+          - generic [ref=e323]:
+            - generic [aria-hidden] [ref=e325]: 
+            - heading "Consulenza IT & Reti" [level=3] [ref=e326]
+            - paragraph [ref=e327]: Soluzioni su misura per aziende, networking e sicurezza.
+          - generic [ref=e329]:
+            - generic [aria-hidden] [ref=e331]: 
+            - heading "Telefonia & Casa" [level=3] [ref=e332]
+            - paragraph [ref=e333]: "Offerte su SIM, internet, luce e gas: risparmio garantito."
+          - generic [ref=e335]:
+            - generic [aria-hidden] [ref=e337]: 
+            - heading "Innovazione & Sviluppo" [level=3] [ref=e338]
+            - paragraph [ref=e339]: Web, e-commerce e software per far crescere la tua attività.
+          - generic [ref=e341]:
+            - generic [aria-hidden] [ref=e343]: 
+            - heading "Affidabilità dal 2004" [level=3] [ref=e344]
+            - paragraph [ref=e345]: Siamo un punto di riferimento per famiglie e aziende.
+        - link "Scopri di più su Key Soft Italia" [ref=e347] [cursor=pointer]:
+          - /url: http://keysoftitalia.test/chi-siamo.php
+          - text: Scopri di più
+          - generic [ref=e348]: 
+    - region "Azioni rapide" [ref=e349]:
+      - generic [ref=e351]:
+        - generic [ref=e353]:
+          - generic [aria-hidden] [ref=e355]: 
+          - heading "Richiedi Preventivo" [level=3] [ref=e356]
+          - paragraph [ref=e357]: Ottieni un preventivo gratuito per riparazioni, consulenza IT o qualsiasi altro servizio.
+          - link "Richiedi preventivo gratuito" [ref=e358] [cursor=pointer]:
+            - /url: http://keysoftitalia.test/preventivo.php
+            - generic [ref=e359]: 
+            - text: Richiedi ora
+        - generic [ref=e361]:
+          - generic [aria-hidden] [ref=e363]: 
+          - heading "Prenota riparazione" [level=3] [ref=e364]
+          - paragraph [ref=e365]: "Accesso prioritario in laboratorio: scegli giorno e ora, attendi la conferma."
+          - link "Prenota riparazione online" [ref=e366] [cursor=pointer]:
+            - /url: http://keysoftitalia.test/prenota-riparazione.php
+            - generic [ref=e367]: 
+            - text: Prenota ora
+        - generic [ref=e369]:
+          - generic [aria-hidden] [ref=e371]: 
+          - heading "Vendi il tuo usato" [level=3] [ref=e372]
+          - paragraph [ref=e373]: Anche se rotto! Valutiamo e acquistiamo il tuo dispositivo usato al miglior prezzo.
+          - link "Vendi il tuo dispositivo usato" [ref=e374] [cursor=pointer]:
+            - /url: http://keysoftitalia.test/valuta-usato.php
+            - generic [ref=e375]: 
+            - text: Vendi ora
+    - region "I nostri partner" [ref=e376]:
+      - generic [ref=e377]:
+        - generic [ref=e378]:
+          - heading "Partner e Brand Trattati" [level=2] [ref=e379]
+          - paragraph [ref=e380]: Collaboriamo con i migliori marchi per offrirti qualità e affidabilità
+        - generic:
+          - generic:
+            - group "1 / 13":
+              - img "Logo Apple"
+            - group "2 / 13":
+              - img "Logo Samsung"
+            - group "3 / 13":
+              - img "Logo Huawei"
+            - group "4 / 13":
+              - img "Logo Xiaomi"
+            - group "5 / 13":
+              - img "Logo Lenovo"
+            - group "6 / 13":
+              - img "Logo HP"
+            - group "7 / 13":
+              - img "Logo ASUS"
+            - group "8 / 13":
+              - img "Logo Brother"
+            - group "9 / 13":
+              - img "Logo Canon"
+            - group "10 / 13":
+              - img "Logo Acer"
+            - group "11 / 13":
+              - img "Logo Motorola"
+            - group "12 / 13":
+              - img "Logo Realme"
+            - group "13 / 13":
+              - img "Logo TP-Link"
+    - region "Recensioni clienti" [ref=e381]:
+      - generic [ref=e382]:
+        - generic [ref=e383]:
+          - heading "Cosa dicono i nostri clienti" [level=2] [ref=e384]
+          - paragraph [ref=e385]: Recensioni autentiche da Google
+        - generic [ref=e386]:
+          - generic [ref=e387]:
+            - group "1 / 10" [ref=e388]:
+              - article "Recensione di Angela P." [ref=e389]:
+                - generic [ref=e390]:
+                  - generic [ref=e391]: AP
+                  - generic [ref=e392]:
+                    - generic [ref=e393]: Angela P.
+                    - generic "Valutazione 5 stelle su 5" [ref=e394]:
+                      - generic [aria-hidden] [ref=e395]: 
+                      - generic [aria-hidden] [ref=e396]: 
+                      - generic [aria-hidden] [ref=e397]: 
+                      - generic [aria-hidden] [ref=e398]: 
+                      - generic [aria-hidden] [ref=e399]: 
+                - paragraph [ref=e400]: "\"Ragazzi molto disponibili e competenti nel loro lavoro.\""
+            - group "2 / 10" [ref=e401]:
+              - article "Recensione di Johnny P." [ref=e402]:
+                - generic [ref=e403]:
+                  - generic [ref=e404]: JP
+                  - generic [ref=e405]:
+                    - generic [ref=e406]: Johnny P.
+                    - generic "Valutazione 5 stelle su 5" [ref=e407]:
+                      - generic [aria-hidden] [ref=e408]: 
+                      - generic [aria-hidden] [ref=e409]: 
+                      - generic [aria-hidden] [ref=e410]: 
+                      - generic [aria-hidden] [ref=e411]: 
+                      - generic [aria-hidden] [ref=e412]: 
+                - paragraph [ref=e413]: "\"Personale attento alle esigenze del cliente, preparatissimo tecnicamente. Consigliatissimo.\""
+            - group "3 / 10" [ref=e414]:
+              - article "Recensione di Vito R." [ref=e415]:
+                - generic [ref=e416]:
+                  - generic [ref=e417]: VR
+                  - generic [ref=e418]:
+                    - generic [ref=e419]: Vito R.
+                    - generic "Valutazione 4 stelle su 5" [ref=e420]:
+                      - generic [aria-hidden] [ref=e421]: 
+                      - generic [aria-hidden] [ref=e422]: 
+                      - generic [aria-hidden] [ref=e423]: 
+                      - generic [aria-hidden] [ref=e424]: 
+                      - generic [aria-hidden] [ref=e425]: 
+                - paragraph [ref=e426]: "\"Personale cordiale e competente e tutta la tecnologia del momento.\""
+            - group "4 / 10" [ref=e427]:
+              - article "Recensione di Patrizia P." [ref=e428]:
+                - generic [ref=e429]:
+                  - generic [ref=e430]: PP
+                  - generic [ref=e431]:
+                    - generic [ref=e432]: Patrizia P.
+                    - generic "Valutazione 5 stelle su 5" [ref=e433]:
+                      - generic [aria-hidden] [ref=e434]: 
+                      - generic [aria-hidden] [ref=e435]: 
+                      - generic [aria-hidden] [ref=e436]: 
+                      - generic [aria-hidden] [ref=e437]: 
+                      - generic [aria-hidden] [ref=e438]: 
+                - paragraph [ref=e439]: "\"Professionisti sempre pronti ad aiutarci e consigliarti i prodotti migliori.\""
+            - group "5 / 10" [ref=e440]:
+              - article "Recensione di Pietro R." [ref=e441]:
+                - generic [ref=e442]:
+                  - generic [ref=e443]: PR
+                  - generic [ref=e444]:
+                    - generic [ref=e445]: Pietro R.
+                    - generic "Valutazione 5 stelle su 5" [ref=e446]:
+                      - generic [aria-hidden] [ref=e447]: 
+                      - generic [aria-hidden] [ref=e448]: 
+                      - generic [aria-hidden] [ref=e449]: 
+                      - generic [aria-hidden] [ref=e450]: 
+                      - generic [aria-hidden] [ref=e451]: 
+                - paragraph [ref=e452]: "\"Ottimo servizio di vendita e assistenza.\""
+            - group "6 / 10" [ref=e453]:
+              - article "Recensione di Eva L." [ref=e454]:
+                - generic [ref=e455]:
+                  - generic [ref=e456]: EL
+                  - generic [ref=e457]:
+                    - generic [ref=e458]: Eva L.
+                    - generic "Valutazione 5 stelle su 5" [ref=e459]:
+                      - generic [aria-hidden] [ref=e460]: 
+                      - generic [aria-hidden] [ref=e461]: 
+                      - generic [aria-hidden] [ref=e462]: 
+                      - generic [aria-hidden] [ref=e463]: 
+                      - generic [aria-hidden] [ref=e464]: 
+                - paragraph [ref=e465]: "\"Sempre gentili e professionali, molto forniti.\""
+            - group "7 / 10" [ref=e466]:
+              - article "Recensione di Paola P." [ref=e467]:
+                - generic [ref=e468]:
+                  - generic [ref=e469]: PP
+                  - generic [ref=e470]:
+                    - generic [ref=e471]: Paola P.
+                    - generic "Valutazione 5 stelle su 5" [ref=e472]:
+                      - generic [aria-hidden] [ref=e473]: 
+                      - generic [aria-hidden] [ref=e474]: 
+                      - generic [aria-hidden] [ref=e475]: 
+                      - generic [aria-hidden] [ref=e476]: 
+                      - generic [aria-hidden] [ref=e477]: 
+                - paragraph [ref=e478]: "\"Gentilissimi, disponibili e competenti sempre!\""
+            - group "8 / 10" [ref=e479]:
+              - article "Recensione di Lilliana P." [ref=e480]:
+                - generic [ref=e481]:
+                  - generic [ref=e482]: LP
+                  - generic [ref=e483]:
+                    - generic [ref=e484]: Lilliana P.
+                    - generic "Valutazione 4 stelle su 5" [ref=e485]:
+                      - generic [aria-hidden] [ref=e486]: 
+                      - generic [aria-hidden] [ref=e487]: 
+                      - generic [aria-hidden] [ref=e488]: 
+                      - generic [aria-hidden] [ref=e489]: 
+                      - generic [aria-hidden] [ref=e490]: 
+                - paragraph [ref=e491]: "\"Sono molto gentili.\""
+            - group "9 / 10" [ref=e492]:
+              - article "Recensione di Nicola B." [ref=e493]:
+                - generic [ref=e494]:
+                  - generic [ref=e495]: NB
+                  - generic [ref=e496]:
+                    - generic [ref=e497]: Nicola B.
+                    - generic "Valutazione 4 stelle su 5" [ref=e498]:
+                      - generic [aria-hidden] [ref=e499]: 
+                      - generic [aria-hidden] [ref=e500]: 
+                      - generic [aria-hidden] [ref=e501]: 
+                      - generic [aria-hidden] [ref=e502]: 
+                      - generic [aria-hidden] [ref=e503]: 
+                - paragraph [ref=e504]: "\"Professionalità, gentilezza, velocità e servizi top!\""
+            - group "10 / 10" [ref=e505]:
+              - article "Recensione di Erasmo S." [ref=e506]:
+                - generic [ref=e507]:
+                  - generic [ref=e508]: ES
+                  - generic [ref=e509]:
+                    - generic [ref=e510]: Erasmo S.
+                    - generic "Valutazione 5 stelle su 5" [ref=e511]:
+                      - generic [aria-hidden] [ref=e512]: 
+                      - generic [aria-hidden] [ref=e513]: 
+                      - generic [aria-hidden] [ref=e514]: 
+                      - generic [aria-hidden] [ref=e515]: 
+                      - generic [aria-hidden] [ref=e516]: 
+                - paragraph [ref=e517]: "\"Cordialità e competenza al TOP.\""
+          - generic [ref=e518]:
+            - button "Go to slide 1" [ref=e519] [cursor=pointer]
+            - button "Go to slide 2" [ref=e520] [cursor=pointer]
+            - button "Go to slide 3" [ref=e521] [cursor=pointer]
+            - button "Go to slide 4" [ref=e522] [cursor=pointer]
+            - button "Go to slide 5" [ref=e523] [cursor=pointer]
+            - button "Go to slide 6" [ref=e524] [cursor=pointer]
+            - button "Go to slide 7" [ref=e525] [cursor=pointer]
+            - button "Go to slide 8" [ref=e526] [cursor=pointer]
+            - button "Go to slide 9" [ref=e527] [cursor=pointer]
+            - button "Go to slide 10" [ref=e528] [cursor=pointer]
+        - link "Leggi tutte le recensioni su Google" [ref=e530] [cursor=pointer]:
+          - /url: https://www.google.it/maps/place/Key+Soft+Italia
+          - text: Leggi tutte le recensioni su Google
+          - generic [ref=e531]: 
+    - region "Contattaci per assistenza" [ref=e532]:
+      - generic [ref=e533]:
+        - heading "Hai bisogno di assistenza immediata?" [level=2] [ref=e534]
+        - paragraph [ref=e535]: Il nostro team di esperti è pronto ad aiutarti. Contattaci per un supporto rapido e professionale.
+        - generic [ref=e536]:
+          - link "Chiama al numero 099 829 3794" [ref=e537] [cursor=pointer]:
+            - /url: tel:099 829 3794
+            - generic [ref=e538]: 
+            - text: "Chiama ora: 099 829 3794"
+          - link "Contattaci su WhatsApp" [ref=e539] [cursor=pointer]:
+            - /url: https://wa.me/393483109840?text=Ciao+Key+Soft+Italia%2C+ho+bisogno+di+assistenza+immediata%21&utm_source=site&utm_medium=whatsapp&utm_campaign=footer-cta
+            - generic [ref=e540]: 
+            - text: WhatsApp
+  - contentinfo [ref=e541]:
+    - generic [ref=e542]:
+      - generic [ref=e543]:
+        - generic [ref=e545]:
+          - link "Homepage Key Soft Italia" [ref=e546] [cursor=pointer]:
+            - /url: http://keysoftitalia.test/
+            - img "Key Soft Italia" [ref=e547]
+            - generic [ref=e548]:
+              - strong [ref=e549]: Key Soft Italia
+              - text: L'universo della Tecnologia
+          - paragraph [ref=e550]: Il tuo partner tecnologico di fiducia a Ginosa. Vendita, riparazioni, consulenza IT e molto altro. Soluzioni complete per privati e aziende.
+          - generic [ref=e551]:
+            - link " Via Diaz, 46 - 74013 Ginosa (TA)" [ref=e552] [cursor=pointer]:
+              - /url: https://maps.google.com/maps?q=Via+Diaz+46+Ginosa+TA
+              - generic [ref=e553]: 
+              - generic [ref=e554]: Via Diaz, 46 - 74013 Ginosa (TA)
+            - link " 099 829 3794" [ref=e555] [cursor=pointer]:
+              - /url: tel:0998293794
+              - generic [ref=e556]: 
+              - generic [ref=e557]: 099 829 3794
+            - link " info@keysoftitalia.it" [ref=e558] [cursor=pointer]:
+              - /url: mailto:info@keysoftitalia.it
+              - generic [ref=e559]: 
+              - generic [ref=e560]: info@keysoftitalia.it
+            - 'link " WhatsApp: 348 310 9840" [ref=e561] [cursor=pointer]':
+              - /url: https://wa.me/393483109840?text=Ciao+Key+Soft+Italia%21&utm_source=site&utm_medium=whatsapp&utm_campaign=general
+              - generic [ref=e562]: 
+              - generic [ref=e563]: "WhatsApp: 348 310 9840"
+        - generic [ref=e565]:
+          - heading "Link Utili" [level=4] [ref=e566]
+          - generic [ref=e567]:
+            - link " Tutti i Servizi" [ref=e568] [cursor=pointer]:
+              - /url: http://keysoftitalia.test/servizi.php
+              - generic [ref=e569]: 
+              - text: Tutti i Servizi
+            - link " Riparazioni & Assistenza" [ref=e570] [cursor=pointer]:
+              - /url: http://keysoftitalia.test/servizi/riparazioni.php
+              - generic [ref=e571]: 
+              - text: Riparazioni & Assistenza
+            - link " Dispositivi Ricondizionati" [ref=e572] [cursor=pointer]:
+              - /url: http://keysoftitalia.test/prodotti.php
+              - generic [ref=e573]: 
+              - text: Dispositivi Ricondizionati
+            - link " I Nostri Volantini" [ref=e574] [cursor=pointer]:
+              - /url: http://keysoftitalia.test/volantini.php
+              - generic [ref=e575]: 
+              - text: I Nostri Volantini
+            - link " Richiedi Preventivo" [ref=e576] [cursor=pointer]:
+              - /url: http://keysoftitalia.test/preventivo.php
+              - generic [ref=e577]: 
+              - text: Richiedi Preventivo
+            - link " Vendi il tuo Usato" [ref=e578] [cursor=pointer]:
+              - /url: http://keysoftitalia.test/valuta-usato.php
+              - generic [ref=e579]: 
+              - text: Vendi il tuo Usato
+            - link " Richiedi Assistenza" [ref=e580] [cursor=pointer]:
+              - /url: http://keysoftitalia.test/assistenza.php
+              - generic [ref=e581]: 
+              - text: Richiedi Assistenza
+            - link " Domande Frequenti" [ref=e582] [cursor=pointer]:
+              - /url: http://keysoftitalia.test/contatti.php#faq
+              - generic [ref=e583]: 
+              - text: Domande Frequenti
+        - generic [ref=e585]:
+          - heading "Seguici" [level=4] [ref=e586]
+          - generic [ref=e587]:
+            - link "Facebook" [ref=e588] [cursor=pointer]:
+              - /url: https://www.facebook.com/keysoftitalia
+              - generic [ref=e589]: 
+            - link "Instagram" [ref=e590] [cursor=pointer]:
+              - /url: https://www.instagram.com/keysoftitalia
+              - generic [ref=e591]: 
+            - link "YouTube" [ref=e592] [cursor=pointer]:
+              - /url: https://www.youtube.com/keysoftitalia
+              - generic [ref=e593]: 
+            - link "TikTok" [ref=e594] [cursor=pointer]:
+              - /url: https://www.tiktok.com/@keysoftitalia
+              - generic [ref=e595]: 
+          - generic [ref=e597]:
+            - heading "Orari di Apertura" [level=4] [ref=e598]:
+              - generic [aria-hidden] [ref=e599]: 
+              - text: Orari di Apertura
+            - generic [ref=e600]:
+              - generic [ref=e601]:
+                - generic [aria-hidden] [ref=e602]: 
+                - text: Chiusi
+              - generic [ref=e603]: Riapre alle 17:00 (tra 3h 55m)
+            - generic [ref=e604]:
+              - generic [ref=e605]:
+                - generic [ref=e606]: Lun–Mer, Ven–Sab
+                - strong [ref=e608]: 09:00 - 13:00 / 17:00 - 20:30
+              - generic [ref=e609]:
+                - generic [ref=e610]: Gio
+                - strong [ref=e612]: 09:00 - 13:00
+              - generic [ref=e613]:
+                - generic [ref=e614]: Dom
+                - strong [ref=e616]:
+                  - strong [ref=e618]: Chiuso
+      - generic [ref=e619]:
+        - generic [ref=e620]: © 2026 Key Soft Italia. Tutti i diritti riservati.
+        - generic [ref=e621]:
+          - link "Privacy Policy" [ref=e622] [cursor=pointer]:
+            - /url: http://keysoftitalia.test/privacy.php?tab=privacy
+          - link "Termini di Servizio" [ref=e623] [cursor=pointer]:
+            - /url: http://keysoftitalia.test/privacy.php?tab=terms
+          - link "Cookie Policy" [ref=e624] [cursor=pointer]:
+            - /url: http://keysoftitalia.test/privacy.php?tab=cookies
+          - link "Preferenze cookie" [ref=e625] [cursor=pointer]:
+            - /url: "#"
+          - link "Amministrazione" [ref=e626] [cursor=pointer]:
+            - /url: http://keysoftitalia.test/admin
+  - link "Contattaci su WhatsApp" [ref=e627] [cursor=pointer]:
+    - /url: https://wa.me/393483109840?text=Ciao+Key+Soft+Italia%2C+ho+bisogno+di+assistenza%21&utm_source=site&utm_medium=whatsapp&utm_campaign=general
+    - generic [ref=e628]: 
+  - text: 
+  - generic [ref=e632]:
+    - generic [ref=e633]:
+      - strong [ref=e634]:
+        - generic [ref=e635]: 
+        - text: Questo sito usa solo statistiche anonime (GA4 con Consent Mode)
+      - generic [ref=e636]:
+        - text: Per migliorare i contenuti usiamo Google Analytics in modalità rispettosa della privacy. Puoi accettare o rifiutare le statistiche anonime. Nessuna pubblicità personalizzata.
+        - link "Leggi la Privacy Policy" [ref=e637] [cursor=pointer]:
+          - /url: http://keysoftitalia.test/privacy.php
+        - text: .
+    - generic [ref=e638]:
+      - button "Rifiuta" [ref=e639] [cursor=pointer]
+      - button "Accetta" [ref=e640] [cursor=pointer]

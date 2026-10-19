@@ -33,10 +33,11 @@ $breadcrumbs = [
     <!-- CSS di pagina -->
     <link rel="stylesheet" href="<?php echo asset_version('css/pages/liberty-commerce.css'); ?>">
 </head>
-<body>
+<body class="site-aligned">
     
     <!-- Header -->
     <?php include '../includes/header.php'; ?>
+<main id="main-content">
     
     <!-- Hero Section -->
     <section class="hero hero-secondary text-center">
@@ -293,7 +294,8 @@ $breadcrumbs = [
     </section>
 
     <!-- Footer -->
-    <?php include '../includes/footer.php'; ?>
+    </main>
+<?php include '../includes/footer.php'; ?>
 
     <script>
     document.addEventListener('DOMContentLoaded', function() {

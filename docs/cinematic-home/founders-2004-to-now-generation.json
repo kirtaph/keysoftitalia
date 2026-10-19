@@ -1,0 +1,60 @@
+{
+  "date": "2026-10-16",
+  "model": "kling_o3_flf",
+  "estimatedCredits": 12.5,
+  "shots": [
+    {
+      "id": "0ab19942-07a9-48cb-b91d-6f814ab0a825",
+      "name": "2004",
+      "params": {
+        "model": "kling_o3_flf",
+        "aspect_ratio": "16:9",
+        "duration": 5,
+        "mode": "pro",
+        "sound": "off",
+        "count": 1,
+        "medias": [
+          {
+            "role": "start_image",
+            "value": "6864aab6-bd86-4f09-9991-966dc43cf00b"
+          }
+        ],
+        "prompt": "Animate the supplied photographic composition as a restrained premium documentary memory shot for a website. This is a REAL photograph: strictly preserve every person's identity, face, expression, age, glasses, hair, clothing, body proportions, number and position. Keep exactly THREE people. The people remain posed as in the photograph, with no gestures, no talking, no walking, no turning heads, no changing smiles. Introduce only an extremely subtle cinematic camera dolly backward of about 2 percent over the entire five seconds, with gentle depth separation; preserve the original camera angle and perspective. The whole group stays in the right half, with the left 40 percent uninterrupted empty graphite #101114 for HTML text. The lower edge stays softly dissolved into the graphite. Calm photographic realism, a living still photograph. No invented body parts, no feet beyond the existing crop, no extra people, no aging or de-aging, no face morphing, no environment, no camera orbit, no zoom burst, no abrupt movement, no particles, no text, no dates, no numbers, no logo, no watermark, no artificial colored lights. Start from the exact provided frame, slowly ease into a still ending. Preserve the archival clothing and photographic colors. Color grading and a transition to the present will be added later, so generate this shot in the original natural color."
+      }
+    },
+    {
+      "id": "ed60f16a-8ce7-4e45-8b47-cfca739be079",
+      "name": "now",
+      "params": {
+        "model": "kling_o3_flf",
+        "aspect_ratio": "16:9",
+        "duration": 5,
+        "mode": "pro",
+        "sound": "off",
+        "count": 1,
+        "medias": [
+          {
+            "role": "start_image",
+            "value": "4a96ebf1-41e8-4ec1-a42f-01a8ff7a5b58"
+          }
+        ],
+        "prompt": "Animate the supplied photographic composition as a restrained premium documentary memory shot for a website. This is a REAL photograph: strictly preserve every person's identity, face, expression, age, glasses, hair, clothing, body proportions, number and position. Keep exactly THREE people. The people remain posed as in the photograph, with no gestures, no talking, no walking, no turning heads, no changing smiles. Introduce only an extremely subtle cinematic camera dolly backward of about 2 percent over the entire five seconds, with gentle depth separation; preserve the original camera angle and perspective. The whole group stays in the right half, with the left 40 percent uninterrupted empty graphite #101114 for HTML text. The lower edge stays softly dissolved into the graphite. Calm photographic realism, a living still photograph. No invented body parts, no feet beyond the existing crop, no extra people, no aging or de-aging, no face morphing, no environment, no camera orbit, no zoom burst, no abrupt movement, no particles, no text, no dates, no numbers, no logo, no watermark, no artificial colored lights. Start from the exact provided frame, slowly ease into a still ending. Preserve the friendly contemporary group portrait, the white sweater on the left, black shirt in the middle and dark teal sweater on the right. This is the present-day final composition."
+      }
+    }
+  ],
+  "assembly": {
+    "fps": 24,
+    "width": 1920,
+    "height": 1080,
+    "duration": 9,
+    "dissolve": {
+      "start": 4,
+      "duration": 1
+    },
+    "colorReturn": {
+      "start": 0.5,
+      "duration": 2.5
+    },
+    "text": "Years and ORA remain HTML overlays; not burned into the video."
+  }
+}

@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-10-05T17:49:45.469805+00:00",
+  "generatedAt": "2026-10-17T09:51:29.543Z",
   "title": "Design System: Key Soft Italia",
   "extensions": {
     "colorMeta": {
@@ -84,6 +84,25 @@
           "#76320f",
           "#6d4c3b"
         ]
+      },
+      "home-spatial": {
+        "role": "neutral",
+        "displayName": "Spatial showroom",
+        "canonical": "#101114",
+        "tonalRamp": [
+          "#101114",
+          "#17191e",
+          "#191b20",
+          "#1d1f24",
+          "#202228",
+          "#282a30",
+          "#292226",
+          "#393c44",
+          "#51545e",
+          "#bfc2c9",
+          "#eeeef0",
+          "#f8f8fa"
+        ]
       }
     },
     "typographyMeta": {
@@ -151,7 +170,129 @@
         "name": "xl",
         "value": "1200px"
       }
-    ]
+    ],
+    "homeSpatialMotion": {
+      "direction": "Visible WebGL devices, three layouts and exploded repair view",
+      "accessibility": "Pause, static reduced-motion rendering, keyboard scene controls, photographic fallback",
+      "budget": "DPR capped at 1.65; stop offscreen and on hidden document",
+      "typography": "TECH is decorative, aria-hidden, intentionally 100–210px"
+    },
+    "homeCinematicMotion": {
+      "source": "User supplied storyboard.mp4; illustrative repair film",
+      "durationSeconds": 10,
+      "fps": 24,
+      "frames": 240,
+      "activeScrollVh": 5.5,
+      "cacheFrames": 18,
+      "concurrentRequests": 4,
+      "accessibility": "Native reversible scrolling, inert inactive chapters, skip to services, flowing reduced-motion and failed-media layout",
+      "framing": "Desktop macro uses a copy scrim; mobile reserves image space below HTML"
+    },
+    "homeContinuum": {
+      "productFallback": "Database model name for empty title; compact explicit missing photo",
+      "action": "#ff6b35",
+      "accent": "#ff976f",
+      "motion": "180ms focus and hover preview; reduced motion disables",
+      "ink": "#f8f8fa",
+      "layout": "Open service rows, dark catalogue, wide video, documentary story, contact invitation",
+      "surfaces": [
+        "#101114",
+        "#17191e",
+        "#202228"
+      ],
+      "secondary": "#bfc2c9"
+    },
+    "cinematicStory": {
+      "transition": "Black joins for clips 02/03; matching frames into clips 04/05; editorial transition to authentic photo",
+      "activeViewportHeights": 14.5,
+      "frameCount": 1008,
+      "fallback": "Readable HTML chapters and final posters",
+      "chapters": [
+        "Repair",
+        "Choose",
+        "Create",
+        "Perspective",
+        "Live selection",
+        "Macro approach",
+        "People"
+      ],
+      "mobileComposition": {
+        "image": "Full-stage cover with adaptive horizontal focus",
+        "text": "HTML overlay with scroll-driven vertical contrast gradient",
+        "transition": "Gradient removed during text-free motion"
+      }
+    },
+    "documentaryContinuation": {
+      "reducedMotion": "Ordinary static flow",
+      "mobileChapterHeight": "Included in main timeline",
+      "sequence": [
+        "Photo in main cinematic stage",
+        "Compact service links and on-demand video",
+        "FAQ",
+        "Contact"
+      ],
+      "photograph": "assets/img/about-story.webp",
+      "desktopChapterHeight": "Included in main timeline",
+      "motion": "Native reversible opposed text/photo entrances within main film stage",
+      "shortViewport": "Below 740px on phones: photograph max width 260px"
+    },
+    "cinematicContinuationProduction": {
+      "status": "desktop-continuation-integrated",
+      "brief": "docs/cinematic-home/next-chapters-prompts.md",
+      "plannedClips": [],
+      "existingRemainder": "compact-closing-content",
+      "implementedLateralMotion": {
+        "cinematicCopyDesktopPx": 80,
+        "cinematicCopyMobilePx": 24,
+        "documentaryPhotoDesktopPx": 100,
+        "documentaryPhotoMobilePx": 20
+      },
+      "liveCatalogue": "HTML selection within fourth cinematic chapter",
+      "mobileSource": "Landscape footage with adaptive framing; dedicated portrait source not produced"
+    },
+    "cinematicWelcome": {
+      "status": "active chapters one and two v2",
+      "reference": "docs/cinematic-home/chapter-02-v2-implementation.md",
+      "activeViewportHeights": 6.4,
+      "desktopOpeningCrop": "top, tracks towards notebook through frame 144",
+      "mobileCrop": "centered portrait",
+      "screenAssistance": "chapter two: manually calibrated projective HTML plane, three scroll-driven method stages; actual painted frame synchronization; cleared before final frame; hidden and inert illustration; mobile compact copy; reduced-motion bypass",
+      "resize": "synchronous repaint after buffer resize; poster retained behind canvas",
+      "copy": "La tua tecnologia, in buone mani. Then: Il tuo computer, di nuovo al tuo fianco. Both CTAs: Richiedi un preventivo. Scroll: Scorri per continuare.",
+      "palette": "existing design tokens",
+      "initialEntryProgress": 0.08,
+      "entryPolicy": "fresh unanchored visits; preserve reload, back-forward and anchors; static reduced motion",
+      "colorStrategy": "restrained; existing brand palette against amber film",
+      "colors": {
+        "text": "#fffaf7",
+        "detail": "#ffe5db",
+        "accent": "#ff976f",
+        "action": "#ff6b35",
+        "actionText": "#17191e"
+      },
+      "controls": "opaque skip surface; return-to-top hidden and inert during story, restored afterwards",
+      "loading": "early boot spinner until first frame, bounded font wait and initial scroll settle; 8s watchdog; static fallback on failure; bypass for no JS and reduced motion"
+    },
+    "publicSite": {
+      "updated": "2026-10-17",
+      "scope": "body.site-aligned",
+      "stylesheet": "assets/css/site-alignment.css",
+      "surface": "#101114",
+      "panel": "#191b20",
+      "raised": "#202228",
+      "text": "#f8f8fa",
+      "muted": "#bfc2c9",
+      "accent": "#ff976f",
+      "action": "#ff6b35",
+      "onAction": "#17191e",
+      "border": "#393c44",
+      "radius": "4px",
+      "headingFont": "Poppins",
+      "bodyFont": "Inter",
+      "documentation": "docs/site-alignment-2026-10-17.md",
+      "motion": "Native document scroll; static readable hero; reduced-motion support",
+      "dependencies": "Local Bootstrap 5.3.2, Swiper 11.2.10, Remix Icon 4.0.0, WOFF2 Inter/Poppins"
+    }
   },
   "components": [
     {

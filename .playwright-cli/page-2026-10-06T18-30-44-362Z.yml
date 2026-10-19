@@ -1,0 +1,417 @@
+- generic [active] [ref=f20e1]:
+  - link "Vai al contenuto principale" [ref=f20e2] [cursor=pointer]:
+    - /url: "#main-content"
+  - text:    
+  - banner [ref=f20e3]:
+    - generic [ref=f20e6]:
+      - link "Key Soft Italia Key Soft Italia L'universo della Tecnologia" [ref=f20e7] [cursor=pointer]:
+        - /url: http://keysoftitalia.test/
+        - img "Key Soft Italia" [ref=f20e9]
+        - generic [ref=f20e10]:
+          - generic [ref=f20e11]: Key Soft Italia
+          - generic [ref=f20e12]: L'universo della Tecnologia
+      - text:         
+      - button "Apri menu" [ref=f20e13] [cursor=pointer]
+  - dialog [aria-hidden] [ref=f20e17]:
+    - generic [ref=f20e18]:
+      - generic [ref=f20e19]: Key Soft Italia
+      - button [ref=f20e24] [cursor=pointer]:
+        - generic [ref=f20e25]: 
+    - generic [ref=f20e26]:
+      - list [ref=f20e27]:
+        - listitem [ref=f20e28]:
+          - link [ref=f20e29] [cursor=pointer]:
+            - /url: http://keysoftitalia.test/prodotti.php
+            - generic [ref=f20e30]: 
+            - text: Prodotti
+        - listitem [ref=f20e31]:
+          - link [ref=f20e32] [cursor=pointer]:
+            - /url: http://keysoftitalia.test/servizi.php
+            - generic [ref=f20e33]: 
+            - text: Servizi
+          - generic [ref=f20e34]:
+            - link [ref=f20e35] [cursor=pointer]:
+              - /url: http://keysoftitalia.test/servizi/vendita.php
+              - generic [ref=f20e36]: 
+              - text: Vendita al Dettaglio
+            - link [ref=f20e37] [cursor=pointer]:
+              - /url: http://keysoftitalia.test/servizi/telefonia.php
+              - generic [ref=f20e38]: 
+              - text: Telefonia Fissa e Mobile
+            - link [ref=f20e39] [cursor=pointer]:
+              - /url: http://keysoftitalia.test/servizi/forniture.php
+              - generic [ref=f20e40]: 
+              - text: Forniture Domestiche
+            - link [ref=f20e41] [cursor=pointer]:
+              - /url: http://keysoftitalia.test/servizi/sviluppo-web.php
+              - generic [ref=f20e42]: 
+              - text: Sviluppo Web e App
+            - link [ref=f20e43] [cursor=pointer]:
+              - /url: http://keysoftitalia.test/servizi/liberty-commerce.php
+              - generic [ref=f20e44]: 
+              - text: Liberty Commerce
+        - listitem [ref=f20e45]:
+          - link [ref=f20e46] [cursor=pointer]:
+            - /url: http://keysoftitalia.test/servizi/riparazioni.php
+            - generic [ref=f20e47]: 
+            - text: Laboratorio
+        - listitem [ref=f20e48]:
+          - link [ref=f20e49] [cursor=pointer]:
+            - /url: http://keysoftitalia.test/video.php
+            - generic [ref=f20e50]: 
+            - text: Video
+        - listitem [ref=f20e51]:
+          - link [ref=f20e52] [cursor=pointer]:
+            - /url: http://keysoftitalia.test/chi-siamo.php
+            - generic [ref=f20e53]: 
+            - text: Chi Siamo
+        - listitem [ref=f20e54]:
+          - link [ref=f20e55] [cursor=pointer]:
+            - /url: http://keysoftitalia.test/contatti.php
+            - generic [ref=f20e56]: 
+            - text: Contatti
+      - generic [ref=f20e57]:
+        - link [ref=f20e58] [cursor=pointer]:
+          - /url: http://keysoftitalia.test/assistenza.php
+          - generic [ref=f20e59]: 
+          - text: Richiedi Assistenza
+        - link [ref=f20e60] [cursor=pointer]:
+          - /url: http://keysoftitalia.test/prenota-riparazione.php
+          - generic [ref=f20e61]: 
+          - text: Nuova Riparazione
+      - generic [ref=f20e62]:
+        - link [ref=f20e63] [cursor=pointer]:
+          - /url: tel:0998293794
+          - generic [ref=f20e64]: 
+        - link [ref=f20e65] [cursor=pointer]:
+          - /url: https://wa.me/393483109840?text=Ciao+Key+Soft+Italia%21&utm_source=site&utm_medium=whatsapp&utm_campaign=general
+          - generic [ref=f20e66]: 
+        - link [ref=f20e67] [cursor=pointer]:
+          - /url: mailto:info@keysoftitalia.it
+          - generic [ref=f20e68]: 
+  - main [ref=f20e69]:
+    - region "Dal guasto, alla tua prossima possibilità" [ref=f20e70]:
+      - generic [ref=f20e71]:
+        - img "Uno smartphone con vetro incrinato, protagonista di un film illustrativo sui nostri servizi" [ref=f20e72]
+        - generic [ref=f20e73]:
+          - generic [ref=f20e74]:
+            - paragraph [ref=f20e75]: Key Soft Italia · Ginosa, dal 2004
+            - heading "La tua tecnologia merita un'altra possibilità." [level=1] [ref=f20e77]
+            - paragraph [ref=f20e78]: "Smartphone e computer: riparazioni, assistenza e dispositivi ricondizionati. A Ginosa, vicino a te."
+            - generic [ref=f20e79]:
+              - link "Richiedi una riparazione" [ref=f20e80] [cursor=pointer]:
+                - /url: http://keysoftitalia.test/prenota-riparazione.php
+                - text: Richiedi una riparazione
+                - generic [aria-hidden] [ref=f20e81]: 
+              - link "Esplora i prodotti" [ref=f20e82] [cursor=pointer]:
+                - /url: http://keysoftitalia.test/prodotti.php
+                - text: Esplora i prodotti
+                - generic [aria-hidden] [ref=f20e83]: 
+          - generic [ref=f20e84]:
+            - paragraph [ref=f20e85]: Il laboratorio
+            - heading "Dentro ogni soluzione, c'è cura." [level=2] [ref=f20e86]
+            - paragraph [ref=f20e87]: Diagnosi e assistenza per trovare la strada giusta per il tuo dispositivo. Con competenza e qualcuno che ti ascolta.
+            - link "Scopri il laboratorio" [ref=f20e88] [cursor=pointer]:
+              - /url: http://keysoftitalia.test/servizi/riparazioni.php
+              - text: Scopri il laboratorio
+              - generic [aria-hidden] [ref=f20e89]: 
+          - generic [ref=f20e90]:
+            - paragraph [ref=f20e91]: Una nuova prospettiva
+            - heading "Pronto per quello che viene dopo." [level=2] [ref=f20e92]
+            - paragraph [ref=f20e93]: Ripara il tuo dispositivo o scegli il prossimo, nuovo o ricondizionato. Ti aiutiamo a trovare quello giusto per te.
+            - link "Esplora il catalogo" [ref=f20e94] [cursor=pointer]:
+              - /url: http://keysoftitalia.test/prodotti.php
+              - text: Esplora il catalogo
+              - generic [aria-hidden] [ref=f20e95]: 
+          - generic [ref=f20e96]:
+            - paragraph [ref=f20e97]: Scegliere, con noi
+            - heading "La prossima possibilità è tua." [level=2] [ref=f20e98]
+            - paragraph [ref=f20e99]: Nuovo o ricondizionato. Il dispositivo giusto per le tue esigenze, con consigli chiari e assistenza anche dopo l'acquisto.
+            - generic [ref=f20e100]:
+              - link "Scopri il catalogo" [ref=f20e101] [cursor=pointer]:
+                - /url: http://keysoftitalia.test/prodotti.php
+                - text: Scopri il catalogo
+                - generic [aria-hidden] [ref=f20e102]: 
+              - link "Valuta il tuo usato" [ref=f20e103] [cursor=pointer]:
+                - /url: http://keysoftitalia.test/valuta-usato.php
+                - text: Valuta il tuo usato
+                - generic [aria-hidden] [ref=f20e104]: 
+          - paragraph [ref=f20e105]: "Film illustrativi: dalla riparazione alla scelta del prossimo dispositivo."
+        - text: 
+    - generic [ref=f20e106]:
+      - region [ref=f20e107]:
+        - generic [ref=f20e108]:
+          - paragraph [ref=f20e109]: Il tuo mondo tech, con noi
+          - heading "Qualunque sia il punto di partenza." [level=2] [ref=f20e110]: Qualunque siail punto di partenza.
+          - paragraph [ref=f20e111]: Una riparazione, il prossimo dispositivo, un progetto per la tua attività. Partiamo da quello che ti serve.
+        - generic [ref=f20e112]:
+          - generic [ref=f20e113]:
+            - link [ref=f20e114] [cursor=pointer]:
+              - /url: http://keysoftitalia.test/servizi/riparazioni.php
+              - generic [ref=f20e115]:
+                - heading "Riparare." [level=3] [ref=f20e116]
+                - paragraph [ref=f20e117]: Smartphone, tablet e computer. Diagnosi e assistenza, con qualcuno che ti ascolta.
+              - generic [aria-hidden] [ref=f20e118]: 
+            - link [ref=f20e119] [cursor=pointer]:
+              - /url: http://keysoftitalia.test/prodotti.php
+              - generic [ref=f20e120]:
+                - heading "Scegliere." [level=3] [ref=f20e121]
+                - paragraph [ref=f20e122]: Nuovo o ricondizionato. Il dispositivo giusto per le tue esigenze, con assistenza anche dopo l'acquisto.
+              - generic [aria-hidden] [ref=f20e123]: 
+            - link [ref=f20e124] [cursor=pointer]:
+              - /url: http://keysoftitalia.test/servizi/sviluppo-web.php
+              - generic [ref=f20e125]:
+                - heading "Creare." [level=3] [ref=f20e126]
+                - paragraph [ref=f20e127]: Siti web, software e consulenza IT. Tecnologia che lavora insieme alla tua attività.
+              - generic [aria-hidden] [ref=f20e128]: 
+          - figure "Competenza, dentro ogni dettaglio." [ref=f20e129]:
+            - img "Dettaglio illustrativo dei componenti di uno smartphone" [ref=f20e130]
+        - navigation "Altri servizi" [ref=f20e132]:
+          - generic [ref=f20e133]: E c'è molto altro.
+          - link "Telefonia ↗" [ref=f20e134] [cursor=pointer]:
+            - /url: http://keysoftitalia.test/servizi/telefonia.php
+          - link "Luce e gas ↗" [ref=f20e135] [cursor=pointer]:
+            - /url: http://keysoftitalia.test/servizi/forniture.php
+          - link "Gestionali ↗" [ref=f20e136] [cursor=pointer]:
+            - /url: http://keysoftitalia.test/servizi/liberty-commerce.php
+          - link "Tutti i servizi ↗" [ref=f20e137] [cursor=pointer]:
+            - /url: http://keysoftitalia.test/servizi.php
+      - region [ref=f20e138]:
+        - generic [ref=f20e139]:
+          - generic [ref=f20e140]:
+            - generic [ref=f20e141]:
+              - paragraph [ref=f20e142]: La selezione del negozio
+              - heading "Il prossimo è qui." [level=2] [ref=f20e143]: Il prossimoè qui.
+            - generic [ref=f20e144]:
+              - paragraph [ref=f20e145]: Dispositivi nuovi e ricondizionati. Consigli chiari, la possibilità di scegliere bene e di usare a lungo.
+              - link "Esplora tutto il catalogo" [ref=f20e146] [cursor=pointer]:
+                - /url: http://keysoftitalia.test/prodotti.php
+                - text: Esplora tutto il catalogo
+                - generic [aria-hidden] [ref=f20e147]: 
+          - generic [ref=f20e148]:
+            - link "Foto in aggiornamento Key Soft OEM Power Bank 50.000mAh € 69,90" [ref=f20e149] [cursor=pointer]:
+              - /url: http://keysoftitalia.test/prodotti.php?sku=PB50K
+              - generic [ref=f20e150]:
+                - generic [ref=f20e151]:
+                  - generic [aria-hidden] [ref=f20e152]: 
+                  - generic [ref=f20e153]: Foto in aggiornamento
+                - generic [aria-hidden] [ref=f20e154]: ↗
+              - generic [ref=f20e155]:
+                - paragraph [ref=f20e156]: Key Soft OEM
+                - heading "Power Bank 50.000mAh" [level=3] [ref=f20e157]
+                - strong [ref=f20e158]: € 69,90
+            - link "Foto in aggiornamento A HP HP 255 G6 Ricondizionato Grado A € 249,00" [ref=f20e159] [cursor=pointer]:
+              - /url: http://keysoftitalia.test/prodotti.php?sku=RIC0231
+              - generic [ref=f20e160]:
+                - generic [ref=f20e161]:
+                  - generic [aria-hidden] [ref=f20e162]: 
+                  - generic [ref=f20e163]: Foto in aggiornamento
+                - generic [ref=f20e164]: A
+                - generic [aria-hidden] [ref=f20e165]: ↗
+              - generic [ref=f20e166]:
+                - paragraph [ref=f20e167]: HP
+                - heading "HP 255 G6 Ricondizionato Grado A" [level=3] [ref=f20e168]
+                - strong [ref=f20e169]: € 249,00
+            - link "Foto in aggiornamento A+ Huawei Huawei P Smart 2019 Ricondizionato Grado A+ € 99,00" [ref=f20e170] [cursor=pointer]:
+              - /url: http://keysoftitalia.test/prodotti.php?sku=RIC0220
+              - generic [ref=f20e171]:
+                - generic [ref=f20e172]:
+                  - generic [aria-hidden] [ref=f20e173]: 
+                  - generic [ref=f20e174]: Foto in aggiornamento
+                - generic [ref=f20e175]: A+
+                - generic [aria-hidden] [ref=f20e176]: ↗
+              - generic [ref=f20e177]:
+                - paragraph [ref=f20e178]: Huawei
+                - heading "Huawei P Smart 2019 Ricondizionato Grado A+" [level=3] [ref=f20e179]
+                - strong [ref=f20e180]: € 99,00
+            - link "Foto in aggiornamento Blow Video Proiettore € 149,00" [ref=f20e181] [cursor=pointer]:
+              - /url: http://keysoftitalia.test/prodotti.php?sku=BLOWHD
+              - generic [ref=f20e182]:
+                - generic [ref=f20e183]:
+                  - generic [aria-hidden] [ref=f20e184]: 
+                  - generic [ref=f20e185]: Foto in aggiornamento
+                - generic [aria-hidden] [ref=f20e186]: ↗
+              - generic [ref=f20e187]:
+                - paragraph [ref=f20e188]: Blow
+                - heading "Video Proiettore" [level=3] [ref=f20e189]
+                - strong [ref=f20e190]: € 149,00
+          - link [ref=f20e191] [cursor=pointer]:
+            - /url: http://keysoftitalia.test/valuta-usato.php
+            - generic [ref=f20e192]:
+              - text: Hai già un dispositivo?
+              - heading "Facciamo il punto sul tuo usato." [level=3] [ref=f20e193]
+            - generic [ref=f20e194]:
+              - text: Richiedi una valutazione
+              - generic [aria-hidden] [ref=f20e195]: 
+      - region [ref=f20e196]:
+        - generic [ref=f20e197]:
+          - generic [ref=f20e198]:
+            - paragraph [ref=f20e199]: Dal nostro mondo
+            - heading "Guardiamola da vicino." [level=2] [ref=f20e200]: Guardiamolada vicino.
+          - link "Tutti i nostri video ↗" [ref=f20e201] [cursor=pointer]:
+            - /url: http://keysoftitalia.test/video.php
+        - 'button "Guarda il video: Microsoft Surface Pro" [ref=f20e202] [cursor=pointer]':
+          - generic [ref=f20e203]:
+            - generic [ref=f20e205]: 
+            - generic [ref=f20e206]: Guarda il video
+        - generic [ref=f20e207]:
+          - heading "Microsoft Surface Pro" [level=3] [ref=f20e208]
+          - generic [ref=f20e209]: Novità e consigli, raccontati da noi.
+      - region [ref=f20e210]:
+        - generic [ref=f20e211]:
+          - generic [ref=f20e212]:
+            - paragraph [ref=f20e213]: Key Soft Italia · Ginosa
+            - heading "Qui, dal 2004." [level=2] [ref=f20e214]: Qui, dal2004.
+            - paragraph [ref=f20e215]: La tecnologia cambia. Il valore di avere qualcuno a cui affidarsi, resta.
+            - paragraph [ref=f20e216]: A Ginosa aiutiamo persone e attività a vivere meglio la tecnologia. Ascoltiamo, consigliamo, ripariamo. Dietro il nostro banco ci siamo noi.
+            - link "Conosci la nostra storia ↗" [ref=f20e217] [cursor=pointer]:
+              - /url: http://keysoftitalia.test/chi-siamo.php
+          - figure "Una storia di persone, prima che di dispositivi." [ref=f20e218]:
+            - img "Una fotografia dalla storia di Key Soft Italia" [ref=f20e219]
+      - region [ref=f20e221]:
+        - generic [ref=f20e222]:
+          - paragraph [ref=f20e223]: Prima di cominciare
+          - heading "Idee chiare." [level=2] [ref=f20e224]: Ideechiare.
+        - generic [ref=f20e225]:
+          - group [ref=f20e226]:
+            - generic "Come richiedo una riparazione? +" [ref=f20e227] [cursor=pointer]
+          - group [ref=f20e228]:
+            - generic "Posso conoscere il costo prima di procedere? +" [ref=f20e229] [cursor=pointer]
+          - group [ref=f20e230]:
+            - generic "Posso far valutare il mio usato? +" [ref=f20e231] [cursor=pointer]
+      - region [ref=f20e232]:
+        - generic [ref=f20e233]:
+          - paragraph [ref=f20e234]: Dal sito, alle persone.
+          - heading "Il prossimo passo? Parliamone." [level=2] [ref=f20e235]: Il prossimo passo?Parliamone.
+          - generic [ref=f20e236]:
+            - generic [ref=f20e237]:
+              - paragraph [ref=f20e238]: Passa a trovarci.
+              - link "Via Diaz, 46 Ginosa" [ref=f20e239] [cursor=pointer]:
+                - /url: https://maps.google.com/maps?q=Via+Diaz+46+Ginosa+TA
+                - text: Via Diaz, 46Ginosa
+                - generic [aria-hidden] [ref=f20e240]: 
+            - generic [ref=f20e241]:
+              - link "Scrivici su WhatsApp" [ref=f20e242] [cursor=pointer]:
+                - /url: https://wa.me/393483109840?text=Ciao+Key+Soft+Italia%21+Vorrei+parlare+con+voi.&utm_source=site&utm_medium=whatsapp&utm_campaign=home-contact
+                - text: Scrivici su WhatsApp
+                - generic [aria-hidden] [ref=f20e243]: 
+              - 'link "Oppure chiamaci: 099 829 3794 ↗" [ref=f20e244] [cursor=pointer]':
+                - /url: tel:0998293794
+              - link "Contatti e indicazioni ↗" [ref=f20e245] [cursor=pointer]:
+                - /url: http://keysoftitalia.test/contatti.php
+  - text: 
+  - contentinfo [ref=f20e246]:
+    - generic [ref=f20e247]:
+      - generic [ref=f20e248]:
+        - generic [ref=f20e250]:
+          - link "Homepage Key Soft Italia" [ref=f20e251] [cursor=pointer]:
+            - /url: http://keysoftitalia.test/
+            - img "Key Soft Italia" [ref=f20e252]
+            - generic [ref=f20e253]:
+              - strong [ref=f20e254]: Key Soft Italia
+              - text: L'universo della Tecnologia
+          - paragraph [ref=f20e255]: Il tuo partner tecnologico di fiducia a Ginosa. Vendita, riparazioni, consulenza IT e molto altro. Soluzioni complete per privati e aziende.
+          - generic [ref=f20e256]:
+            - link " Via Diaz, 46 - 74013 Ginosa (TA)" [ref=f20e257] [cursor=pointer]:
+              - /url: https://maps.google.com/maps?q=Via+Diaz+46+Ginosa+TA
+              - generic [ref=f20e258]: 
+              - generic [ref=f20e259]: Via Diaz, 46 - 74013 Ginosa (TA)
+            - link " 099 829 3794" [ref=f20e260] [cursor=pointer]:
+              - /url: tel:0998293794
+              - generic [ref=f20e261]: 
+              - generic [ref=f20e262]: 099 829 3794
+            - link " info@keysoftitalia.it" [ref=f20e263] [cursor=pointer]:
+              - /url: mailto:info@keysoftitalia.it
+              - generic [ref=f20e264]: 
+              - generic [ref=f20e265]: info@keysoftitalia.it
+            - 'link " WhatsApp: 348 310 9840" [ref=f20e266] [cursor=pointer]':
+              - /url: https://wa.me/393483109840?text=Ciao+Key+Soft+Italia%21&utm_source=site&utm_medium=whatsapp&utm_campaign=general
+              - generic [ref=f20e267]: 
+              - generic [ref=f20e268]: "WhatsApp: 348 310 9840"
+        - generic [ref=f20e270]:
+          - heading "Link Utili" [level=4] [ref=f20e271]
+          - generic [ref=f20e272]:
+            - link " Tutti i Servizi" [ref=f20e273] [cursor=pointer]:
+              - /url: http://keysoftitalia.test/servizi.php
+              - generic [ref=f20e274]: 
+              - text: Tutti i Servizi
+            - link " Riparazioni & Assistenza" [ref=f20e275] [cursor=pointer]:
+              - /url: http://keysoftitalia.test/servizi/riparazioni.php
+              - generic [ref=f20e276]: 
+              - text: Riparazioni & Assistenza
+            - link " Dispositivi Ricondizionati" [ref=f20e277] [cursor=pointer]:
+              - /url: http://keysoftitalia.test/prodotti.php
+              - generic [ref=f20e278]: 
+              - text: Dispositivi Ricondizionati
+            - link " I Nostri Volantini" [ref=f20e279] [cursor=pointer]:
+              - /url: http://keysoftitalia.test/volantini.php
+              - generic [ref=f20e280]: 
+              - text: I Nostri Volantini
+            - link " Richiedi Preventivo" [ref=f20e281] [cursor=pointer]:
+              - /url: http://keysoftitalia.test/preventivo.php
+              - generic [ref=f20e282]: 
+              - text: Richiedi Preventivo
+            - link " Vendi il tuo Usato" [ref=f20e283] [cursor=pointer]:
+              - /url: http://keysoftitalia.test/valuta-usato.php
+              - generic [ref=f20e284]: 
+              - text: Vendi il tuo Usato
+            - link " Richiedi Assistenza" [ref=f20e285] [cursor=pointer]:
+              - /url: http://keysoftitalia.test/assistenza.php
+              - generic [ref=f20e286]: 
+              - text: Richiedi Assistenza
+            - link " Domande Frequenti" [ref=f20e287] [cursor=pointer]:
+              - /url: http://keysoftitalia.test/contatti.php#faq
+              - generic [ref=f20e288]: 
+              - text: Domande Frequenti
+        - generic [ref=f20e290]:
+          - heading "Seguici" [level=4] [ref=f20e291]
+          - generic [ref=f20e292]:
+            - link "Facebook" [ref=f20e293] [cursor=pointer]:
+              - /url: https://www.facebook.com/keysoftitalia
+              - generic [ref=f20e294]: 
+            - link "Instagram" [ref=f20e295] [cursor=pointer]:
+              - /url: https://www.instagram.com/keysoftitalia
+              - generic [ref=f20e296]: 
+            - link "YouTube" [ref=f20e297] [cursor=pointer]:
+              - /url: https://www.youtube.com/keysoftitalia
+              - generic [ref=f20e298]: 
+            - link "TikTok" [ref=f20e299] [cursor=pointer]:
+              - /url: https://www.tiktok.com/@keysoftitalia
+              - generic [ref=f20e300]: 
+          - generic [ref=f20e302]:
+            - heading "Orari di Apertura" [level=4] [ref=f20e303]:
+              - generic [aria-hidden] [ref=f20e304]: 
+              - text: Orari di Apertura
+            - generic [ref=f20e305]:
+              - generic [ref=f20e306]:
+                - generic [aria-hidden] [ref=f20e307]: 
+                - text: Chiusi
+              - generic [ref=f20e308]: Riapre Mercoledì alle 09:00 (tra 12h 29m)
+            - generic [ref=f20e309]:
+              - generic [ref=f20e310]:
+                - generic [ref=f20e311]: Lun–Mer, Ven–Sab
+                - strong [ref=f20e313]: 09:00 - 13:00 / 17:00 - 20:30
+              - generic [ref=f20e314]:
+                - generic [ref=f20e315]: Gio
+                - strong [ref=f20e317]: 09:00 - 13:00
+              - generic [ref=f20e318]:
+                - generic [ref=f20e319]: Dom
+                - strong [ref=f20e321]:
+                  - strong [ref=f20e323]: Chiuso
+      - generic [ref=f20e324]:
+        - generic [ref=f20e325]: © 2026 Key Soft Italia. Tutti i diritti riservati.
+        - generic [ref=f20e326]:
+          - link "Privacy Policy" [ref=f20e327] [cursor=pointer]:
+            - /url: http://keysoftitalia.test/privacy.php?tab=privacy
+          - link "Termini di Servizio" [ref=f20e328] [cursor=pointer]:
+            - /url: http://keysoftitalia.test/privacy.php?tab=terms
+          - link "Cookie Policy" [ref=f20e329] [cursor=pointer]:
+            - /url: http://keysoftitalia.test/privacy.php?tab=cookies
+          - link "Preferenze cookie" [ref=f20e330] [cursor=pointer]:
+            - /url: "#"
+          - link "Amministrazione" [ref=f20e331] [cursor=pointer]:
+            - /url: http://keysoftitalia.test/admin
+  - link "Contattaci su WhatsApp" [ref=f20e332] [cursor=pointer]:
+    - /url: https://wa.me/393483109840?text=Ciao+Key+Soft+Italia%2C+ho+bisogno+di+assistenza%21&utm_source=site&utm_medium=whatsapp&utm_campaign=general
+    - generic [ref=f20e333]: 
+  - text:  

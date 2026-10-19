@@ -1,0 +1,63 @@
+{
+  "date": "2026-10-16",
+  "selectedJobs": [
+    {
+      "id": "468ae8a9-1ddd-4085-855b-eef272901a0d",
+      "params": {
+        "model": "kling_o3_flf",
+        "aspect_ratio": "16:9",
+        "duration": 5,
+        "mode": "pro",
+        "sound": "off",
+        "medias": [
+          {
+            "role": "start_image",
+            "value": "6864aab6-bd86-4f09-9991-966dc43cf00b"
+          },
+          {
+            "role": "end_image",
+            "value": "6864aab6-bd86-4f09-9991-966dc43cf00b"
+          }
+        ],
+        "prompt": "A quiet, realistic studio portrait video of exactly the three people in the supplied image. Preserve the supplied composition, every facial identity, hairstyle, glasses, expression and garment. Keep the same relaxed posed smiles and original head positions throughout. Very subtle breathing only. Minimal camera movement, an almost imperceptible slow push in and settle back to the exact supplied ending frame. The background is a completely flat, uniform, seamless very dark charcoal throughout the entire frame, exactly as supplied. The left side remains empty. The lower bodies softly fade into the dark background as supplied. Absolutely no text, symbols, graphics, borders, picture frames, walls, panels, floor, horizon, light beams, haze, vignette, glow or new background detail. Do not change expressions or have anyone speak. Preserve the image as a direct view of the people against empty charcoal, with photographic fidelity. Silent."
+      }
+    },
+    {
+      "id": "32f364f2-b5b3-46b5-81b6-65bde393f566",
+      "params": {
+        "model": "kling_o3_flf",
+        "aspect_ratio": "16:9",
+        "duration": 5,
+        "mode": "pro",
+        "sound": "off",
+        "medias": [
+          {
+            "role": "start_image",
+            "value": "4a96ebf1-41e8-4ec1-a42f-01a8ff7a5b58"
+          },
+          {
+            "role": "end_image",
+            "value": "4a96ebf1-41e8-4ec1-a42f-01a8ff7a5b58"
+          }
+        ],
+        "prompt": "A quiet, realistic studio portrait video of exactly the three people in the supplied image. Preserve the supplied composition, every facial identity, hairstyle, glasses, expression and garment. Keep the same relaxed posed smiles and original head positions throughout. Very subtle breathing only. Minimal camera movement, an almost imperceptible slow push in and settle back to the exact supplied ending frame. The background is a completely flat, uniform, seamless very dark charcoal throughout the entire frame, exactly as supplied. The left side remains empty. The lower bodies softly fade into the dark background as supplied. Absolutely no text, symbols, graphics, borders, picture frames, walls, panels, floor, horizon, light beams, haze, vignette, glow or new background detail. Do not change expressions or have anyone speak. Preserve the image as a direct view of the people against empty charcoal, with photographic fidelity. Silent."
+      }
+    }
+  ],
+  "final": {
+    "file": "assets/img/home/founders/video/founders-2004-to-now.mp4",
+    "duration": 9,
+    "width": 1920,
+    "height": 1080,
+    "fps": 24,
+    "frameCount": 216,
+    "bytes": 1532981
+  },
+  "mobile": {
+    "file": "assets/img/home/founders/video/founders-2004-to-now-mobile.mp4",
+    "width": 720,
+    "height": 1280
+  },
+  "preview": "artifacts/founders-memory-preview.html",
+  "status": "Generation complete; video not yet integrated into the homepage."
+}

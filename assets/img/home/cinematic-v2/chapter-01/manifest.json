@@ -1,0 +1,43 @@
+{
+  "version": 1,
+  "frameCount": 240,
+  "fps": 24,
+  "activeViewportHeights": 3.2,
+  "desktopPattern": "desktop/sequence/frame-{index}.webp",
+  "mobilePattern": "mobile/sequence/frame-{index}.webp",
+  "beats": [
+    {
+      "id": "welcome",
+      "scroll": [
+        0,
+        0.16
+      ],
+      "frames": [
+        0,
+        0
+      ]
+    },
+    {
+      "id": "approach",
+      "scroll": [
+        0.16,
+        0.94
+      ],
+      "frames": [
+        0,
+        144
+      ]
+    },
+    {
+      "id": "settle",
+      "scroll": [
+        0.94,
+        1
+      ],
+      "frames": [
+        144,
+        239
+      ]
+    }
+  ]
+}

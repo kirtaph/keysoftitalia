@@ -760,7 +760,7 @@ ready(() => {
 
     // Initialize reveal animations (motore unico)
     try {
-        window.KSReveal.init({
+        if (!document.body.classList.contains('site-aligned')) window.KSReveal.init({
             once: false,
             offset: 8
         });
@@ -834,7 +834,7 @@ ready(() => {
             }
         }
         var hero = document.querySelector('.hero-secondary');
-        if (hero) {
+        if (hero && !document.body.classList.contains('site-aligned')) {
             hero.dataset.heroTheme = theme;
             var overlay = document.createElement('div');
             overlay.className = 'secondary-overlay';
@@ -845,7 +845,7 @@ ready(() => {
             hero.insertBefore(blobs, overlay.nextElementSibling);
         }
         /* parallax on hero-pattern */
-        var pat = document.querySelector('.hero-secondary .hero-pattern');
+        var pat = document.body.classList.contains('site-aligned') ? null : document.querySelector('.hero-secondary .hero-pattern');
         if (pat) {
             window.addEventListener('scroll', function() {
                 var rect = hero.getBoundingClientRect();

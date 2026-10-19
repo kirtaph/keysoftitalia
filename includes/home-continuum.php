@@ -1,0 +1,16 @@
+<div class="home-continuum">
+<section id="home-services" class="continuum-shortcuts home-shell" aria-labelledby="home-services-title">
+ <h2 id="home-services-title">Da dove vuoi iniziare?</h2>
+ <nav class="continuum-shortcut-links" aria-label="Servizi e percorsi"><a href="<?= url('prenota-riparazione.php') ?>">Riparazioni ↗</a><a href="<?= url('prodotti.php') ?>">Nuovo e ricondizionato ↗</a><a href="<?= url('servizi/sviluppo-web.php') ?>">Siti e progetti web ↗</a><a href="<?= url('servizi/telefonia.php') ?>">Telefonia ↗</a><a href="<?= url('servizi/forniture.php') ?>">Luce e gas ↗</a><a href="<?= url('servizi/liberty-commerce.php') ?>">Gestionali per negozi ↗</a><a href="<?= url('servizi.php') ?>">Tutti i servizi ↗</a></nav>
+ <?php if ($homeVideo && $videoPlayable): ?><div class="continuum-video-note"><p>Novità e consigli, raccontati da noi.</p><button class="continuum-text-link" type="button" data-home-video aria-label="Guarda il video: <?= $esc($homeVideo['title']) ?>"><i class="ri-play-line" aria-hidden="true"></i> <?= $esc($homeVideo['title']) ?></button><a class="continuum-text-link" href="<?= url('video.php') ?>">Tutti i video ↗</a><noscript><a href="<?= $esc($videoUrl) ?>" target="_blank" rel="noopener">Guarda su Facebook ↗</a></noscript></div><?php endif; ?>
+</section>
+<section class="home-faq continuum-faq home-shell" aria-labelledby="home-faq-title"><div><h2 id="home-faq-title">Prima di<br><span>cominciare.</span></h2></div><div class="home-faq-list">
+ <details><summary>Come richiedo una riparazione?</summary><p>Puoi <a href="<?= url('prenota-riparazione.php') ?>">prenotare online</a> oppure passare in negozio in Via Diaz 46, a Ginosa.</p></details>
+ <details><summary>Posso conoscere il costo prima di procedere?</summary><p>Sì. Valutiamo il dispositivo e ti diciamo quanto costa prima di intervenire. Puoi anche <a href="<?= url('preventivo.php') ?>">richiedere un preventivo online</a>.</p></details>
+ <details><summary>Posso far valutare il mio usato?</summary><p>Sì. Parti dalla <a href="<?= url('valuta-usato.php') ?>">valutazione dell'usato</a> oppure contattaci per parlarne insieme.</p></details>
+</div></section>
+<section class="continuum-contact" aria-labelledby="home-contact-title"><div class="home-shell">
+ <h2 id="home-contact-title">Il prossimo passo?<br><span>Parliamone.</span></h2>
+ <div class="continuum-contact-bottom"><div><p>Passa a trovarci.</p><a class="continuum-address" href="https://maps.google.com/maps?q=Via+Diaz+46+Ginosa+TA" target="_blank" rel="noopener">Via Diaz, 46<br>Ginosa <i class="ri-arrow-right-up-line" aria-hidden="true"></i></a></div><div class="continuum-contact-actions"><a class="home-button home-button-dark" href="<?= $esc(whatsapp_link('Ciao Key Soft Italia! Vorrei parlare con voi.', ['utm_campaign' => 'home-contact'])) ?>" target="_blank" rel="noopener">Scrivici su WhatsApp <i class="ri-whatsapp-line" aria-hidden="true"></i></a><a class="continuum-text-link" href="tel:0998293794">Oppure chiamaci: 099 829 3794 ↗</a><a class="continuum-text-link" href="<?= url('contatti.php') ?>">Contatti e indicazioni ↗</a></div></div>
+</div></section>
+</div>

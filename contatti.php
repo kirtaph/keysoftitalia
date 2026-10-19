@@ -36,9 +36,10 @@ $page_schema = [
   <!-- CSS di pagina -->
   <link rel="stylesheet" href="<?= asset_version('css/pages/contatti.css'); ?>">
 </head>
-<body>
+<body class="site-aligned">
 
   <?php include 'includes/header.php'; ?>
+<main id="main-content">
 
   <!-- HERO -->
 <section class="hero hero-secondary text-center">
@@ -54,7 +55,7 @@ $page_schema = [
       Siamo qui per aiutarti. Scegli il modo <strong>più comodo</strong> per contattarci.
     </p>
         <div class="hero-cta" data-aos="fade-up" data-aos-delay="300">
-      <a href="#modulo-contatto" class="btn btn-primary btn-lg smooth-scroll" aria-label="Scopri la nostra storia">
+      <a href="#modulo-contatto" class="btn btn-primary btn-lg smooth-scroll" aria-label="Vai al modulo di contatto">
         <i class="ri-arrow-down-line me-1"></i> Contattaci ora!
       </a>
     </div>
@@ -749,7 +750,8 @@ if (function_exists('ks_hours_notice_for_date')) {
 </section>
 
 
-  <?php include 'includes/footer.php'; ?>
+  </main>
+<?php include 'includes/footer.php'; ?>
 
   <!-- JSON-LD LocalBusiness -->
   <script type="application/ld+json">

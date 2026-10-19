@@ -55,6 +55,9 @@ $current_page = get_current_page();
       <a href="<?php echo url(); ?>" class="logo">
         <div class="logo-mark">
           <?php $mainLogo = ($activeLogoCampaign && !empty($activeLogoCampaign['logo_path'])) ? asset($activeLogoCampaign['logo_path']) : asset('img/logo.png'); ?>
+          <?php // A 48px mark does not need the 1MB PNG: prefer the WebP twin when it exists.
+          $mainLogoWebp = preg_replace('/\.png(\?.*)?$/i', '.webp', $mainLogo);
+          if ($mainLogoWebp !== $mainLogo && is_file(BASE_PATH . 'assets/' . preg_replace('#^.*?assets/#', '', $mainLogoWebp))) $mainLogo = $mainLogoWebp; ?>
           <img src="<?php echo $mainLogo; ?>" alt="Key Soft Italia" class="logo-img" width="48" height="48" decoding="async">
         </div>
         <div class="logo-text">

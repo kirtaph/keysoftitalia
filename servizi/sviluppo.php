@@ -29,16 +29,17 @@ $breadcrumbs = [
     <?php include '../includes/head.php'; ?>
     <link rel="stylesheet" href="<?php echo asset_version('css/pages/servizi-detail.css'); ?>">
 </head>
-<body>
+<body class="site-aligned">
     
     <!-- Header -->
-    <?php 
+    <?php
     // Temporarily change dir for include
     $original_dir = getcwd();
     chdir('..');
     include 'includes/header.php'; 
     chdir($original_dir);
     ?>
+<main id="main-content">
     
     <!-- Hero Section -->
     <section class="hero hero-secondary hero-service">
@@ -368,7 +369,8 @@ $breadcrumbs = [
     </section>
     
     <!-- Footer -->
-    <?php 
+    </main>
+<?php
     // Temporarily change dir for include
     $original_dir = getcwd();
     chdir('..');

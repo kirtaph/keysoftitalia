@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="it">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Key Soft Italia — La nostra storia, dal 2004 a oggi</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&family=Poppins:wght@500;600&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box}body{margin:0;background:#101114;color:#f8f8fa;font-family:Inter,sans-serif}main{max-width:1280px;margin:auto;padding:24px}header{display:flex;justify-content:space-between;align-items:center;gap:24px;margin-bottom:20px}header strong{font-family:Poppins,sans-serif;font-size:18px;font-weight:600}header p{margin:0;color:#bfc2c9;font-size:14px}.stage{position:relative;background:#101114}video{display:block;width:100%;height:auto}.year{position:absolute;left:24px;top:20px;pointer-events:none;color:#ff976f;font-family:Poppins,sans-serif;font-size:clamp(28px,4vw,56px);line-height:1;font-weight:600;font-variant-numeric:tabular-nums;letter-spacing:-.03em}footer{display:flex;flex-wrap:wrap;gap:16px 28px;align-items:center;margin-top:24px}button{padding:12px 20px;min-height:44px;border:0;border-radius:4px;background:#ff6b35;color:#17191e;font:500 14px/1.5 Inter,sans-serif;cursor:pointer}a{color:#ff976f;font-size:14px}a:focus-visible,button:focus-visible{outline:2px solid #f8f8fa;outline-offset:4px}.note{font-size:14px;color:#bfc2c9;line-height:1.6;margin-top:24px;max-width:64ch}@media(max-width:600px){main{padding:16px 12px}header{align-items:flex-start;flex-direction:column;gap:8px}.year{left:12px;top:12px;font-size:28px}footer{gap:16px}.note{font-size:13px}}
+</style>
+<main>
+ <header><strong>Key Soft Italia</strong><p>La nostra storia · 2004 → oggi</p></header>
+ <div class="stage">
+  <video id="memory" controls playsinline preload="metadata" poster="../assets/img/home/founders/video/morph/aging-poster.webp">
+   <source src="../assets/img/home/founders/video/morph/founders-aging-v2.mp4" type="video/mp4">
+  </video>
+  <span class="year" id="year" aria-hidden="true">2004</span>
+ </div>
+ <footer><button id="replay" type="button">Guarda la trasformazione</button><a href="../assets/img/home/founders/video/morph/founders-aging-v2.mp4" download>Scarica il video</a></footer>
+ <p class="note">I fondatori dal 2004 a oggi, in una trasformazione continua. Gli anni e «ORA» sono sovrapposti in HTML, pronti per essere sincronizzati allo scroll.</p>
+</main>
+<script>
+const video=document.getElementById('memory'),year=document.getElementById('year');
+function update(){const t=video.currentTime,p=Math.max(0,Math.min(1,(t-.6)/8.3));year.textContent=t>=9?'ORA':String(2004+Math.floor(22*p));}
+video.addEventListener('timeupdate',update);video.addEventListener('seeked',update);document.getElementById('replay').addEventListener('click',()=>{video.currentTime=0;video.play();});
+</script>
+</html>

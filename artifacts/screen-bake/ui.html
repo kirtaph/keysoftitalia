@@ -1,0 +1,65 @@
+<!doctype html><html><head><meta charset="utf-8">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Poppins:wght@500&display=block" rel="stylesheet">
+<style>
+html,body{margin:0;background:#000;overflow:hidden}
+#f{position:absolute;inset:0;width:100%;height:100%;display:block}
+#ui{position:absolute;left:0;top:0;width:640px;height:400px;transform-origin:0 0;color:#fffaf7;overflow:hidden;filter:blur(.35px)}
+.app{position:absolute;inset:0;display:flex;flex-direction:column;padding:30px 40px 30px;background:radial-gradient(90% 85% at 100% 112%,rgba(255,107,53,.26),transparent 62%),linear-gradient(162deg,#1c1d22 0%,#111215 64%);box-shadow:inset 0 0 70px rgba(16,17,20,.65)}
+.bar{display:flex;justify-content:space-between;align-items:center;padding-bottom:14px;border-bottom:1px solid rgba(255,255,255,.09);font:500 13px/1 Inter,sans-serif;color:#bfc2c9}
+.brand{display:flex;align-items:center;gap:8px;color:#ffe5db}.brand i{width:8px;height:8px;border-radius:50%;background:#ff6b35}
+h1{margin:auto 0 0;font:500 44px/1.06 Poppins,sans-serif;letter-spacing:-.03em}
+ol{list-style:none;margin:34px 0 0;padding:0;display:grid;grid-template-columns:repeat(3,1fr)}
+li{position:relative;display:flex;flex-direction:column;gap:12px}
+.n{position:relative;z-index:1;display:grid;place-items:center;width:34px;height:34px;border-radius:50%;border:2px solid #393c44;background:#16171b;font:600 14px/1 Inter,sans-serif;color:#bfc2c9}
+.n svg{display:none;width:17px;height:17px;fill:none;stroke:#17191e;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round}
+li>i{position:absolute;top:16px;left:46px;right:12px;height:2px;background:#393c44;overflow:hidden}
+li>i::after{content:'';position:absolute;inset:0;background:#ff976f;transform:scaleX(var(--p,0));transform-origin:left}
+.l{font:500 19px/1.2 Inter,sans-serif;color:#bfc2c9;opacity:.65}
+li.on .n{border-color:#ff976f;color:#ff976f;box-shadow:0 0 0 6px rgba(255,151,111,.14)}li.on .l{color:#fffaf7;opacity:1}
+li.ok .n{background:#ff976f;border-color:#ff976f}li.ok .n b{display:none}li.ok .n svg{display:block}li.ok .l{color:#ffe5db;opacity:1}
+.st{display:flex;align-items:center;gap:10px;margin:22px 0 0;padding-top:16px;border-top:1px solid rgba(255,255,255,.09);font:17px/1.3 Inter,sans-serif;color:#d6d8dd}
+.st::before{content:'';width:7px;height:7px;border-radius:50%;background:#ff976f}
+/* The display's own light: a diagonal sheen and the warm room reflected on the glass. */
+#glass{position:absolute;inset:0;background:linear-gradient(116deg,rgba(255,240,225,.13) 0%,rgba(255,240,225,.04) 30%,transparent 50%),linear-gradient(0deg,rgba(255,170,110,.06),transparent 40%);pointer-events:none}
+
+/* Phone crop: the camera frames the left half of the display, so the content is a column there. */
+body.mobile .app{padding:26px 250px 26px 112px}
+body.mobile .bar>span:last-child{display:none}
+h1 .c{display:none}body.mobile h1 .w{display:none}body.mobile h1 .c{display:inline}
+body.mobile h1{font-size:48px;margin-top:22px}body.mobile ol{margin-top:auto}
+body.mobile ol{grid-template-columns:1fr;gap:12px;margin-top:auto}
+body.mobile li{flex-direction:row;align-items:center;gap:14px}
+body.mobile li>i{top:36px;left:16px;right:auto;width:2px;height:14px}
+body.mobile li>i::after{transform:scaleY(var(--p,0));transform-origin:top}
+body.mobile .l{font-size:21px}
+body.mobile .st{font-size:16px;margin-top:16px;padding-top:12px}
+</style></head><body class="__VARIANT__">
+<img id="f" alt="">
+<div id="ui"><div class="app">
+ <div class="bar"><span class="brand"><i></i>Key Soft Italia</span><span>Il nostro metodo</span></div>
+ <h1><span class="w">Prima capire.<br>Poi intervenire.</span><span class="c">Capire.<br>Risolvere.</span></h1>
+ <ol>
+  <li><span class="n"><b>1</b><svg viewBox="0 0 16 16"><path d="M3.5 8.5l3 3 6-7"/></svg></span><span class="l">Diagnosi</span><i></i></li>
+  <li><span class="n"><b>2</b><svg viewBox="0 0 16 16"><path d="M3.5 8.5l3 3 6-7"/></svg></span><span class="l">Intervento</span><i></i></li>
+  <li><span class="n"><b>3</b><svg viewBox="0 0 16 16"><path d="M3.5 8.5l3 3 6-7"/></svg></span><span class="l">Verifica</span></li>
+ </ol>
+ <p class="st" id="st"></p>
+</div><div id="glass"></div></div>
+<script>
+const clamp=v=>Math.max(0,Math.min(1,v));
+function surface(c){const [[x0,y0],[x1,y1],[x2,y2],[x3,y3]]=c;const dx1=x1-x2,dx2=x3-x2,dx3=x0-x1+x2-x3,dy1=y1-y2,dy2=y3-y2,dy3=y0-y1+y2-y3,den=dx1*dy2-dx2*dy1,g=(dx3*dy2-dx2*dy3)/den,h=(dx1*dy3-dx3*dy1)/den;return [x1-x0+g*x1,x3-x0+h*x3,x0,y1-y0+g*y1,y3-y0+h*y3,y0,g,h];}
+function pt(m,u,v){const [a,b,c,d,e,f,g,h]=m,w=g*u+h*v+1;return [(a*u+b*v+c)/w,(d*u+e*v+f)/w];}
+const status=['Ascoltiamo e cerchiamo la causa.','Ripariamo e configuriamo.','Controlliamo tutto prima di riconsegnarlo.','Pronto per tornare da te.'];
+const T=document.body.classList.contains('mobile')?{enter:[62,8],steps:[66,12,11],exit:[101,10]}:{enter:[34,18],steps:[44,27,25],exit:[126,24]};
+window.compose=async(src,quad,i)=>{
+ const f=document.getElementById('f');f.src=src;await f.decode();
+ const m=surface(quad),inset=[[-.004,-.006],[1.006,-.006],[1.006,1.008],[-.004,1.008]].map(([u,v])=>pt(m,u,v));
+ const [a,b,c,d,e,ff,g,h]=surface(inset);
+ const ui=document.getElementById('ui');
+ ui.style.transform=`matrix3d(${[a/640,d/640,0,g/640,b/400,e/400,0,h/400,0,0,1,0,c,ff,0,1].join(',')})`;
+ ui.style.opacity=(clamp((i-T.enter[0])/T.enter[1])*(1-clamp((i-T.exit[0])/T.exit[1]))).toFixed(3);
+ const vals=[0,1,2].map(n=>clamp((i-(T.steps[0]+n*T.steps[1]))/T.steps[2])),act=vals.findIndex(v=>v<1);
+ document.querySelectorAll('li').forEach((li,n)=>{li.className=vals[n]>=1?'ok':n===act?'on':'';li.style.setProperty('--p',vals[n]);});
+ document.getElementById('st').textContent=status[vals[2]>=1?3:vals[1]>=1?2:vals[0]>=1?1:0];
+};
+</script></body></html>

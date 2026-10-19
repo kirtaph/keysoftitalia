@@ -1,0 +1,222 @@
+{
+  "version": 5,
+  "fps": 24,
+  "frameCount": 1008,
+  "duration": 42,
+  "width": 1280,
+  "height": 720,
+  "mobileWidth": 640,
+  "mobileHeight": 360,
+  "desktopPattern": "desktop",
+  "mobilePattern": "mobile",
+  "poster": "cinematic-v1/poster.webp",
+  "source": "../storyboard.mp4",
+  "activeViewportHeights": 14.5,
+  "beats": [
+    {
+      "id": "opening",
+      "scroll": [
+        0.0,
+        0.06967526083963844
+      ],
+      "frames": [
+        0,
+        60
+      ]
+    },
+    {
+      "id": "inside",
+      "scroll": [
+        0.06967526083963844,
+        0.15518580492534315
+      ],
+      "frames": [
+        60,
+        100
+      ]
+    },
+    {
+      "id": "care",
+      "scroll": [
+        0.15518580492534315,
+        0.25653163680616003
+      ],
+      "frames": [
+        100,
+        192
+      ]
+    },
+    {
+      "id": "restart",
+      "scroll": [
+        0.25653163680616003,
+        0.31670572405892194
+      ],
+      "frames": [
+        192,
+        239
+      ]
+    },
+    {
+      "id": "join",
+      "scroll": [
+        0.3167057248074991,
+        0.3282222966186809
+      ],
+      "frames": [
+        239,
+        240
+      ]
+    },
+    {
+      "id": "choose-reveal",
+      "scroll": [
+        0.3282222966186809,
+        0.41851221961834617
+      ],
+      "frames": [
+        240,
+        407
+      ]
+    },
+    {
+      "id": "choose",
+      "scroll": [
+        0.41851221961834617,
+        0.45490458654168053
+      ],
+      "frames": [
+        407,
+        431
+      ]
+    },
+    {
+      "id": "join-create",
+      "scroll": [
+        0.45490458654168053,
+        0.4635420154000669
+      ],
+      "frames": [
+        431,
+        432
+      ]
+    },
+    {
+      "id": "create-reveal",
+      "scroll": [
+        0.4635420154000669,
+        0.5585537328423166
+      ],
+      "frames": [
+        432,
+        587
+      ]
+    },
+    {
+      "id": "create",
+      "scroll": [
+        0.5585537328423166,
+        0.593103448275862
+      ],
+      "frames": [
+        587,
+        623
+      ]
+    },
+    {
+      "id": "perspective-reveal",
+      "scroll": [
+        0.593103448275862,
+        0.6827586206896552
+      ],
+      "frames": [
+        624,
+        791
+      ]
+    },
+    {
+      "id": "perspective",
+      "scroll": [
+        0.6827586206896552,
+        0.7448275862068966
+      ],
+      "frames": [
+        791,
+        815
+      ]
+    },
+    {
+      "id": "selection",
+      "scroll": [
+        0.7448275862068966,
+        0.8137931034482759
+      ],
+      "frames": [
+        815,
+        815
+      ]
+    },
+    {
+      "id": "approach",
+      "scroll": [
+        0.8137931034482759,
+        0.8896551724137931
+      ],
+      "frames": [
+        816,
+        1007
+      ]
+    },
+    {
+      "id": "people",
+      "scroll": [
+        0.8896551724137931,
+        1
+      ],
+      "frames": [
+        1007,
+        1007
+      ]
+    }
+  ],
+  "frameSources": [
+    {
+      "start": 0,
+      "end": 239,
+      "desktopPattern": "cinematic-v1/desktop/frame-{index}.webp",
+      "mobilePattern": "cinematic-v1/mobile/frame-{index}.webp"
+    },
+    {
+      "start": 240,
+      "end": 431,
+      "desktopPattern": "story-continuation/sequence/desktop/frame-{index}.webp",
+      "mobilePattern": "story-continuation/sequence/mobile/frame-{index}.webp"
+    },
+    {
+      "start": 432,
+      "end": 623,
+      "desktopPattern": "story-continuation/sequence-03/desktop/frame-{index}.webp",
+      "mobilePattern": "story-continuation/sequence-03/mobile/frame-{index}.webp"
+    },
+    {
+      "start": 624,
+      "end": 815,
+      "desktopPattern": "story-continuation/sequence-04/desktop/frame-{index}.webp",
+      "mobilePattern": "story-continuation/sequence-04/mobile/frame-{index}.webp"
+    },
+    {
+      "start": 816,
+      "end": 1007,
+      "desktopPattern": "story-continuation/sequence-05/desktop/frame-{index}.webp",
+      "mobilePattern": "story-continuation/sequence-05/mobile/frame-{index}.webp"
+    }
+  ],
+  "mobileReframe": {
+    "frames": [
+      624,
+      815
+    ],
+    "from": 0.58,
+    "to": 0.3
+  }
+}

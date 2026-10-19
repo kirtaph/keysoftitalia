@@ -1,0 +1,48 @@
+{
+  "desktop": {
+    "metadata": {
+      "ffmpeg_version": "7.1-essentials_build-www.gyan.dev built with gcc 14.2.0 (Rev1, Built by MSYS2 project)",
+      "codec": "h264",
+      "pix_fmt": "yuv420p(tv, smpte170m/bt709/iec61966-2-1, progressive)",
+      "audio_codec": "aac",
+      "fps": 24.0,
+      "source_size": [
+        1920,
+        1080
+      ],
+      "size": [
+        1920,
+        1080
+      ],
+      "rotate": 0,
+      "duration": 10.0
+    },
+    "frames": 240,
+    "bytes": 5566968,
+    "firstMeanRGBDelta": 3.6660416666666666,
+    "lastMeanRGBDelta": 3.218240740740741
+  },
+  "mobile": {
+    "metadata": {
+      "ffmpeg_version": "7.1-essentials_build-www.gyan.dev built with gcc 14.2.0 (Rev1, Built by MSYS2 project)",
+      "codec": "h264",
+      "pix_fmt": "yuv420p(tv, smpte170m/bt709/iec61966-2-1, progressive)",
+      "audio_codec": "aac",
+      "fps": 24.0,
+      "source_size": [
+        1080,
+        1920
+      ],
+      "size": [
+        1080,
+        1920
+      ],
+      "rotate": 0,
+      "duration": 10.0
+    },
+    "frames": 240,
+    "bytes": 5670946,
+    "firstMeanRGBDelta": 3.7363194444444443,
+    "lastMeanRGBDelta": 2.8343171296296297
+  }
+}

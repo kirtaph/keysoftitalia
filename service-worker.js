@@ -3,7 +3,7 @@
  * Fully PWA compliant: handles precaching, offline fallback, and asset caching.
  */
 
-const CACHE_NAME = 'ks-pwa-v5';
+const CACHE_NAME = 'ks-pwa-v6';
 const OFFLINE_URL = 'offline.html';
 
 // Asset da pre-memorizzare all'installazione
@@ -14,7 +14,7 @@ const PRECACHE_ASSETS = [
   'assets/css/main.css',
   'assets/css/components.css',
   'assets/js/main.js',
-  'assets/img/logo.png',
+  'assets/img/logo.webp',
   'assets/img/pwa/icon-192.png',
   'assets/img/pwa/icon-512.png',
   'assets/img/pwa/icon-maskable-192.png',
@@ -67,7 +67,10 @@ self.addEventListener('fetch', (event) => {
     req.method !== 'GET' ||
     url.pathname.includes('/admin/') ||
     url.pathname.includes('/ajax/') ||
-    url.pathname.includes('ajax_actions')
+    url.pathname.includes('ajax_actions') ||
+    // Le sequenze del film in home sono centinaia di frame: la cache HTTP basta,
+    // salvarle qui riempirebbe lo spazio del dispositivo senza scadenza.
+    url.pathname.includes('/img/home/')
   ) {
     return; // Pass-through alla rete
   }

@@ -1,0 +1,20 @@
+{
+  "variant": "mobile",
+  "frames": 193,
+  "fps": 24,
+  "width": 720,
+  "height": 1280,
+  "webpBytes": 2812604,
+  "avifBytes": 1926534,
+  "storyboardIndices": [
+    0,
+    24,
+    48,
+    72,
+    96,
+    120,
+    144,
+    168,
+    192
+  ]
+}

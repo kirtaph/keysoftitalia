@@ -1,0 +1,187 @@
+/* Laboratorio: the home's film language on an inner page. Stills sit inside the graphite
+   under the same lens as the film (lifted blacks, vignette, grain); prices read as open rows. */
+body.laboratory-page { --lab-bg:#101114; --lab-panel:#17191e; --lab-line:#393c44; --lab-text:#f8f8fa; --lab-muted:#bfc2c9; --lab-accent:#ff976f; --lab-action:#ff6b35; --lab-ease:cubic-bezier(.23,1,.32,1); }
+body.laboratory-page ::selection { background:var(--lab-action); color:#17191e; }
+body.laboratory-page main :is(h1,h2) { font-weight:500; letter-spacing:-.035em; margin:0; }
+body.laboratory-page main :is(h1,h2) span { color:var(--lab-accent); }
+body.laboratory-page main h3 { font-size:20px; line-height:1.35; font-weight:500; letter-spacing:-.02em; margin:0; }
+body.laboratory-page main p { color:var(--lab-muted); margin:0; }
+
+/* Shared actions */
+body.laboratory-page .lab-button { display:inline-flex; align-items:center; gap:14px; min-height:48px; padding:12px 22px; border-radius:4px; background:var(--lab-action); color:#17191e; font-size:14px; font-weight:500; text-decoration:none; transition:background-color 180ms ease-out; }
+body.laboratory-page .lab-button:is(:hover,:focus-visible) { background:#ffe5db; color:#17191e; }
+body.laboratory-page .lab-link { display:inline-flex; align-items:center; gap:14px; min-height:44px; color:var(--lab-text); font-size:14px; text-decoration:none; transition:color 180ms ease-out; }
+body.laboratory-page .lab-link i { color:var(--lab-accent); font-size:18px; transition:transform 180ms var(--lab-ease); }
+body.laboratory-page .lab-link:is(:hover,:focus-visible) { color:var(--lab-accent); }
+@media(hover:hover) and (pointer:fine) {
+ body.laboratory-page .lab-link:hover i.ri-arrow-down-line { transform:translateY(3px); }
+ body.laboratory-page .lab-link:hover i.ri-arrow-right-up-line { transform:translate(2px,-2px); }
+}
+
+/* Stills: the film's lens. Blacks lifted to graphite, edges and joins dissolve into the page. */
+body.laboratory-page .lab-still { position:relative; margin:0; overflow:hidden; background:var(--lab-bg); }
+body.laboratory-page .lab-still picture { display:block; height:100%; }
+body.laboratory-page .lab-still img { display:block; width:100%; height:100%; object-fit:cover; filter:saturate(.84) brightness(.92) contrast(1.04); }
+body.laboratory-page .lab-grade { position:absolute; inset:0; pointer-events:none; }
+body.laboratory-page .lab-grade::before { content:''; position:absolute; inset:0; background:var(--lab-bg); mix-blend-mode:lighten; }
+body.laboratory-page .lab-grade::after { content:''; position:absolute; inset:0; }
+body.laboratory-page .lab-grade > i { position:absolute; inset:0; background:url(../../img/home/film-grain.png) 0 0 / 160px 160px; opacity:.09; mix-blend-mode:overlay; }
+body.laboratory-page .lab-still figcaption { position:absolute; right:clamp(20px,4vw,80px); bottom:24px; z-index:1; color:var(--lab-muted); font-size:11px; }
+
+/* Opening */
+body.laboratory-page .lab-hero { position:relative; isolation:isolate; display:flex; align-items:center; min-height:max(600px,calc(100svh - var(--lab-head-offset,85px))); overflow:hidden; background:var(--lab-bg); }
+body.laboratory-page .lab-hero-still { position:absolute; inset:0 0 0 auto; z-index:-1; width:min(74%,1240px); }
+body.laboratory-page .lab-hero-still img { object-position:62% 50%; animation:lab-settle 1.8s var(--lab-ease) both; }
+body.laboratory-page .lab-hero-still .lab-grade::after { background:
+ linear-gradient(90deg,var(--lab-bg) 0%,rgba(16,17,20,.88) 16%,rgba(16,17,20,.42) 40%,rgba(16,17,20,0) 62%),
+ linear-gradient(0deg,var(--lab-bg) 0%,rgba(16,17,20,0) 28%),
+ linear-gradient(180deg,rgba(16,17,20,.55) 0%,rgba(16,17,20,0) 22%),
+ radial-gradient(120% 100% at 60% 45%,rgba(16,17,20,0) 55%,rgba(16,17,20,.5) 100%); }
+body.laboratory-page .lab-hero-copy { position:relative; padding-block:96px 72px; }
+body.laboratory-page .lab-hero h1 { max-width:9ch; font-size:clamp(52px,6.2vw,88px); line-height:1.02; }
+body.laboratory-page .lab-hero h1 span { display:block; }
+body.laboratory-page .lab-hero-copy > p { max-width:36ch; margin-top:28px; font-size:18px; line-height:1.7; color:#d5d8dc; }
+body.laboratory-page .lab-actions { display:flex; flex-wrap:wrap; align-items:center; gap:16px 32px; margin-top:36px; }
+body.laboratory-page .lab-hero .hero-breadcrumb { margin-top:56px!important; }
+@keyframes lab-settle { from { transform:scale(1.06); } to { transform:none; } }
+
+/* Repairs: one index, names only. The notebook still opens it; the heading rises out of its dissolve. */
+body.laboratory-page .lab-repairs { padding:40px 0 120px; }
+body.laboratory-page .lab-repairs h2 { position:relative; margin-top:-120px; font-size:clamp(44px,6vw,88px); line-height:1.04; }
+body.laboratory-page .lab-repair-index { display:grid; grid-template-columns:repeat(3,1fr); gap:56px; margin-top:72px; }
+body.laboratory-page .lab-repair-group h3 { margin-bottom:20px; color:var(--lab-accent); font-size:16px; letter-spacing:-.01em; }
+body.laboratory-page .lab-repair-group ul { margin:0; padding:0; list-style:none; border-bottom:1px solid var(--lab-line); }
+body.laboratory-page .lab-repair-group li { padding:16px 0; border-top:1px solid var(--lab-line); color:var(--lab-text); font-family:var(--ks-font-heading); font-size:22px; font-weight:500; line-height:1.3; letter-spacing:-.02em; }
+body.laboratory-page .lab-repair-note { margin-top:48px; font-size:16px; }
+body.laboratory-page .lab-repair-note a { display:inline-flex; align-items:center; gap:8px; min-height:44px; margin-left:8px; color:var(--lab-text); text-decoration:underline; text-decoration-color:var(--lab-line); text-underline-offset:6px; transition:color 180ms ease-out,text-decoration-color 180ms ease-out; }
+body.laboratory-page .lab-repair-note a i { color:var(--lab-accent); }
+body.laboratory-page .lab-repair-note a:is(:hover,:focus-visible) { color:var(--lab-accent); text-decoration-color:var(--lab-accent); }
+
+body.laboratory-page .lab-band { height:clamp(360px,62svh,640px); }
+body.laboratory-page .lab-band img { object-position:50% 64%; }
+body.laboratory-page .lab-band .lab-grade::after { background:
+ linear-gradient(180deg,var(--lab-bg) 0%,rgba(16,17,20,0) 26%),
+ linear-gradient(0deg,var(--lab-bg) 0%,rgba(16,17,20,.82) 22%,rgba(16,17,20,0) 58%),
+ radial-gradient(125% 95% at 50% 45%,rgba(16,17,20,0) 52%,rgba(16,17,20,.55) 100%); }
+body.laboratory-page .lab-band figcaption { top:56px; bottom:auto; }
+
+/* Warranty */
+body.laboratory-page .lab-warranty { padding-block:110px; background:var(--lab-panel); }
+body.laboratory-page .lab-warranty-layout { display:grid; grid-template-columns:1.1fr .9fr; gap:100px; align-items:center; }
+body.laboratory-page .lab-warranty h2 { font-size:clamp(40px,5vw,72px); line-height:1.1; }
+body.laboratory-page .lab-warranty-layout > div > p { max-width:52ch; margin-top:28px; font-size:16px; line-height:1.8; }
+body.laboratory-page .lab-warranty strong { color:var(--lab-text); font-weight:500; }
+body.laboratory-page .lab-facts { display:grid; grid-template-columns:1fr 1fr; column-gap:48px; margin:0; border-bottom:1px solid var(--lab-line); }
+body.laboratory-page .lab-facts > div { display:flex; flex-direction:column-reverse; gap:6px; padding-block:24px 26px; border-top:1px solid var(--lab-line); }
+body.laboratory-page .lab-facts dt { color:var(--lab-muted); font-size:13px; font-weight:400; }
+body.laboratory-page .lab-facts dd { margin:0; font-family:var(--ks-font-heading); font-size:32px; font-weight:500; line-height:1.2; letter-spacing:-.02em; font-variant-numeric:tabular-nums; }
+
+/* Process: the home's repair footage, scrubbed by native scroll. Static list without JS or motion. */
+body.laboratory-page .lab-process { position:relative; padding-block:120px; counter-reset:lab-step; }
+body.laboratory-page .lab-process-poster,body.laboratory-page .lab-process-film,body.laboratory-page .lab-process .lab-grade,body.laboratory-page .lab-process-timeline { display:none; }
+body.laboratory-page .lab-process-copy h2 { font-size:clamp(36px,4.4vw,64px); line-height:1.1; margin-bottom:56px; }
+body.laboratory-page .lab-steps { display:grid; grid-template-columns:repeat(4,1fr); gap:40px; margin:0; padding:0; list-style:none; }
+body.laboratory-page .lab-steps li { padding-top:28px; border-top:1px solid var(--lab-line); counter-increment:lab-step; }
+body.laboratory-page .lab-steps li::before { content:counter(lab-step,decimal-leading-zero); display:block; margin-bottom:28px; color:var(--lab-accent); font-family:var(--ks-font-heading); font-size:14px; font-variant-numeric:tabular-nums; }
+body.laboratory-page .lab-steps p { margin-top:12px; max-width:32ch; font-size:14px; line-height:1.7; }
+
+body.laboratory-page .lab-process.is-film { height:calc(var(--lab-steps,4) * 110svh + 100svh); padding:0; }
+body.laboratory-page .is-film .lab-process-stage { position:sticky; top:var(--lab-header,84px); height:calc(100svh - var(--lab-header,84px)); overflow:hidden; background:#0b0c0f; }
+body.laboratory-page .is-film :is(.lab-process-film,.lab-grade) { display:block; }
+body.laboratory-page .is-film .lab-process-poster { position:absolute; inset:0; display:block; }
+body.laboratory-page .is-film .lab-process-poster img { width:100%; height:100%; object-fit:cover; }
+body.laboratory-page .is-film.has-frame .lab-process-poster { visibility:hidden; }
+body.laboratory-page .is-film .lab-process-film { position:absolute; inset:0; width:100%; height:100%; }
+body.laboratory-page .is-film .lab-grade::after { background:
+ linear-gradient(90deg,var(--lab-bg) 0%,rgba(16,17,20,.92) 22%,rgba(16,17,20,.4) 44%,rgba(16,17,20,0) 60%),
+ linear-gradient(180deg,var(--lab-bg) 0%,rgba(16,17,20,0) 14%),
+ linear-gradient(0deg,var(--lab-bg) 0%,rgba(16,17,20,0) 22%),
+ radial-gradient(120% 100% at 64% 48%,rgba(16,17,20,0) 50%,rgba(16,17,20,.55) 100%); }
+body.laboratory-page .is-film .lab-process-copy { position:relative; z-index:1; display:flex; flex-direction:column; justify-content:center; height:100%; padding-bottom:72px; }
+body.laboratory-page .is-film .lab-process-copy h2 { max-width:12ch; margin-bottom:40px; font-size:clamp(28px,2.6vw,36px); }
+body.laboratory-page .is-film .lab-steps { display:grid; grid-template-columns:1fr; gap:0; max-width:520px; }
+body.laboratory-page .is-film .lab-steps li { grid-area:1 / 1; padding:0; border:0; opacity:0; transform:translateY(32px); visibility:hidden; will-change:transform,opacity; }
+body.laboratory-page .is-film .lab-steps li::before { margin-bottom:20px; font-size:16px; }
+body.laboratory-page .is-film .lab-steps h3 { font-size:clamp(40px,4.6vw,68px); line-height:1.04; letter-spacing:-.04em; max-width:11ch; }
+body.laboratory-page .is-film .lab-steps p { max-width:36ch; margin-top:24px; font-size:18px; line-height:1.7; color:#d5d8dc; }
+body.laboratory-page .is-film .lab-process-timeline { position:absolute; left:0; right:0; bottom:20px; z-index:2; display:flex; align-items:center; gap:24px; margin-inline:auto; }
+body.laboratory-page .lab-process-meter { position:relative; flex:none; width:120px; height:2px; background:rgba(255,229,219,.25); }
+body.laboratory-page .lab-process-meter::before { content:''; position:absolute; inset:0; background:var(--lab-accent); transform:scaleX(var(--lab-progress,0)); transform-origin:left; }
+body.laboratory-page .lab-process-timeline ol { display:flex; gap:24px; margin:0; padding:0; list-style:none; }
+body.laboratory-page .lab-process-timeline button { display:inline-flex; align-items:center; gap:8px; min-height:44px; padding:0; border:0; background:none; color:rgba(255,229,219,.8); font-size:13px; transition:color 180ms ease-out; }
+body.laboratory-page .lab-process-timeline b { font-weight:600; font-variant-numeric:tabular-nums; }
+body.laboratory-page .lab-process-timeline button[aria-current] { color:#fffaf7; }
+body.laboratory-page .lab-process-timeline button[aria-current] b { color:var(--lab-accent); }
+@media(hover:hover) and (pointer:fine) { body.laboratory-page .lab-process-timeline button:hover { color:#fffaf7; } }
+
+body.laboratory-page :is(.whatsapp-sticky,.back-to-top) { transition:opacity 240ms ease-out,visibility 240ms; }
+body.laboratory-page.lab-film-in-view :is(.whatsapp-sticky,.back-to-top) { opacity:0!important; visibility:hidden!important; pointer-events:none; }
+
+/* Gentle entrances for the flowing sections; content stays visible without JS. */
+.lab-js body.laboratory-page [data-lab-reveal] { opacity:0; transform:translateY(28px); transition:opacity 700ms var(--lab-ease),transform 900ms var(--lab-ease); }
+.lab-js body.laboratory-page [data-lab-reveal].is-in { opacity:1; transform:none; }
+
+/* Contact */
+body.laboratory-page .lab-contact { padding-block:100px 110px; background:var(--lab-panel); }
+body.laboratory-page .lab-contact h2 { font-size:clamp(44px,6vw,88px); line-height:1.08; }
+body.laboratory-page .lab-contact-bottom { display:flex; justify-content:space-between; align-items:end; gap:80px; margin-top:64px; }
+body.laboratory-page .lab-contact-bottom > p { max-width:36ch; font-size:16px; line-height:1.8; }
+body.laboratory-page .lab-contact-actions { display:flex; flex-direction:column; align-items:flex-start; gap:8px; }
+body.laboratory-page .lab-contact-actions .lab-button { margin-bottom:8px; }
+
+@media(max-width:1100px) {
+ body.laboratory-page .lab-hero-still { width:86%; }
+ body.laboratory-page .lab-warranty-layout { grid-template-columns:1fr; }
+ body.laboratory-page .lab-warranty-layout { gap:56px; }
+ body.laboratory-page .lab-repair-index { gap:40px; }
+ body.laboratory-page .lab-repair-group li { font-size:19px; }
+ body.laboratory-page .lab-steps { grid-template-columns:1fr 1fr; gap:48px 40px; }
+}
+@media(max-width:767px) {
+ body.laboratory-page .lab-hero { display:block; min-height:0; }
+ body.laboratory-page .lab-hero-still { position:relative; inset:auto; width:100%; height:min(58svh,440px); }
+ body.laboratory-page .lab-hero-still img { object-position:68% 50%; }
+ body.laboratory-page .lab-hero-still .lab-grade::after { background:
+  linear-gradient(0deg,var(--lab-bg) 0%,rgba(16,17,20,.7) 24%,rgba(16,17,20,0) 56%),
+  linear-gradient(180deg,rgba(16,17,20,.5) 0%,rgba(16,17,20,0) 20%); }
+ body.laboratory-page .lab-still figcaption { top:16px; right:20px; bottom:auto; }
+ body.laboratory-page .lab-hero-copy { margin-top:-88px; padding-block:0 56px; }
+ body.laboratory-page .lab-hero h1 { font-size:clamp(44px,13vw,60px); }
+ body.laboratory-page .lab-hero-copy > p { margin-top:20px; font-size:16px; }
+ body.laboratory-page .lab-actions { margin-top:28px; gap:8px 24px; }
+ body.laboratory-page .lab-hero .hero-breadcrumb { margin-top:32px!important; }
+ body.laboratory-page .lab-repairs { padding:24px 0 72px; }
+ body.laboratory-page .lab-repairs h2 { margin-top:-64px; font-size:clamp(40px,12vw,52px); }
+ body.laboratory-page .lab-repair-index { grid-template-columns:1fr; gap:40px; margin-top:40px; }
+ body.laboratory-page .lab-repair-group h3 { margin-bottom:12px; }
+ body.laboratory-page .lab-repair-group li { padding:13px 0; font-size:19px; }
+ body.laboratory-page .lab-repair-note { margin-top:32px; }
+ body.laboratory-page .lab-repair-note a { margin-left:0; }
+ body.laboratory-page .lab-steps h3 { font-size:18px; }
+ body.laboratory-page .lab-band { height:320px; }
+ body.laboratory-page .lab-band figcaption { top:28px; }
+ body.laboratory-page :is(.lab-warranty,.lab-process,.lab-contact) { padding-block:72px; }
+ body.laboratory-page .lab-warranty h2 { font-size:40px; }
+ body.laboratory-page .lab-facts { column-gap:24px; }
+ body.laboratory-page .lab-facts dd { font-size:28px; }
+ body.laboratory-page .lab-steps { grid-template-columns:1fr; gap:32px; }
+ body.laboratory-page .lab-steps li::before { margin-bottom:16px; }
+ body.laboratory-page .is-film .lab-grade::after { background:linear-gradient(180deg,var(--lab-bg) 0%,rgba(16,17,20,.9) 30%,rgba(16,17,20,.2) 50%,rgba(16,17,20,0) 62%),linear-gradient(0deg,var(--lab-bg) 0%,rgba(16,17,20,0) 18%); }
+ body.laboratory-page .is-film .lab-process-copy { justify-content:flex-start; padding:28px 0 0; }
+ body.laboratory-page .is-film .lab-process-copy h2 { margin-bottom:20px; font-size:20px; }
+ body.laboratory-page .is-film .lab-steps h3 { font-size:clamp(34px,10vw,44px); }
+ body.laboratory-page .is-film .lab-steps p { margin-top:14px; font-size:15px; }
+ body.laboratory-page .is-film .lab-steps li::before { margin-bottom:12px; font-size:14px; }
+ body.laboratory-page .is-film .lab-process-timeline { gap:12px; bottom:12px; }
+ body.laboratory-page .lab-process-meter { width:40px; }
+ body.laboratory-page .lab-process-timeline ol { gap:12px; }
+ body.laboratory-page .lab-process-timeline button:not([aria-current]) span { display:none; }
+ body.laboratory-page .lab-contact h2 { font-size:clamp(40px,11vw,52px); }
+ body.laboratory-page .lab-contact-bottom { flex-direction:column; align-items:stretch; gap:32px; margin-top:36px; }
+ body.laboratory-page .lab-contact-actions .lab-button { justify-content:space-between; align-self:stretch; }
+}
+@media(prefers-reduced-motion:reduce) {
+ .lab-js body.laboratory-page [data-lab-reveal] { opacity:1; transform:none; transition:none; }
+ body.laboratory-page .lab-hero-still img { animation:none; }
+ body.laboratory-page :is(.lab-button,.lab-link,.lab-link i) { transition:none; }
+}

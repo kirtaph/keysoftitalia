@@ -85,11 +85,11 @@ $page_keywords = "traccia ordine, stato ordine, tracking key soft, riparazione s
     <?php include 'includes/head.php'; ?>
     <link rel="stylesheet" href="<?php echo asset_version('css/pages/track-order.css'); ?>">
 </head>
-<body data-aos-easing="ease-in-out" data-aos-duration="800" data-aos-once="true">
+<body class="site-aligned" data-aos-easing="ease-in-out" data-aos-duration="800" data-aos-once="true">
 
     <?php include 'includes/header.php'; ?>
 
-    <main>
+    <main id="main-content">
         <!-- HERO SECONDARY (Site Standard) -->
         <section class="hero hero-secondary text-center">
             <div class="hero-pattern"></div>

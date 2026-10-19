@@ -9,6 +9,8 @@ vendor/
 *.zip
 *.bak
 cache/
+artifacts/media-runtime/
+artifacts/skill-runtime/
 config/runtime/
 
 # VS Code e OS

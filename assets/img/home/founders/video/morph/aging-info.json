@@ -1,0 +1,21 @@
+{
+  "metadata": {
+    "ffmpeg_version": "7.1-essentials_build-www.gyan.dev built with gcc 14.2.0 (Rev1, Built by MSYS2 project)",
+    "codec": "h264",
+    "pix_fmt": "yuv420p(progressive)",
+    "fps": 24.0,
+    "source_size": [
+      1920,
+      1080
+    ],
+    "size": [
+      1920,
+      1080
+    ],
+    "rotate": 0,
+    "duration": 9.83
+  },
+  "frames": 240,
+  "bytes": 4721915,
+  "editing": "Continuous source section 2.6\u20136.4s retimed to 10s with motion-compensated interpolation and saturation ramp; no crossfades or cuts between shots."
+}

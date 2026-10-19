@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="it">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Key Soft Italia — Dal 2004 a oggi</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#101114;color:#f8f8fa;font-family:Arial,sans-serif}main{max-width:1440px;margin:auto;padding:28px 24px}header{display:flex;justify-content:space-between;gap:24px;align-items:center;margin-bottom:24px}header strong{font-size:18px}header p{margin:0;color:#bfc2c9;font-size:14px}.stage{position:relative;isolation:isolate}video{display:block;width:100%;height:auto}.copy{position:absolute;left:4%;top:15%;width:35%;pointer-events:none}.year{font-size:clamp(36px,7vw,96px);font-weight:600;line-height:1.05;letter-spacing:-.04em;color:#ff976f;font-variant-numeric:tabular-nums}.copy h1{font-size:clamp(24px,3vw,44px);font-weight:500;line-height:1.15;letter-spacing:-.03em;margin:24px 0}.copy p{font-size:clamp(12px,1.3vw,18px);line-height:1.5;color:#bfc2c9;max-width:28ch}footer{font-size:14px;color:#bfc2c9;line-height:1.6;margin-top:24px}a{color:#ff976f}button{background:#ff6b35;color:#17191e;border:0;border-radius:4px;padding:12px 20px;font:inherit;cursor:pointer}button:focus-visible{outline:2px solid #f8f8fa;outline-offset:4px}@media(max-width:600px){main{padding:20px 12px}header{align-items:flex-start;flex-direction:column;gap:8px}.copy{top:11%;left:5%;width:90%}.year{font-size:56px}.copy h1{font-size:24px;max-width:18ch;margin:12px 0}.copy p{font-size:14px;max-width:28ch}header p{font-size:12px}}
+</style>
+<main>
+ <header><strong>Key Soft Italia</strong><p>Dal 2004 a oggi · Anteprima del capitolo</p></header>
+ <div class="stage">
+  <video id="memory" controls playsinline preload="metadata" poster="../assets/img/home/founders/video/founders-2004-to-now-poster.webp">
+   <source media="(max-width:600px)" src="../assets/img/home/founders/video/founders-2004-to-now-mobile.mp4" type="video/mp4">
+   <source src="../assets/img/home/founders/video/founders-2004-to-now.mp4" type="video/mp4">
+  </video>
+  <div class="copy"><div class="year" id="year" aria-hidden="true">2004</div><h1 id="title">Da qui è iniziato tutto.</h1><p id="caption">Tre amici, una passione condivisa.</p></div>
+ </div>
+ <footer><button id="replay" type="button">Guarda dall'inizio</button><p>Gli anni e «ORA» sono sovrapposti in HTML. Il video resta disponibile senza scritte per l'integrazione con lo scroll.</p><a href="../assets/img/home/founders/video/founders-2004-to-now.mp4" download>Scarica il video desktop</a></footer>
+</main>
+<script>
+const video=document.getElementById('memory'),year=document.getElementById('year'),title=document.getElementById('title'),caption=document.getElementById('caption');
+function update(){const t=video.currentTime,p=Math.max(0,Math.min(1,(t-1.5)/3.5));year.textContent=t>=5?'ORA':String(Math.min(2026,2004+Math.floor(22*p)));title.textContent=t>=5?'La stessa passione. Oggi, insieme.':'Da qui è iniziato tutto.';caption.textContent=t>=5?'Noi tre, oggi. Sempre al vostro fianco.':'Tre amici, una passione condivisa.';}
+video.addEventListener('timeupdate',update);video.addEventListener('seeked',update);document.getElementById('replay').addEventListener('click',()=>{video.currentTime=0;video.play();});
+</script>
+</html>

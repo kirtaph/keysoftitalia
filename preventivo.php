@@ -36,9 +36,10 @@ $page_schema = [
   <?php include 'includes/head.php'; ?>
   <link rel="stylesheet" href="<?php echo asset_version('css/pages/preventivo.css'); ?>">
 </head>
-<body data-aos-easing="ease-in-out" data-aos-duration="800" data-aos-once="true">
+<body class="site-aligned" data-aos-easing="ease-in-out" data-aos-duration="800" data-aos-once="true">
 
 <?php include 'includes/header.php'; ?>
+<main id="main-content">
 
 <!-- HERO -->
 <section class="hero hero-secondary text-center">
@@ -444,6 +445,7 @@ $ld_faq = [
 <script type="application/ld+json"><?php echo json_encode($ld_service, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES); ?></script>
 <script type="application/ld+json"><?php echo json_encode($ld_faq, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES); ?></script>
 
+</main>
 <?php include 'includes/footer.php'; ?>
 
 <!-- Wizard IIFE -->

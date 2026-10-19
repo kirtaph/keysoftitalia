@@ -51,9 +51,10 @@ $documenti = $u('contatti.php#faq');           // “Documentation” -> FAQ/Doc
   <?php include 'includes/head.php'; ?>
   <link rel="stylesheet" href="<?= asset_version('css/pages/404.css'); ?>">
 </head>
-<body>
+<body class="site-aligned">
 
 <?php include 'includes/header.php'; ?>
+<main id="main-content">
 
 <section class="hero hero-secondary text-center">
   <div class="container">
@@ -146,6 +147,7 @@ $documenti = $u('contatti.php#faq');           // “Documentation” -> FAQ/Doc
   </div>
 </section>
 
+</main>
 <?php include 'includes/footer.php'; ?>
 <script src="<?= asset('js/main.js'); ?>" defer></script>
 </body>

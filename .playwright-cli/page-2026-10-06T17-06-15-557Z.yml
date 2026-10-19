@@ -1,0 +1,87 @@
+- generic [active] [ref=e1]:
+  - banner [ref=e2]:
+    - generic [ref=e3]:
+      - generic [ref=e4]: Key Soft Italia
+      - generic [ref=e6]: Tavola di direzioneCampione di stile · 06/10/2026
+  - main [ref=e7]:
+    - generic [ref=e8]:
+      - generic [ref=e9]:
+        - text: GINOSA · DAL 2004
+        - heading "La tua tecnologia merita un'altra possibilità." [level=1] [ref=e10]
+        - paragraph [ref=e11]: "Smartphone e computer: riparazioni, assistenza e dispositivi ricondizionati. Una storia di cura, dentro e fuori il dispositivo."
+        - generic [ref=e12]:
+          - link "Richiedi una riparazione ↗" [ref=e13] [cursor=pointer]:
+            - /url: ../../prenota-riparazione.php
+          - link "La storia visiva ↓" [ref=e14] [cursor=pointer]:
+            - /url: "#visual-story"
+      - figure "Riferimento di materiali e luce. Fotografia illustrativa esistente, non un frame del nuovo film." [ref=e15]:
+        - img "Fotografia illustrativa di una lavorazione su smartphone" [ref=e16]
+    - generic [ref=e18]: La home finale userà una sequenza cinematografica a tutta schermata, con capitoli HTML sincronizzati allo scroll. Questa tavola mostra identità e racconto; il filmato deve ancora essere prodotto.
+    - generic [ref=e20]:
+      - generic [ref=e21]:
+        - text: IDENTITÀ PRESERVATA
+        - heading "Precisa. Tangibile. Vicina." [level=2] [ref=e22]: Precisa.Tangibile.Vicina.
+        - generic [ref=e23]:
+          - generic [ref=e24]: Showroom
+          - generic [ref=e26]: Arancione
+          - generic [ref=e28]: Catalogo
+          - generic [ref=e30]: Luce
+      - generic [ref=e32]:
+        - text: TIPOGRAFIA E COMPONENTI
+        - paragraph [ref=e33]: Dentro ogni soluzione,c'è cura.
+        - paragraph [ref=e34]: Poppins per la voce del marchio. Inter per informazioni e azioni. Il testo resta leggibile, selezionabile e separato dal film.
+        - generic [ref=e35]:
+          - generic [ref=e36]:
+            - heading "Il laboratorio" [level=3] [ref=e37]
+            - paragraph [ref=e38]: Diagnosi e assistenza per trovare la strada giusta per il tuo dispositivo.
+          - link "Scopri il laboratorio" [ref=e39] [cursor=pointer]:
+            - /url: ../../servizi/riparazioni.php
+            - text: ↗
+    - generic [ref=e40]:
+      - text: UN SOGGETTO · UN FILM CONTINUO
+      - heading "Visual Story" [level=2] [ref=e41]
+      - generic [ref=e42]:
+        - generic [ref=e43]: "01"
+        - generic [ref=e44]:
+          - heading "Il guasto" [level=3] [ref=e45]
+          - paragraph [ref=e46]: Macro su un vetro incrinato. Luce radente, alluminio e una camera che si avvicina lentamente. Spazio a sinistra per la prima promessa.
+        - generic [ref=e47]:
+          - heading "Un'altra possibilità." [level=3] [ref=e48]
+          - paragraph [ref=e49]: La tua tecnologia merita un'altra possibilità. Richiedi una riparazione.
+      - generic [ref=e50]:
+        - generic [ref=e51]: "02"
+        - generic [ref=e52]:
+          - heading "Dentro" [level=3] [ref=e53]
+          - paragraph [ref=e54]: Il testo scompare. Il telefono resta solo, ruota e si apre in tre strati. La transizione occupa il suo spazio, senza anticipare la destinazione.
+        - generic [ref=e55]:
+          - heading "Solo il movimento." [level=3] [ref=e56]
+          - paragraph [ref=e57]: "Nessun testo: qui parla il dispositivo."
+      - generic [ref=e58]:
+        - generic [ref=e59]: "03"
+        - generic [ref=e60]:
+          - heading "La cura" [level=3] [ref=e61]
+          - paragraph [ref=e62]: Avvicinamento ai componenti, riflessi arancioni e riassemblaggio dello stesso soggetto. Un dettaglio viene tenuto per lasciare leggere.
+        - generic [ref=e63]:
+          - heading "Dentro ogni soluzione, c'è cura." [level=3] [ref=e64]
+          - paragraph [ref=e65]: Diagnosi e assistenza per trovare la strada giusta. Scopri il laboratorio.
+      - generic [ref=e66]:
+        - generic [ref=e67]: "04"
+        - generic [ref=e68]:
+          - heading "Riparti" [level=3] [ref=e69]
+          - paragraph [ref=e70]: Il display integro si accende. La camera arretra, il telefono completo resta in scena e apre il percorso verso i prodotti del negozio.
+        - generic [ref=e71]:
+          - heading "Pronto per quello che viene dopo." [level=3] [ref=e72]
+          - paragraph [ref=e73]: Ripara il tuo dispositivo o scegli il prossimo. Esplora il catalogo.
+      - generic "Distribuzione iniziale di 5,5 viewport di scorrimento attivo" [ref=e74]:
+        - generic [ref=e75]: Guasto1,25 viewport
+        - generic [ref=e76]: Dentro1,75 viewport
+        - generic [ref=e77]: Cura1,5 viewport
+        - generic [ref=e78]: Riparti1 viewport
+      - paragraph [ref=e79]: "Un palco fissato, scorrimento nativo e reversibile. Testi HTML con pause di lettura. Poi servizi, prodotti reali e contatti tornano nel flusso normale. Con movimento ridotto: poster e contenuti sempre disponibili."
+      - generic [ref=e80]:
+        - link "Brief di produzione ↗" [ref=e81] [cursor=pointer]:
+          - /url: production-brief.md
+        - link "Prompt per immagini e film ↗" [ref=e82] [cursor=pointer]:
+          - /url: prompts.md
+  - contentinfo [ref=e83]:
+    - generic [ref=e84]: Proposta di direzione · Nessun video generato · Logo e dati reali preservati · Nessuna pubblicazione

@@ -1,0 +1,26 @@
+async page=>{
+ const errors=[];page.on('pageerror',e=>errors.push(e.message));
+ await page.emulateMedia({reducedMotion:'no-preference'});
+ await page.goto('http://keysoftitalia.test/');await page.evaluate(()=>localStorage.setItem('ksoft_consent_v2',JSON.stringify({state:'denied',ts:Date.now()})));await page.reload();await page.evaluate(()=>document.fonts.ready);
+ const r={widths:[]};
+ async function humanPosition(p){await page.locator('#home-people').evaluate((el,p)=>{const stage=el.querySelector('.continuum-human-stage');scrollTo({top:el.offsetTop-document.querySelector('.header').getBoundingClientRect().height+p*(el.offsetHeight-stage.offsetHeight),behavior:'instant'});},p);await page.waitForTimeout(150);}
+ for(const width of [320,390,768,1024,1440]){
+  await page.setViewportSize({width,height:width<768?844:1000});await humanPosition(.4);
+  await page.locator('.continuum-human-visual img').evaluate(el=>el.decode());
+  r.widths.push(await page.evaluate(()=>{const stage=document.querySelector('.continuum-human-stage').getBoundingClientRect(),photo=document.querySelector('.continuum-human-visual').getBoundingClientRect();return{width:innerWidth,overflow:document.documentElement.scrollWidth>innerWidth,photoFits:photo.bottom<=stage.bottom+2,imageLoaded:document.querySelector('.continuum-human-visual img').naturalWidth>0};}));
+  if(width===1440||width===390||width===320)await page.screenshot({path:`artifacts/story-people-${width}.png`});
+ }
+ await page.setViewportSize({width:1440,height:1000});
+ const states=[];
+ for(const offset of [700,300,700]){
+  await page.locator('#home-people').evaluate((el,offset)=>scrollTo({top:el.offsetTop-offset,behavior:'instant'}),offset);await page.waitForTimeout(100);
+  states.push(await page.locator('.continuum-human-visual').evaluate(el=>({opacity:Number(getComputedStyle(el).opacity),transform:getComputedStyle(el).transform})));
+ }
+ r.motion=states;r.reversible=states[0].transform===states[2].transform&&states[0].opacity===states[2].opacity;
+ await page.locator('.continuum-catalogue').evaluate(el=>scrollTo({top:el.offsetTop-100,behavior:'instant'}));await page.waitForTimeout(100);await page.screenshot({path:'artifacts/story-catalogue.png'});
+ await page.emulateMedia({reducedMotion:'reduce'});await page.reload();
+ r.reduced=await page.locator('#home-people').evaluate(el=>!el.classList.contains('is-narrative')&&getComputedStyle(el.querySelector('h2')).opacity==='1'&&getComputedStyle(el.querySelector('figure')).transform==='none');
+ await page.emulateMedia({reducedMotion:'no-preference'});
+ r.errors=errors;r.passed=r.widths.every(w=>!w.overflow&&w.photoFits&&w.imageLoaded)&&r.motion[0].transform!=='none'&&r.motion[0].transform!==r.motion[1].transform&&r.reversible&&r.reduced&&!errors.length;
+ if(!r.passed)throw new Error(JSON.stringify(r));return r;
+}

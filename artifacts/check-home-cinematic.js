@@ -1,0 +1,36 @@
+async page=>{
+ const errors=[];page.on('pageerror',e=>errors.push(e.message));
+ await page.setViewportSize({width:1440,height:1000});
+ await page.goto('http://keysoftitalia.test/');
+ await page.evaluate(()=>localStorage.setItem('ksoft_consent_v2',JSON.stringify({state:'denied',ts:Date.now()})));
+ await page.reload();await page.waitForFunction(()=>document.getElementById('home-cinematic').dataset.renderer==='sequence');
+ const r={beats:[]};
+ for(const [p,name,frame] of [[0,'opening',0],[.36,'inside',80],[.62,'care',144],[.96,'restart',239],[.36,'inside',80],[0,'opening',0]]){
+  await page.evaluate(p=>{const s=document.getElementById('home-cinematic'),h=document.querySelector('.header').getBoundingClientRect().height;scrollTo({top:s.offsetTop-h+p*5.5/10.3*(s.offsetHeight-s.querySelector('.cinematic-stage').offsetHeight),behavior:'instant'});},p);
+  await page.waitForFunction(f=>Math.abs(Number(document.getElementById('home-cinematic').dataset.frame)-f)<=2,frame);
+  r.beats.push(await page.evaluate(()=>({chapter:document.getElementById('home-cinematic').dataset.chapter,frame:Number(document.getElementById('home-cinematic').dataset.frame),activeChapters:[...document.querySelectorAll('[data-chapter].cinematic-chapter')].filter(c=>!c.inert).length})));
+ }
+ await page.mouse.wheel(0,550);await page.waitForTimeout(250);
+ r.nativeScroll=await page.evaluate(()=>scrollY>100);
+ await page.evaluate(()=>scrollTo({top:0,behavior:'instant'}));
+ const before=await page.locator('canvas').screenshot();await page.mouse.wheel(0,1800);await page.waitForTimeout(300);const after=await page.locator('canvas').screenshot();r.pixelsChanged=Buffer.compare(before,after)!==0;
+ r.breakpoints=[];
+ for(const width of [320,390,768,1024,1440]){
+  await page.setViewportSize({width,height:900});await page.evaluate(()=>scrollTo({top:0,behavior:'instant'}));await page.waitForTimeout(100);
+  r.breakpoints.push(await page.evaluate(()=>({width:innerWidth,overflow:document.documentElement.scrollWidth>innerWidth,titleFits:document.querySelector('h1').scrollWidth<=document.querySelector('h1').clientWidth+1})));
+ }
+ await page.setViewportSize({width:390,height:844});
+ await page.locator('.cinematic-skip').click();
+ r.skipFocus=await page.evaluate(()=>document.activeElement.id==='home-services-title');
+ await page.locator('.menu-toggle').click();r.menuOpen=await page.locator('.menu-toggle').getAttribute('aria-expanded');await page.keyboard.press('Escape');r.menuClosed=await page.locator('.menu-toggle').getAttribute('aria-expanded');
+ await page.emulateMedia({reducedMotion:'reduce'});await page.reload();await page.waitForFunction(()=>document.getElementById('home-cinematic').dataset.renderer==='poster');
+ r.reduced=await page.evaluate(()=>({renderer:document.getElementById('home-cinematic').dataset.renderer,enhanced:document.getElementById('home-cinematic').classList.contains('cinematic-enhanced'),visibleChapters:[...document.querySelectorAll('.cinematic-chapter')].every(c=>getComputedStyle(c).visibility==='visible'&&!c.inert)}));
+ await page.emulateMedia({reducedMotion:'no-preference'});
+ const fallback=await page.context().browser().newContext();await fallback.route('**/story-manifest.json*',route=>route.abort());const fp=await fallback.newPage();await fp.goto('http://keysoftitalia.test/');await fp.waitForFunction(()=>document.getElementById('home-cinematic').dataset.renderer==='poster');r.mediaFailure=await fp.evaluate(()=>[...document.querySelectorAll('.cinematic-chapter')].every(c=>!c.inert));await fallback.close();
+ await page.reload();await page.waitForFunction(()=>document.getElementById('home-cinematic').dataset.renderer==='sequence');await page.setViewportSize({width:1440,height:1000});await page.evaluate(()=>scrollTo({top:0,behavior:'instant'}));await page.waitForTimeout(100);await page.screenshot({path:'artifacts/cinematic-final-desktop.png'});
+ await page.setViewportSize({width:390,height:844});await page.evaluate(()=>scrollTo({top:0,behavior:'instant'}));await page.waitForTimeout(150);await page.screenshot({path:'artifacts/cinematic-final-mobile.png'});
+ r.errors=errors;
+ r.passed=r.nativeScroll&&r.pixelsChanged&&r.breakpoints.every(b=>!b.overflow&&b.titleFits)&&r.skipFocus&&r.menuOpen==='true'&&r.menuClosed==='false'&&r.reduced.renderer==='poster'&&!r.reduced.enhanced&&r.reduced.visibleChapters&&r.mediaFailure&&!errors.length&&r.beats.every((b,i)=>Math.abs(b.frame-[0,80,144,239,80,0][i])<=2)&&r.beats[1].activeChapters===0;
+ if(!r.passed)throw new Error(JSON.stringify(r));return r;
+}
+

@@ -1,0 +1,94 @@
+async page => {
+  const results = {};
+  const errors = [];
+  page.on('pageerror', error => errors.push(error.message));
+  await page.goto('http://keysoftitalia.test/');
+  await page.evaluate(() => localStorage.setItem('ksoft_consent_v2', JSON.stringify({state:'denied',ts:Date.now()})));
+  await page.reload();
+  results.breakpoints = [];
+  for (const width of [320,390,768,1024,1440]) {
+    await page.setViewportSize({width,height:900});
+    results.breakpoints.push(await page.evaluate(() => ({
+      width:innerWidth,overflow:document.documentElement.scrollWidth>innerWidth,
+      hiddenHeadings:[...document.querySelectorAll('main h1,main h2,main h3,main h4')]
+        .filter(el=>!el.closest('[aria-hidden=true]')&&getComputedStyle(el).opacity==='0').length
+    })));
+  }
+  results.content = await page.evaluate(() => ({
+    h1:document.querySelectorAll('h1').length,products:document.querySelectorAll('.home-product').length,
+    canonical:document.querySelector('link[rel=canonical]').href,iframeBeforeClick:document.querySelectorAll('dialog iframe').length
+  }));
+  const routes=['prenota-riparazione.php','preventivo.php','prodotti.php','servizi.php',
+    'servizi/riparazioni.php','servizi/sviluppo-web.php','servizi/telefonia.php',
+    'servizi/forniture.php','servizi/liberty-commerce.php','video.php','chi-siamo.php','contatti.php','valuta-usato.php'];
+  results.routes=await Promise.all(routes.map(async route => ({route,status:(await page.request.get('http://keysoftitalia.test/'+route)).status()})));
+  await page.setViewportSize({width:390,height:844});
+  await page.locator('.menu-toggle').click();
+  results.menuOpen=await page.evaluate(()=>({
+    expanded:document.querySelector('.menu-toggle').getAttribute('aria-expanded'),
+    hidden:document.getElementById('ksOffcanvasNav').getAttribute('aria-hidden'),
+    mainInert:document.querySelector('main').inert,focus:document.activeElement.getAttribute('aria-label')
+  }));
+  await page.keyboard.press('Shift+Tab');
+  results.menuFocusContained=await page.evaluate(()=>document.getElementById('ksOffcanvasNav').contains(document.activeElement));
+  await page.keyboard.press('Escape');
+  results.menuClosed=await page.evaluate(()=>({
+    expanded:document.querySelector('.menu-toggle').getAttribute('aria-expanded'),
+    inert:document.getElementById('ksOffcanvasNav').inert,overflow:document.body.style.overflow
+  }));
+  await page.locator('.home-faq summary').first().click();
+  results.faqOpen=await page.locator('.home-faq details').first().getAttribute('open')!==null;
+  await page.locator('.home-faq summary').first().click();
+  if(await page.locator('[data-home-video]').count()) {
+    await page.locator('[data-home-video]').click();
+    results.videoOpen=await page.evaluate(()=>({
+      open:document.querySelector('dialog').open,source:document.querySelector('dialog iframe').src,
+      focus:document.activeElement.getAttribute('aria-label')
+    }));
+    await page.keyboard.press('Escape');
+    results.videoClosed=await page.evaluate(()=>({
+      open:document.querySelector('dialog').open,iframes:document.querySelectorAll('dialog iframe').length,
+      returnedFocus:document.activeElement.hasAttribute('data-home-video')
+    }));
+  }
+  await page.emulateMedia({reducedMotion:'reduce'});
+  await page.reload();
+  results.reducedMotion=await page.evaluate(()=>({
+    preference:matchMedia('(prefers-reduced-motion: reduce)').matches,
+    animations:document.getAnimations().filter(a=>a.playState==='running').length,
+    headingsVisible:[...document.querySelectorAll('main h2')].every(el=>getComputedStyle(el).opacity==='1')
+  }));
+  await page.emulateMedia({reducedMotion:'no-preference'});
+  await page.setViewportSize({width:1440,height:1000});
+  await page.reload();
+  for(let y=0;y<await page.evaluate(()=>document.documentElement.scrollHeight);y+=750) {
+    await page.evaluate(y=>window.scrollTo(0,y),y);
+    await page.waitForTimeout(100);
+  }
+  await page.evaluate(()=>window.scrollTo(0,0));
+  await page.screenshot({path:'artifacts/home-after-full.png',fullPage:true});
+  await page.screenshot({path:'artifacts/home-after-desktop.png'});
+  results.brokenImages=await page.evaluate(()=>[...document.images].filter(i=>i.complete&&!i.naturalWidth).map(i=>i.src));
+  await page.setViewportSize({width:390,height:844});
+  await page.evaluate(()=>window.scrollTo(0,0));
+  await page.screenshot({path:'artifacts/home-after-mobile.png',fullPage:true});
+  await page.screenshot({path:'artifacts/home-mobile-viewport.png'});
+  const noJS=await page.context().browser().newContext({javaScriptEnabled:false,viewport:{width:390,height:844}});
+  const noJSPage=await noJS.newPage();
+  await noJSPage.goto('http://keysoftitalia.test/');
+  results.noJavaScript=await noJSPage.evaluate(()=>({
+    bodyVisible:getComputedStyle(document.body).opacity==='1',h1:document.querySelector('h1').innerText,
+    products:document.querySelectorAll('.home-product').length,overflow:document.documentElement.scrollWidth>innerWidth
+  }));
+  await noJS.close();
+  results.pageErrors=errors;
+  results.passed=results.breakpoints.every(b=>!b.overflow&&!b.hiddenHeadings)
+    &&results.content.h1===1&&!results.content.iframeBeforeClick
+    &&results.routes.every(r=>r.status===200)&&results.menuFocusContained
+    &&results.menuOpen.expanded==='true'&&results.menuClosed.expanded==='false'
+    &&results.faqOpen&&results.reducedMotion.animations===0&&results.reducedMotion.headingsVisible
+    &&!results.brokenImages.length&&results.noJavaScript.bodyVisible&&!results.noJavaScript.overflow&&!errors.length
+    &&(!results.videoClosed||(!results.videoClosed.open&&!results.videoClosed.iframes&&results.videoClosed.returnedFocus));
+  if(!results.passed) throw new Error(JSON.stringify(results));
+  return results;
+}

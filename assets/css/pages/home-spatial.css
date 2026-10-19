@@ -1,0 +1,150 @@
+/* Spatial direction: an orange-lit showroom, with actual WebGL devices. */
+.home-restyle { --home-ink:#17191e; --home-muted:#bfc2c9; --home-link:#ff976f; background:#101114; color:#f8f8fa; }
+.home-restyle main :is(h1,h2,h3,h4) { color:#f8f8fa; }
+.home-restyle .header-top { background:#101114; border-bottom:1px solid #282a30; }
+.home-restyle .header, .home-restyle .header-main { background:#101114; border-color:#282a30; }
+.home-restyle .logo-title, .home-restyle .nav-link { color:#f8f8fa; }
+.home-restyle .logo-subtitle { color:#bfc2c9; }
+.home-restyle .nav-cta-preventivo { background:#ff6b35; color:#17191e; }
+.home-restyle .nav-cta-preventivo i { color:#17191e; }
+.home-restyle .menu-toggle span { background:#f8f8fa; }
+.home-restyle .nav-dropdown { background:#202228; border-color:#393c44; }
+.home-restyle .nav-dropdown-item { color:#f8f8fa; }
+.spatial-hero { position:relative; padding:0; display:block; width:100%; background:#101114; overflow:hidden; }
+.spatial-hero-inner { display:grid; grid-template-columns:.85fr 1.15fr; gap:0; position:relative; min-height:700px; align-items:center; }
+.spatial-hero .home-hero-copy { position:relative; z-index:2; padding:45px 0 55px; }
+.spatial-hero .home-location { font-size:12px; color:#bfc2c9; margin-bottom:26px; }
+.spatial-hero h1 { font-size:clamp(56px,6.1vw,88px); font-weight:600; letter-spacing:-.04em; line-height:1.04; margin-bottom:30px; }
+.spatial-hero h1 span { color:#ff976f; }
+.spatial-hero .home-hero-description { color:#bfc2c9; font-size:16px; max-width:39ch; margin-bottom:30px; line-height:1.8; }
+.spatial-hero .home-button-dark { background:#ff6b35; color:#17191e; border-radius:4px; }
+.spatial-hero .home-button-dark i { color:#17191e; }
+.spatial-hero .home-button-outline { color:#f8f8fa; background:transparent; border:0; border-radius:4px; padding-inline:10px; }
+.spatial-hero .home-explore { color:#bfc2c9 !important; margin-top:38px; font-size:12px; }
+.spatial-hero .home-explore-icon { border-color:#51545e; }
+.spatial-stage { position:relative; height:690px; min-width:0; margin-inline:-30px -65px; isolation:isolate; }
+.spatial-stage::before { content:''; position:absolute; width:75%; aspect-ratio:1; top:12%; left:10%; border-radius:50%; background:radial-gradient(ellipse,rgba(255,107,53,.14),rgba(255,107,53,0) 65%); z-index:-1; }
+.spatial-stage-word { position:absolute; top:34%; left:5%; width:90%; text-align:center; font-family:'Poppins',sans-serif; font-weight:700; font-size:clamp(100px,14vw,210px); letter-spacing:-.04em; color:#1d1f24; z-index:-1; pointer-events:none; }
+#home-3d-canvas { position:absolute; inset:0 0 auto; width:100%; height:calc(100% - 125px); display:block; opacity:0; touch-action:pan-y; cursor:grab; }
+#home-3d-canvas:active { cursor:grabbing; }
+.spatial-ready #home-3d-canvas { opacity:1; }
+.spatial-fallback { position:absolute; top:12%; left:8%; width:84%; height:68%; object-fit:cover; border-radius:8px; }
+.spatial-ready .spatial-fallback { visibility:hidden; }
+.spatial-stage:not(.spatial-ready) :is(.spatial-controls,.spatial-hint) { visibility:hidden; }
+.spatial-controls[hidden] { display:none; }
+.spatial-stage-caption { position:absolute; bottom:125px; left:0; right:0; display:flex; justify-content:center; align-items:center; gap:9px; font-size:11px; color:#bfc2c9; pointer-events:none; }
+.spatial-live-dot { width:5px; height:5px; border-radius:50%; background:#ff976f; }
+.spatial-controls { position:absolute; bottom:48px; left:50%; transform:translateX(-50%); display:flex; gap:4px; background:#202228; padding:5px; border:1px solid #393c44; border-radius:6px; white-space:nowrap; }
+.spatial-controls button { display:inline-flex; gap:9px; align-items:center; justify-content:center; border:0; background:transparent; color:#bfc2c9; padding:12px 17px; min-height:44px; border-radius:4px; font-size:12px; font-weight:500; transition:background-color 180ms ease,color 180ms ease; }
+.spatial-controls button i { font-size:18px; }
+.spatial-controls [aria-pressed=true] { background:#ff6b35; color:#17191e; }
+.spatial-controls #spatial-pause { border-left:1px solid #393c44; border-radius:0; padding-inline:13px; }
+.spatial-hint { position:absolute; bottom:12px; width:100%; text-align:center; color:#bfc2c9; font-size:11px; margin:0; pointer-events:none; }
+.spatial-hero-bottom { display:flex; justify-content:space-between; align-items:center; gap:30px; padding-block:23px; border-top:1px solid #393c44; font-size:11px; color:#bfc2c9; }
+.spatial-hero-bottom a { display:flex; align-items:center; gap:12px; color:#f8f8fa !important; }
+.spatial-hero-bottom i { font-size:18px; color:#ff976f; }
+.home-assurance { background:#191b20; }
+.home-assurance-inner > * { color:#d5d8dc; }
+.home-restyle main h2 { font-size:clamp(36px,4.1vw,60px); font-weight:600; }
+.home-section-heading { grid-template-columns:1.2fr .8fr; margin-bottom:54px; }
+.home-section-heading p { color:#bfc2c9; }
+.home-service-layout { grid-template-columns:1.15fr .85fr; gap:20px; }
+.home-repair-panel { min-height:580px; border-radius:4px; }
+.home-repair-copy h3 { font-size:40px; }
+.home-service-link { background:#202228; color:#f8f8fa !important; border-radius:4px; padding:36px; }
+.home-service-link-business { background:#292226; }
+.home-service-link .home-service-tag { color:#ff976f; }
+.home-service-link p { color:#bfc2c9; }
+.home-round-arrow { background:#393c44; }
+.home-extra-services { border-color:#393c44; }
+.home-catalogue { background:#eeeef0; color:#17191e; padding-block:105px; }
+.home-catalogue-intro { gap:80px; grid-template-columns:1.1fr .9fr; }
+.home-catalogue-photo { border-radius:4px; height:450px; }
+.home-catalogue-photo > span { color:#fff; }
+.home-restyle main .home-catalogue :is(h2,h3,h4) { color:#17191e; }
+.home-restyle .home-catalogue h2 span { color:#ac3b12; }
+.home-catalogue-copy > p, .home-catalogue-copy .home-service-tag { color:#515961; }
+.home-restyle .home-catalogue .home-button-light { color:#fff; background:#17191e; border-radius:4px; }
+.home-trade-link { color:#515961 !important; }
+.home-products-heading span, .home-product-info > span { color:#515961; }
+.home-product-image { background:#fff; border-radius:4px; }
+.home-product-price { border-color:#c1c6cc; }
+.home-product-price i { color:#ac3b12; }
+.home-catalogue-empty, .home-catalogue-empty a { color:#515961; }
+.home-video-section { grid-template-columns:.75fr 1.25fr; padding-block:120px; }
+.home-video-poster { border-radius:4px; }
+.home-play { background:#ff6b35; color:#17191e; }
+.home-video-caption > span { color:#bfc2c9; }
+.home-story { background:#191b20; padding-block:105px; }
+.home-story-photo img { border-radius:4px; filter:saturate(.6); }
+.home-story-copy > p:not(.home-location), .home-story-photo > span, .home-story-copy .home-location { color:#bfc2c9; }
+.home-faq-list, .home-faq details { border-color:#393c44; }
+.home-faq summary { color:#f8f8fa; }
+.home-faq details > p { color:#bfc2c9; }
+.home-flyer { border-color:#393c44; }
+.home-flyer .home-button-dark { background:#ff6b35; color:#17191e; }
+.home-flyer .home-button-dark i { color:#17191e; }
+.home-restyle main .home-contact h2 { color:#17191e; }
+.home-contact h2 { font-size:clamp(48px,6vw,82px) !important; }
+.home-contact .home-button-dark { color:#fff; background:#17191e; border-radius:4px; }
+.home-contact .home-button-dark i { color:#ff976f; }
+.home-restyle .footer { background:#101114; }
+.home-restyle .home-video-dialog { color:#17191e; }
+@media (hover:hover) and (pointer:fine) {
+  .spatial-hero .home-button-dark:hover { background:#ff976f; }
+  .spatial-hero .home-button-outline:hover { background:#202228; }
+  .spatial-controls button:hover:not([aria-pressed=true]) { background:#393c44; color:#fff; }
+}
+@media (max-width:1199px) {
+  .spatial-hero-inner { min-height:640px; grid-template-columns:.9fr 1.1fr; }
+  .spatial-stage { height:630px; margin-inline:-20px -32px; }
+  .spatial-hero h1 { font-size:clamp(48px,6.1vw,72px); }
+  .spatial-hero .home-actions { gap:8px; }
+  .spatial-hero .home-button { font-size:11px; padding-inline:14px; }
+  .home-catalogue-intro { gap:40px; }
+  .home-repair-copy h3 { font-size:32px; }
+}
+@media (max-width:991px) {
+  .spatial-hero-inner { grid-template-columns:1fr 1.1fr; min-height:620px; }
+  .spatial-hero h1 { font-size:56px; }
+  .spatial-stage { height:580px; margin-inline:-40px -35px; }
+  .spatial-stage-caption { font-size:11px; padding-inline:25px; text-align:center; }
+  .spatial-controls button { padding-inline:12px; font-size:11px; gap:6px; }
+  .spatial-hero .home-hero-description { font-size:13px; }
+  .home-repair-panel { min-height:530px; }
+  .home-service-link { padding:28px; }
+}
+@media (max-width:767px) {
+  .spatial-hero-inner { grid-template-columns:1fr; min-height:0; }
+  .spatial-hero .home-hero-copy { grid-column:1; grid-row:2; padding:8px 0 40px; }
+  .spatial-hero .home-location { font-size:11px; margin-bottom:23px; }
+  .spatial-hero h1 { font-size:clamp(44px,12.5vw,56px); line-height:1.04; margin-bottom:24px; }
+  .spatial-hero .home-hero-description { font-size:13px; max-width:43ch; }
+  .spatial-hero .home-explore { display:none; }
+  .spatial-hero .home-button { min-height:48px; font-size:11px; }
+  .spatial-stage { grid-column:1; grid-row:1; height:420px; margin-inline:-20px; margin-top:0; }
+  .spatial-stage-word { font-size:100px; top:29%; }
+  .spatial-stage-caption { bottom:123px; font-size:11px; }
+  .spatial-controls { bottom:47px; }
+  .spatial-controls button { font-size:11px; padding-inline:14px; min-height:44px; }
+  .spatial-hint { font-size:11px; }
+  .spatial-hero-bottom { padding-block:20px; gap:18px; flex-wrap:wrap; font-size:11px; }
+  .home-restyle main h2 { font-size:clamp(32px,8.4vw,48px); }
+  .home-section-heading, .home-service-layout, .home-catalogue-intro, .home-video-section { grid-template-columns:1fr; gap:26px; }
+  .home-section-heading { margin-bottom:32px; }
+  .home-repair-panel { min-height:450px; }
+  .home-repair-copy h3 { font-size:32px; }
+  .home-service-link { min-height:250px; padding:28px; }
+  .home-catalogue, .home-story { padding-block:65px; }
+  .home-catalogue-photo { height:auto; }
+  .home-video-section { padding-block:70px; }
+  .home-contact h2 { font-size:56px !important; }
+}
+@media (max-width:359px) {
+  .spatial-hero h1 { font-size:44px; }
+  .spatial-stage { height:390px; margin-inline:-16px; }
+  .spatial-controls button { padding-inline:10px; }
+}
+@media (prefers-reduced-motion:reduce) {
+  .spatial-controls button { transition:none; }
+}

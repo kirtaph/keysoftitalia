@@ -58,10 +58,11 @@ $page_schema = [
     <?php include 'includes/head.php'; ?>
     <link rel="stylesheet" href="<?php echo asset_version('css/pages/privacy.css'); ?>">
 </head>
-<body>
+<body class="site-aligned">
     
     <!-- Header -->
     <?php include 'includes/header.php'; ?>
+<main id="main-content">
     
     <?php
     $hero_icon = 'ri-shield-keyhole-line';
@@ -588,7 +589,8 @@ $page_schema = [
     </section>
     
     <!-- Footer -->
-    <?php include 'includes/footer.php'; ?>
+    </main>
+<?php include 'includes/footer.php'; ?>
     
     <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>

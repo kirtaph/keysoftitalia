@@ -1,0 +1,66 @@
+{
+  "desktopImage": {
+    "model": "gpt_image_2_5",
+    "aspect_ratio": "16:9",
+    "resolution": "2k",
+    "quality": "high",
+    "count": 1,
+    "medias": [
+      {
+        "role": "image",
+        "value": "f1a79f43-02e0-4e36-83a3-e90ed12d5288"
+      }
+    ],
+    "prompt": "Create the END KEYFRAME of the next shot of a photorealistic premium technology store website film. Reference is the EXACT preceding shot: preserve the SAME dark warm gold metal smartphone, screen with amber sand dunes, photographic lighting and seamless nearly black graphite background. Camera has slowly pulled back: the same phone now stands upright on a very low matte charcoal display plinth in the RIGHT HALF of the frame, beside one slim open silver notebook behind it on the far right and one dark thin tablet with matching muted amber wallpaper behind and slightly left of the phone. A coherent believable physical showroom still life, grounded devices with soft contact shadows, elegant warm edge lights, restrained high-end product photography, realistic precise proportions, no floating parts, no people. The devices occupy x=52% to 92% and y=30% to 83%. The LEFT 45% is empty uninterrupted graphite negative space for website copy. Keep the TOP 15% and BOTTOM 12% quiet and dark for navigation. Background same graphite as reference, no architecture or visible shop, no colorful gradients, no decorative lines. The actual reference phone remains most recognizable hero of the group. Widescreen 16:9, 50mm lens, crisp believable commercial photography. Absolutely NO text, NO lettering, NO logos, NO labels, NO prices, NO UI, NO watermark."
+  },
+  "mobileImage": {
+    "model": "gpt_image_2_5",
+    "aspect_ratio": "9:16",
+    "resolution": "2k",
+    "quality": "high",
+    "count": 1,
+    "medias": [
+      {
+        "role": "image",
+        "value": "ffa69fad-ab8d-4868-b956-c9fa032644db"
+      }
+    ],
+    "prompt": "Recompose the supplied exact photorealistic technology still life into a PORTRAIT 9:16 END KEYFRAME for the same website film on a phone screen. Preserve exactly the reference gold smartphone with amber dunes display, dark tablet and open silver laptop, graphite plinth, realistic high-end product photography and amber edge lights. ALL THREE devices must fit completely inside the portrait frame with generous side margins. Arrange a compact coherent group across the lower 45% of the image: phone in front near center, tablet behind left, open laptop behind right. The TOP 45% must be empty uninterrupted near-black graphite negative space for the HTML headline and two buttons; no objects or light spots there. Bottom 10% quiet dark for chapter navigation. The group is smaller in frame than reference, grounded on a low wide charcoal plinth. No new objects, no duplicates, no people. Same restrained warm amber and graphite palette. No lettering, no logo, no price, no text, no UI."
+  },
+  "desktopVideo": {
+    "model": "kling_o3_flf",
+    "aspect_ratio": "16:9",
+    "duration": 8,
+    "mode": "pro",
+    "sound": "off",
+    "medias": [
+      {
+        "role": "start_image",
+        "value": "f1a79f43-02e0-4e36-83a3-e90ed12d5288"
+      },
+      {
+        "role": "end_image",
+        "value": "ffa69fad-ab8d-4868-b956-c9fa032644db"
+      }
+    ],
+    "prompt": "One continuous elegant photorealistic product-camera shot, no cuts. Begin EXACTLY on the supplied first frame, the repaired gold smartphone lit with warm amber dunes screen against empty graphite. Slowly dolly backward and slightly to the right, keeping the SAME rigid intact smartphone the visual anchor. Reveal a low dark display plinth beneath it and the stationary tablet and open silver laptop standing behind, as shown in the exact end frame. The other devices are initially outside the camera framing and in deep shadow; they become visible as the camera pulls back and a restrained soft studio key light rises. Physically grounded products: no morphing, no parts assembling, no devices growing out of the phone, no multiplying objects. Maintain the phone's warm gold frame, amber screen, studio black graphite and warm reflection continuity. Motion eases to a complete still hold for the final 1.5 seconds at the supplied end composition. Large quiet negative space on the left for HTML copy. All screens remain amber abstract dune wallpaper with NO UI. No hands, no people, no words, logos, prices, particles, flashes or camera shake."
+  },
+  "mobileVideo": {
+    "model": "kling_o3_flf",
+    "aspect_ratio": "9:16",
+    "duration": 8,
+    "mode": "pro",
+    "sound": "off",
+    "medias": [
+      {
+        "role": "start_image",
+        "value": "c171f83c-688f-4af6-96f4-4e66fbc2c6ce"
+      },
+      {
+        "role": "end_image",
+        "value": "d9509723-3131-48e5-84e7-64398e3bf023"
+      }
+    ],
+    "prompt": "One continuous elegant photorealistic product-camera shot, no cuts. Begin EXACTLY on the supplied first frame, the repaired gold smartphone lit with warm amber dunes screen against empty graphite. Slowly dolly backward and slightly to the right, keeping the SAME rigid intact smartphone the visual anchor. Reveal a low dark display plinth beneath it and the stationary tablet and open silver laptop standing behind, as shown in the exact end frame. The other devices are initially outside the camera framing and in deep shadow; they become visible as the camera pulls back and a restrained soft studio key light rises. Physically grounded products: no morphing, no parts assembling, no devices growing out of the phone, no multiplying objects. Maintain the phone's warm gold frame, amber screen, studio black graphite and warm reflection continuity. Motion eases to a complete still hold for the final 1.5 seconds at the supplied end composition. Portrait composition: generous quiet graphite space in the TOP HALF for HTML copy; all devices stay together in the lower half, within the portrait frame. Camera pulls back without tilting or changing the smartphone identity. All screens remain amber abstract dune wallpaper with NO UI. No hands, no people, no words, logos, prices, particles, flashes or camera shake."
+  }
+}

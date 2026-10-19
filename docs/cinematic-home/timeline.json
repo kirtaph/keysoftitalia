@@ -1,0 +1,15 @@
+{
+  "status": "proposed-awaiting-source-film",
+  "durationSeconds": 12,
+  "activeViewportHeights": 5.5,
+  "stageViewportHeights": 1,
+  "beats": [
+    {"id":"opening","scrollVh":[0,1.25],"videoSeconds":[0,2],"copy":"La tua tecnologia merita un'altra possibilità.","holdStart":true},
+    {"id":"inside","scrollVh":[1.25,3],"videoSeconds":[2,4],"copy":null},
+    {"id":"care","scrollVh":[3,4.5],"videoSeconds":[4,8],"copy":"Dentro ogni soluzione, c'è cura.","holdEnd":true},
+    {"id":"restart","scrollVh":[4.5,5.5],"videoSeconds":[8,12],"copy":"Pronto per quello che viene dopo.","holdEnd":true}
+  ],
+  "sourceVideo": null,
+  "frameManifest": null,
+  "poster": null
+}
