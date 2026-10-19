@@ -34,6 +34,8 @@ if (function_exists('generate_csrf_token')) {
         $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
     }
 }
+// Public form endpoints reject submissions sent too soon after the page view.
+$_SESSION['ksi_page_seen_at'] = time();
 
 $page_title       = $page_title       ?? SITE_NAME;
 $page_description = $page_description ?? SITE_DESCRIPTION;

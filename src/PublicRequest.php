@@ -42,4 +42,24 @@ if (!$preview) {
         \KeySoftItalia\BackendHttp::send(['ok' => false, 'success' => false,
             'message' => 'Devi accettare la Privacy Policy.', 'errors' => ['privacy' => 'Consenso richiesto.']], 422);
     }
+
+    require_once __DIR__ . '/SpamGuard.php';
+    $seenAt = $_SESSION['ksi_page_seen_at'] ?? null;
+    $verdict = \KeySoftItalia\SpamGuard::evaluate($_POST, is_int($seenAt) ? time() - $seenAt : null);
+    $ip = $_SERVER['REMOTE_ADDR'] ?? 'unknown';
+    if ($verdict['score'] >= \KeySoftItalia\SpamGuard::BLOCK) {
+        error_log(sprintf('[Spam blocked] %s score=%d reasons=%s ip=%s', basename($_SERVER['SCRIPT_FILENAME'] ?? ''),
+            $verdict['score'], implode(',', $verdict['reasons']), $ip));
+        if ($verdict['score'] >= \KeySoftItalia\SpamGuard::SILENT) {
+            \KeySoftItalia\BackendHttp::send(['ok' => true, 'success' => true, 'message' => 'Grazie! Ti ricontatteremo a breve.']);
+        }
+        \KeySoftItalia\BackendHttp::send(['ok' => false, 'success' => false, 'error' => 'spam',
+            'message' => 'La richiesta non può essere inviata: rimuovi eventuali link dal messaggio oppure contattaci per telefono o WhatsApp.'], 422);
+    }
+    $guard = new \KeySoftItalia\SpamGuard(new \KeySoftItalia\Api\FileStore(__DIR__ . '/../config/runtime/spam'));
+    if ($guard->overLimit($ip)) {
+        error_log('[Spam blocked] rate limit ip=' . $ip);
+        \KeySoftItalia\BackendHttp::send(['ok' => false, 'success' => false, 'error' => 'rate',
+            'message' => 'Hai inviato troppe richieste. Riprova più tardi o contattaci per telefono.'], 429);
+    }
 }
