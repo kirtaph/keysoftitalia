@@ -7,7 +7,7 @@ body.site-aligned main :is(.svc-head,.svc-contact) :is(h1,h2) span { color:var(-
 /* Opening */
 body.site-aligned .svc-head { position:relative; isolation:isolate; display:flex; align-items:center; min-height:max(540px,calc(100svh - var(--svc-head-offset,85px))); overflow:hidden; }
 body.site-aligned .svc-head-still { position:absolute; inset:0; z-index:-2; }
-body.site-aligned .svc-head-still img { width:100%; height:100%; object-fit:cover; object-position:70% 6%; animation:svc-settle 1.8s var(--svc-ease) both; }
+body.site-aligned .svc-head-still img { width:100%; height:100%; object-fit:cover; object-position:72% 50%; animation:svc-settle 1.8s var(--svc-ease) both; }
 /* No z-index on the grade: the lighten blend has to reach the photo underneath. */
 body.site-aligned .svc-head-grade { position:absolute; inset:0; pointer-events:none; }
 body.site-aligned .svc-head-grade::before { content:''; position:absolute; inset:0; background:var(--svc-bg); mix-blend-mode:lighten; }
@@ -43,7 +43,7 @@ body.site-aligned .svc-reel-cta i { color:var(--svc-accent); }
 body.site-aligned .svc-reel.is-reel { height:calc((var(--svc-count) - 1) * 90svh + 100svh); padding:0; }
 body.site-aligned .is-reel .svc-reel-stage { position:sticky; top:var(--svc-header,84px); height:calc(100svh - var(--svc-header,84px)); overflow:hidden; background:var(--svc-bg); }
 body.site-aligned .is-reel .svc-reel-frames { position:absolute; inset:0 0 0 auto; z-index:0; display:block; width:64%; }
-body.site-aligned .is-reel .svc-reel-frames img { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; object-position:50% 42%; opacity:0; will-change:opacity,transform; }
+body.site-aligned .is-reel .svc-reel-frames img { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; object-position:72% 50%; opacity:0; will-change:opacity,transform; }
 body.site-aligned .is-reel .svc-reel-frames img:first-child { opacity:1; }
 /* The lens: blacks lifted to the page graphite, every edge dissolved into it, film grain.
    No z-index here, so the lighten blend reaches the frames. */
@@ -118,7 +118,7 @@ body.site-aligned .svc-link:is(:hover,:focus-visible) { color:var(--svc-accent);
  body.site-aligned .svc-reel { --svc-gutter:20px; padding:56px 20px; }
  body.site-aligned .svc-reel-list { grid-template-columns:1fr; }
  body.site-aligned .is-reel .svc-reel-frames { inset:0; width:100%; }
- body.site-aligned .is-reel .svc-reel-frames img { object-position:50% 30%; }
+ body.site-aligned .is-reel .svc-reel-frames img { object-position:50% 0%; }
  body.site-aligned .svc-lens::after { background:linear-gradient(0deg,var(--svc-bg) 0%,var(--svc-bg) 30%,rgba(16,17,20,.75) 46%,rgba(16,17,20,0) 66%),linear-gradient(180deg,var(--svc-bg) 0%,rgba(16,17,20,0) 14%); }
  body.site-aligned .is-reel .svc-reel-list { top:50%; left:20px; width:calc(100% - 40px); }
  body.site-aligned .is-reel .svc-reel-item > a:first-child { gap:12px; }
@@ -129,7 +129,7 @@ body.site-aligned .svc-link:is(:hover,:focus-visible) { color:var(--svc-accent);
 }
 @media(max-width:767px) {
  body.site-aligned .svc-head { align-items:flex-end; min-height:calc(100svh - var(--svc-head-offset,73px)); }
- body.site-aligned .svc-head-still img { object-position:50% 20%; }
+ body.site-aligned .svc-head-still img { object-position:50% 0%; }
  body.site-aligned .svc-head > .svc-head-grade::after { background:linear-gradient(0deg,var(--svc-bg) 0%,rgba(16,17,20,.88) 30%,rgba(16,17,20,0) 58%),linear-gradient(180deg,rgba(16,17,20,.5) 0%,rgba(16,17,20,0) 18%); }
  body.site-aligned .svc-head-copy { padding-block:0 40px; }
  body.site-aligned .svc-head h1 { font-size:clamp(44px,13vw,60px); }

@@ -107,3 +107,30 @@ lamp on a dark wooden sideboard; beside it a small unbranded smart energy displa
 amber curve and a few dots, no numbers. In soft focus behind, a gas hob's faint flame glow from an
 open kitchen. No faces.
 ```
+
+## Versioni desktop e mobile (19 ottobre)
+
+Ogni immagine ora esiste in due composizioni, generate con la stessa scena approvata come riferimento (`image_references` = job della versione 4:5):
+
+- **Desktop 5:4** (`{nome}-desktop.webp`, 1500 px): soggetto nel 60% destro, 40% sinistro calmo e scuro, perché la scena del rullo copre il 64% destro dello schermo e la lente dissolve il lato sinistro. «Vendita» desktop è specchiata in orizzontale (soggetto generato a sinistra).
+- **Mobile 9:16** (`{nome}-mobile.webp`, 900 px): soggetto nel 55% alto, 45% basso scuro per il rullo e il testo.
+- **Apertura**: `negozio-desktop` (16:9, metà sinistra libera per il titolo) e `negozio-mobile` (9:16, parte bassa libera). Negozio la sera, senza persone: sostituisce il fotogramma della home.
+
+Prompt di ricomposizione: «Use the attached image as the exact scene reference: same [soggetto]… Recompose it as a landscape 5:4 photograph: [soggetto] sit in the RIGHT 60% of the frame; the left 40% is calm, dark … with no important detail» / «… portrait 9:16 photograph: [soggetto] fill the UPPER 55% of the frame, fully visible and centred; the lower 45% … calm and empty, for text overlay». Originali PNG in `sources/`.
+
+## Vendita (19 ottobre)
+
+Apertura `vendita-apertura-*` (16:9 / 9:16): banco espositivo la sera con notebook, smartphone su supporto, tablet e auricolari; soggetto nel 55% destro. Categorie `vendita-cat-*` (5:4 / 9:16, soggetto nel 60% destro): PC desktop con monitor; tre smartphone su supporti e tablet; smart TV con soundbar; impastatrice, bollitore, phon e rasoio; telecamere IP e registratore; router, SSD, chiavetta e schede. Stile comune come sopra, in versione orizzontale.
+
+MyShape `vendita-myshape-*`, seconda versione (la prima, con una striscia di pellicola che usciva dal plotter, non era realistica; ora in `sources/vendita-myshape-v1-*`). Il processo reale: plotter compatto da banco con fessura frontale e piccolo display, foglio di pellicola idrogel/TPU su supporto, taglio «kiss-cut» della sagoma senza tagliare il supporto, sagoma staccata dal foglio con la linguetta, poi allineamento e spatolina.
+
+```text
+[stile comune, 16:9, candid] Scene, physically accurate: on a dark counter lies a flat rectangular sheet
+of thin, perfectly clear hydrogel screen-protector film on a slightly frosted backing liner, about the
+size of a postcard. The cutting machine has kiss-cut a smartphone-shaped outline into it with rounded
+corners and a small camera notch. A technician's two natural hands are peeling the freshly cut
+phone-shaped protector up from the sheet by one corner; a small coloured pull tab sits on one short
+edge. Beside the sheet, a smartphone lies face up. Behind, in soft focus, a compact shoebox-sized
+desktop film cutter with a narrow front feed slot and a tiny dark touchscreen, a small stack of blank
+film sheets. Subject in the LEFT 55%, right 45% calm and dark.
+```

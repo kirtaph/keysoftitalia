@@ -98,8 +98,8 @@ $services = [
 
 <section class="svc-head" aria-labelledby="svc-title" data-glide-from>
   <picture class="svc-head-still">
-    <source media="(max-width:767px)" srcset="<?= asset('img/servizi/hero-mobile.webp'); ?>">
-    <img src="<?= asset('img/servizi/hero-1920.webp'); ?>" alt="Vito Moro al bancone del negozio Key Soft Italia (scena ricostruita)" width="1672" height="941" fetchpriority="high" decoding="async">
+    <source media="(max-width:767px)" srcset="<?= asset('img/servizi/negozio-mobile.webp'); ?>">
+    <img src="<?= asset('img/servizi/negozio-desktop.webp'); ?>" alt="Il bancone e il laboratorio di un negozio di tecnologia la sera, immagine illustrativa" width="1920" height="1080" fetchpriority="high" decoding="async">
   </picture>
   <span class="svc-head-grade" aria-hidden="true"></span>
   <div class="container svc-head-copy">
@@ -114,7 +114,10 @@ $services = [
   <div class="svc-reel-stage">
     <div class="svc-reel-frames" aria-hidden="true">
       <?php foreach ($services as $i => $service): ?>
-      <img src="<?= asset('img/servizi/' . $service['image'] . '.webp'); ?>" alt="" width="1200" height="1500" loading="<?= $i < 2 ? 'eager' : 'lazy' ?>" decoding="async">
+      <picture>
+        <source media="(max-width:860px)" srcset="<?= asset('img/servizi/' . $service['image'] . '-mobile.webp'); ?>">
+        <img src="<?= asset('img/servizi/' . $service['image'] . '-desktop.webp'); ?>" alt="" width="1500" height="1200" loading="<?= $i < 2 ? 'eager' : 'lazy' ?>" decoding="async">
+      </picture>
       <?php endforeach; ?>
     </div>
     <span class="svc-lens" aria-hidden="true"><i></i></span>
@@ -127,7 +130,7 @@ $services = [
             <span class="svc-reel-num"><?= str_pad((string)($i + 1), 2, '0', STR_PAD_LEFT); ?></span>
             <span class="svc-reel-name"><?= htmlspecialchars($service['name']); ?></span>
           </a>
-          <span class="svc-reel-frame" aria-hidden="true"><img src="<?= asset('img/servizi/' . $service['image'] . '.webp'); ?>" alt="" width="1200" height="1500" loading="lazy" decoding="async"></span>
+          <span class="svc-reel-frame" aria-hidden="true"><img src="<?= asset('img/servizi/' . $service['image'] . '-desktop.webp'); ?>" alt="" width="1500" height="1200" loading="lazy" decoding="async"></span>
           <p class="svc-reel-line"><?= htmlspecialchars($service['line']); ?></p>
           <a class="svc-reel-cta" href="<?= url($service['url']); ?>" tabindex="-1" aria-hidden="true">Scopri il servizio <i class="ri-arrow-right-up-line"></i></a>
         </li>
